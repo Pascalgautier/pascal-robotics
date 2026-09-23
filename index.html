@@ -672,6 +672,55 @@ a, p, span, div { overflow-wrap:break-word; }
   .chrono-item{grid-template-columns:20px 1fr;gap:12px}
 }
 
+
+/* Digital Twin banner (after hero) */
+.dt-banner{padding:8px 0 28px}
+.dt-banner-card{
+  display:block;
+  border-radius:28px;
+  border:1px solid rgba(156,229,26,.28);
+  background:
+    radial-gradient(circle at 92% 18%,rgba(85,203,255,.14),transparent 34%),
+    radial-gradient(circle at 12% 80%,rgba(156,229,26,.10),transparent 36%),
+    linear-gradient(155deg,#0d1418,#090d10 70%);
+  padding:clamp(28px,4vw,48px) clamp(24px,4vw,44px);
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  box-shadow:0 18px 50px rgba(0,0,0,.28);
+}
+.dt-banner-card:hover{
+  border-color:rgba(156,229,26,.55);
+  transform:translateY(-2px);
+  box-shadow:0 22px 60px rgba(0,0,0,.36);
+}
+.dt-banner-card .eyebrow{margin-bottom:10px}
+.dt-banner-title{
+  font-size:clamp(48px,7vw,88px);
+  line-height:.94;
+  letter-spacing:-.05em;
+  margin:0 0 14px;
+  font-weight:900;
+}
+.dt-banner-title .soft{color:var(--blue)}
+.dt-banner-body{
+  margin:0 0 18px;
+  max-width:820px;
+  color:#c8d2d6;
+  font-size:clamp(16px,1.6vw,20px);
+  line-height:1.45;
+}
+.dt-banner-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--green);
+  font-weight:850;
+  font-size:15px;
+  letter-spacing:.02em;
+}
+@media (max-width: 760px) {
+  .dt-banner{padding:4px 0 18px}
+  .dt-banner-card{padding:24px 18px;border-radius:22px}
+}
 </style>
 </head>
 <body id="top">
@@ -690,6 +739,7 @@ a, p, span, div { overflow-wrap:break-word; }
       <a href="#applications" data-i18n="nav.applications">Applications</a>
       <a href="#method" data-i18n="nav.method">Méthode</a>
       <a href="#experience" data-i18n="nav.experience">Parcours</a>
+      <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
       <a class="contact-pill" href="#contact" data-i18n="nav.contact">Engager la conversation ↗</a>
     </div>
   </div>
@@ -718,6 +768,17 @@ a, p, span, div { overflow-wrap:break-word; }
       </div>
       <div class="place" data-i18n="hero.place">Conçu à Laval, France</div>
     </div>
+  </div>
+</section>
+
+<section class="dt-banner" aria-labelledby="dt-banner-title">
+  <div class="wrap">
+    <a class="dt-banner-card reveal" href="jumeaux-numeriques.html">
+      <div class="eyebrow" data-i18n="dt.banner.eyebrow">Nouveau · Pipeline</div>
+      <h2 id="dt-banner-title" class="dt-banner-title" data-i18n-html="dt.banner.title">Jumeaux numériques<br><span class="soft">Digital Twin</span></h2>
+      <p class="dt-banner-body" data-i18n="dt.banner.body">Pascal Robotics orchestre le pipeline Digital Twin jusqu’au robot incarné — de la simulation à la Physical AI sur le terrain industriel.</p>
+      <span class="dt-banner-cta" data-i18n="dt.banner.cta">Explorer le Digital Twin →</span>
+    </a>
   </div>
 </section>
 
@@ -1087,6 +1148,11 @@ const I18N = {
     "nav.method": "Méthode",
     "nav.experience": "Parcours",
     "nav.contact": "Engager la conversation ↗",
+    "nav.dt": "Digital Twin",
+    "dt.banner.eyebrow": "Nouveau · Pipeline",
+    "dt.banner.title": "Jumeaux numériques<br><span class=\"soft\">Digital Twin</span>",
+    "dt.banner.body": "Pascal Robotics orchestre le pipeline Digital Twin jusqu’au robot incarné — de la simulation à la Physical AI sur le terrain industriel.",
+    "dt.banner.cta": "Explorer le Digital Twin →",
     "logo.aria": "Logo Pascal Robotics",
     "logo.alt": "Logo Pascal Robotics",
     "hero.kicker": "Robotique mobile & humanoïde · Digital Twin · Physical AI",
@@ -1255,6 +1321,11 @@ const I18N = {
     "nav.method": "Method",
     "nav.experience": "Path",
     "nav.contact": "Start a conversation ↗",
+    "nav.dt": "Digital Twin",
+    "dt.banner.eyebrow": "New · Pipeline",
+    "dt.banner.title": "Digital Twin<br><span class=\"soft\">Jumeaux numériques</span>",
+    "dt.banner.body": "Pascal Robotics orchestrates the full Digital Twin pipeline through to the embodied robot — from simulation to Physical AI on the industrial floor.",
+    "dt.banner.cta": "Explore Digital Twin →",
     "logo.aria": "Pascal Robotics logo",
     "logo.alt": "Pascal Robotics logo",
     "hero.kicker": "Mobile & humanoid robotics · Digital Twin · Physical AI",
