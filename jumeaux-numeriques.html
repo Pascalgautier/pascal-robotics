@@ -144,41 +144,19 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   .dt-film-cap{font-size:12px}
 }
 
-.visual-band{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+#visuals .section-head{grid-template-columns:1fr;max-width:920px}
+.visual-band{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .dt-shot{
   position:relative;
-  min-height:220px;
+  margin:0;
   border-radius:28px;
   overflow:hidden;
-  border:1px solid rgba(0,0,0,.08);
-  background:#fff;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  border:1px solid rgba(255,255,255,.08);
+  background:#0b0f12;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
-.dt-shot:nth-child(2){
-  background:
-    linear-gradient(160deg,rgba(156,229,26,.18),transparent 45%),
-    linear-gradient(20deg,rgba(85,203,255,.10),transparent 40%),
-    linear-gradient(160deg,#0c1114,#090d10);
-}
-.dt-shot:nth-child(3){
-  background:
-    linear-gradient(200deg,rgba(85,203,255,.20),transparent 48%),
-    linear-gradient(40deg,rgba(156,229,26,.08),transparent 38%),
-    linear-gradient(160deg,#0c1114,#090d10);
-}
-.dt-shot img{width:100%;height:100%;object-fit:contain;background:#fff;display:block;min-height:220px}
-.dt-shot figcaption{
-  position:relative;z-index:1;
-  padding:18px 20px;
-  background:linear-gradient(180deg,transparent,rgba(5,7,8,.88));
-  font-size:13px;font-weight:750;color:#e8eef0;
-  letter-spacing:.02em;
-}
-.dt-shot .ph-label{
-  position:absolute;top:18px;left:18px;z-index:1;
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);font-weight:800;
-}
+.dt-shot:nth-child(3){grid-column:1 / -1}
+.dt-shot img{width:100%;height:auto;display:block;object-fit:contain;background:#0b0f12}
 
 .pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .step{
@@ -304,7 +282,6 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   <div class="dt-film-overlay">
     <div class="eyebrow" data-i18n="film.eyebrow">Film</div>
     <h2 id="film-title" class="dt-film-title" data-i18n="film.title">Du jumeau numérique au robot incarné.</h2>
-    <p class="dt-film-cap" data-i18n="film.caption">Court film — de la simulation à l’écran jusqu’au robot physique.</p>
   </div>
 </section>
 
@@ -315,23 +292,16 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
         <div class="eyebrow" data-i18n="visuals.eyebrow">01 / Vision</div>
         <h2 id="visuals-title" data-i18n-html="visuals.title">Des réalités industrielles<br>hautement fidèles.</h2>
       </div>
-      <p data-i18n="visuals.intro">Un Digital Twin utile n’est pas une maquette décorative : c’est une représentation opérable pour simuler, valider et préparer le passage au robot incarné.</p>
     </div>
     <div class="visual-band reveal">
       <figure class="dt-shot">
-        <span class="ph-label" data-i18n="visuals.ph">Visual</span>
-        <img src="dt-visual-1.jpg" alt="" data-i18n-alt="visuals.img1.alt" onerror="this.remove()">
-        <figcaption data-i18n="visuals.cap1">Digital Twin haute fidélité — atelier &amp; flux</figcaption>
+        <img src="dt-visual-1.jpg" alt="" width="448" height="448" data-i18n-alt="visuals.img1.alt" loading="lazy">
       </figure>
       <figure class="dt-shot">
-        <span class="ph-label" data-i18n="visuals.ph">Visual</span>
-        <img src="dt-visual-2.jpg" alt="" data-i18n-alt="visuals.img2.alt" onerror="this.remove()">
-        <figcaption data-i18n="visuals.cap2">Simulation &amp; Physical AI — scénarios terrain</figcaption>
+        <img src="dt-visual-2.jpg" alt="" width="448" height="448" data-i18n-alt="visuals.img2.alt" loading="lazy">
       </figure>
       <figure class="dt-shot">
-        <span class="ph-label" data-i18n="visuals.ph">Visual</span>
-        <img src="dt-visual-3.jpg" alt="" data-i18n-alt="visuals.img3.alt" onerror="this.remove()">
-        <figcaption data-i18n="visuals.cap3">Embodied robot — déploiement Edge AI</figcaption>
+        <img src="dt-visual-3.jpg" alt="" width="920" height="448" data-i18n-alt="visuals.img3.alt" loading="lazy">
       </figure>
     </div>
   </div>
@@ -479,9 +449,9 @@ const I18N = {
     "visuals.cap1": "Digital Twin haute fidélité — atelier & flux",
     "visuals.cap2": "Simulation & Physical AI — scénarios terrain",
     "visuals.cap3": "Embodied robot — déploiement Edge AI",
-    "visuals.img1.alt": "Illustration Digital Twin industriel",
-    "visuals.img2.alt": "Illustration simulation Physical AI",
-    "visuals.img3.alt": "Illustration robot incarné Edge AI",
+    "visuals.img1.alt": "Simuler et opérer — robot autonome",
+    "visuals.img2.alt": "Valider la tâche — simulation opérateur",
+    "visuals.img3.alt": "Incarner le robot — transfert vers le bras",
     "pipe.eyebrow": "02 / Pipeline",
     "pipe.title": "Du besoin terrain<br>au robot incarné.",
     "pipe.intro": "Une chaîne continue : cadrer le cas d’usage, construire le Digital Twin, simuler, valider, puis incarner sur machine — et itérer.",
@@ -555,9 +525,9 @@ const I18N = {
     "visuals.cap1": "High-fidelity Digital Twin — shop floor & flows",
     "visuals.cap2": "Simulation & Physical AI — field scenarios",
     "visuals.cap3": "Embodied robot — Edge AI deployment",
-    "visuals.img1.alt": "Industrial Digital Twin illustration",
-    "visuals.img2.alt": "Physical AI simulation illustration",
-    "visuals.img3.alt": "Embodied robot Edge AI illustration",
+    "visuals.img1.alt": "Simulate and operate — autonomous robot",
+    "visuals.img2.alt": "Validate the task — operator simulation",
+    "visuals.img3.alt": "Embody the robot — transfer to the arm",
     "pipe.eyebrow": "02 / Pipeline",
     "pipe.title": "From field need<br>to embodied robot.",
     "pipe.intro": "A continuous chain: frame the use case, build the Digital Twin, simulate, validate, then embody on machine — and iterate.",
