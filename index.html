@@ -149,6 +149,23 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 }
 
 
+
+.wiki-ref{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:12px;padding:8px 10px 8px 8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0a0e11;border-radius:14px;
+  max-width:100%;text-decoration:none;color:inherit;
+}
+.wiki-ref:hover{border-color:rgba(156,229,26,.35)}
+.wiki-ref img{
+  width:56px;height:56px;object-fit:cover;border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);flex:0 0 auto;
+}
+.wiki-ref .wiki-meta{display:grid;gap:2px;min-width:0}
+.wiki-ref .wiki-meta b{font-size:13px;font-weight:800;color:#eef4f6}
+.wiki-ref .wiki-meta span{font-size:12px;color:var(--muted)}
+
 /* ===== Responsive hardening ===== */
 html, body { max-width:100%; overflow-x:hidden; }
 * { min-width:0; }
@@ -880,6 +897,13 @@ a, p, span, div { overflow-wrap:break-word; }
           <time data-i18n="exp.i3.when">2010</time>
           <strong data-i18n="exp.i3.title">Le Robographe</strong>
           <p data-i18n="exp.i3.body">Robot industriel comme outil artistique — au sein de l’écosystème Laval Virtual.</p>
+          <a class="wiki-ref" href="https://fr.wikipedia.org/wiki/Robographe" target="_blank" rel="noopener noreferrer">
+            <img src="robographe-thumb.jpg" width="56" height="61" alt="" data-i18n-alt="exp.i3.wiki.alt" loading="lazy">
+            <span class="wiki-meta">
+              <b data-i18n="exp.i3.wiki.title">Wikipedia — Robographe ↗</b>
+              <span data-i18n="exp.i3.wiki.sub">Article et illustration (Wikimedia Commons)</span>
+            </span>
+          </a>
         </div>
       </div>
       <div class="chrono-item">
@@ -1110,6 +1134,9 @@ const I18N = {
     "exp.i3.when": "2010",
     "exp.i3.title": "Le Robographe",
     "exp.i3.body": "Robot industriel comme outil artistique — au sein de l’écosystème Laval Virtual.",
+    "exp.i3.wiki.title": "Wikipedia — Robographe ↗",
+    "exp.i3.wiki.sub": "Article et illustration (Wikimedia Commons)",
+    "exp.i3.wiki.alt": "Le Robographe — illustration Wikimedia Commons",
     "exp.i4.when": "Années suivantes",
     "exp.i4.title": "Robot lumière & robot caméra",
     "exp.i4.body": "Poursuite des systèmes robotiques appliqués à la lumière et à la caméra — précision, trajectoires et contrôle.",
@@ -1264,6 +1291,9 @@ const I18N = {
     "exp.i3.when": "2010",
     "exp.i3.title": "Le Robographe",
     "exp.i3.body": "Industrial robot as an artistic tool — within the Laval Virtual ecosystem.",
+    "exp.i3.wiki.title": "Wikipedia — Robographe ↗",
+    "exp.i3.wiki.sub": "Article and illustration (Wikimedia Commons)",
+    "exp.i3.wiki.alt": "The Robographe — Wikimedia Commons illustration",
     "exp.i4.when": "Following years",
     "exp.i4.title": "Light robot & camera robot",
     "exp.i4.body": "Continued robotic systems for light and camera — precision, trajectories and control.",
