@@ -626,41 +626,9 @@ a, p, span, div { overflow-wrap:break-word; }
   .hero-dt-content{animation:none}
 }
 
-/* Designer polish — breathing, hovers, cadre, midcta, stack strip */
+/* Designer polish — breathing, hovers, cadre, midcta */
 #applications{padding-bottom:80px}
 #usecases{padding-top:76px}
-.hero-stack{
-  margin:14px auto 0;
-  max-width:720px;
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-}
-.hero-stack-pill{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:7px 12px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(8,14,18,.42);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  color:rgba(220,230,236,.88);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  line-height:1;
-  transition:border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease;
-}
-.hero-stack-pill:hover{
-  border-color:rgba(156,229,26,.45);
-  color:#fff;
-  background:rgba(12,20,24,.62);
-  box-shadow:0 0 0 1px rgba(156,229,26,.12);
-}
 .big-card,.use-card,.why-card,.step-row,.path-card,.platform-card{
   transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
@@ -806,7 +774,6 @@ a, p, span, div { overflow-wrap:break-word; }
   .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover,.path-card:hover,.platform-card:hover{transform:none;box-shadow:none}
   .apps-loop video{animation:none;opacity:1}
   .hero-dt-content{animation:none}
-  .hero-stack-pill{transition:none}
   .apps-loop{transition:none}
 }
 
@@ -1484,14 +1451,6 @@ h2.title-parallax{
       <div class="eyebrow" data-i18n="dt.hero.eyebrow">Nouveau · Digital Twin</div>
       <h1 id="hero-dt-title" data-i18n-html="dt.hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
       <p class="lead" data-i18n="dt.hero.lead">Du Digital Twin au robot incarné — Physical AI pour le sol industriel.</p>
-      <nav class="hero-stack" aria-label="Stack" data-i18n-aria="dt.hero.stackAria">
-        <a class="hero-stack-pill" href="jumeaux-numeriques.html">OpenUSD</a>
-        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Omniverse</a>
-        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Isaac Sim</a>
-        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Isaac Lab</a>
-        <a class="hero-stack-pill" href="#method">Edge AI</a>
-        <a class="hero-stack-pill" href="#method">VLA</a>
-      </nav>
     </div>
   </div>
   <div class="actions hero-dt-actions">
@@ -2037,7 +1996,6 @@ const I18N = {
     "dt.hero.eyebrow": "Nouveau · Digital Twin",
     "dt.hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
     "dt.hero.lead": "Du Digital Twin au robot incarné — Physical AI pour le sol industriel.",
-    "dt.hero.stackAria": "Stack technologique",
     "dt.hero.cta1": "Explorer le Digital Twin →",
     "dt.hero.cta2": "Parler de votre cas d’usage ↗",
     "logo.aria": "Logo Pascal Robotics",
@@ -2285,7 +2243,6 @@ const I18N = {
     "dt.hero.eyebrow": "New · Digital Twin",
     "dt.hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
     "dt.hero.lead": "From Digital Twin to the embodied robot — Physical AI for the industrial floor.",
-    "dt.hero.stackAria": "Technology stack",
     "dt.hero.cta1": "Explore Digital Twin →",
     "dt.hero.cta2": "Talk about your use case ↗",
     "logo.aria": "Pascal Robotics logo",
