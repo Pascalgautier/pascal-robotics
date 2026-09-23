@@ -700,35 +700,13 @@ a, p, span, div { overflow-wrap:break-word; }
   object-position:center 58%;
   transform:scale(1.02);
   opacity:0;
+  z-index:1;
+  transition:opacity 1.25s ease-in-out;
   will-change:opacity;
 }
-.hero-dt-bg--a{
-  z-index:1;
-  animation:heroBgCrossfadeA 18s ease-in-out infinite;
-}
-.hero-dt-bg--b{
+.hero-dt-bg.is-active{
+  opacity:1;
   z-index:2;
-  animation:heroBgCrossfadeB 18s ease-in-out infinite;
-}
-.hero-dt-bg--c{
-  z-index:3;
-  animation:heroBgCrossfadeC 18s ease-in-out infinite;
-}
-/* 3 images · ~5.5s chacune · fondu ~1.2s */
-@keyframes heroBgCrossfadeA{
-  0%,26%{opacity:1}
-  33%,93%{opacity:0}
-  100%{opacity:1}
-}
-@keyframes heroBgCrossfadeB{
-  0%,26%{opacity:0}
-  33%,60%{opacity:1}
-  66%,100%{opacity:0}
-}
-@keyframes heroBgCrossfadeC{
-  0%,60%{opacity:0}
-  66%,93%{opacity:1}
-  100%{opacity:0}
 }
 .hero-dt-overlay{
   position:absolute;
@@ -991,9 +969,9 @@ a, p, span, div { overflow-wrap:break-word; }
 <main id="content">
 <section class="hero-dt" aria-labelledby="hero-dt-title">
   <div class="hero-dt-bgs" aria-hidden="true">
-    <img class="hero-dt-bg hero-dt-bg--a" src="assets/hero-digital-twin.jpg" alt="" width="1920" height="1072" decoding="async" fetchpriority="high">
-    <img class="hero-dt-bg hero-dt-bg--b" src="assets/hero-digital-twin-2.jpg" alt="" width="1920" height="1076" decoding="async" fetchpriority="low">
-    <img class="hero-dt-bg hero-dt-bg--c" src="assets/hero-digital-twin-3.jpg" alt="" width="1920" height="1076" decoding="async" fetchpriority="low">
+    <img class="hero-dt-bg is-active" src="assets/hero-digital-twin.jpg" alt="" width="1920" height="1072" decoding="async" fetchpriority="high">
+    <img class="hero-dt-bg" src="assets/hero-digital-twin-2.jpg" alt="" width="1920" height="1076" decoding="async" fetchpriority="low">
+    <img class="hero-dt-bg" src="assets/hero-digital-twin-3.jpg" alt="" width="1920" height="1081" decoding="async" fetchpriority="low">
   </div>
   <div class="hero-dt-overlay" aria-hidden="true"></div>
   <div class="wrap hero-dt-inner">
@@ -1859,5 +1837,22 @@ if (copyProjectEmail) {
 }
 
 </script>
+
+<script>
+(function(){
+  var root = document.querySelector('.hero-dt-bgs');
+  if (!root) return;
+  var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-dt-bg'));
+  if (slides.length < 2) return;
+  var i = 0;
+  var HOLD_MS = 5500;
+  setInterval(function(){
+    slides[i].classList.remove('is-active');
+    i = (i + 1) % slides.length;
+    slides[i].classList.add('is-active');
+  }, HOLD_MS);
+})();
+</script>
+
 </body>
 </html>
