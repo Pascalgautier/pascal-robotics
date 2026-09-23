@@ -692,6 +692,32 @@ a, p, span, div { overflow-wrap:break-word; }
   background-repeat:no-repeat;
   z-index:0;
   transform:scale(1.02);
+  opacity:0;
+  will-change:opacity;
+}
+.hero-dt-bg--a{
+  opacity:1;
+  animation:heroBgCrossfadeA 16s ease-in-out infinite;
+}
+.hero-dt-bg--b{
+  animation:heroBgCrossfadeB 16s ease-in-out infinite;
+}
+@keyframes heroBgCrossfadeA{
+  0%,42%{opacity:1}
+  50%,92%{opacity:0}
+  100%{opacity:1}
+}
+@keyframes heroBgCrossfadeB{
+  0%,42%{opacity:0}
+  50%,92%{opacity:1}
+  100%{opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .hero-dt-bg{
+    animation:none !important;
+  }
+  .hero-dt-bg--a{opacity:1}
+  .hero-dt-bg--b{opacity:0}
 }
 .hero-dt-overlay{
   position:absolute;
@@ -953,7 +979,8 @@ a, p, span, div { overflow-wrap:break-word; }
 
 <main id="content">
 <section class="hero-dt" aria-labelledby="hero-dt-title">
-  <div class="hero-dt-bg" role="img" aria-label="Digital Twin — jumeau numérique et robot incarné" style="background-image:url('assets/hero-digital-twin.jpg')"></div>
+  <div class="hero-dt-bg hero-dt-bg--a" role="img" aria-label="Digital Twin — jumeau numérique et robot incarné" style="background-image:url('assets/hero-digital-twin.jpg')"></div>
+  <div class="hero-dt-bg hero-dt-bg--b" aria-hidden="true" style="background-image:url('assets/hero-digital-twin-2.jpg')"></div>
   <div class="hero-dt-overlay" aria-hidden="true"></div>
   <div class="wrap hero-dt-inner">
     <div class="hero-dt-logo">
