@@ -707,12 +707,16 @@ a, p, span, div { overflow-wrap:break-word; }
   position:relative;
   z-index:2;
   width:100%;
-  padding:6px 0 72px;
+  padding:6px 0 88px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  min-height:inherit;
+  min-height:100%;
+  height:100%;
+  margin-top:0;
+  margin-bottom:0;
+  align-self:stretch;
   box-sizing:border-box;
   text-align:center;
 }
@@ -777,24 +781,29 @@ a, p, span, div { overflow-wrap:break-word; }
   position:absolute;
   left:0;
   right:0;
-  bottom:10px;
+  bottom:0;
   z-index:3;
   display:flex;
-  justify-content:center;
+  justify-content:flex-start;
+  align-items:center;
   flex-wrap:wrap;
-  gap:10px;
-  margin-top:0;
-  padding:0 16px;
+  gap:12px;
+  margin:0;
+  padding:14px max(20px, calc((100% - var(--max)) / 2 + 20px));
   width:100%;
   box-sizing:border-box;
+  background:linear-gradient(180deg, rgba(4,8,12,0) 0%, rgba(4,8,12,.72) 42%, rgba(4,8,12,.88) 100%);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border-top:1px solid rgba(255,255,255,.08);
 }
 .hero-dt-actions .btn{
-  min-height:42px;
-  padding:0 16px;
+  min-height:44px;
+  padding:0 18px;
   font-size:13px;
 }
 .hero-dt-actions .btn:not(.primary){
-  background:rgba(8,14,18,.45);
+  background:rgba(8,14,18,.55);
   backdrop-filter:blur(8px);
   border-color:rgba(255,255,255,.28);
   color:#f4f8fa;
@@ -862,7 +871,7 @@ a, p, span, div { overflow-wrap:break-word; }
   }
   .hero-dt-content h1{font-size:clamp(28px,8vw,42px)}
   .hero-dt-content .lead{font-size:clamp(13px,3.6vw,15px)}
-  .hero-dt-actions{bottom:12px;gap:10px;justify-content:center}
+  .hero-dt-actions{bottom:0;gap:10px;justify-content:flex-start;padding:12px 16px}
   .hero-secondary{padding:28px 0 22px}
   .hero-secondary h2{font-size:clamp(26px,8vw,36px)}
 }
@@ -955,10 +964,10 @@ a, p, span, div { overflow-wrap:break-word; }
       <h1 id="hero-dt-title" data-i18n-html="dt.hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
       <p class="lead" data-i18n="dt.hero.lead">Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’au Physical AI déployée sur le terrain.</p>
     </div>
-    <div class="actions hero-dt-actions">
-      <a class="btn primary" href="jumeaux-numeriques.html" data-i18n="dt.hero.cta1">Explorer le Digital Twin →</a>
-      <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Engager la conversation ↗</a>
-    </div>
+  </div>
+  <div class="actions hero-dt-actions">
+    <a class="btn primary" href="jumeaux-numeriques.html" data-i18n="dt.hero.cta1">Explorer le Digital Twin →</a>
+    <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Engager la conversation ↗</a>
   </div>
 </section>
 
