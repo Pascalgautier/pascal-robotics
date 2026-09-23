@@ -144,6 +144,17 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 .signature-copy strong{display:block;color:#eef3f4;font-size:13px;margin-bottom:4px}
 .footerline{margin-top:6px;color:#6f7a7f}
 .signature-contact{margin-top:0}
+.footer-linkedin{
+  display:block;
+  margin-top:12px;
+  color:var(--green);
+  font-size:14px;
+  font-weight:850;
+  letter-spacing:.04em;
+  text-decoration:none;
+  text-align:center;
+}
+.footer-linkedin:hover{color:#b6f04a;text-decoration:underline}
 @media (max-width:560px){
   .signature-logo-plain img{width:min(220px,62vw)}
 }
@@ -925,6 +936,13 @@ a, p, span, div { overflow-wrap:break-word; }
           <time data-i18n="exp.i4.when">Années suivantes</time>
           <strong data-i18n="exp.i4.title">Robot lumière &amp; robot caméra</strong>
           <p data-i18n="exp.i4.body">Poursuite des systèmes robotiques appliqués à la lumière et à la caméra — précision, trajectoires et contrôle.</p>
+          <a class="wiki-ref" href="https://vimeo.com/4542168" target="_blank" rel="noopener noreferrer">
+            <img src="lumiere-thumb.jpg" width="56" height="56" alt="" data-i18n-alt="exp.i4.video.alt" loading="lazy">
+            <span class="wiki-meta">
+              <b data-i18n="exp.i4.video.title">Voir la vidéo sur Vimeo ↗</b>
+              <span data-i18n="exp.i4.video.sub">Vimeo · robot lumière</span>
+            </span>
+          </a>
         </div>
       </div>
       <div class="chrono-item">
@@ -1049,7 +1067,8 @@ a, p, span, div { overflow-wrap:break-word; }
         <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
       </div>
       <div class="signature-contact signature-copy">
-        <div data-i18n-html="footer.contact">Contact : <a href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a> · <a href="tel:+33659590369">+33 6 59 59 03 69</a> · <a href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
+        <div data-i18n-html="footer.contact">Contact : <a href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a> · <a href="tel:+33659590369">+33 6 59 59 03 69</a></div>
+        <a class="footer-linkedin" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="footer.linkedin">LinkedIn</a>
       </div>
     </div>
   </div>
@@ -1165,6 +1184,9 @@ const I18N = {
     "exp.i4.when": "Années suivantes",
     "exp.i4.title": "Robot lumière & robot caméra",
     "exp.i4.body": "Poursuite des systèmes robotiques appliqués à la lumière et à la caméra — précision, trajectoires et contrôle.",
+    "exp.i4.video.title": "Voir la vidéo sur Vimeo ↗",
+    "exp.i4.video.sub": "Vimeo · robot lumière",
+    "exp.i4.video.alt": "Vidéo du robot lumière",
     "exp.i5.when": "2023",
     "exp.i5.title": "Robotique caméra — collaboration",
     "exp.i5.body": "Déploiement de solutions de robotique caméra avec Electric Friends pour France Télévisions — jalon de parcours professionnel, non présenté comme référence commerciale Pascal Robotics.",
@@ -1216,7 +1238,8 @@ const I18N = {
     "footer.sig.alt": "Signature Pascal Robotics",
     "footer.tagline": "Robotique mobile & humanoïde · Digital Twin · Physical AI · Intégration",
     "footer.line": "© 2026 · Laval, France",
-    "footer.contact": "Contact : <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a> · <a href=\"https://www.linkedin.com/in/pascal-gautier2026\" target=\"_blank\" rel=\"noopener noreferrer\">LinkedIn</a>"
+    "footer.contact": "Contact : <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a>",
+    "footer.linkedin": "LinkedIn"
   },
   en: {
     "meta.title": "Pascal Robotics — Mobile Robotics, Digital Twin & Physical AI",
@@ -1326,6 +1349,9 @@ const I18N = {
     "exp.i4.when": "Following years",
     "exp.i4.title": "Light robot & camera robot",
     "exp.i4.body": "Continued robotic systems for light and camera — precision, trajectories and control.",
+    "exp.i4.video.title": "Watch the video on Vimeo ↗",
+    "exp.i4.video.sub": "Vimeo · light robot",
+    "exp.i4.video.alt": "Video of the light robot",
     "exp.i5.when": "2023",
     "exp.i5.title": "Camera robotics — collaboration",
     "exp.i5.body": "Deployment of camera robotics solutions with Electric Friends for France Télévisions — a career milestone, not presented as a Pascal Robotics commercial client reference.",
@@ -1377,7 +1403,8 @@ const I18N = {
     "footer.sig.alt": "Pascal Robotics signature",
     "footer.tagline": "Mobile & humanoid robotics · Digital Twin · Physical AI · Integration",
     "footer.line": "© 2026 · Laval, France",
-    "footer.contact": "Contact: <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a> · <a href=\"https://www.linkedin.com/in/pascal-gautier2026\" target=\"_blank\" rel=\"noopener noreferrer\">LinkedIn</a>"
+    "footer.contact": "Contact: <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a>",
+    "footer.linkedin": "LinkedIn"
   }
 };
 
