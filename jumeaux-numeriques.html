@@ -115,8 +115,33 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   font-size:13px;
   line-height:1.4;
 }
-@media (max-width:760px){
-  .dt-film-overlay{padding:20px 16px 24px}
+/* Portrait / smartphone: show the full landscape clip, no crop */
+@media (max-width:900px), (orientation: portrait){
+  .dt-film-section{
+    min-height:0;
+    height:auto;
+    overflow:visible;
+    display:flex;
+    flex-direction:column;
+  }
+  .dt-film-fs{
+    position:relative;
+    inset:auto;
+    width:100%;
+    height:auto;
+    max-height:none;
+    aspect-ratio:752 / 416;
+    object-fit:contain;
+    object-position:center center;
+  }
+  .dt-film-overlay{
+    position:relative;
+    left:auto;right:auto;bottom:auto;
+    padding:18px 16px 22px;
+    background:linear-gradient(180deg,rgba(5,7,10,.35),rgba(5,7,10,.92));
+  }
+  .dt-film-title{font-size:clamp(20px,6.2vw,28px)}
+  .dt-film-cap{font-size:12px}
 }
 
 .visual-band{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
