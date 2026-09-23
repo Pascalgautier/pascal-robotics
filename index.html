@@ -773,10 +773,26 @@ a, p, span, div { overflow-wrap:break-word; }
   flex-wrap:wrap;
   gap:10px;
 }
-.hero-dt-content .actions .btn{
+.hero-dt-actions{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:auto;
+  padding-top:24px;
+  padding-bottom:8px;
+  width:100%;
+}
+.hero-dt-actions .btn{
   min-height:42px;
   padding:0 16px;
   font-size:13px;
+}
+.hero-dt-actions .btn:not(.primary){
+  background:rgba(8,14,18,.45);
+  backdrop-filter:blur(8px);
+  border-color:rgba(255,255,255,.28);
+  color:#f4f8fa;
 }
 .hero-dt-content .btn:not(.primary){
   background:rgba(8,14,18,.45);
@@ -841,7 +857,7 @@ a, p, span, div { overflow-wrap:break-word; }
   }
   .hero-dt-content h1{font-size:clamp(28px,8vw,42px)}
   .hero-dt-content .lead{font-size:clamp(13px,3.6vw,15px)}
-  .hero-dt-content .actions{gap:10px;justify-content:center}
+  .hero-dt-actions{gap:10px;justify-content:center;margin-top:auto}
   .hero-secondary{padding:28px 0 22px}
   .hero-secondary h2{font-size:clamp(26px,8vw,36px)}
 }
@@ -933,10 +949,10 @@ a, p, span, div { overflow-wrap:break-word; }
       <div class="eyebrow" data-i18n="dt.hero.eyebrow">Nouveau · Digital Twin</div>
       <h1 id="hero-dt-title" data-i18n-html="dt.hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
       <p class="lead" data-i18n="dt.hero.lead">Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’au Physical AI déployée sur le terrain.</p>
-      <div class="actions">
-        <a class="btn primary" href="jumeaux-numeriques.html" data-i18n="dt.hero.cta1">Explorer le Digital Twin →</a>
-        <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Engager la conversation ↗</a>
-      </div>
+    </div>
+    <div class="actions hero-dt-actions">
+      <a class="btn primary" href="jumeaux-numeriques.html" data-i18n="dt.hero.cta1">Explorer le Digital Twin →</a>
+      <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Engager la conversation ↗</a>
     </div>
   </div>
 </section>
