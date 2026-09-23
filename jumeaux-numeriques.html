@@ -36,14 +36,17 @@ img{display:block;max-width:100%}
 .skip{position:absolute;left:-9999px;top:auto}
 .skip:focus{left:16px;top:16px;z-index:999;background:#fff;color:#000;padding:10px 14px;border-radius:8px}
 
-.nav{position:sticky;top:0;z-index:30;background:rgba(5,7,8,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{position:sticky;top:0;z-index:40;background:rgba(5,7,8,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .wordmark{font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
 .wordmark span{color:var(--green)}
-.links{display:flex;align-items:center;gap:24px;color:#bac4c8;font-size:13px}
-.links a:hover{color:#fff}
-.links a.is-active{color:var(--green)}
-.contact-pill{border:1px solid rgba(156,229,26,.42);padding:10px 14px;border-radius:999px;color:#ecffd7!important}
+.links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em}
+.links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
+.links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
+.links a:not(.contact-pill).is-active{color:var(--green);border-bottom-color:rgba(156,229,26,.7)}
+.contact-pill{border:1px solid rgba(156,229,26,.42);padding:10px 14px;border-radius:999px;color:#ecffd7!important;letter-spacing:.02em;font-weight:800;white-space:nowrap;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.contact-pill:hover,.contact-pill:focus-visible{border-color:rgba(156,229,26,.75);background:rgba(156,229,26,.08);box-shadow:0 0 0 1px rgba(156,229,26,.12);outline:none}
+#content section[id],#film,#visuals,#pipeline,#pillars,#contact{scroll-margin-top:92px}
 .lang-switch{display:inline-flex;align-items:center;gap:6px;margin-right:4px}
 .lang-switch button{
   appearance:none;background:transparent;border:0;color:#bac4c8;font:inherit;font-size:12px;font-weight:800;
@@ -315,7 +318,7 @@ h2.title-parallax{
       <a href="accueil.html#applications" data-i18n="nav.applications">Applications</a>
       <a class="is-active" href="jumeaux-numeriques.html" data-i18n="nav.dt" aria-current="page">Digital Twin</a>
       <a href="accueil.html#method" data-i18n="nav.method">Méthode</a>
-      <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Engager la conversation ↗</a>
+      <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
     </div>
   </div>
 </nav>
@@ -501,7 +504,7 @@ const I18N = {
     "nav.applications": "Applications",
     "nav.dt": "Digital Twin",
     "nav.method": "Méthode",
-    "nav.contact": "Engager la conversation ↗",
+    "nav.contact": "Parler de votre cas d’usage ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
     "hero.lead": "Un Digital Twin n’a de sens que s’il mène à un robot incarné, validé pour le terrain.",
@@ -577,7 +580,7 @@ const I18N = {
     "nav.applications": "Applications",
     "nav.dt": "Digital Twin",
     "nav.method": "Method",
-    "nav.contact": "Start a conversation ↗",
+    "nav.contact": "Talk about your use case ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
     "hero.lead": "A Digital Twin only matters if it leads to an embodied robot, validated for the floor.",

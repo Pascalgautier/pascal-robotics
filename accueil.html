@@ -36,13 +36,17 @@ img{display:block;max-width:100%}
 .skip{position:absolute;left:-9999px;top:auto}
 .skip:focus{left:16px;top:16px;z-index:999;background:#fff;color:#000;padding:10px 14px;border-radius:8px}
 
-.nav{position:sticky;top:0;z-index:30;background:rgba(5,7,8,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{position:sticky;top:0;z-index:40;background:rgba(5,7,8,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .wordmark{font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
 .wordmark span{color:var(--green)}
-.links{display:flex;align-items:center;gap:24px;color:#bac4c8;font-size:13px}
-.links a:hover{color:#fff}
-.contact-pill{border:1px solid rgba(156,229,26,.42);padding:10px 14px;border-radius:999px;color:#ecffd7!important}
+.links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em}
+.links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
+.links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
+.links a:not(.contact-pill).is-active{color:var(--green);border-bottom-color:rgba(156,229,26,.7)}
+.contact-pill{border:1px solid rgba(156,229,26,.42);padding:10px 14px;border-radius:999px;color:#ecffd7!important;letter-spacing:.02em;font-weight:800;white-space:nowrap;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.contact-pill:hover,.contact-pill:focus-visible{border-color:rgba(156,229,26,.75);background:rgba(156,229,26,.08);box-shadow:0 0 0 1px rgba(156,229,26,.12);outline:none}
+#content section[id],#why,#contrast,#paths,#applications,#usecases,#method,#platform,#architecture,#experience,#about,#poc,#faq,#contact{scroll-margin-top:92px}
 
 .hero{padding:18px 0 42px}
 .center-intro{max-width:920px;margin:0 auto;text-align:center}
@@ -61,7 +65,7 @@ h1 .soft{color:#738089}
 .section{padding:64px 0;border-top:1px solid rgba(255,255,255,.05)}
 .section-head{display:grid;grid-template-columns:.82fr 1.18fr;gap:60px;align-items:end;margin-bottom:36px}
 .eyebrow{color:var(--green);font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:850}
-h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:6px 0 0}
+h2{font-size:clamp(38px,5.4vw,68px);line-height:.96;letter-spacing:-.05em;margin:6px 0 0;font-weight:900}
 .section-head p{color:var(--muted);font-size:17px;max-width:690px;margin:0}
 
 
@@ -657,7 +661,7 @@ a, p, span, div { overflow-wrap:break-word; }
   background:rgba(12,20,24,.62);
   box-shadow:0 0 0 1px rgba(156,229,26,.12);
 }
-.big-card,.use-card,.why-card,.step-row{
+.big-card,.use-card,.why-card,.step-row,.path-card,.platform-card{
   transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover{
@@ -798,8 +802,8 @@ a, p, span, div { overflow-wrap:break-word; }
 }
 
 @media (prefers-reduced-motion:reduce){
-  .big-card,.use-card,.why-card,.step-row{transition:none}
-  .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover{transform:none;box-shadow:none}
+  .big-card,.use-card,.why-card,.step-row,.path-card,.platform-card{transition:none}
+  .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover,.path-card:hover,.platform-card:hover{transform:none;box-shadow:none}
   .apps-loop video{animation:none;opacity:1}
   .hero-dt-content{animation:none}
   .hero-stack-pill{transition:none}
@@ -862,22 +866,9 @@ a, p, span, div { overflow-wrap:break-word; }
   font-size:10px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;
   padding:6px 10px;
 }
-.method-flow{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:12px;
-  margin-bottom:22px;
-}
-.flow-step{
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.075);
-  background:#0b1013;
-  padding:16px 14px;
-  min-height:118px;
-}
-.flow-step .n{color:var(--green);font-size:11px;font-weight:900;letter-spacing:.14em}
-.flow-step b{display:block;margin-top:8px;font-size:14px;line-height:1.25}
-.flow-step span{display:block;margin-top:6px;color:var(--muted);font-size:12px}
+/* method-flow / flow-step — see Terminal-inspired UX block below */
+.method-flow{margin-bottom:22px}
+.flow-step{min-height:0}
 .stack-note{
   border-radius:22px;
   border:1px solid rgba(255,255,255,.075);
@@ -931,11 +922,9 @@ a, p, span, div { overflow-wrap:break-word; }
 
 @media (max-width: 980px) {
   .usecases-grid,
-  .method-flow,
   .arch-grid {
     grid-template-columns:1fr;
   }
-  .method-flow{gap:10px}
 }
 @media (max-width: 760px) {
   .why-card,.use-card,.stack-note,.arch-card{padding:22px 18px;border-radius:20px}
@@ -1266,6 +1255,193 @@ h2.title-parallax{
     transform:none !important;
   }
 }
+
+/* ===== Terminal-inspired UX (paths / platform / method frieze / FAQ) ===== */
+.paths-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.path-card{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.09);
+  background:
+    radial-gradient(circle at 88% 12%,rgba(85,203,255,.07),transparent 40%),
+    linear-gradient(165deg,#10161a,#0b1013 70%);
+  padding:28px 26px 24px;
+  min-height:280px;
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.path-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(156,229,26,.28);
+  box-shadow:0 18px 44px rgba(0,0,0,.28);
+}
+.path-card .eyebrow{margin:0}
+.path-card h3{
+  margin:0;
+  font-size:clamp(22px,2.2vw,28px);
+  line-height:1.12;
+  letter-spacing:-.03em;
+  font-weight:900;
+}
+.path-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+  flex:1;
+}
+.path-card .btn{
+  width:100%;
+  margin-top:8px;
+  border-radius:14px;
+}
+.platform-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.platform-card{
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(156,229,26,.07),transparent 42%),
+    linear-gradient(160deg,#0e1418,#0a0e11);
+  padding:30px 28px;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.platform-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(85,203,255,.28);
+  box-shadow:0 18px 44px rgba(0,0,0,.26);
+}
+.platform-card .eyebrow{margin:0}
+.platform-card h3{
+  margin:0;
+  font-size:clamp(24px,2.6vw,34px);
+  line-height:1.08;
+  letter-spacing:-.035em;
+  font-weight:900;
+}
+.platform-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.5;
+  flex:1;
+}
+.platform-card .more{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:8px;
+  color:var(--green);
+  font-size:14px;
+  font-weight:850;
+  letter-spacing:.01em;
+}
+.platform-card .more:hover{color:var(--green2);text-decoration:underline}
+
+.method-flow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:22px;
+  align-items:stretch;
+}
+.flow-step{
+  flex:1 1 140px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(180deg,#12181c,#0b1013);
+  padding:14px 14px 16px;
+  min-height:0;
+  position:relative;
+}
+.flow-step::after{
+  content:"→";
+  position:absolute;
+  right:-9px;
+  top:50%;
+  transform:translateY(-50%);
+  color:rgba(156,229,26,.55);
+  font-size:14px;
+  font-weight:900;
+  z-index:1;
+  pointer-events:none;
+}
+.flow-step:last-child::after{content:none}
+.flow-step .n{color:var(--green);font-size:10px;font-weight:900;letter-spacing:.16em}
+.flow-step b{display:block;margin-top:8px;font-size:15px;line-height:1.2;letter-spacing:-.02em}
+.flow-step span{display:block;margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
+
+.faq-list{display:grid;gap:10px;margin-top:8px}
+.faq-item{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#0b1013;
+  overflow:hidden;
+}
+.faq-item summary{
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px 18px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:-.01em;
+  color:#eef3f4;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{
+  content:"+";
+  flex:0 0 auto;
+  width:28px;height:28px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.12);
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--green);
+  font-size:18px;font-weight:700;line-height:1;
+}
+.faq-item[open] summary::after{content:"–"}
+.faq-item summary:hover{background:rgba(255,255,255,.02)}
+.faq-item summary:focus-visible{outline:2px solid rgba(156,229,26,.45);outline-offset:2px}
+.faq-item .faq-body{
+  margin:0;
+  padding:0 18px 16px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.55;
+  max-width:820px;
+}
+
+@media (max-width:980px){
+  .paths-grid{grid-template-columns:1fr}
+  .platform-grid{grid-template-columns:1fr}
+  .flow-step::after{content:none}
+}
+@media (max-width:760px){
+  .path-card,.platform-card{padding:22px 18px;border-radius:22px;min-height:0}
+  .faq-item summary{padding:14px 14px;font-size:14px}
+  .faq-item .faq-body{padding:0 14px 14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .path-card,.platform-card{transition:none}
+  .path-card:hover,.platform-card:hover{transform:none}
+  .links a:not(.contact-pill),.contact-pill{transition:none}
+}
+
 </style>
 </head>
 <body id="top">
@@ -1281,11 +1457,12 @@ h2.title-parallax{
         <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
       </div>
       <a href="#why" data-i18n="nav.why">Pourquoi</a>
+      <a href="#paths" data-i18n="nav.paths">Engager</a>
       <a href="#applications" data-i18n="nav.applications">Applications</a>
       <a href="#method" data-i18n="nav.method">Méthode</a>
-      <a href="#experience" data-i18n="nav.experience">Parcours</a>
       <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
-      <a class="contact-pill" href="#contact" data-i18n="nav.contact">Engager la conversation ↗</a>
+      <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      <a class="contact-pill" href="#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
     </div>
   </div>
 </nav>
@@ -1319,7 +1496,7 @@ h2.title-parallax{
   </div>
   <div class="actions hero-dt-actions">
     <a class="btn primary" href="jumeaux-numeriques.html" data-i18n="dt.hero.cta1">Explorer le Digital Twin →</a>
-    <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Engager la conversation ↗</a>
+    <a class="btn" href="#contact" data-i18n="dt.hero.cta2">Parler de votre cas d’usage ↗</a>
   </div>
 </section>
 
@@ -1331,7 +1508,7 @@ h2.title-parallax{
       <p class="lead" data-i18n="hero.lead">Digital Twin → robot incarné. Physical AI pour le terrain industriel.</p>
       <p class="sub" data-i18n="hero.sub">Simulé. Intégré. Validé avant déploiement.</p>
       <div class="actions">
-        <a class="btn primary" href="#contact" data-i18n="hero.cta1">Engager la conversation ↗</a>
+        <a class="btn primary" href="#contact" data-i18n="hero.cta1">Parler de votre cas d’usage ↗</a>
         <a class="btn" href="#why" data-i18n="hero.cta2">Découvrir l’approche ↓</a>
       </div>
     </div>
@@ -1393,11 +1570,43 @@ h2.title-parallax{
   </div>
 </section>
 
+<section class="section" id="paths" aria-labelledby="paths-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="paths.eyebrow">03 / Par où commencer</div>
+        <h2 id="paths-title" data-i18n-html="paths.title">Trois façons<br>d’engager.</h2>
+      </div>
+      <p data-i18n="paths.intro">Choisissez le niveau d’engagement qui correspond à votre maturité — étude, POC ou intégration. Chaque piste mène à une conversation concrète.</p>
+    </div>
+    <div class="paths-grid">
+      <article class="path-card reveal">
+        <div class="eyebrow" data-i18n="paths.a.eyebrow">Étude / cadrage</div>
+        <h3 data-i18n="paths.a.title">J’ai un cas terrain à cadrer</h3>
+        <p data-i18n="paths.a.body">Clarifier la tâche, les contraintes d’atelier et les critères de succès avant d’engager simulation ou matériel.</p>
+        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20%C3%89tude%20%2F%20cadrage" data-i18n="paths.a.cta">Cadrer mon cas ↗</a>
+      </article>
+      <article class="path-card reveal">
+        <div class="eyebrow" data-i18n="paths.b.eyebrow">POC</div>
+        <h3 data-i18n="paths.b.title">Je veux un POC Digital Twin → robot</h3>
+        <p data-i18n="paths.b.body">Passer d’un jumeau numérique à une preuve utile — simulation, validation, puis robot incarné à petite échelle.</p>
+        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20POC%20Digital%20Twin%20%E2%86%92%20robot" data-i18n="paths.b.cta">Lancer un POC ↗</a>
+      </article>
+      <article class="path-card reveal">
+        <div class="eyebrow" data-i18n="paths.c.eyebrow">Intégration</div>
+        <h3 data-i18n="paths.c.title">Je vise une intégration industrielle</h3>
+        <p data-i18n="paths.c.body">Relier robotique mobile ou humanoïde, Edge AI et process existants — avec une trajectoire de déploiement cadrée.</p>
+        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20Int%C3%A9gration%20industrielle" data-i18n="paths.c.cta">Parler intégration ↗</a>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="applications">
   <div class="wrap">
     <div class="apps-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="apps.eyebrow">03 / Applications</div>
+        <div class="eyebrow" data-i18n="apps.eyebrow">04 / Applications</div>
         <h2 data-i18n-html="apps.title">Construit autour<br>du travail réel.</h2>
       </div>
       <p class="apps-copy" data-i18n="apps.intro">Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.</p>
@@ -1448,7 +1657,7 @@ h2.title-parallax{
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="uc.eyebrow">04 / Cas d’usage</div>
+        <div class="eyebrow" data-i18n="uc.eyebrow">05 / Cas d’usage</div>
         <h2 data-i18n-html="uc.title">Trois pistes<br>de POC / étude.</h2>
       </div>
       <p data-i18n="uc.intro">Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.</p>
@@ -1484,18 +1693,18 @@ h2.title-parallax{
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="method.eyebrow">05 / Méthode</div>
-        <h2 data-i18n-html="method.title">Du besoin<br>au ROI mesurable.</h2>
+        <div class="eyebrow" data-i18n="method.eyebrow">06 / Méthode</div>
+        <h2 data-i18n-html="method.title">Du besoin<br>au robot incarné.</h2>
       </div>
-      <p data-i18n="method.intro">Une trajectoire claire : besoin industriel → Digital Twin → simulation → Physical AI / apprentissage → robot réel → retour sur investissement.</p>
+      <p data-i18n="method.intro">Frise compacte : Besoin → Digital Twin → Simulation → Validation → Robot incarné → Itération.</p>
     </div>
-    <div class="method-flow reveal">
-      <div class="flow-step"><div class="n">01</div><b data-i18n="method.s1.title">Besoin industriel</b><span data-i18n="method.s1.body">Tâche, contraintes, critères de succès.</span></div>
-      <div class="flow-step"><div class="n">02</div><b data-i18n="method.s2.title">Digital Twin</b><span data-i18n="method.s2.body">Modéliser l’environnement et les actifs.</span></div>
-      <div class="flow-step"><div class="n">03</div><b data-i18n="method.s3.title">Simulation</b><span data-i18n="method.s3.body">Scénarios, risques, itérations rapides.</span></div>
-      <div class="flow-step"><div class="n">04</div><b data-i18n="method.s4.title">Physical AI</b><span data-i18n="method.s4.body">Apprentissage, VLA, politiques utiles.</span></div>
-      <div class="flow-step"><div class="n">05</div><b data-i18n="method.s5.title">Robot réel</b><span data-i18n="method.s5.body">Intégration, edge, validation terrain.</span></div>
-      <div class="flow-step"><div class="n">06</div><b data-i18n="method.s6.title">ROI</b><span data-i18n="method.s6.body">Preuve avant investissement lourd.</span></div>
+    <div class="method-flow reveal" role="list" aria-label="Frise méthode" data-i18n-aria="method.flowAria">
+      <div class="flow-step" role="listitem"><div class="n">01</div><b data-i18n="method.s1.title">Besoin</b><span data-i18n="method.s1.body">Tâche réelle, contraintes, critères de succès.</span></div>
+      <div class="flow-step" role="listitem"><div class="n">02</div><b data-i18n="method.s2.title">Digital Twin</b><span data-i18n="method.s2.body">Modéliser l’environnement et les actifs.</span></div>
+      <div class="flow-step" role="listitem"><div class="n">03</div><b data-i18n="method.s3.title">Simulation</b><span data-i18n="method.s3.body">Scénarios Isaac / Omniverse, risques, itérations.</span></div>
+      <div class="flow-step" role="listitem"><div class="n">04</div><b data-i18n="method.s4.title">Validation</b><span data-i18n="method.s4.body">Mesurer robustesse avant le hardware.</span></div>
+      <div class="flow-step" role="listitem"><div class="n">05</div><b data-i18n="method.s5.title">Robot incarné</b><span data-i18n="method.s5.body">Intégration, Edge AI, déploiement terrain.</span></div>
+      <div class="flow-step" role="listitem"><div class="n">06</div><b data-i18n="method.s6.title">Itération</b><span data-i18n="method.s6.body">Retour terrain → twin → amélioration continue.</span></div>
     </div>
     <div class="stack-note reveal">
       <p data-i18n="method.stack">Stack illustrative (non obligatoire, approche agnostique) : OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / contrôleurs, Edge AI — choisis selon le cas d’usage, pas selon un catalogue figé.</p>
@@ -1512,11 +1721,49 @@ h2.title-parallax{
   </div>
 </section>
 
+<section class="section" id="platform" aria-labelledby="platform-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="platform.eyebrow">07 / Plateforme</div>
+        <h2 id="platform-title" data-i18n-html="platform.title">Modules<br>composables.</h2>
+      </div>
+      <p data-i18n="platform.intro">Une chaîne modulaire — Digital Twin, simulation, robot incarné et itération terrain — assemblée selon le cas d’usage, pas selon un catalogue figé.</p>
+    </div>
+    <div class="platform-grid">
+      <article class="platform-card reveal">
+        <div class="eyebrow" data-i18n="platform.a.eyebrow">Digital Twin · OpenUSD</div>
+        <h3 data-i18n="platform.a.title">Jumeau numérique fidèle</h3>
+        <p data-i18n="platform.a.body">Modéliser cellule, usine ou actif en OpenUSD pour partager une vérité terrain exploitable en simulation.</p>
+        <a class="more" href="jumeaux-numeriques.html" data-i18n="platform.more">En savoir plus →</a>
+      </article>
+      <article class="platform-card reveal">
+        <div class="eyebrow" data-i18n="platform.b.eyebrow">Simulation · Isaac / Omniverse</div>
+        <h3 data-i18n="platform.b.title">Éprouver avant le hardware</h3>
+        <p data-i18n="platform.b.body">Isaac Sim, Isaac Lab et Omniverse pour tester perception, politiques et scénarios sans figer l’investissement matériel.</p>
+        <a class="more" href="jumeaux-numeriques.html#pipeline" data-i18n="platform.more">En savoir plus →</a>
+      </article>
+      <article class="platform-card reveal">
+        <div class="eyebrow" data-i18n="platform.c.eyebrow">Robot incarné · Edge AI</div>
+        <h3 data-i18n="platform.c.title">Du jumeau au terrain</h3>
+        <p data-i18n="platform.c.body">Passer à un robot mobile ou humanoïde avec Edge AI et boucles utiles — là où la preuve devient opérationnelle.</p>
+        <a class="more" href="jumeaux-numeriques.html#pillars" data-i18n="platform.more">En savoir plus →</a>
+      </article>
+      <article class="platform-card reveal">
+        <div class="eyebrow" data-i18n="platform.d.eyebrow">Itération terrain</div>
+        <h3 data-i18n="platform.d.title">Apprendre en boucle</h3>
+        <p data-i18n="platform.d.body">Retour d’atelier → mise à jour du Digital Twin → re-simulation → amélioration continue du robot incarné.</p>
+        <a class="more" href="#method" data-i18n="platform.more">En savoir plus →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="architecture">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="arch.eyebrow">06 / Architecture</div>
+        <div class="eyebrow" data-i18n="arch.eyebrow">08 / Architecture</div>
         <h2 data-i18n-html="arch.title">Ouverte,<br>modulaire, souveraine.</h2>
       </div>
       <p data-i18n="arch.intro">Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.</p>
@@ -1540,7 +1787,7 @@ h2.title-parallax{
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="exp.eyebrow">07 / Parcours</div>
+        <div class="eyebrow" data-i18n="exp.eyebrow">09 / Parcours</div>
         <h2 data-i18n-html="exp.title">Le chemin de<br>Pascal Gautier.</h2>
       </div>
       <p data-i18n="exp.intro">Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.</p>
@@ -1623,7 +1870,7 @@ h2.title-parallax{
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="about.eyebrow">08 / Expertise humaine</div>
+        <div class="eyebrow" data-i18n="about.eyebrow">10 / Expertise humaine</div>
         <h2 data-i18n-html="about.title">La technologie commence<br>par les personnes.</h2>
       </div>
       <p data-i18n="about.intro">Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?</p>
@@ -1654,7 +1901,7 @@ h2.title-parallax{
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="poc.eyebrow">09 / POC</div>
+        <div class="eyebrow" data-i18n="poc.eyebrow">11 / POC</div>
         <h2 data-i18n-html="poc.title">Vous avez un cas<br>d’usage robotique&nbsp;?</h2>
       </div>
       <p data-i18n="poc.intro">Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.</p>
@@ -1669,7 +1916,45 @@ h2.title-parallax{
       <div class="step-row"><div class="sn">7</div><div><b data-i18n="poc.s7.title">Décision de déploiement</b><span data-i18n="poc.s7.body">Décider en connaissance de cause : déployer, itérer ou arrêter.</span></div></div>
     </div>
     <div class="poc-cta reveal">
-      <a class="btn primary" href="#contact" data-i18n="poc.cta">Engager la conversation ↗</a>
+      <a class="btn primary" href="#contact" data-i18n="poc.cta">Parler de votre cas d’usage ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="faq.eyebrow">12 / FAQ</div>
+        <h2 id="faq-title" data-i18n-html="faq.title">Questions<br>fréquentes.</h2>
+      </div>
+      <p data-i18n="faq.intro">Des réponses directes — sans promesses hors sol ni références inventées.</p>
+    </div>
+    <div class="faq-list reveal">
+      <details class="faq-item">
+        <summary data-i18n="faq.q1">Quelle différence avec un intégrateur catalogue&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a1">Nous ne partons pas d’une machine à poser. Nous partons de la tâche, du Digital Twin et de la preuve — puis nous intégrons robotique mobile ou humanoïde seulement si le cas le justifie.</p>
+      </details>
+      <details class="faq-item">
+        <summary data-i18n="faq.q2">Pourquoi simuler avant le hardware&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a2">Pour découvrir contraintes, collisions et limites de perception avant d’engager le matériel. La simulation (Isaac Sim, Omniverse) réduit le coût des itérations et clarifie la faisabilité.</p>
+      </details>
+      <details class="faq-item">
+        <summary data-i18n="faq.q3">Étude vs POC vs intégration&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a3">L’étude cadre le besoin et les critères de succès. Le POC prouve un sous-ensemble utile (souvent Digital Twin → robot). L’intégration déploie dans le process industriel avec Edge AI et boucles opérationnelles.</p>
+      </details>
+      <details class="faq-item">
+        <summary data-i18n="faq.q4">Humanoïdes : quand ça a du sens&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a4">Lorsque la tâche tire parti d’un environnement conçu pour l’humain (postes, outils, circulation) et que la simulation a déjà validé gestes, perception et sécurité — pas comme effet de mode.</p>
+      </details>
+      <details class="faq-item">
+        <summary data-i18n="faq.q5">Stack imposée ou agnostique&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a5">Agnostique. OpenUSD, Omniverse, Isaac Sim, Isaac Lab, VLA ou Edge AI sont des briques illustratives — choisies selon le cas, pas un catalogue figé.</p>
+      </details>
+      <details class="faq-item">
+        <summary data-i18n="faq.q6">Par où commencer&nbsp;?</summary>
+        <p class="faq-body" data-i18n="faq.a6">Par une conversation sur votre cas terrain. Ensuite : étude / cadrage, POC Digital Twin → robot, ou intégration — selon votre maturité. Voyez la section « Trois façons d’engager ».</p>
+      </details>
     </div>
   </div>
 </section>
@@ -1678,14 +1963,14 @@ h2.title-parallax{
   <div class="wrap">
     <div class="ctabox reveal">
       <div>
-        <div class="eyebrow" data-i18n="contact.eyebrow">10 / Engager la conversation</div>
+        <div class="eyebrow" data-i18n="contact.eyebrow">13 / Contact</div>
         <h2 data-i18n-html="contact.title">Explorons<br>votre cas d’usage.</h2>
         <p data-i18n="contact.body">Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.</p>
       </div>
       <div class="contact-list">
         <a class="contact-mega" href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a>
         <a class="contact-mega" href="tel:+33659590369">+33 6 59 59 03 69</a>
-        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20Demande%20de%20projet" id="discuss-project" data-i18n="contact.discuss">Discuter d’un projet ↗</a>
+        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20Demande%20de%20projet" id="discuss-project" data-i18n="contact.discuss">Parler de votre cas d’usage ↗</a>
         <a class="contact-quiet" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin">LinkedIn ↗</a>
       </div>
     </div>
@@ -1738,10 +2023,12 @@ const I18N = {
     "nav.aria": "Navigation principale",
     "lang.aria": "Langue",
     "nav.why": "Pourquoi",
+    "nav.paths": "Engager",
     "nav.applications": "Applications",
     "nav.method": "Méthode",
     "nav.experience": "Parcours",
-    "nav.contact": "Engager la conversation ↗",
+    "nav.faq": "FAQ",
+    "nav.contact": "Parler de votre cas d’usage ↗",
     "nav.dt": "Digital Twin",
     "dt.banner.eyebrow": "Nouveau · Pipeline",
     "dt.banner.title": "Jumeaux numériques<br><span class=\"soft\">Digital Twin</span>",
@@ -1752,14 +2039,14 @@ const I18N = {
     "dt.hero.lead": "Du Digital Twin au robot incarné — Physical AI pour le sol industriel.",
     "dt.hero.stackAria": "Stack technologique",
     "dt.hero.cta1": "Explorer le Digital Twin →",
-    "dt.hero.cta2": "Engager la conversation ↗",
+    "dt.hero.cta2": "Parler de votre cas d’usage ↗",
     "logo.aria": "Logo Pascal Robotics",
     "logo.alt": "Logo Pascal Robotics",
     "hero.kicker": "Robotique mobile & humanoïde · Digital Twin · Physical AI",
     "hero.title": "L’intelligence.<br><span class=\"soft\">Mise en mouvement.</span>",
     "hero.lead": "Digital Twin → robot incarné. Physical AI pour le terrain industriel.",
     "hero.sub": "Simulé. Intégré. Validé avant déploiement.",
-    "hero.cta1": "Engager la conversation ↗",
+    "hero.cta1": "Parler de votre cas d’usage ↗",
     "hero.cta2": "Découvrir l’approche ↓",
     "approach.img1.alt": "Visuel système robotique avec six cartouches",
 
@@ -1792,7 +2079,7 @@ const I18N = {
     "ba.with.body": "Modéliser la cellule, éprouver perception et politiques en simulation, mesurer la robustesse — puis déployer un robot réel avec un risque déjà réduit.",
     "midcta.label": "Parler de votre cas d’usage",
     "midcta.cta": "Parler de votre cas d’usage ↗",
-    "apps.eyebrow": "03 / Applications",
+    "apps.eyebrow": "04 / Applications",
     "apps.title": "Construit autour<br>du travail réel.",
     "apps.intro": "Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.",
     "apps.video.aria": "Applications — boucle muette",
@@ -1814,7 +2101,7 @@ const I18N = {
     "apps.demo.p2.body": "Construire le plus petit démonstrateur utile avant de déployer le système à plus grande échelle.",
     "apps.demo.p3.title": "Démonstrations et conférences",
     "apps.demo.p3.body": "Expliquer la technologie à travers des scénarios concrets et compréhensibles.",
-    "uc.eyebrow": "04 / Cas d’usage",
+    "uc.eyebrow": "05 / Cas d’usage",
     "uc.title": "Trois pistes<br>de POC / étude.",
     "uc.intro": "Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.",
     "uc.badge": "POC / Étude",
@@ -1824,23 +2111,55 @@ const I18N = {
     "uc.b.body": "Apprentissage de gestes, manipulation, inspection et répétition de tâches — pour tester la faisabilité d’une assistance humanoïde sur un poste ou un flux réel.",
     "uc.c.title": "Digital Twin industriel",
     "uc.c.body": "Simuler usine, cellule ou robot avant le déploiement physique — pour réduire le risque, comparer des scénarios et préparer l’intégration sur le terrain.",
-    "method.eyebrow": "05 / Méthode",
-    "method.title": "Du besoin<br>au ROI mesurable.",
-    "method.intro": "Une trajectoire claire : besoin industriel → Digital Twin → simulation → Physical AI / apprentissage → robot réel → retour sur investissement.",
-    "method.s1.title": "Besoin industriel",
-    "method.s1.body": "Tâche, contraintes, critères de succès.",
+    "paths.eyebrow": "03 / Par où commencer",
+    "paths.title": "Trois façons<br>d’engager.",
+    "paths.intro": "Choisissez le niveau d’engagement qui correspond à votre maturité — étude, POC ou intégration. Chaque piste mène à une conversation concrète.",
+    "paths.a.eyebrow": "Étude / cadrage",
+    "paths.a.title": "J’ai un cas terrain à cadrer",
+    "paths.a.body": "Clarifier la tâche, les contraintes d’atelier et les critères de succès avant d’engager simulation ou matériel.",
+    "paths.a.cta": "Cadrer mon cas ↗",
+    "paths.b.eyebrow": "POC",
+    "paths.b.title": "Je veux un POC Digital Twin → robot",
+    "paths.b.body": "Passer d’un jumeau numérique à une preuve utile — simulation, validation, puis robot incarné à petite échelle.",
+    "paths.b.cta": "Lancer un POC ↗",
+    "paths.c.eyebrow": "Intégration",
+    "paths.c.title": "Je vise une intégration industrielle",
+    "paths.c.body": "Relier robotique mobile ou humanoïde, Edge AI et process existants — avec une trajectoire de déploiement cadrée.",
+    "paths.c.cta": "Parler intégration ↗",
+    "method.eyebrow": "06 / Méthode",
+    "method.title": "Du besoin<br>au robot incarné.",
+    "method.intro": "Frise compacte : Besoin → Digital Twin → Simulation → Validation → Robot incarné → Itération.",
+    "method.s1.title": "Besoin",
+    "method.s1.body": "Tâche réelle, contraintes, critères de succès.",
     "method.s2.title": "Digital Twin",
     "method.s2.body": "Modéliser l’environnement et les actifs.",
     "method.s3.title": "Simulation",
-    "method.s3.body": "Scénarios, risques, itérations rapides.",
-    "method.s4.title": "Physical AI",
-    "method.s4.body": "Apprentissage, VLA, politiques utiles.",
-    "method.s5.title": "Robot réel",
-    "method.s5.body": "Intégration, edge, validation terrain.",
-    "method.s6.title": "ROI",
-    "method.s6.body": "Preuve avant investissement lourd.",
+    "method.s3.body": "Scénarios Isaac / Omniverse, risques, itérations.",
+    "method.s4.title": "Validation",
+    "method.s4.body": "Mesurer robustesse avant le hardware.",
+    "method.s5.title": "Robot incarné",
+    "method.s5.body": "Intégration, Edge AI, déploiement terrain.",
+    "method.s6.title": "Itération",
+    "method.s6.body": "Retour terrain → twin → amélioration continue.",
+    "method.flowAria": "Frise méthode",
     "method.stack": "Stack illustrative (non obligatoire, approche agnostique) : OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / contrôleurs, Edge AI — choisis selon le cas d’usage, pas selon un catalogue figé.",
-    "arch.eyebrow": "06 / Architecture",
+    "platform.eyebrow": "07 / Plateforme",
+    "platform.title": "Modules<br>composables.",
+    "platform.intro": "Une chaîne modulaire — Digital Twin, simulation, robot incarné et itération terrain — assemblée selon le cas d’usage, pas selon un catalogue figé.",
+    "platform.a.eyebrow": "Digital Twin · OpenUSD",
+    "platform.a.title": "Jumeau numérique fidèle",
+    "platform.a.body": "Modéliser cellule, usine ou actif en OpenUSD pour partager une vérité terrain exploitable en simulation.",
+    "platform.b.eyebrow": "Simulation · Isaac / Omniverse",
+    "platform.b.title": "Éprouver avant le hardware",
+    "platform.b.body": "Isaac Sim, Isaac Lab et Omniverse pour tester perception, politiques et scénarios sans figer l’investissement matériel.",
+    "platform.c.eyebrow": "Robot incarné · Edge AI",
+    "platform.c.title": "Du jumeau au terrain",
+    "platform.c.body": "Passer à un robot mobile ou humanoïde avec Edge AI et boucles utiles — là où la preuve devient opérationnelle.",
+    "platform.d.eyebrow": "Itération terrain",
+    "platform.d.title": "Apprendre en boucle",
+    "platform.d.body": "Retour d’atelier → mise à jour du Digital Twin → re-simulation → amélioration continue du robot incarné.",
+    "platform.more": "En savoir plus →",
+    "arch.eyebrow": "08 / Architecture",
     "arch.title": "Ouverte,<br>modulaire, souveraine.",
     "arch.intro": "Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.",
     "arch.c1.eyebrow": "Modularité",
@@ -1849,7 +2168,7 @@ const I18N = {
     "arch.c2.eyebrow": "Souveraineté & ouverture",
     "arch.c2.title": "Maîtriser ce qui compte.",
     "arch.c2.body": "Privilégier des interfaces claires, des formats interopérables et une chaîne de décision transparente — pour garder la main sur données, modèles et déploiement.",
-    "exp.eyebrow": "07 / Parcours",
+    "exp.eyebrow": "09 / Parcours",
     "exp.title": "Le chemin de<br>Pascal Gautier.",
     "exp.intro": "Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.",
     "exp.i1.when": "2001 – 2008",
@@ -1879,7 +2198,7 @@ const I18N = {
     "exp.i6.when": "Aujourd’hui",
     "exp.i6.title": "Pascal Robotics",
     "exp.i6.body": "Robotique mobile, humanoïdes, Digital Twin et Physical AI — pour transformer un besoin industriel en preuve opérationnelle.",
-    "about.eyebrow": "08 / Expertise humaine",
+    "about.eyebrow": "10 / Expertise humaine",
     "about.title": "La technologie commence<br>par les personnes.",
     "about.intro": "Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?",
     "about.card.title": "Expertise humaine → intelligence robotique.",
@@ -1892,7 +2211,7 @@ const I18N = {
     "about.t2": "Systèmes robotiques pour le dessin, la lumière et les applications de caméras de diffusion.",
     "about.t3.label": "AUJOURD’HUI",
     "about.t3": "Robotique mobile, Digital Twin et Physical AI.",
-    "poc.eyebrow": "09 / POC",
+    "poc.eyebrow": "11 / POC",
     "poc.title": "Vous avez un cas<br>d’usage robotique&nbsp;?",
     "poc.intro": "Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.",
     "poc.s1.title": "Analyse du besoin",
@@ -1909,11 +2228,26 @@ const I18N = {
     "poc.s6.body": "Mesurer faisabilité, coûts, délais et retour attendu.",
     "poc.s7.title": "Décision de déploiement",
     "poc.s7.body": "Décider en connaissance de cause : déployer, itérer ou arrêter.",
-    "poc.cta": "Engager la conversation ↗",
-    "contact.eyebrow": "10 / Engager la conversation",
+    "poc.cta": "Parler de votre cas d’usage ↗",
+    "faq.eyebrow": "12 / FAQ",
+    "faq.title": "Questions<br>fréquentes.",
+    "faq.intro": "Des réponses directes — sans promesses hors sol ni références inventées.",
+    "faq.q1": "Quelle différence avec un intégrateur catalogue ?",
+    "faq.a1": "Nous ne partons pas d’une machine à poser. Nous partons de la tâche, du Digital Twin et de la preuve — puis nous intégrons robotique mobile ou humanoïde seulement si le cas le justifie.",
+    "faq.q2": "Pourquoi simuler avant le hardware ?",
+    "faq.a2": "Pour découvrir contraintes, collisions et limites de perception avant d’engager le matériel. La simulation (Isaac Sim, Omniverse) réduit le coût des itérations et clarifie la faisabilité.",
+    "faq.q3": "Étude vs POC vs intégration ?",
+    "faq.a3": "L’étude cadre le besoin et les critères de succès. Le POC prouve un sous-ensemble utile (souvent Digital Twin → robot). L’intégration déploie dans le process industriel avec Edge AI et boucles opérationnelles.",
+    "faq.q4": "Humanoïdes : quand ça a du sens ?",
+    "faq.a4": "Lorsque la tâche tire parti d’un environnement conçu pour l’humain (postes, outils, circulation) et que la simulation a déjà validé gestes, perception et sécurité — pas comme effet de mode.",
+    "faq.q5": "Stack imposée ou agnostique ?",
+    "faq.a5": "Agnostique. OpenUSD, Omniverse, Isaac Sim, Isaac Lab, VLA ou Edge AI sont des briques illustratives — choisies selon le cas, pas un catalogue figé.",
+    "faq.q6": "Par où commencer ?",
+    "faq.a6": "Par une conversation sur votre cas terrain. Ensuite : étude / cadrage, POC Digital Twin → robot, ou intégration — selon votre maturité. Voyez la section « Trois façons d’engager ».",
+    "contact.eyebrow": "13 / Contact",
     "contact.title": "Explorons<br>votre cas d’usage.",
     "contact.body": "Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.",
-    "contact.discuss": "Discuter d’un projet ↗",
+    "contact.discuss": "Parler de votre cas d’usage ↗",
     "contact.linkedin": "LinkedIn ↗",
     "modal.close": "Fermer",
     "modal.eyebrow": "Contact projet",
@@ -1937,10 +2271,12 @@ const I18N = {
     "nav.aria": "Main navigation",
     "lang.aria": "Language",
     "nav.why": "Why us",
+    "nav.paths": "Engage",
     "nav.applications": "Applications",
     "nav.method": "Method",
     "nav.experience": "Path",
-    "nav.contact": "Start a conversation ↗",
+    "nav.faq": "FAQ",
+    "nav.contact": "Talk about your use case ↗",
     "nav.dt": "Digital Twin",
     "dt.banner.eyebrow": "New · Pipeline",
     "dt.banner.title": "Digital Twin<br><span class=\"soft\">Jumeaux numériques</span>",
@@ -1951,14 +2287,14 @@ const I18N = {
     "dt.hero.lead": "From Digital Twin to the embodied robot — Physical AI for the industrial floor.",
     "dt.hero.stackAria": "Technology stack",
     "dt.hero.cta1": "Explore Digital Twin →",
-    "dt.hero.cta2": "Start a conversation ↗",
+    "dt.hero.cta2": "Talk about your use case ↗",
     "logo.aria": "Pascal Robotics logo",
     "logo.alt": "Pascal Robotics logo",
     "hero.kicker": "Mobile & humanoid robotics · Digital Twin · Physical AI",
     "hero.title": "Intelligence.<br><span class=\"soft\">Into motion.</span>",
     "hero.lead": "Digital Twin → embodied robot. Physical AI for the industrial floor.",
     "hero.sub": "Simulated. Integrated. Validated before deployment.",
-    "hero.cta1": "Start a conversation ↗",
+    "hero.cta1": "Talk about your use case ↗",
     "hero.cta2": "Discover the approach ↓",
     "approach.img1.alt": "Robotics system visual with six cartouches",
 
@@ -1991,7 +2327,7 @@ const I18N = {
     "ba.with.body": "Model the cell, stress perception and policies in simulation, measure robustness — then deploy a real robot with risk already reduced.",
     "midcta.label": "Talk about your use case",
     "midcta.cta": "Talk about your use case ↗",
-    "apps.eyebrow": "03 / Applications",
+    "apps.eyebrow": "04 / Applications",
     "apps.title": "Built around<br>real-world work.",
     "apps.intro": "Pascal Robotics focuses on use cases where mobility, perception, simulation and human know-how can create operational value. Each project starts with the task, not with a catalogue.",
     "apps.video.aria": "Applications — muted loop",
@@ -2013,7 +2349,7 @@ const I18N = {
     "apps.demo.p2.body": "Build the smallest useful demonstrator before scaling the system.",
     "apps.demo.p3.title": "Demonstrations & talks",
     "apps.demo.p3.body": "Explain the technology through concrete, understandable scenarios.",
-    "uc.eyebrow": "04 / Use cases",
+    "uc.eyebrow": "05 / Use cases",
     "uc.title": "Three POC / study<br>tracks.",
     "uc.intro": "Exploration frames — clearly labeled as proofs of concept or studies, not as contracted client projects.",
     "uc.badge": "POC / Study",
@@ -2023,23 +2359,55 @@ const I18N = {
     "uc.b.body": "Gesture learning, manipulation, inspection and task repetition — to test whether humanoid assistance is feasible on a real workstation or flow.",
     "uc.c.title": "Industrial Digital Twin",
     "uc.c.body": "Simulate a plant, cell or robot before physical deployment — to reduce risk, compare scenarios and prepare field integration.",
-    "method.eyebrow": "05 / Method",
-    "method.title": "From need<br>to measurable ROI.",
-    "method.intro": "A clear path: industrial need → Digital Twin → simulation → Physical AI / learning → real robot → return on investment.",
-    "method.s1.title": "Industrial need",
-    "method.s1.body": "Task, constraints, success criteria.",
+    "paths.eyebrow": "03 / Where to start",
+    "paths.title": "Three ways<br>to engage.",
+    "paths.intro": "Pick the engagement level that matches your maturity — study, POC or integration. Each path leads to a concrete conversation.",
+    "paths.a.eyebrow": "Study / framing",
+    "paths.a.title": "I have a field case to frame",
+    "paths.a.body": "Clarify the task, shop-floor constraints and success criteria before committing to simulation or hardware.",
+    "paths.a.cta": "Frame my case ↗",
+    "paths.b.eyebrow": "POC",
+    "paths.b.title": "I want a Digital Twin → robot POC",
+    "paths.b.body": "Move from a digital twin to useful proof — simulation, validation, then an embodied robot at small scale.",
+    "paths.b.cta": "Start a POC ↗",
+    "paths.c.eyebrow": "Integration",
+    "paths.c.title": "I aim for industrial integration",
+    "paths.c.body": "Connect mobile or humanoid robotics, Edge AI and existing processes — with a framed deployment path.",
+    "paths.c.cta": "Talk integration ↗",
+    "method.eyebrow": "06 / Method",
+    "method.title": "From need<br>to embodied robot.",
+    "method.intro": "Compact frieze: Need → Digital Twin → Simulation → Validation → Embodied robot → Iteration.",
+    "method.s1.title": "Need",
+    "method.s1.body": "Real task, constraints, success criteria.",
     "method.s2.title": "Digital Twin",
     "method.s2.body": "Model the environment and assets.",
     "method.s3.title": "Simulation",
-    "method.s3.body": "Scenarios, risks, fast iteration.",
-    "method.s4.title": "Physical AI",
-    "method.s4.body": "Learning, VLA, useful policies.",
-    "method.s5.title": "Real robot",
-    "method.s5.body": "Integration, edge, field validation.",
-    "method.s6.title": "ROI",
-    "method.s6.body": "Evidence before heavy investment.",
+    "method.s3.body": "Isaac / Omniverse scenarios, risks, iteration.",
+    "method.s4.title": "Validation",
+    "method.s4.body": "Measure robustness before hardware.",
+    "method.s5.title": "Embodied robot",
+    "method.s5.body": "Integration, Edge AI, field deployment.",
+    "method.s6.title": "Iteration",
+    "method.s6.body": "Field feedback → twin → continuous improvement.",
+    "method.flowAria": "Method frieze",
     "method.stack": "Illustrative stack (not mandatory — stack-agnostic approach): OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / controllers, Edge AI — selected for the use case, not a fixed catalogue.",
-    "arch.eyebrow": "06 / Architecture",
+    "platform.eyebrow": "07 / Platform",
+    "platform.title": "Composable<br>modules.",
+    "platform.intro": "A modular chain — Digital Twin, simulation, embodied robot and field iteration — assembled for the use case, not a fixed catalogue.",
+    "platform.a.eyebrow": "Digital Twin · OpenUSD",
+    "platform.a.title": "Faithful digital twin",
+    "platform.a.body": "Model a cell, plant or asset in OpenUSD to share a field truth usable in simulation.",
+    "platform.b.eyebrow": "Simulation · Isaac / Omniverse",
+    "platform.b.title": "Prove before hardware",
+    "platform.b.body": "Isaac Sim, Isaac Lab and Omniverse to test perception, policies and scenarios without locking hardware spend.",
+    "platform.c.eyebrow": "Embodied robot · Edge AI",
+    "platform.c.title": "From twin to field",
+    "platform.c.body": "Move to a mobile or humanoid robot with Edge AI and useful loops — where proof becomes operational.",
+    "platform.d.eyebrow": "Field iteration",
+    "platform.d.title": "Learn in the loop",
+    "platform.d.body": "Shop-floor feedback → Digital Twin update → re-simulation → continuous improvement of the embodied robot.",
+    "platform.more": "Learn more →",
+    "arch.eyebrow": "08 / Architecture",
     "arch.title": "Open,<br>modular, sovereign.",
     "arch.intro": "An architecture designed for industrial constraints, stack choices and data stewardship — without unnecessary lock-in.",
     "arch.c1.eyebrow": "Modularity",
@@ -2048,7 +2416,7 @@ const I18N = {
     "arch.c2.eyebrow": "Sovereignty & openness",
     "arch.c2.title": "Keep control of what matters.",
     "arch.c2.body": "Prefer clear interfaces, interoperable formats and a transparent decision chain — so you retain control over data, models and deployment.",
-    "exp.eyebrow": "07 / Path",
+    "exp.eyebrow": "09 / Path",
     "exp.title": "Pascal Gautier’s<br>path.",
     "exp.intro": "A personal chronology — immersive tech, robotics and imaging — that informs Pascal Robotics today. This is not a commercial client track record.",
     "exp.i1.when": "2001 – 2008",
@@ -2078,7 +2446,7 @@ const I18N = {
     "exp.i6.when": "Today",
     "exp.i6.title": "Pascal Robotics",
     "exp.i6.body": "Mobile robotics, humanoids, Digital Twin and Physical AI — turning an industrial need into operational proof.",
-    "about.eyebrow": "08 / Human expertise",
+    "about.eyebrow": "10 / Human expertise",
     "about.title": "Technology starts<br>with people.",
     "about.intro": "Pascal Robotics is founded by Pascal Gautier, with a career spanning immersive technologies, robotics and image systems. His work has repeatedly focused on the same question: how can human expertise be captured, translated and made useful through machines?",
     "about.card.title": "Human expertise → robot intelligence.",
@@ -2091,7 +2459,7 @@ const I18N = {
     "about.t2": "Robotic systems for drawing, light and broadcast camera applications.",
     "about.t3.label": "TODAY",
     "about.t3": "Mobile robotics, Digital Twin and Physical AI.",
-    "poc.eyebrow": "09 / POC",
+    "poc.eyebrow": "11 / POC",
     "poc.title": "Do you have a<br>robotics use case?",
     "poc.intro": "A simple path from idea to useful proof — without rushing hardware investment.",
     "poc.s1.title": "Need analysis",
@@ -2108,11 +2476,26 @@ const I18N = {
     "poc.s6.body": "Measure feasibility, cost, timeline and expected return.",
     "poc.s7.title": "Deployment decision",
     "poc.s7.body": "Decide with evidence: deploy, iterate or stop.",
-    "poc.cta": "Start a conversation ↗",
-    "contact.eyebrow": "10 / Start a conversation",
+    "poc.cta": "Talk about your use case ↗",
+    "faq.eyebrow": "12 / FAQ",
+    "faq.title": "Frequently<br>asked questions.",
+    "faq.intro": "Straight answers — no overpromises and no invented references.",
+    "faq.q1": "How is this different from a catalogue integrator?",
+    "faq.a1": "We don’t start from a machine to install. We start from the task, the Digital Twin and the proof — then integrate mobile or humanoid robotics only if the case justifies it.",
+    "faq.q2": "Why simulate before hardware?",
+    "faq.a2": "To surface constraints, collisions and perception limits before committing hardware. Simulation (Isaac Sim, Omniverse) lowers iteration cost and clarifies feasibility.",
+    "faq.q3": "Study vs POC vs integration?",
+    "faq.a3": "A study frames the need and success criteria. A POC proves a useful subset (often Digital Twin → robot). Integration deploys into the industrial process with Edge AI and operational loops.",
+    "faq.q4": "Humanoids: when does it make sense?",
+    "faq.a4": "When the task benefits from an environment built for humans (stations, tools, circulation) and simulation has already validated gestures, perception and safety — not as a trend play.",
+    "faq.q5": "Imposed stack or agnostic?",
+    "faq.a5": "Agnostic. OpenUSD, Omniverse, Isaac Sim, Isaac Lab, VLA or Edge AI are illustrative building blocks — chosen for the case, not a fixed catalogue.",
+    "faq.q6": "Where should I start?",
+    "faq.a6": "With a conversation about your field case. Then: study / framing, Digital Twin → robot POC, or integration — depending on your maturity. See the “Three ways to engage” section.",
+    "contact.eyebrow": "13 / Contact",
     "contact.title": "Let’s explore<br>your use case.",
     "contact.body": "Have a task, environment or robotics question in mind? Contact Pascal Robotics to discuss what can realistically be simulated, integrated and tested.",
-    "contact.discuss": "Discuss a project ↗",
+    "contact.discuss": "Talk about your use case ↗",
     "contact.linkedin": "LinkedIn ↗",
     "modal.close": "Close",
     "modal.eyebrow": "Project contact",
@@ -2298,6 +2681,31 @@ if (copyProjectEmail) {
     el.addEventListener('mouseleave', onLeave);
   });
 })();
+
+/* Sticky nav active section highlight */
+(function(){
+  const links = Array.from(document.querySelectorAll('.nav .links a[href^="#"]'));
+  if (!links.length) return;
+  const map = new Map();
+  links.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) map.set(el, a);
+  });
+  if (!map.size || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const a = map.get(entry.target);
+      if (!a) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('is-active'));
+        a.classList.add('is-active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -65% 0px', threshold: 0.01 });
+  map.forEach((_, el) => io.observe(el));
+})();
+
 </script>
 
 </body>
