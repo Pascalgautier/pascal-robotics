@@ -145,18 +145,37 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 }
 
 #visuals .section-head{grid-template-columns:1fr;max-width:920px}
-.visual-band{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.visual-band{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  width:min(100%, 900px);
+  margin:0 auto;
+}
 .dt-shot{
   position:relative;
   margin:0;
   border-radius:28px;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,.08);
-  background:#0b0f12;
-  box-shadow:0 10px 30px rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.075);
+  background:radial-gradient(circle at 88% 18%,rgba(85,203,255,.08),transparent 32%),linear-gradient(160deg,#0c1114,#090d10);
+  box-shadow:none;
+  min-height:170px;
+  max-height:190px;
+  padding:12px;
+  display:grid;
+  place-items:center;
 }
-.dt-shot:nth-child(3){grid-column:1 / -1}
-.dt-shot img{width:100%;height:auto;display:block;object-fit:contain;background:#0b0f12}
+.dt-shot img{
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:166px;
+  display:block;
+  object-fit:contain;
+  background:transparent;
+  border-radius:14px;
+}
 
 .pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .step{
@@ -219,6 +238,9 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   .contact-pill{padding:8px 10px}
   .pipeline{grid-template-columns:1fr}
   .step,.pillar,.dt-shot{border-radius:20px}
+  .visual-band{width:100%;grid-template-columns:1fr;gap:12px}
+  .dt-shot{min-height:140px;max-height:160px;padding:10px}
+  .dt-shot img{max-height:140px}
   .ctabox{padding:28px 22px;border-radius:24px}
 }
 @media (max-width: 480px) {
