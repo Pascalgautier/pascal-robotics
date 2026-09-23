@@ -12,7 +12,7 @@
   --panel:#0c1114;
   --line:#1b242a;
   --text:#f4f7f8;
-  --muted:#9ca8ae;
+  --muted:#a8b4ba;
   --green:#9ce51a;
   --green2:#c6ff5b;
   --blue:#55cbff;
@@ -58,7 +58,7 @@ h1 .soft{color:#738089}
 .btn.primary:hover{background:var(--green2);border-color:var(--green2)}
 .place{margin-top:14px;color:#7f8b91;font-size:11px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
 
-.section{padding:56px 0;border-top:1px solid rgba(255,255,255,.05)}
+.section{padding:64px 0;border-top:1px solid rgba(255,255,255,.05)}
 .section-head{display:grid;grid-template-columns:.82fr 1.18fr;gap:60px;align-items:end;margin-bottom:36px}
 .eyebrow{color:var(--green);font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:850}
 h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:6px 0 0}
@@ -165,10 +165,25 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 .signature-copy{color:#758087;font-size:12px}
 .signature-copy strong{display:block;color:#eef3f4;font-size:13px;margin-bottom:4px}
 .footerline{margin-top:6px;color:#6f7a7f}
-.signature-contact{margin-top:0}
+.signature-contact{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+.signature-contact .sig-link{
+  display:block;
+  color:#eef3f4;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:.01em;
+  line-height:1.35;
+}
+.signature-contact .sig-link:hover{color:var(--green2);text-decoration:underline}
 .footer-linkedin{
   display:block;
-  margin-top:12px;
+  margin-top:10px;
   color:var(--green);
   font-size:14px;
   font-weight:850;
@@ -325,7 +340,7 @@ a, p, span, div { overflow-wrap:break-word; }
   }
 
   .section {
-    padding:40px 0;
+    padding:48px 0;
   }
 
   .section-head {
@@ -333,7 +348,7 @@ a, p, span, div { overflow-wrap:break-word; }
   }
 
   h2 {
-    font-size:clamp(34px,10vw,50px);
+    font-size:clamp(30px,9vw,44px);
   }
 
   .section-head p {
@@ -536,6 +551,110 @@ a, p, span, div { overflow-wrap:break-word; }
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none;transition:none}
 }
+
+/* Designer polish — breathing, hovers, cadre, midcta, stack strip */
+#applications{padding-bottom:80px}
+#usecases{padding-top:76px}
+.hero-stack{
+  margin:10px auto 0;
+  max-width:640px;
+  color:rgba(196,208,214,.78);
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  line-height:1.45;
+}
+.big-card,.use-card,.why-card,.step-row{
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.16);
+  box-shadow:0 14px 36px rgba(0,0,0,.22);
+}
+.apps-loop video{
+  opacity:0;
+  animation:appsFadeIn .8s ease forwards;
+}
+@keyframes appsFadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+.cadre-card{
+  margin-top:18px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(160deg,#0b1013,#090d10);
+  padding:22px 24px;
+}
+.cadre-card .cadre-title{
+  margin:0 0 12px;
+  color:var(--green);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.cadre-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:10px;
+}
+.cadre-list li{
+  display:grid;
+  gap:2px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.cadre-list li:first-child{border-top:0;padding-top:0}
+.cadre-list b{
+  font-size:13px;
+  font-weight:800;
+  color:#eef3f4;
+}
+.cadre-list span{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.45;
+}
+.midcta{
+  padding:28px 0 8px;
+  border-top:1px solid rgba(255,255,255,.04);
+}
+.midcta-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+  border-radius:20px;
+  border:1px solid rgba(156,229,26,.18);
+  background:linear-gradient(135deg,#0b1114,#080b0d);
+  padding:18px 22px;
+}
+.midcta-label{
+  margin:0;
+  font-size:clamp(18px,2.4vw,26px);
+  font-weight:850;
+  letter-spacing:-.02em;
+  line-height:1.15;
+}
+@media (max-width:760px){
+  #applications{padding-bottom:56px}
+  #usecases{padding-top:52px}
+  .midcta-inner{padding:16px 16px;justify-content:center;text-align:center}
+  .midcta-label{font-size:18px;width:100%}
+  .cadre-card{padding:18px 16px;border-radius:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  .big-card,.use-card,.why-card,.step-row{transition:none}
+  .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover{transform:none;box-shadow:none}
+  .apps-loop video{animation:none;opacity:1}
+}
+
 
 .lang-switch{display:inline-flex;align-items:center;gap:6px;margin-right:4px}
 .lang-switch button{
@@ -821,8 +940,15 @@ a, p, span, div { overflow-wrap:break-word; }
   font-size:13px;
 }
 .hero-dt-actions .btn:not(.primary){
-  background:rgba(8,14,18,.55);
+  background:rgba(8,14,18,.38);
   backdrop-filter:blur(8px);
+  border-color:rgba(255,255,255,.16);
+  color:#d5dde2;
+  opacity:.82;
+  font-weight:700;
+}
+.hero-dt-actions .btn:not(.primary):hover{
+  opacity:1;
   border-color:rgba(255,255,255,.28);
   color:#f4f8fa;
 }
@@ -868,6 +994,16 @@ a, p, span, div { overflow-wrap:break-word; }
   min-height:44px;
   font-size:13px;
   padding:0 16px;
+}
+.hero-secondary .actions .btn:not(.primary){
+  opacity:.78;
+  border-color:rgba(255,255,255,.14);
+  background:#0a0f12;
+  font-weight:700;
+}
+.hero-secondary .actions .btn:not(.primary):hover{
+  opacity:1;
+  border-color:rgba(255,255,255,.28);
 }
 .hero-secondary .place{
   margin-top:12px;
@@ -984,7 +1120,8 @@ a, p, span, div { overflow-wrap:break-word; }
     <div class="hero-dt-content reveal">
       <div class="eyebrow" data-i18n="dt.hero.eyebrow">Nouveau · Digital Twin</div>
       <h1 id="hero-dt-title" data-i18n-html="dt.hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
-      <p class="lead" data-i18n="dt.hero.lead">Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’au Physical AI déployée sur le terrain.</p>
+      <p class="lead" data-i18n="dt.hero.lead">Du Digital Twin au robot incarné — Physical AI pour le sol industriel.</p>
+      <p class="hero-stack" data-i18n="dt.hero.stack">OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA</p>
     </div>
   </div>
   <div class="actions hero-dt-actions">
@@ -998,7 +1135,7 @@ a, p, span, div { overflow-wrap:break-word; }
     <div class="center-intro reveal">
       <div class="kicker" data-i18n="hero.kicker">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI</div>
       <h2 id="hero-secondary-title" data-i18n-html="hero.title">L’intelligence.<br><span class="soft">Mise en mouvement.</span></h2>
-      <p class="lead" data-i18n="hero.lead">Robotique mobile et humanoïde, Digital Twin et Physical AI — intégrés pour le terrain industriel.</p>
+      <p class="lead" data-i18n="hero.lead">Digital Twin → robot incarné. Physical AI pour le terrain industriel.</p>
       <p class="sub" data-i18n="hero.sub">Simulé. Intégré. Validé avant déploiement.</p>
       <div class="actions">
         <a class="btn primary" href="#contact" data-i18n="hero.cta1">Engager la conversation ↗</a>
@@ -1027,6 +1164,15 @@ a, p, span, div { overflow-wrap:break-word; }
         <span class="pill" data-i18n="why.pill5">Intégration industrielle</span>
       </div>
     </div>
+    <aside class="cadre-card reveal" aria-label="Cadre d’engagement">
+      <div class="cadre-title" data-i18n="cadre.title">Cadre d’engagement</div>
+      <ul class="cadre-list">
+        <li><b data-i18n="cadre.l1.label">Point de départ</b><span data-i18n="cadre.l1.body">Une tâche réelle, des contraintes d’atelier et des critères de succès — pas un catalogue.</span></li>
+        <li><b data-i18n="cadre.l2.label">Dé-risquer</b><span data-i18n="cadre.l2.body">Digital Twin et simulation pour tester avant d’investir dans le matériel.</span></li>
+        <li><b data-i18n="cadre.l3.label">Premier engagement</b><span data-i18n="cadre.l3.body">Étude, POC ou intégration cadrée — selon le niveau de maturité du besoin.</span></li>
+        <li><b data-i18n="cadre.l4.label">Ce que nous ne vendons pas</b><span data-i18n="cadre.l4.body">Des machines hors contexte : pas de catalogue robotique « prêt-à-poser ».</span></li>
+      </ul>
+    </aside>
   </div>
 </section>
 
@@ -1107,6 +1253,13 @@ a, p, span, div { overflow-wrap:break-word; }
         <p data-i18n="uc.c.body">Simuler usine, cellule ou robot avant le déploiement physique — pour réduire le risque, comparer des scénarios et préparer l’intégration sur le terrain.</p>
       </article>
     </div>
+  </div>
+</section>
+
+<section class="midcta" aria-labelledby="midcta-label">
+  <div class="wrap midcta-inner reveal">
+    <p id="midcta-label" class="midcta-label" data-i18n="midcta.label">Parler de votre cas d’usage</p>
+    <a class="btn primary" href="#contact" data-i18n="midcta.cta">Parler de votre cas d’usage ↗</a>
   </div>
 </section>
 
@@ -1350,8 +1503,9 @@ a, p, span, div { overflow-wrap:break-word; }
         <span data-i18n="footer.tagline">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration</span>
         <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
       </div>
-      <div class="signature-contact signature-copy">
-        <div data-i18n-html="footer.contact">Contact : <a href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a> · <a href="tel:+33659590369">+33 6 59 59 03 69</a></div>
+      <div class="signature-contact">
+        <a class="sig-link" href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a>
+        <a class="sig-link" href="tel:+33659590369">+33 6 59 59 03 69</a>
         <a class="footer-linkedin" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="footer.linkedin">LinkedIn</a>
       </div>
     </div>
@@ -1378,14 +1532,15 @@ const I18N = {
     "dt.banner.cta": "Explorer le Digital Twin →",
     "dt.hero.eyebrow": "Nouveau · Digital Twin",
     "dt.hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
-    "dt.hero.lead": "Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’au Physical AI déployée sur le terrain.",
+    "dt.hero.lead": "Du Digital Twin au robot incarné — Physical AI pour le sol industriel.",
+    "dt.hero.stack": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
     "dt.hero.cta1": "Explorer le Digital Twin →",
     "dt.hero.cta2": "Engager la conversation ↗",
     "logo.aria": "Logo Pascal Robotics",
     "logo.alt": "Logo Pascal Robotics",
     "hero.kicker": "Robotique mobile & humanoïde · Digital Twin · Physical AI",
     "hero.title": "L’intelligence.<br><span class=\"soft\">Mise en mouvement.</span>",
-    "hero.lead": "Robotique mobile et humanoïde, Digital Twin et Physical AI — intégrés pour le terrain industriel.",
+    "hero.lead": "Digital Twin → robot incarné. Physical AI pour le terrain industriel.",
     "hero.sub": "Simulé. Intégré. Validé avant déploiement.",
     "hero.cta1": "Engager la conversation ↗",
     "hero.cta2": "Découvrir l’approche ↓",
@@ -1400,6 +1555,17 @@ const I18N = {
     "why.pill3": "Digital Twin",
     "why.pill4": "Physical AI",
     "why.pill5": "Intégration industrielle",
+    "cadre.title": "Cadre d’engagement",
+    "cadre.l1.label": "Point de départ",
+    "cadre.l1.body": "Une tâche réelle, des contraintes d’atelier et des critères de succès — pas un catalogue.",
+    "cadre.l2.label": "Dé-risquer",
+    "cadre.l2.body": "Digital Twin et simulation pour tester avant d’investir dans le matériel.",
+    "cadre.l3.label": "Premier engagement",
+    "cadre.l3.body": "Étude, POC ou intégration cadrée — selon le niveau de maturité du besoin.",
+    "cadre.l4.label": "Ce que nous ne vendons pas",
+    "cadre.l4.body": "Des machines hors contexte : pas de catalogue robotique « prêt-à-poser ».",
+    "midcta.label": "Parler de votre cas d’usage",
+    "midcta.cta": "Parler de votre cas d’usage ↗",
     "apps.eyebrow": "03 / Applications",
     "apps.title": "Construit autour<br>du travail réel.",
     "apps.intro": "Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.",
@@ -1556,14 +1722,15 @@ const I18N = {
     "dt.banner.cta": "Explore Digital Twin →",
     "dt.hero.eyebrow": "New · Digital Twin",
     "dt.hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
-    "dt.hero.lead": "Pascal Robotics orchestrates the Digital Twin pipeline — from industrial reality to simulation, through to Physical AI deployed on the ground.",
+    "dt.hero.lead": "From Digital Twin to the embodied robot — Physical AI for the industrial floor.",
+    "dt.hero.stack": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
     "dt.hero.cta1": "Explore Digital Twin →",
     "dt.hero.cta2": "Start a conversation ↗",
     "logo.aria": "Pascal Robotics logo",
     "logo.alt": "Pascal Robotics logo",
     "hero.kicker": "Mobile & humanoid robotics · Digital Twin · Physical AI",
     "hero.title": "Intelligence.<br><span class=\"soft\">Into motion.</span>",
-    "hero.lead": "Mobile and humanoid robotics, Digital Twin and Physical AI — integrated for industrial ground truth.",
+    "hero.lead": "Digital Twin → embodied robot. Physical AI for the industrial floor.",
     "hero.sub": "Simulated. Integrated. Validated before deployment.",
     "hero.cta1": "Start a conversation ↗",
     "hero.cta2": "Discover the approach ↓",
@@ -1578,6 +1745,17 @@ const I18N = {
     "why.pill3": "Digital Twin",
     "why.pill4": "Physical AI",
     "why.pill5": "Industrial integration",
+    "cadre.title": "Engagement frame",
+    "cadre.l1.label": "Starting point",
+    "cadre.l1.body": "A real task, shop-floor constraints and success criteria — not a catalogue.",
+    "cadre.l2.label": "De-risk",
+    "cadre.l2.body": "Digital Twin and simulation to test before investing in hardware.",
+    "cadre.l3.label": "First engagement",
+    "cadre.l3.body": "Study, POC or framed integration — matching the maturity of the need.",
+    "cadre.l4.label": "What we do not sell",
+    "cadre.l4.body": "Machines out of context: no off-the-shelf robot catalogue.",
+    "midcta.label": "Talk about your use case",
+    "midcta.cta": "Talk about your use case ↗",
     "apps.eyebrow": "03 / Applications",
     "apps.title": "Built around<br>real-world work.",
     "apps.intro": "Pascal Robotics focuses on use cases where mobility, perception, simulation and human know-how can create operational value. Each project starts with the task, not with a catalogue.",

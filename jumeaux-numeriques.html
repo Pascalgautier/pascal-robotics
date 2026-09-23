@@ -12,7 +12,7 @@
   --panel:#0c1114;
   --line:#1b242a;
   --text:#f4f7f8;
-  --muted:#9ca8ae;
+  --muted:#a8b4ba;
   --green:#9ce51a;
   --green2:#c6ff5b;
   --blue:#55cbff;
@@ -63,9 +63,11 @@ h1 .soft{color:var(--blue)}
 .actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:50px;padding:0 19px;border-radius:12px;border:1px solid var(--line);background:#0b1013;font-size:14px;font-weight:800}
 .btn.primary{background:var(--green);color:#081000;border-color:var(--green)}
+.btn:not(.primary){opacity:.82;border-color:rgba(255,255,255,.14);font-weight:700}
 .btn:hover{border-color:rgba(255,255,255,.22)}
+.btn:not(.primary):hover{opacity:1}
 
-.section{padding:56px 0;border-top:1px solid rgba(255,255,255,.05)}
+.section{padding:64px 0;border-top:1px solid rgba(255,255,255,.05)}
 .section-head{display:grid;grid-template-columns:.82fr 1.18fr;gap:60px;align-items:end;margin-bottom:36px}
 .eyebrow{color:var(--green);font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:850}
 h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:6px 0 0;font-weight:900}
@@ -215,7 +217,10 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 .signature-logo-plain img{width:min(280px,52vw);height:auto;display:block;filter:drop-shadow(0 14px 34px rgba(0,0,0,.28))}
 .signature-copy{color:#758087;font-size:12px}
 .footerline{margin-top:6px;color:#6f7a7f}
-.footer-linkedin{display:block;margin-top:12px;color:var(--green);font-size:14px;font-weight:850;letter-spacing:.04em;text-align:center}
+.signature-contact{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.signature-contact .sig-link{display:block;color:#eef3f4;font-size:15px;font-weight:800;letter-spacing:.01em;line-height:1.35}
+.signature-contact .sig-link:hover{color:var(--green2);text-decoration:underline}
+.footer-linkedin{display:block;margin-top:10px;color:var(--green);font-size:14px;font-weight:850;letter-spacing:.04em;text-align:center}
 .back-home{margin-top:8px;font-size:13px;color:#9ca8ae}
 .back-home a{color:var(--blue);font-weight:750}
 
@@ -246,6 +251,26 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   .wordmark{font-size:10px}
   h1{font-size:clamp(36px,12vw,52px)}
 }
+
+/* Designer polish — jumeaux */
+.step,.pillar,.dt-shot{
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.step:hover,.pillar:hover,.dt-shot:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.16);
+  box-shadow:0 14px 36px rgba(0,0,0,.22);
+}
+@media (max-width:760px){
+  .section{padding:48px 0}
+  h2{font-size:clamp(30px,9vw,44px)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .step,.pillar,.dt-shot{transition:none}
+  .step:hover,.pillar:hover,.dt-shot:hover{transform:none;box-shadow:none}
+}
 </style>
 </head>
 <body id="top">
@@ -275,7 +300,7 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
     <div class="center-intro reveal">
       <div class="kicker" data-i18n="hero.kicker">Digital Twin · Simulation · Physical AI · Embodied robot</div>
       <h1 data-i18n-html="hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
-      <p class="lead" data-i18n="hero.lead">Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’à la Physical AI déployée sur le terrain.</p>
+      <p class="lead" data-i18n="hero.lead">Un Digital Twin n’a de sens que s’il mène à un robot incarné, validé pour le terrain.</p>
       <p class="sub" data-i18n="hero.sub">OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA</p>
       <div class="actions">
         <a class="btn primary" href="#film" data-i18n="hero.cta1">Voir le film ↓</a>
@@ -428,8 +453,9 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
         <span data-i18n="footer.tagline">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration</span>
         <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
       </div>
-      <div class="signature-contact signature-copy">
-        <div data-i18n-html="footer.contact">Contact : <a href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a> · <a href="tel:+33659590369">+33 6 59 59 03 69</a></div>
+      <div class="signature-contact">
+        <a class="sig-link" href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a>
+        <a class="sig-link" href="tel:+33659590369">+33 6 59 59 03 69</a>
         <a class="footer-linkedin" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="footer.linkedin">LinkedIn</a>
         <div class="back-home"><a href="accueil.html#top" data-i18n="footer.back">← Retour à l’accueil</a></div>
       </div>
@@ -452,7 +478,7 @@ const I18N = {
     "nav.contact": "Engager la conversation ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
-    "hero.lead": "Pascal Robotics orchestre le pipeline Digital Twin — de la réalité industrielle à la simulation, jusqu’à la Physical AI déployée sur le terrain.",
+    "hero.lead": "Un Digital Twin n’a de sens que s’il mène à un robot incarné, validé pour le terrain.",
     "hero.sub": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
     "hero.cta1": "Voir le film ↓",
     "hero.cta_pipe": "Voir le pipeline ↓",
@@ -528,7 +554,7 @@ const I18N = {
     "nav.contact": "Start a conversation ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
-    "hero.lead": "Pascal Robotics orchestrates the Digital Twin pipeline — from industrial reality to simulation, through to Physical AI deployed on the floor.",
+    "hero.lead": "A Digital Twin only matters if it leads to an embodied robot, validated for the floor.",
     "hero.sub": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
     "hero.cta1": "Watch the film ↓",
     "hero.cta_pipe": "See the pipeline ↓",
