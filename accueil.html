@@ -66,23 +66,35 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 
 
 
-/* Applications header: title | intro | looping mute video */
+/* Applications: title+intro on top, full-bleed video, then band cards */
 .apps-head{
   display:grid;
-  grid-template-columns:minmax(220px,.78fr) minmax(220px,.95fr) minmax(240px,1.05fr);
-  gap:28px;
-  align-items:center;
-  margin-bottom:36px;
+  grid-template-columns:1fr;
+  gap:18px;
+  align-items:start;
+  margin-bottom:22px;
+  max-width:820px;
 }
-.apps-head .apps-copy{margin:0;color:var(--muted);font-size:17px;max-width:none}
+.apps-head .apps-copy{margin:0;color:var(--muted);font-size:17px;max-width:690px}
 .apps-loop{
-  margin:0;
-  border-radius:22px;
+  margin:0 0 36px;
+  border-radius:28px;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,.075);
+  border:1px solid rgba(156,229,26,.18);
   background:#090d10;
-  box-shadow:0 18px 48px rgba(0,0,0,.28);
+  box-shadow:
+    0 22px 56px rgba(0,0,0,.32),
+    0 0 0 1px rgba(255,255,255,.04),
+    0 0 40px rgba(156,229,26,.08);
   aspect-ratio:960 / 528;
+  transition:box-shadow .25s ease, border-color .25s ease;
+}
+.apps-loop:hover{
+  border-color:rgba(156,229,26,.34);
+  box-shadow:
+    0 26px 64px rgba(0,0,0,.36),
+    0 0 0 1px rgba(255,255,255,.06),
+    0 0 56px rgba(156,229,26,.16);
 }
 .apps-loop video{
   display:block;
@@ -113,12 +125,60 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
 .t span{display:block;color:#a8b2b7;font-size:12px;margin-top:5px}
 
 .cta{padding:56px 0}
-.ctabox{border-radius:32px;border:1px solid rgba(156,229,26,.20);background:radial-gradient(circle at 90% 28%,rgba(156,229,26,.10),transparent 28%),linear-gradient(135deg,#0b1114,#080b0d);padding:46px;display:grid;grid-template-columns:1.3fr .7fr;gap:28px;align-items:center}
-.ctabox h2{font-size:clamp(38px,5.6vw,66px);margin:0 0 14px}
-.ctabox p{color:var(--muted);max-width:650px}
-.contact-list{display:grid;gap:10px}
+.ctabox{
+  border-radius:36px;
+  border:1px solid rgba(156,229,26,.28);
+  background:
+    radial-gradient(circle at 88% 18%,rgba(156,229,26,.22),transparent 34%),
+    radial-gradient(circle at 12% 88%,rgba(0,0,0,.55),transparent 42%),
+    linear-gradient(135deg,#0c1410,#060908 55%,#080b0d);
+  box-shadow:0 28px 72px rgba(0,0,0,.38), 0 0 60px rgba(156,229,26,.10);
+  padding:56px 52px;
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:32px;
+  align-items:center;
+}
+.ctabox h2{font-size:clamp(44px,6.2vw,76px);margin:0 0 16px;letter-spacing:-.045em}
+.ctabox p{color:var(--muted);max-width:650px;font-size:16px}
+.contact-list{display:grid;gap:14px}
 .contact-list a{border:1px solid #263239;background:#0a0e10;border-radius:14px;padding:15px 16px;font-size:13px;font-weight:800}
 .contact-list a:hover{border-color:var(--green)}
+.contact-list .contact-mega{
+  display:block;
+  color:#f4faf2;
+  font-size:clamp(20px,2.4vw,28px);
+  font-weight:900;
+  letter-spacing:-.02em;
+  line-height:1.2;
+  text-decoration:none;
+  border:0;
+  background:transparent;
+  border-radius:0;
+  padding:4px 0;
+  transition:color .2s ease;
+}
+.contact-list .contact-mega:hover{color:var(--green);border-color:transparent}
+.contact-list .btn.primary{
+  margin-top:6px;
+  justify-self:start;
+  min-height:52px;
+  padding:0 22px;
+  font-size:15px;
+  box-shadow:0 10px 28px rgba(156,229,26,.25);
+}
+.contact-list .contact-quiet{
+  display:inline-flex;
+  color:#8a969c;
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  padding:2px 0;
+  border:0;
+  background:transparent;
+  border-radius:0;
+}
+.contact-list .contact-quiet:hover{color:#c8d2d6;border-color:transparent}
 
 
 
@@ -228,8 +288,8 @@ a, p, span, div { overflow-wrap:break-word; }
 .contact-list a, .signature-contact a { overflow-wrap:anywhere; word-break:break-word; }
 
 @media (max-width: 980px) {
-  .apps-head{grid-template-columns:1fr;gap:18px;align-items:start}
-  .apps-loop{max-width:520px}
+  .apps-head{max-width:none}
+  .apps-loop{max-width:none}
   .section-head,
   .band,
   .profile,
@@ -256,7 +316,8 @@ a, p, span, div { overflow-wrap:break-word; }
 }
 
 @media (max-width: 760px) {
-  .apps-loop{border-radius:18px}
+  .apps-loop{border-radius:18px;max-height:42vh;aspect-ratio:auto}
+  .apps-loop video{max-height:42vh}
   .wrap {
     width:calc(100% - 24px);
   }
@@ -382,22 +443,30 @@ a, p, span, div { overflow-wrap:break-word; }
   }
 
   .ctabox {
-    padding:26px 20px;
-    border-radius:22px;
+    padding:36px 22px;
+    border-radius:26px;
   }
 
   .ctabox h2 {
-    font-size:clamp(36px,10vw,52px);
+    font-size:clamp(40px,11vw,56px);
   }
 
   .contact-list {
     width:100%;
   }
 
+  .contact-list .contact-mega {
+    font-size:clamp(18px,5.5vw,24px);
+  }
+
   .contact-list a {
     width:100%;
-    padding:13px 12px;
-    font-size:12px;
+  }
+
+  .contact-list a.btn.primary {
+    width:auto;
+    justify-self:stretch;
+    text-align:center;
   }
 
   .signature {
@@ -470,7 +539,7 @@ a, p, span, div { overflow-wrap:break-word; }
   }
 
   .ctabox {
-    padding:22px 16px;
+    padding:32px 18px;
   }
 
   .signature-logo-plain img {
@@ -550,20 +619,43 @@ a, p, span, div { overflow-wrap:break-word; }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none;transition:none}
+  .hero-dt-content{animation:none}
 }
 
 /* Designer polish — breathing, hovers, cadre, midcta, stack strip */
 #applications{padding-bottom:80px}
 #usecases{padding-top:76px}
 .hero-stack{
-  margin:10px auto 0;
-  max-width:640px;
-  color:rgba(196,208,214,.78);
-  font-size:11px;
-  font-weight:750;
+  margin:14px auto 0;
+  max-width:720px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+}
+.hero-stack-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(8,14,18,.42);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  color:rgba(220,230,236,.88);
+  font-size:10px;
+  font-weight:800;
   letter-spacing:.08em;
   text-transform:uppercase;
-  line-height:1.45;
+  line-height:1;
+  transition:border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.hero-stack-pill:hover{
+  border-color:rgba(156,229,26,.45);
+  color:#fff;
+  background:rgba(12,20,24,.62);
+  box-shadow:0 0 0 1px rgba(156,229,26,.12);
 }
 .big-card,.use-card,.why-card,.step-row{
   transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
@@ -649,10 +741,69 @@ a, p, span, div { overflow-wrap:break-word; }
   .midcta-label{font-size:18px;width:100%}
   .cadre-card{padding:18px 16px;border-radius:18px}
 }
+
+/* Before / After — Sans vs Avec Digital Twin */
+.ba-section{padding-top:8px}
+.ba-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:8px;
+}
+.ba-card{
+  border-radius:24px;
+  padding:28px 26px;
+  min-height:220px;
+}
+.ba-card .ba-label{
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin:0 0 10px;
+}
+.ba-card h3{
+  font-size:clamp(22px,2.6vw,30px);
+  line-height:1.08;
+  letter-spacing:-.03em;
+  margin:0 0 12px;
+  font-weight:900;
+}
+.ba-card p{
+  margin:0;
+  font-size:15px;
+  line-height:1.5;
+  color:var(--muted);
+}
+.ba-card.ba-without{
+  border:1px solid rgba(220,90,70,.28);
+  background:linear-gradient(160deg,#120c0c,#0a0909);
+  box-shadow:inset 0 0 0 1px rgba(180,60,50,.06);
+}
+.ba-card.ba-without .ba-label{color:#e08a7a}
+.ba-card.ba-without h3{color:#d8c4c0}
+.ba-card.ba-without p{color:#9a8682}
+.ba-card.ba-with{
+  border:1px solid rgba(156,229,26,.28);
+  background:
+    radial-gradient(circle at 88% 12%,rgba(156,229,26,.12),transparent 42%),
+    linear-gradient(160deg,#0b1410,#080d10);
+  box-shadow:0 16px 40px rgba(0,0,0,.22), 0 0 28px rgba(156,229,26,.06);
+}
+.ba-card.ba-with .ba-label{color:var(--green)}
+.ba-card.ba-with h3{color:#eef6f0}
+@media (max-width:760px){
+  .ba-grid{grid-template-columns:1fr;gap:14px}
+  .ba-card{padding:22px 18px;min-height:0;border-radius:20px}
+}
+
 @media (prefers-reduced-motion:reduce){
   .big-card,.use-card,.why-card,.step-row{transition:none}
   .big-card:hover,.use-card:hover,.why-card:hover,.step-row:hover{transform:none;box-shadow:none}
   .apps-loop video{animation:none;opacity:1}
+  .hero-dt-content{animation:none}
+  .hero-stack-pill{transition:none}
+  .apps-loop{transition:none}
 }
 
 
@@ -834,10 +985,10 @@ a, p, span, div { overflow-wrap:break-word; }
   position:absolute;
   inset:0;
   z-index:1;
-  /* Light vignette + soft bottom fade — image stays dominant */
+  /* Softer vignette — background images read more clearly */
   background:
-    radial-gradient(ellipse 70% 55% at 50% 48%,rgba(4,10,16,.34) 0%,rgba(4,10,16,.12) 55%,rgba(4,10,16,.22) 100%),
-    linear-gradient(180deg,rgba(5,10,14,.18) 0%,rgba(5,10,14,.06) 42%,rgba(5,10,14,.38) 100%);
+    radial-gradient(ellipse 72% 58% at 50% 48%,rgba(4,10,16,.22) 0%,rgba(4,10,16,.06) 58%,rgba(4,10,16,.14) 100%),
+    linear-gradient(180deg,rgba(5,10,14,.10) 0%,rgba(5,10,14,.03) 44%,rgba(5,10,14,.28) 100%);
   pointer-events:none;
 }
 .hero-dt-inner{
@@ -881,6 +1032,11 @@ a, p, span, div { overflow-wrap:break-word; }
   margin:0 auto;
   text-align:center;
   flex:0 0 auto;
+  animation:heroContentIn .95s ease both;
+}
+@keyframes heroContentIn{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
 }
 .hero-dt-content .eyebrow{
   color:var(--blue);
@@ -890,7 +1046,7 @@ a, p, span, div { overflow-wrap:break-word; }
   text-transform:uppercase;
 }
 .hero-dt-content h1{
-  font-size:clamp(28px,3.6vw,48px);
+  font-size:clamp(32px,4.2vw,56px);
   line-height:1.02;
   letter-spacing:-.04em;
   margin:0 0 8px;
@@ -939,13 +1095,17 @@ a, p, span, div { overflow-wrap:break-word; }
   padding:0 18px;
   font-size:13px;
 }
+.hero-dt-actions .btn.primary{
+  box-shadow:0 8px 28px rgba(156,229,26,.28);
+  font-weight:900;
+}
 .hero-dt-actions .btn:not(.primary){
-  background:rgba(8,14,18,.38);
+  background:rgba(8,14,18,.32);
   backdrop-filter:blur(8px);
-  border-color:rgba(255,255,255,.16);
-  color:#d5dde2;
-  opacity:.82;
-  font-weight:700;
+  border-color:rgba(255,255,255,.12);
+  color:#c5cdd2;
+  opacity:.72;
+  font-weight:650;
 }
 .hero-dt-actions .btn:not(.primary):hover{
   opacity:1;
@@ -1020,10 +1180,10 @@ a, p, span, div { overflow-wrap:break-word; }
   .hero-dt-bg{object-position:58% 40%}
   .hero-dt-overlay{
     background:
-      radial-gradient(ellipse 80% 60% at 50% 48%,rgba(4,10,16,.40) 0%,rgba(4,10,16,.16) 58%,rgba(4,10,16,.28) 100%),
-      linear-gradient(180deg,rgba(5,10,14,.22) 0%,rgba(5,10,14,.08) 40%,rgba(5,10,14,.48) 100%);
+      radial-gradient(ellipse 80% 60% at 50% 48%,rgba(4,10,16,.28) 0%,rgba(4,10,16,.10) 58%,rgba(4,10,16,.18) 100%),
+      linear-gradient(180deg,rgba(5,10,14,.14) 0%,rgba(5,10,14,.05) 40%,rgba(5,10,14,.36) 100%);
   }
-  .hero-dt-content h1{font-size:clamp(28px,8vw,42px)}
+  .hero-dt-content h1{font-size:clamp(30px,8.5vw,46px)}
   .hero-dt-content .lead{font-size:clamp(13px,3.6vw,15px)}
   .hero-dt-actions{bottom:0;gap:10px;justify-content:flex-start;padding:12px 16px}
   .hero-secondary{padding:28px 0 22px}
@@ -1121,7 +1281,14 @@ a, p, span, div { overflow-wrap:break-word; }
       <div class="eyebrow" data-i18n="dt.hero.eyebrow">Nouveau · Digital Twin</div>
       <h1 id="hero-dt-title" data-i18n-html="dt.hero.title">Jumeaux numériques.<br><span class="soft">Jusqu’au robot incarné.</span></h1>
       <p class="lead" data-i18n="dt.hero.lead">Du Digital Twin au robot incarné — Physical AI pour le sol industriel.</p>
-      <p class="hero-stack" data-i18n="dt.hero.stack">OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA</p>
+      <nav class="hero-stack" aria-label="Stack" data-i18n-aria="dt.hero.stackAria">
+        <a class="hero-stack-pill" href="jumeaux-numeriques.html">OpenUSD</a>
+        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Omniverse</a>
+        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Isaac Sim</a>
+        <a class="hero-stack-pill" href="jumeaux-numeriques.html">Isaac Lab</a>
+        <a class="hero-stack-pill" href="#method">Edge AI</a>
+        <a class="hero-stack-pill" href="#method">VLA</a>
+      </nav>
     </div>
   </div>
   <div class="actions hero-dt-actions">
@@ -1176,6 +1343,29 @@ a, p, span, div { overflow-wrap:break-word; }
   </div>
 </section>
 
+<section class="section ba-section" id="contrast" aria-labelledby="ba-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="ba.eyebrow">02 / Avant · Après</div>
+        <h2 id="ba-title" data-i18n-html="ba.title">Dé-risquer<br>avant d’incarner.</h2>
+      </div>
+      <p data-i18n="ba.intro">Le Digital Twin n’est pas une démo visuelle : c’est le moyen de tester la tâche, l’environnement et le comportement avant d’engager le matériel.</p>
+    </div>
+    <div class="ba-grid">
+      <article class="ba-card ba-without reveal">
+        <div class="ba-label" data-i18n="ba.without.label">Sans Digital Twin</div>
+        <h3 data-i18n="ba.without.title">Risque, découverte tardive, paris matériel coûteux</h3>
+        <p data-i18n="ba.without.body">Les écarts apparaissent sur le terrain : contraintes d’atelier mal anticipées, itérations lentes, investissements robotiques engagés avant d’avoir validé la faisabilité.</p>
+      </article>
+      <article class="ba-card ba-with reveal">
+        <div class="ba-label" data-i18n="ba.with.label">Avec Digital Twin → robot incarné</div>
+        <h3 data-i18n="ba.with.title">Simuler, valider, puis incarner</h3>
+        <p data-i18n="ba.with.body">Modéliser la cellule, éprouver perception et politiques en simulation, mesurer la robustesse — puis déployer un robot réel avec un risque déjà réduit.</p>
+      </article>
+    </div>
+  </div>
+</section>
 
 <section class="section" id="applications">
   <div class="wrap">
@@ -1185,21 +1375,22 @@ a, p, span, div { overflow-wrap:break-word; }
         <h2 data-i18n-html="apps.title">Construit autour<br>du travail réel.</h2>
       </div>
       <p class="apps-copy" data-i18n="apps.intro">Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.</p>
-      <figure class="apps-loop">
-        <video
-          muted
-          autoplay
-          loop
-          playsinline
-          preload="metadata"
-          poster="/assets/applications-loop-poster.jpg"
-          aria-label="Applications — boucle muette"
-          data-i18n-aria="apps.video.aria"
-        >
-          <source src="/assets/applications-loop.mp4" type="video/mp4">
-        </video>
-      </figure>
     </div>
+
+    <figure class="apps-loop reveal">
+      <video
+        muted
+        autoplay
+        loop
+        playsinline
+        preload="metadata"
+        poster="/assets/applications-loop-poster.jpg"
+        aria-label="Applications — boucle muette"
+        data-i18n-aria="apps.video.aria"
+      >
+        <source src="/assets/applications-loop.mp4" type="video/mp4">
+      </video>
+    </figure>
 
     <div class="band">
       <article class="big-card reveal">
@@ -1466,10 +1657,10 @@ a, p, span, div { overflow-wrap:break-word; }
         <p data-i18n="contact.body">Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.</p>
       </div>
       <div class="contact-list">
-        <a href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr ↗</a>
-        <a href="tel:+33659590369">+33 6 59 59 03 69 ↗</a>
-        <a href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20Demande%20de%20projet" id="discuss-project" data-i18n="contact.discuss">Discuter d’un projet ↗</a>
-        <a href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin">LinkedIn ↗</a>
+        <a class="contact-mega" href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a>
+        <a class="contact-mega" href="tel:+33659590369">+33 6 59 59 03 69</a>
+        <a class="btn primary" href="mailto:pgautier@pascal-robotics.fr?subject=Pascal%20Robotics%20%E2%80%94%20Demande%20de%20projet" id="discuss-project" data-i18n="contact.discuss">Discuter d’un projet ↗</a>
+        <a class="contact-quiet" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin">LinkedIn ↗</a>
       </div>
     </div>
   </div>
@@ -1533,7 +1724,7 @@ const I18N = {
     "dt.hero.eyebrow": "Nouveau · Digital Twin",
     "dt.hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
     "dt.hero.lead": "Du Digital Twin au robot incarné — Physical AI pour le sol industriel.",
-    "dt.hero.stack": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
+    "dt.hero.stackAria": "Stack technologique",
     "dt.hero.cta1": "Explorer le Digital Twin →",
     "dt.hero.cta2": "Engager la conversation ↗",
     "logo.aria": "Logo Pascal Robotics",
@@ -1564,6 +1755,15 @@ const I18N = {
     "cadre.l3.body": "Étude, POC ou intégration cadrée — selon le niveau de maturité du besoin.",
     "cadre.l4.label": "Ce que nous ne vendons pas",
     "cadre.l4.body": "Des machines hors contexte : pas de catalogue robotique « prêt-à-poser ».",
+    "ba.eyebrow": "02 / Avant · Après",
+    "ba.title": "Dé-risquer<br>avant d’incarner.",
+    "ba.intro": "Le Digital Twin n’est pas une démo visuelle : c’est le moyen de tester la tâche, l’environnement et le comportement avant d’engager le matériel.",
+    "ba.without.label": "Sans Digital Twin",
+    "ba.without.title": "Risque, découverte tardive, paris matériel coûteux",
+    "ba.without.body": "Les écarts apparaissent sur le terrain : contraintes d’atelier mal anticipées, itérations lentes, investissements robotiques engagés avant d’avoir validé la faisabilité.",
+    "ba.with.label": "Avec Digital Twin → robot incarné",
+    "ba.with.title": "Simuler, valider, puis incarner",
+    "ba.with.body": "Modéliser la cellule, éprouver perception et politiques en simulation, mesurer la robustesse — puis déployer un robot réel avec un risque déjà réduit.",
     "midcta.label": "Parler de votre cas d’usage",
     "midcta.cta": "Parler de votre cas d’usage ↗",
     "apps.eyebrow": "03 / Applications",
@@ -1723,7 +1923,7 @@ const I18N = {
     "dt.hero.eyebrow": "New · Digital Twin",
     "dt.hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
     "dt.hero.lead": "From Digital Twin to the embodied robot — Physical AI for the industrial floor.",
-    "dt.hero.stack": "OpenUSD · Omniverse · Isaac Sim · Isaac Lab · Edge AI · VLA",
+    "dt.hero.stackAria": "Technology stack",
     "dt.hero.cta1": "Explore Digital Twin →",
     "dt.hero.cta2": "Start a conversation ↗",
     "logo.aria": "Pascal Robotics logo",
@@ -1754,6 +1954,15 @@ const I18N = {
     "cadre.l3.body": "Study, POC or framed integration — matching the maturity of the need.",
     "cadre.l4.label": "What we do not sell",
     "cadre.l4.body": "Machines out of context: no off-the-shelf robot catalogue.",
+    "ba.eyebrow": "02 / Before · After",
+    "ba.title": "De-risk<br>before embodying.",
+    "ba.intro": "A Digital Twin is not a visual demo: it is how you test the task, environment and behaviour before committing hardware.",
+    "ba.without.label": "Without Digital Twin",
+    "ba.without.title": "Risk, late discovery, costly hardware bets",
+    "ba.without.body": "Gaps show up on the floor: shop-floor constraints missed, slow iterations, robotic spend committed before feasibility is proven.",
+    "ba.with.label": "With Digital Twin → embodied robot",
+    "ba.with.title": "Simulate, validate, then embody",
+    "ba.with.body": "Model the cell, stress perception and policies in simulation, measure robustness — then deploy a real robot with risk already reduced.",
     "midcta.label": "Talk about your use case",
     "midcta.cta": "Talk about your use case ↗",
     "apps.eyebrow": "03 / Applications",
