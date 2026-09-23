@@ -149,8 +149,6 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:16px;
-  width:min(100%, 900px);
-  margin:0 auto;
 }
 .dt-shot{
   position:relative;
@@ -160,9 +158,9 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   border:1px solid rgba(255,255,255,.075);
   background:radial-gradient(circle at 88% 18%,rgba(85,203,255,.08),transparent 32%),linear-gradient(160deg,#0c1114,#090d10);
   box-shadow:none;
-  min-height:170px;
-  max-height:190px;
-  padding:12px;
+  min-height:148px;
+  max-height:158px;
+  padding:10px;
   display:grid;
   place-items:center;
 }
@@ -170,11 +168,11 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   width:auto;
   height:auto;
   max-width:100%;
-  max-height:166px;
+  max-height:138px;
   display:block;
   object-fit:contain;
   background:transparent;
-  border-radius:14px;
+  border-radius:12px;
 }
 
 .pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -238,9 +236,9 @@ h2{font-size:clamp(36px,5vw,62px);line-height:.98;letter-spacing:-.045em;margin:
   .contact-pill{padding:8px 10px}
   .pipeline{grid-template-columns:1fr}
   .step,.pillar,.dt-shot{border-radius:20px}
-  .visual-band{width:100%;grid-template-columns:1fr;gap:12px}
-  .dt-shot{min-height:140px;max-height:160px;padding:10px}
-  .dt-shot img{max-height:140px}
+  .visual-band{grid-template-columns:1fr;gap:12px}
+  .dt-shot{min-height:128px;max-height:140px;padding:8px}
+  .dt-shot img{max-height:124px}
   .ctabox{padding:28px 22px;border-radius:24px}
 }
 @media (max-width: 480px) {
