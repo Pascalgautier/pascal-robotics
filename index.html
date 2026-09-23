@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#050708">
-<title>Pascal Robotics — Robotique mobile et Physical AI</title>
-<meta name="description" content="Pascal Robotics intègre la robotique mobile, les jumeaux numériques et des logiciels sur mesure dans des solutions concrètes. Basé à Laval, France.">
+<title>Pascal Robotics — Robotique mobile, Digital Twin &amp; Physical AI</title>
+<meta name="description" content="Pascal Robotics intègre robotique mobile et humanoïde, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Laval, France.">
 <style>
 :root {
   --bg:#050708;
@@ -513,6 +513,131 @@ a, p, span, div { overflow-wrap:break-word; }
   .lang-switch{margin-right:2px}
   .lang-switch button{font-size:11px}
 }
+
+/* ===== Content extensions (method / chrono / steps / pills) ===== */
+.why-card{
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.075);
+  background:radial-gradient(circle at 88% 18%,rgba(85,203,255,.08),transparent 32%),linear-gradient(160deg,#0c1114,#090d10);
+  padding:34px;
+}
+.why-card p{color:var(--muted);font-size:17px;max-width:820px;margin:0}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{
+  display:inline-flex;align-items:center;
+  border:1px solid rgba(156,229,26,.28);
+  background:rgba(156,229,26,.06);
+  color:#e8ffc8;
+  border-radius:999px;
+  padding:7px 12px;
+  font-size:12px;font-weight:800;letter-spacing:.02em;
+}
+.pill.blue{
+  border-color:rgba(85,203,255,.32);
+  background:rgba(85,203,255,.07);
+  color:#d7f4ff;
+}
+.usecases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.use-card{
+  border-radius:24px;border:1px solid rgba(255,255,255,.075);
+  background:#0b1013;padding:26px 24px;min-height:280px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.use-card h3{font-size:22px;line-height:1.15;letter-spacing:-.025em;margin:4px 0 0}
+.use-card p{color:var(--muted);font-size:14px;margin:0;max-width:none}
+.badge{
+  align-self:flex-start;
+  display:inline-flex;
+  border-radius:999px;
+  border:1px solid rgba(85,203,255,.35);
+  background:rgba(85,203,255,.08);
+  color:#bfefff;
+  font-size:10px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;
+  padding:6px 10px;
+}
+.method-flow{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+  margin-bottom:22px;
+}
+.flow-step{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.075);
+  background:#0b1013;
+  padding:16px 14px;
+  min-height:118px;
+}
+.flow-step .n{color:var(--green);font-size:11px;font-weight:900;letter-spacing:.14em}
+.flow-step b{display:block;margin-top:8px;font-size:14px;line-height:1.25}
+.flow-step span{display:block;margin-top:6px;color:var(--muted);font-size:12px}
+.stack-note{
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.075);
+  background:linear-gradient(145deg,#0b1114,#090d10);
+  padding:24px 26px;
+}
+.stack-note p{color:var(--muted);margin:0 0 14px;font-size:14px;max-width:920px}
+.arch-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+.arch-card{
+  border-radius:24px;border:1px solid rgba(255,255,255,.075);
+  background:#0b1013;padding:28px 26px;
+}
+.arch-card h3{font-size:26px;line-height:1.1;letter-spacing:-.03em;margin:6px 0 12px}
+.arch-card p{color:var(--muted);margin:0;max-width:none}
+.chrono{display:grid;gap:0;position:relative;margin-top:8px}
+.chrono::before{
+  content:"";position:absolute;left:11px;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(180deg,rgba(156,229,26,.55),rgba(85,203,255,.25),transparent);
+}
+.chrono-item{
+  display:grid;grid-template-columns:24px 1fr;gap:16px;
+  padding:16px 0 16px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.chrono-item:last-child{border-bottom:0}
+.chrono-dot{
+  width:12px;height:12px;border-radius:50%;margin-top:6px;
+  background:var(--green);box-shadow:0 0 0 4px rgba(156,229,26,.12);
+}
+.chrono-item time{
+  display:block;color:var(--green);font-size:12px;font-weight:850;letter-spacing:.08em;
+  margin-bottom:4px;
+}
+.chrono-item strong{display:block;font-size:15px;margin-bottom:4px}
+.chrono-item p{margin:0;color:var(--muted);font-size:14px;max-width:820px}
+.steps-list{display:grid;gap:10px;margin-top:8px}
+.step-row{
+  display:grid;grid-template-columns:42px 1fr;gap:14px;align-items:start;
+  border:1px solid rgba(255,255,255,.07);border-radius:16px;
+  background:#0b1013;padding:14px 16px;
+}
+.step-row .sn{
+  width:32px;height:32px;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(156,229,26,.12);color:var(--green);
+  font-size:12px;font-weight:900;
+}
+.step-row b{display:block;font-size:14px;margin-bottom:2px}
+.step-row span{color:var(--muted);font-size:13px}
+.poc-cta{margin-top:22px}
+
+@media (max-width: 980px) {
+  .usecases-grid,
+  .method-flow,
+  .arch-grid {
+    grid-template-columns:1fr;
+  }
+  .method-flow{gap:10px}
+}
+@media (max-width: 760px) {
+  .why-card,.use-card,.stack-note,.arch-card{padding:22px 18px;border-radius:20px}
+  .use-card{min-height:0}
+  .flow-step{min-height:0}
+  .chrono::before{left:9px}
+  .chrono-item{grid-template-columns:20px 1fr;gap:12px}
+}
+
 </style>
 </head>
 <body id="top">
@@ -527,9 +652,10 @@ a, p, span, div { overflow-wrap:break-word; }
         <span class="sep" aria-hidden="true">|</span>
         <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
       </div>
-      <a href="#approach" data-i18n="nav.approach">Notre approche</a>
+      <a href="#why" data-i18n="nav.why">Pourquoi</a>
       <a href="#applications" data-i18n="nav.applications">Applications</a>
-      <a href="#about" data-i18n="nav.about">À propos</a>
+      <a href="#method" data-i18n="nav.method">Méthode</a>
+      <a href="#experience" data-i18n="nav.experience">Parcours</a>
       <a class="contact-pill" href="#contact" data-i18n="nav.contact">Engager la conversation ↗</a>
     </div>
   </div>
@@ -548,15 +674,37 @@ a, p, span, div { overflow-wrap:break-word; }
 <section class="hero">
   <div class="wrap">
     <div class="center-intro reveal">
-      <div class="kicker" data-i18n="hero.kicker">Robotique mobile et Physical AI</div>
+      <div class="kicker" data-i18n="hero.kicker">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI</div>
       <h1 data-i18n-html="hero.title">L’intelligence.<br><span class="soft">Mise en mouvement.</span></h1>
-      <p class="lead" data-i18n="hero.lead">Amener la robotique mobile dans le monde réel.</p>
-      <p class="sub" data-i18n="hero.sub">Simulé. Intégré. Prêt pour votre mission.</p>
+      <p class="lead" data-i18n="hero.lead">Robotique mobile et humanoïde, Digital Twin et Physical AI — intégrés pour le terrain industriel.</p>
+      <p class="sub" data-i18n="hero.sub">Simulé. Intégré. Validé avant déploiement.</p>
       <div class="actions">
         <a class="btn primary" href="#contact" data-i18n="hero.cta1">Engager la conversation ↗</a>
-        <a class="btn" href="#approach" data-i18n="hero.cta2">Voir ce que nous faisons ↓</a>
+        <a class="btn" href="#why" data-i18n="hero.cta2">Découvrir l’approche ↓</a>
       </div>
       <div class="place" data-i18n="hero.place">Conçu à Laval, France</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="why.eyebrow">01 / Pourquoi</div>
+        <h2 data-i18n-html="why.title">Pourquoi<br>Pascal Robotics&nbsp;?</h2>
+      </div>
+      <p data-i18n="why.intro">Intégrer, simuler et prouver avant d’investir — plutôt que de partir d’un catalogue de machines.</p>
+    </div>
+    <div class="why-card reveal">
+      <p data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
+      <div class="pill-row">
+        <span class="pill" data-i18n="why.pill1">Robotique mobile</span>
+        <span class="pill" data-i18n="why.pill2">Humanoïdes</span>
+        <span class="pill blue" data-i18n="why.pill3">Digital Twin</span>
+        <span class="pill blue" data-i18n="why.pill4">Physical AI</span>
+        <span class="pill" data-i18n="why.pill5">Intégration industrielle</span>
+      </div>
     </div>
   </div>
 </section>
@@ -583,7 +731,7 @@ a, p, span, div { overflow-wrap:break-word; }
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="apps.eyebrow">02 / Applications</div>
+        <div class="eyebrow" data-i18n="apps.eyebrow">03 / Applications</div>
         <h2 data-i18n-html="apps.title">Construit autour<br>du travail réel.</h2>
       </div>
       <p data-i18n="apps.intro">Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.</p>
@@ -615,11 +763,158 @@ a, p, span, div { overflow-wrap:break-word; }
   </div>
 </section>
 
+<section class="section" id="usecases">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="uc.eyebrow">04 / Cas d’usage</div>
+        <h2 data-i18n-html="uc.title">Trois pistes<br>de POC / étude.</h2>
+      </div>
+      <p data-i18n="uc.intro">Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.</p>
+    </div>
+    <div class="usecases-grid">
+      <article class="use-card reveal">
+        <span class="badge" data-i18n="uc.badge">POC / Étude</span>
+        <h3 data-i18n="uc.a.title">Sécurité civile &amp; intervention</h3>
+        <p data-i18n="uc.a.body">Quadrupède instrumenté, cartographie et inspection dans des environnements sensibles ou dangereux — pour évaluer perception, mobilité et boucle opérateur avant un déploiement.</p>
+      </article>
+      <article class="use-card reveal">
+        <span class="badge" data-i18n="uc.badge">POC / Étude</span>
+        <h3 data-i18n="uc.b.title">Industrie &amp; humanoïdes</h3>
+        <p data-i18n="uc.b.body">Apprentissage de gestes, manipulation, inspection et répétition de tâches — pour tester la faisabilité d’une assistance humanoïde sur un poste ou un flux réel.</p>
+      </article>
+      <article class="use-card reveal">
+        <span class="badge" data-i18n="uc.badge">POC / Étude</span>
+        <h3 data-i18n="uc.c.title">Digital Twin industriel</h3>
+        <p data-i18n="uc.c.body">Simuler usine, cellule ou robot avant le déploiement physique — pour réduire le risque, comparer des scénarios et préparer l’intégration sur le terrain.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="method.eyebrow">05 / Méthode</div>
+        <h2 data-i18n-html="method.title">Du besoin<br>au ROI mesurable.</h2>
+      </div>
+      <p data-i18n="method.intro">Une trajectoire claire : besoin industriel → Digital Twin → simulation → Physical AI / apprentissage → robot réel → retour sur investissement.</p>
+    </div>
+    <div class="method-flow reveal">
+      <div class="flow-step"><div class="n">01</div><b data-i18n="method.s1.title">Besoin industriel</b><span data-i18n="method.s1.body">Tâche, contraintes, critères de succès.</span></div>
+      <div class="flow-step"><div class="n">02</div><b data-i18n="method.s2.title">Digital Twin</b><span data-i18n="method.s2.body">Modéliser l’environnement et les actifs.</span></div>
+      <div class="flow-step"><div class="n">03</div><b data-i18n="method.s3.title">Simulation</b><span data-i18n="method.s3.body">Scénarios, risques, itérations rapides.</span></div>
+      <div class="flow-step"><div class="n">04</div><b data-i18n="method.s4.title">Physical AI</b><span data-i18n="method.s4.body">Apprentissage, VLA, politiques utiles.</span></div>
+      <div class="flow-step"><div class="n">05</div><b data-i18n="method.s5.title">Robot réel</b><span data-i18n="method.s5.body">Intégration, edge, validation terrain.</span></div>
+      <div class="flow-step"><div class="n">06</div><b data-i18n="method.s6.title">ROI</b><span data-i18n="method.s6.body">Preuve avant investissement lourd.</span></div>
+    </div>
+    <div class="stack-note reveal">
+      <p data-i18n="method.stack">Stack illustrative (non obligatoire, approche agnostique) : OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / contrôleurs, Edge AI — choisis selon le cas d’usage, pas selon un catalogue figé.</p>
+      <div class="pill-row">
+        <span class="pill blue">OpenUSD</span>
+        <span class="pill blue">Omniverse</span>
+        <span class="pill blue">Isaac Sim</span>
+        <span class="pill blue">Isaac Lab</span>
+        <span class="pill">VLA</span>
+        <span class="pill">ROS</span>
+        <span class="pill">Edge AI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="architecture">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="arch.eyebrow">06 / Architecture</div>
+        <h2 data-i18n-html="arch.title">Ouverte,<br>modulaire, souveraine.</h2>
+      </div>
+      <p data-i18n="arch.intro">Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.</p>
+    </div>
+    <div class="arch-grid">
+      <article class="arch-card reveal">
+        <div class="eyebrow" data-i18n="arch.c1.eyebrow">Modularité</div>
+        <h3 data-i18n="arch.c1.title">Composer plutôt qu’imposer.</h3>
+        <p data-i18n="arch.c1.body">Perception, simulation, contrôle, Edge AI et interfaces humaines s’assemblent par briques. Chaque module peut évoluer sans reconstruire l’ensemble du système.</p>
+      </article>
+      <article class="arch-card reveal">
+        <div class="eyebrow" data-i18n="arch.c2.eyebrow">Souveraineté &amp; ouverture</div>
+        <h3 data-i18n="arch.c2.title">Maîtriser ce qui compte.</h3>
+        <p data-i18n="arch.c2.body">Privilégier des interfaces claires, des formats interopérables et une chaîne de décision transparente — pour garder la main sur données, modèles et déploiement.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="experience">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="exp.eyebrow">07 / Parcours</div>
+        <h2 data-i18n-html="exp.title">Le chemin de<br>Pascal Gautier.</h2>
+      </div>
+      <p data-i18n="exp.intro">Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.</p>
+    </div>
+    <div class="chrono reveal">
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i1.when">2001 – 2008</time>
+          <strong data-i18n="exp.i1.title">CLARTÉ</strong>
+          <p data-i18n="exp.i1.body">Réalité virtuelle, simulation et technologies immersives — construire des expériences où le réel et le numérique se rejoignent.</p>
+        </div>
+      </div>
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i2.when">2008</time>
+          <strong data-i18n="exp.i2.title">Robot chef d’orchestre FANUC</strong>
+          <p data-i18n="exp.i2.body">Conduite d’un robot industriel via motion capture — traduire le geste humain en mouvement machine.</p>
+        </div>
+      </div>
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i3.when">2010</time>
+          <strong data-i18n="exp.i3.title">Le Robographe</strong>
+          <p data-i18n="exp.i3.body">Robot industriel comme outil artistique — au sein de l’écosystème Laval Virtual.</p>
+        </div>
+      </div>
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i4.when">Années suivantes</time>
+          <strong data-i18n="exp.i4.title">Robot lumière &amp; robot caméra</strong>
+          <p data-i18n="exp.i4.body">Poursuite des systèmes robotiques appliqués à la lumière et à la caméra — précision, trajectoires et contrôle.</p>
+        </div>
+      </div>
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i5.when">2023</time>
+          <strong data-i18n="exp.i5.title">Robotique caméra — collaboration</strong>
+          <p data-i18n="exp.i5.body">Déploiement de solutions de robotique caméra avec Electric Friends pour France Télévisions — jalon de parcours professionnel, non présenté comme référence commerciale Pascal Robotics.</p>
+        </div>
+      </div>
+      <div class="chrono-item">
+        <div class="chrono-dot" aria-hidden="true"></div>
+        <div>
+          <time data-i18n="exp.i6.when">Aujourd’hui</time>
+          <strong data-i18n="exp.i6.title">Pascal Robotics</strong>
+          <p data-i18n="exp.i6.body">Robotique mobile, humanoïdes, Digital Twin et Physical AI — pour transformer un besoin industriel en preuve opérationnelle.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="about">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="about.eyebrow">03 / Expertise humaine</div>
+        <div class="eyebrow" data-i18n="about.eyebrow">08 / Expertise humaine</div>
         <h2 data-i18n-html="about.title">La technologie commence<br>par les personnes.</h2>
       </div>
       <p data-i18n="about.intro">Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?</p>
@@ -638,11 +933,35 @@ a, p, span, div { overflow-wrap:break-word; }
   </div>
 </section>
 
+<section class="section" id="poc">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow" data-i18n="poc.eyebrow">09 / POC</div>
+        <h2 data-i18n-html="poc.title">Vous avez un cas<br>d’usage robotique&nbsp;?</h2>
+      </div>
+      <p data-i18n="poc.intro">Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.</p>
+    </div>
+    <div class="steps-list reveal">
+      <div class="step-row"><div class="sn">1</div><div><b data-i18n="poc.s1.title">Analyse du besoin</b><span data-i18n="poc.s1.body">Clarifier la tâche, l’environnement, les contraintes et les critères de succès.</span></div></div>
+      <div class="step-row"><div class="sn">2</div><div><b data-i18n="poc.s2.title">Jumeau numérique</b><span data-i18n="poc.s2.body">Reconstruction ou création du Digital Twin du contexte d’exploitation.</span></div></div>
+      <div class="step-row"><div class="sn">3</div><div><b data-i18n="poc.s3.title">Sélection robot / capteurs / IA</b><span data-i18n="poc.s3.body">Choisir le robot, les capteurs et les modèles IA adaptés au cas d’usage.</span></div></div>
+      <div class="step-row"><div class="sn">4</div><div><b data-i18n="poc.s4.title">Simulation</b><span data-i18n="poc.s4.body">Tester scénarios, risques et hypothèses avant le terrain.</span></div></div>
+      <div class="step-row"><div class="sn">5</div><div><b data-i18n="poc.s5.title">POC</b><span data-i18n="poc.s5.body">Construire la plus petite preuve de concept utile et évaluable.</span></div></div>
+      <div class="step-row"><div class="sn">6</div><div><b data-i18n="poc.s6.title">Évaluation technique et économique</b><span data-i18n="poc.s6.body">Mesurer faisabilité, coûts, délais et retour attendu.</span></div></div>
+      <div class="step-row"><div class="sn">7</div><div><b data-i18n="poc.s7.title">Décision de déploiement</b><span data-i18n="poc.s7.body">Décider en connaissance de cause : déployer, itérer ou arrêter.</span></div></div>
+    </div>
+    <div class="poc-cta reveal">
+      <a class="btn primary" href="#contact" data-i18n="poc.cta">Engager la conversation ↗</a>
+    </div>
+  </div>
+</section>
+
 <section class="cta" id="contact">
   <div class="wrap">
     <div class="ctabox reveal">
       <div>
-        <div class="eyebrow" data-i18n="contact.eyebrow">04 / Engager la conversation</div>
+        <div class="eyebrow" data-i18n="contact.eyebrow">10 / Engager la conversation</div>
         <h2 data-i18n-html="contact.title">Explorons<br>votre cas d’usage.</h2>
         <p data-i18n="contact.body">Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.</p>
       </div>
@@ -680,7 +999,7 @@ a, p, span, div { overflow-wrap:break-word; }
       </div>
       <div class="signature-copy">
         <strong>Pascal Robotics</strong>
-        <span data-i18n="footer.tagline">Robotique mobile · Digital Twin · Physical AI</span>
+        <span data-i18n="footer.tagline">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration</span>
         <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
       </div>
       <div class="signature-contact signature-copy">
@@ -693,27 +1012,37 @@ a, p, span, div { overflow-wrap:break-word; }
 <script>
 const I18N = {
   fr: {
-    "meta.title": "Pascal Robotics — Robotique mobile et Physical AI",
-    "meta.description": "Pascal Robotics intègre la robotique mobile, le Digital Twin et des logiciels sur mesure dans des solutions concrètes. Basé à Laval, France.",
+    "meta.title": "Pascal Robotics — Robotique mobile, Digital Twin & Physical AI",
+    "meta.description": "Pascal Robotics intègre robotique mobile et humanoïde, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Laval, France.",
     "skip": "Aller au contenu",
     "nav.aria": "Navigation principale",
     "lang.aria": "Langue",
-    "nav.approach": "Notre approche",
+    "nav.why": "Pourquoi",
     "nav.applications": "Applications",
-    "nav.about": "À propos",
+    "nav.method": "Méthode",
+    "nav.experience": "Parcours",
     "nav.contact": "Engager la conversation ↗",
     "logo.aria": "Logo Pascal Robotics",
     "logo.alt": "Logo Pascal Robotics",
-    "hero.kicker": "Robotique mobile et Physical AI",
+    "hero.kicker": "Robotique mobile & humanoïde · Digital Twin · Physical AI",
     "hero.title": "L’intelligence.<br><span class=\"soft\">Mise en mouvement.</span>",
-    "hero.lead": "Amener la robotique mobile dans le monde réel.",
-    "hero.sub": "Simulé. Intégré. Prêt pour votre mission.",
+    "hero.lead": "Robotique mobile et humanoïde, Digital Twin et Physical AI — intégrés pour le terrain industriel.",
+    "hero.sub": "Simulé. Intégré. Validé avant déploiement.",
     "hero.cta1": "Engager la conversation ↗",
-    "hero.cta2": "Voir ce que nous faisons ↓",
+    "hero.cta2": "Découvrir l’approche ↓",
     "hero.place": "Conçu à Laval, France",
     "approach.img1.alt": "Visuel système robotique avec six cartouches",
     "approach.img2.alt": "Robot humanoïde en déploiement dans un environnement logistique",
-    "apps.eyebrow": "02 / Applications",
+    "why.eyebrow": "01 / Pourquoi",
+    "why.title": "Pourquoi<br>Pascal Robotics&nbsp;?",
+    "why.intro": "Intégrer, simuler et prouver avant d’investir — plutôt que de partir d’un catalogue de machines.",
+    "why.body": "Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.",
+    "why.pill1": "Robotique mobile",
+    "why.pill2": "Humanoïdes",
+    "why.pill3": "Digital Twin",
+    "why.pill4": "Physical AI",
+    "why.pill5": "Intégration industrielle",
+    "apps.eyebrow": "03 / Applications",
     "apps.title": "Construit autour<br>du travail réel.",
     "apps.intro": "Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.",
     "apps.ind.eyebrow": "Industrie et opérations",
@@ -734,7 +1063,63 @@ const I18N = {
     "apps.demo.p2.body": "Construire le plus petit démonstrateur utile avant de déployer le système à plus grande échelle.",
     "apps.demo.p3.title": "Démonstrations et conférences",
     "apps.demo.p3.body": "Expliquer la technologie à travers des scénarios concrets et compréhensibles.",
-    "about.eyebrow": "03 / Expertise humaine",
+    "uc.eyebrow": "04 / Cas d’usage",
+    "uc.title": "Trois pistes<br>de POC / étude.",
+    "uc.intro": "Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.",
+    "uc.badge": "POC / Étude",
+    "uc.a.title": "Sécurité civile & intervention",
+    "uc.a.body": "Quadrupède instrumenté, cartographie et inspection dans des environnements sensibles ou dangereux — pour évaluer perception, mobilité et boucle opérateur avant un déploiement.",
+    "uc.b.title": "Industrie & humanoïdes",
+    "uc.b.body": "Apprentissage de gestes, manipulation, inspection et répétition de tâches — pour tester la faisabilité d’une assistance humanoïde sur un poste ou un flux réel.",
+    "uc.c.title": "Digital Twin industriel",
+    "uc.c.body": "Simuler usine, cellule ou robot avant le déploiement physique — pour réduire le risque, comparer des scénarios et préparer l’intégration sur le terrain.",
+    "method.eyebrow": "05 / Méthode",
+    "method.title": "Du besoin<br>au ROI mesurable.",
+    "method.intro": "Une trajectoire claire : besoin industriel → Digital Twin → simulation → Physical AI / apprentissage → robot réel → retour sur investissement.",
+    "method.s1.title": "Besoin industriel",
+    "method.s1.body": "Tâche, contraintes, critères de succès.",
+    "method.s2.title": "Digital Twin",
+    "method.s2.body": "Modéliser l’environnement et les actifs.",
+    "method.s3.title": "Simulation",
+    "method.s3.body": "Scénarios, risques, itérations rapides.",
+    "method.s4.title": "Physical AI",
+    "method.s4.body": "Apprentissage, VLA, politiques utiles.",
+    "method.s5.title": "Robot réel",
+    "method.s5.body": "Intégration, edge, validation terrain.",
+    "method.s6.title": "ROI",
+    "method.s6.body": "Preuve avant investissement lourd.",
+    "method.stack": "Stack illustrative (non obligatoire, approche agnostique) : OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / contrôleurs, Edge AI — choisis selon le cas d’usage, pas selon un catalogue figé.",
+    "arch.eyebrow": "06 / Architecture",
+    "arch.title": "Ouverte,<br>modulaire, souveraine.",
+    "arch.intro": "Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.",
+    "arch.c1.eyebrow": "Modularité",
+    "arch.c1.title": "Composer plutôt qu’imposer.",
+    "arch.c1.body": "Perception, simulation, contrôle, Edge AI et interfaces humaines s’assemblent par briques. Chaque module peut évoluer sans reconstruire l’ensemble du système.",
+    "arch.c2.eyebrow": "Souveraineté & ouverture",
+    "arch.c2.title": "Maîtriser ce qui compte.",
+    "arch.c2.body": "Privilégier des interfaces claires, des formats interopérables et une chaîne de décision transparente — pour garder la main sur données, modèles et déploiement.",
+    "exp.eyebrow": "07 / Parcours",
+    "exp.title": "Le chemin de<br>Pascal Gautier.",
+    "exp.intro": "Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.",
+    "exp.i1.when": "2001 – 2008",
+    "exp.i1.title": "CLARTÉ",
+    "exp.i1.body": "Réalité virtuelle, simulation et technologies immersives — construire des expériences où le réel et le numérique se rejoignent.",
+    "exp.i2.when": "2008",
+    "exp.i2.title": "Robot chef d’orchestre FANUC",
+    "exp.i2.body": "Conduite d’un robot industriel via motion capture — traduire le geste humain en mouvement machine.",
+    "exp.i3.when": "2010",
+    "exp.i3.title": "Le Robographe",
+    "exp.i3.body": "Robot industriel comme outil artistique — au sein de l’écosystème Laval Virtual.",
+    "exp.i4.when": "Années suivantes",
+    "exp.i4.title": "Robot lumière & robot caméra",
+    "exp.i4.body": "Poursuite des systèmes robotiques appliqués à la lumière et à la caméra — précision, trajectoires et contrôle.",
+    "exp.i5.when": "2023",
+    "exp.i5.title": "Robotique caméra — collaboration",
+    "exp.i5.body": "Déploiement de solutions de robotique caméra avec Electric Friends pour France Télévisions — jalon de parcours professionnel, non présenté comme référence commerciale Pascal Robotics.",
+    "exp.i6.when": "Aujourd’hui",
+    "exp.i6.title": "Pascal Robotics",
+    "exp.i6.body": "Robotique mobile, humanoïdes, Digital Twin et Physical AI — pour transformer un besoin industriel en preuve opérationnelle.",
+    "about.eyebrow": "08 / Expertise humaine",
     "about.title": "La technologie commence<br>par les personnes.",
     "about.intro": "Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?",
     "about.card.title": "Expertise humaine → intelligence robotique.",
@@ -744,7 +1129,25 @@ const I18N = {
     "about.t2": "Systèmes robotiques pour le dessin, la lumière et les applications de caméras de diffusion.",
     "about.t3.label": "AUJOURD’HUI",
     "about.t3": "Robotique mobile, Digital Twin et Physical AI.",
-    "contact.eyebrow": "04 / Engager la conversation",
+    "poc.eyebrow": "09 / POC",
+    "poc.title": "Vous avez un cas<br>d’usage robotique&nbsp;?",
+    "poc.intro": "Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.",
+    "poc.s1.title": "Analyse du besoin",
+    "poc.s1.body": "Clarifier la tâche, l’environnement, les contraintes et les critères de succès.",
+    "poc.s2.title": "Jumeau numérique",
+    "poc.s2.body": "Reconstruction ou création du Digital Twin du contexte d’exploitation.",
+    "poc.s3.title": "Sélection robot / capteurs / IA",
+    "poc.s3.body": "Choisir le robot, les capteurs et les modèles IA adaptés au cas d’usage.",
+    "poc.s4.title": "Simulation",
+    "poc.s4.body": "Tester scénarios, risques et hypothèses avant le terrain.",
+    "poc.s5.title": "POC",
+    "poc.s5.body": "Construire la plus petite preuve de concept utile et évaluable.",
+    "poc.s6.title": "Évaluation technique et économique",
+    "poc.s6.body": "Mesurer faisabilité, coûts, délais et retour attendu.",
+    "poc.s7.title": "Décision de déploiement",
+    "poc.s7.body": "Décider en connaissance de cause : déployer, itérer ou arrêter.",
+    "poc.cta": "Engager la conversation ↗",
+    "contact.eyebrow": "10 / Engager la conversation",
     "contact.title": "Explorons<br>votre cas d’usage.",
     "contact.body": "Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.",
     "contact.discuss": "Discuter d’un projet ↗",
@@ -758,32 +1161,42 @@ const I18N = {
     "modal.copied": "E-mail copié : ",
     "modal.mailtoSubject": "Pascal Robotics — Demande de projet",
     "footer.sig.alt": "Signature Pascal Robotics",
-    "footer.tagline": "Robotique mobile · Digital Twin · Physical AI",
+    "footer.tagline": "Robotique mobile & humanoïde · Digital Twin · Physical AI · Intégration",
     "footer.line": "© 2026 · Laval, France",
     "footer.contact": "Contact : <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a>"
   },
   en: {
-    "meta.title": "Pascal Robotics — Mobile Robotics & Physical AI",
-    "meta.description": "Pascal Robotics integrates mobile robotics, digital twins and custom software into real-world solutions. Based in Laval, France.",
+    "meta.title": "Pascal Robotics — Mobile Robotics, Digital Twin & Physical AI",
+    "meta.description": "Pascal Robotics integrates mobile and humanoid robotics, Digital Twin and Physical AI to turn an industrial need into an operational proof of concept. Based in Laval, France.",
     "skip": "Skip to content",
     "nav.aria": "Main navigation",
     "lang.aria": "Language",
-    "nav.approach": "Our approach",
+    "nav.why": "Why us",
     "nav.applications": "Applications",
-    "nav.about": "About",
+    "nav.method": "Method",
+    "nav.experience": "Path",
     "nav.contact": "Start a conversation ↗",
     "logo.aria": "Pascal Robotics logo",
     "logo.alt": "Pascal Robotics logo",
-    "hero.kicker": "Mobile robotics & physical AI",
+    "hero.kicker": "Mobile & humanoid robotics · Digital Twin · Physical AI",
     "hero.title": "Intelligence.<br><span class=\"soft\">Into motion.</span>",
-    "hero.lead": "Bringing mobile robotics to the real world.",
-    "hero.sub": "Simulated. Integrated. Ready for your mission.",
+    "hero.lead": "Mobile and humanoid robotics, Digital Twin and Physical AI — integrated for industrial ground truth.",
+    "hero.sub": "Simulated. Integrated. Validated before deployment.",
     "hero.cta1": "Start a conversation ↗",
-    "hero.cta2": "See what we do ↓",
+    "hero.cta2": "Discover the approach ↓",
     "hero.place": "Engineered in Laval, France",
     "approach.img1.alt": "Robotics system visual with six cartouches",
     "approach.img2.alt": "Humanoid robot deploying in a logistics environment",
-    "apps.eyebrow": "02 / Applications",
+    "why.eyebrow": "01 / Why",
+    "why.title": "Why<br>Pascal Robotics?",
+    "why.intro": "Integrate, simulate and prove before you invest — instead of starting from a machine catalogue.",
+    "why.body": "Pascal Robotics does not manufacture robots. We integrate mobile robotics, Digital Twin and Physical AI to turn an industrial need into an operational proof of concept. Our role is to connect the real world, simulation and artificial intelligence so a use case can be tested before hardware investment or industrial deployment.",
+    "why.pill1": "Mobile robotics",
+    "why.pill2": "Humanoids",
+    "why.pill3": "Digital Twin",
+    "why.pill4": "Physical AI",
+    "why.pill5": "Industrial integration",
+    "apps.eyebrow": "03 / Applications",
     "apps.title": "Built around<br>real-world work.",
     "apps.intro": "Pascal Robotics focuses on use cases where mobility, perception, simulation and human know-how can create operational value. Each project starts with the task, not with a catalogue.",
     "apps.ind.eyebrow": "Industry & operations",
@@ -804,7 +1217,63 @@ const I18N = {
     "apps.demo.p2.body": "Build the smallest useful demonstrator before scaling the system.",
     "apps.demo.p3.title": "Demonstrations & talks",
     "apps.demo.p3.body": "Explain the technology through concrete, understandable scenarios.",
-    "about.eyebrow": "03 / Human expertise",
+    "uc.eyebrow": "04 / Use cases",
+    "uc.title": "Three POC / study<br>tracks.",
+    "uc.intro": "Exploration frames — clearly labeled as proofs of concept or studies, not as contracted client projects.",
+    "uc.badge": "POC / Study",
+    "uc.a.title": "Civil security & intervention",
+    "uc.a.body": "Instrumented quadruped, mapping and inspection in sensitive or hazardous environments — to assess perception, mobility and the operator loop before deployment.",
+    "uc.b.title": "Industry & humanoids",
+    "uc.b.body": "Gesture learning, manipulation, inspection and task repetition — to test whether humanoid assistance is feasible on a real workstation or flow.",
+    "uc.c.title": "Industrial Digital Twin",
+    "uc.c.body": "Simulate a plant, cell or robot before physical deployment — to reduce risk, compare scenarios and prepare field integration.",
+    "method.eyebrow": "05 / Method",
+    "method.title": "From need<br>to measurable ROI.",
+    "method.intro": "A clear path: industrial need → Digital Twin → simulation → Physical AI / learning → real robot → return on investment.",
+    "method.s1.title": "Industrial need",
+    "method.s1.body": "Task, constraints, success criteria.",
+    "method.s2.title": "Digital Twin",
+    "method.s2.body": "Model the environment and assets.",
+    "method.s3.title": "Simulation",
+    "method.s3.body": "Scenarios, risks, fast iteration.",
+    "method.s4.title": "Physical AI",
+    "method.s4.body": "Learning, VLA, useful policies.",
+    "method.s5.title": "Real robot",
+    "method.s5.body": "Integration, edge, field validation.",
+    "method.s6.title": "ROI",
+    "method.s6.body": "Evidence before heavy investment.",
+    "method.stack": "Illustrative stack (not mandatory — stack-agnostic approach): OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / controllers, Edge AI — selected for the use case, not a fixed catalogue.",
+    "arch.eyebrow": "06 / Architecture",
+    "arch.title": "Open,<br>modular, sovereign.",
+    "arch.intro": "An architecture designed for industrial constraints, stack choices and data stewardship — without unnecessary lock-in.",
+    "arch.c1.eyebrow": "Modularity",
+    "arch.c1.title": "Compose, don’t impose.",
+    "arch.c1.body": "Perception, simulation, control, Edge AI and human interfaces assemble as building blocks. Each module can evolve without rebuilding the whole system.",
+    "arch.c2.eyebrow": "Sovereignty & openness",
+    "arch.c2.title": "Keep control of what matters.",
+    "arch.c2.body": "Prefer clear interfaces, interoperable formats and a transparent decision chain — so you retain control over data, models and deployment.",
+    "exp.eyebrow": "07 / Path",
+    "exp.title": "Pascal Gautier’s<br>path.",
+    "exp.intro": "A personal chronology — immersive tech, robotics and imaging — that informs Pascal Robotics today. This is not a commercial client track record.",
+    "exp.i1.when": "2001 – 2008",
+    "exp.i1.title": "CLARTÉ",
+    "exp.i1.body": "Virtual reality, simulation and immersive technologies — building experiences where real and digital meet.",
+    "exp.i2.when": "2008",
+    "exp.i2.title": "FANUC conductor robot",
+    "exp.i2.body": "Driving an industrial robot via motion capture — translating human gesture into machine motion.",
+    "exp.i3.when": "2010",
+    "exp.i3.title": "Le Robographe",
+    "exp.i3.body": "Industrial robot as an artistic tool — within the Laval Virtual ecosystem.",
+    "exp.i4.when": "Following years",
+    "exp.i4.title": "Light robot & camera robot",
+    "exp.i4.body": "Continued robotic systems for light and camera — precision, trajectories and control.",
+    "exp.i5.when": "2023",
+    "exp.i5.title": "Camera robotics — collaboration",
+    "exp.i5.body": "Deployment of camera robotics solutions with Electric Friends for France Télévisions — a career milestone, not presented as a Pascal Robotics commercial client reference.",
+    "exp.i6.when": "Today",
+    "exp.i6.title": "Pascal Robotics",
+    "exp.i6.body": "Mobile robotics, humanoids, Digital Twin and Physical AI — turning an industrial need into operational proof.",
+    "about.eyebrow": "08 / Human expertise",
     "about.title": "Technology starts<br>with people.",
     "about.intro": "Pascal Robotics is founded by Pascal Gautier, with a career spanning immersive technologies, robotics and image systems. His work has repeatedly focused on the same question: how can human expertise be captured, translated and made useful through machines?",
     "about.card.title": "Human expertise → robot intelligence.",
@@ -813,8 +1282,26 @@ const I18N = {
     "about.t2.label": "THEN",
     "about.t2": "Robotic systems for drawing, light and broadcast camera applications.",
     "about.t3.label": "TODAY",
-    "about.t3": "Mobile robotics, digital twins and Physical AI.",
-    "contact.eyebrow": "04 / Start a conversation",
+    "about.t3": "Mobile robotics, Digital Twin and Physical AI.",
+    "poc.eyebrow": "09 / POC",
+    "poc.title": "Do you have a<br>robotics use case?",
+    "poc.intro": "A simple path from idea to useful proof — without rushing hardware investment.",
+    "poc.s1.title": "Need analysis",
+    "poc.s1.body": "Clarify the task, environment, constraints and success criteria.",
+    "poc.s2.title": "Digital Twin",
+    "poc.s2.body": "Rebuild or create the Digital Twin of the operating context.",
+    "poc.s3.title": "Robot / sensors / AI selection",
+    "poc.s3.body": "Select the robot, sensors and AI models suited to the use case.",
+    "poc.s4.title": "Simulation",
+    "poc.s4.body": "Test scenarios, risks and hypotheses before going to the field.",
+    "poc.s5.title": "POC",
+    "poc.s5.body": "Build the smallest useful, evaluable proof of concept.",
+    "poc.s6.title": "Technical and economic assessment",
+    "poc.s6.body": "Measure feasibility, cost, timeline and expected return.",
+    "poc.s7.title": "Deployment decision",
+    "poc.s7.body": "Decide with evidence: deploy, iterate or stop.",
+    "poc.cta": "Start a conversation ↗",
+    "contact.eyebrow": "10 / Start a conversation",
     "contact.title": "Let’s explore<br>your use case.",
     "contact.body": "Have a task, environment or robotics question in mind? Contact Pascal Robotics to discuss what can realistically be simulated, integrated and tested.",
     "contact.discuss": "Discuss a project ↗",
@@ -828,7 +1315,7 @@ const I18N = {
     "modal.copied": "Email copied: ",
     "modal.mailtoSubject": "Pascal Robotics — Project enquiry",
     "footer.sig.alt": "Pascal Robotics signature",
-    "footer.tagline": "Mobile Robotics · Digital Twin · Physical AI",
+    "footer.tagline": "Mobile & humanoid robotics · Digital Twin · Physical AI · Integration",
     "footer.line": "© 2026 · Laval, France",
     "footer.contact": "Contact: <a href=\"mailto:pgautier@pascal-robotics.fr\">pgautier@pascal-robotics.fr</a> · <a href=\"tel:+33659590369\">+33 6 59 59 03 69</a>"
   }
