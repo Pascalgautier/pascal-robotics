@@ -688,7 +688,7 @@ a, p, span, div { overflow-wrap:break-word; }
   position:absolute;
   inset:0;
   background-size:cover;
-  background-position:center 48%;
+  background-position:center 58%;
   background-repeat:no-repeat;
   z-index:0;
   transform:scale(1.02);
@@ -707,7 +707,7 @@ a, p, span, div { overflow-wrap:break-word; }
   position:relative;
   z-index:2;
   width:100%;
-  padding:20px 0 72px;
+  padding:6px 0 80px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -720,18 +720,18 @@ a, p, span, div { overflow-wrap:break-word; }
 .hero-dt-logo{
   display:flex;
   justify-content:center;
-  margin:4px 0 12px;
+  margin:0 0 8px;
 }
 .hero-dt-logo img{
-  width:min(140px,36vw);
+  width:min(110px,30vw);
   height:auto;
   display:block;
   filter:drop-shadow(0 8px 22px rgba(0,0,0,.4));
   opacity:.92;
 }
 @media (max-width: 760px) {
-  .hero-dt-logo{margin:0 0 12px}
-  .hero-dt-logo img{width:min(112px,40vw)}
+  .hero-dt-logo{margin:0 0 6px}
+  .hero-dt-logo img{width:min(96px,34vw)}
 }
 
 .hero-dt-content{
@@ -743,16 +743,16 @@ a, p, span, div { overflow-wrap:break-word; }
 }
 .hero-dt-content .eyebrow{
   color:var(--blue);
-  margin-bottom:10px;
-  font-size:11px;
+  margin-bottom:6px;
+  font-size:10px;
   letter-spacing:.14em;
   text-transform:uppercase;
 }
 .hero-dt-content h1{
-  font-size:clamp(32px,4.2vw,56px);
-  line-height:1.05;
+  font-size:clamp(28px,3.6vw,48px);
+  line-height:1.02;
   letter-spacing:-.04em;
-  margin:0 0 12px;
+  margin:0 0 8px;
   font-weight:900;
   color:#fff;
   text-shadow:0 2px 20px rgba(0,0,0,.4);
@@ -761,16 +761,22 @@ a, p, span, div { overflow-wrap:break-word; }
   color:var(--blue);
 }
 .hero-dt-content .lead{
-  margin:0 auto 18px;
-  max-width:520px;
+  margin:0 auto 12px;
+  max-width:480px;
   color:#e2eaef;
-  font-size:clamp(14px,1.35vw,17px);
-  line-height:1.4;
+  font-size:clamp(13px,1.2vw,15px);
+  line-height:1.35;
   text-shadow:0 1px 10px rgba(0,0,0,.35);
 }
 .hero-dt-content .actions{
   justify-content:center;
   flex-wrap:wrap;
+  gap:10px;
+}
+.hero-dt-content .actions .btn{
+  min-height:42px;
+  padding:0 16px;
+  font-size:13px;
 }
 .hero-dt-content .btn:not(.primary){
   background:rgba(8,14,18,.45);
@@ -826,7 +832,7 @@ a, p, span, div { overflow-wrap:break-word; }
     align-items:stretch;
     padding:0;
   }
-  .hero-dt-inner{padding:14px 0 56px;justify-content:flex-start}
+  .hero-dt-inner{padding:4px 0 64px;justify-content:flex-start}
   .hero-dt-bg{background-position:58% 40%}
   .hero-dt-overlay{
     background:
