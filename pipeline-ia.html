@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#05070c">
 <meta name="robots" content="noindex,nofollow">
 <title>Pascal Robotics — Pipeline IA · Francis × MCT</title>
-<meta name="description" content="Document de travail (accès restreint) : pipeline vidéo IA — workflows créatifs Francis Frankel × infrastructure GPU MCT. Pascal Robotics.">
+<meta name="description" content="Document de travail (accès restreint) : du workflow Seedance / Higgsfield de Francis vers une chaîne IA ouverte et maîtrisée — orchestrée par Pascal Robotics, mesurée avant toute infra MCT.">
 <link rel="stylesheet" href="assets/pipeline-ia/pipeline-ia.css">
 </head>
 <body>
@@ -39,7 +39,7 @@
 </nav>
 
 <main id="main">
-  <!-- GATE -->
+  <!-- GATE — password unchanged: Francis2026 / sessionStorage pr_francis_mct_v1 -->
   <section id="gate" class="gate" aria-labelledby="gate-title">
     <div class="wrap">
       <div class="gate-card">
@@ -61,261 +61,455 @@
 
   <!-- DOCUMENT -->
   <div id="doc" class="doc" hidden>
-    <!-- A. Hero -->
+
+    <!-- ========== HERO ========== -->
     <header class="hero" id="top">
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="hero-particles" aria-hidden="true"></div>
+      <div class="hero-flow-bg" aria-hidden="true">
+        <span>Création</span><span class="dot">→</span>
+        <span>Modèles</span><span class="dot">→</span>
+        <span>Orchestration</span><span class="dot">→</span>
+        <span>Compute</span>
+      </div>
       <div class="wrap">
         <div class="badge-row reveal">
-          <span class="badge"><em>Document de travail</em> · Vision / POC</span>
-          <span class="badge">Francis × MCT</span>
+          <span class="badge"><em>Document de travail</em></span>
+          <span class="badge">POC</span>
           <span class="badge">Non industrialisé</span>
+          <span class="badge">Non contractuel</span>
         </div>
-        <p class="section-kicker reveal reveal-delay-1">Pipeline vidéo IA · Créatif × Infrastructure</p>
-        <h1 class="reveal reveal-delay-1">Du workflow créatif<br>à l’<span class="accent">infrastructure souveraine.</span></h1>
-        <p class="lead reveal reveal-delay-2">Relier l’exigence créative de <strong>Francis Frankel</strong> — workflows vidéo IA haut de gamme — à l’infrastructure GPU privée / hébergée de <strong>Nicolas Boulinguiez / MCT</strong>, pour un pipeline plus maîtrisé, souverain et conscient des coûts.</p>
-        <p class="sub reveal reveal-delay-2">Une expérimentation structurée. Pas une industrialisation déjà livrée — une trajectoire vers la preuve.</p>
+        <p class="section-kicker reveal reveal-delay-1">Pipeline vidéo IA · Francis × Pascal Robotics × MCT</p>
+        <h1 class="reveal reveal-delay-1">Du workflow Seedance&nbsp;/&nbsp;Higgsfield de Francis<br>à une <span class="accent">chaîne IA ouverte et maîtrisée.</span></h1>
+
+        <div class="hero-triad reveal reveal-delay-2" role="group" aria-label="Principe stratégique">
+          <p><strong>Francis</strong> crée.</p>
+          <p><strong>Pascal Robotics</strong> orchestre.</p>
+          <p><strong>MCT</strong> fournit la puissance de calcul.</p>
+        </div>
+
+        <p class="lead reveal reveal-delay-2">Deuxième chemin en parallèle — pas un remplacement. Sur un projet type, Francis consomme environ <strong>6&nbsp;000 crédits</strong>. Le POC loue d’abord du GPU à l’heure, mesure qualité / vitesse / échecs / coût, puis — <em>si validé</em> — reporte la même architecture sur une infra GPU MCT.</p>
+        <p class="sub reveal reveal-delay-2">Document de travail · POC · non industrialisé · non contractuel. Aucun partenariat signé, aucune capacité MCT déjà live, aucun ROI annoncé.</p>
+
         <div class="hero-ctas reveal reveal-delay-3">
-          <a class="btn-primary" href="#constat">Comprendre le projet</a>
+          <a class="btn-primary" href="#workflow">Voir le workflow actuel</a>
+          <a class="btn-ghost" href="#poc">Comprendre le POC</a>
           <a class="btn-ghost" href="#architecture">Voir l’architecture</a>
         </div>
-        <div class="notice reveal reveal-delay-3">
-          <strong>Document évolutif, volontairement non figé.</strong>
-          Cette page décrit une vision et des pistes de POC. Elle ne revendique ni clients commerciaux, ni partenariats officiels, ni ROI industrialisé.
+
+        <div class="principle-strip reveal reveal-delay-3" aria-label="Principe lisible en moins de 30 secondes">
+          <div class="principle-flow">
+            <span class="pf-node creative">Francis<br><small>création + workflow</small></span>
+            <span class="pf-arrow" aria-hidden="true">→</span>
+            <span class="pf-node orch">Pascal Robotics<br><small>orchestration · intégration · benchmark</small></span>
+            <span class="pf-arrow" aria-hidden="true">→</span>
+            <span class="pf-node models">Modèles<br><small>Seedance · WAN · LTX · autres</small></span>
+            <span class="pf-arrow" aria-hidden="true">→</span>
+            <span class="pf-node compute">GPU<br><small>loué d’abord · MCT ensuite ?</small></span>
+          </div>
+          <p class="principle-mantra">Le modèle peut changer. L’infrastructure peut changer. Le workflow créatif reste. L’orchestration Pascal Robotics fait le lien.</p>
         </div>
+
         <div class="hero-art reveal reveal-delay-4" aria-hidden="true">
-          <img src="assets/pipeline-ia/hero-flow.svg" alt="" width="1200" height="320" loading="eager">
+          <img src="assets/pipeline-ia/hero-flow.svg" alt="" width="1200" height="280" loading="eager">
         </div>
       </div>
     </header>
 
     <div class="wrap">
-      <!-- B. Le constat -->
-      <section class="section" id="constat">
-        <p class="section-kicker reveal">Constat</p>
-        <h2 class="reveal">Pourquoi le pipeline 100&nbsp;% cloud externe montre ses limites.</h2>
-        <p class="reveal">Les workflows créatifs vidéo IA accélèrent la production — mais exposent aussi des frictions structurelles dès que l’on itère beaucoup, qu’on traite des volumes sensibles, ou qu’on veut garder la main sur la chaîne.</p>
-        <div class="grid-4">
+
+      <!-- ========== 1. WORKFLOW RÉEL FRANCIS ========== -->
+      <section class="section" id="workflow">
+        <p class="section-kicker reveal">01 · Workflow réel</p>
+        <h2 class="reveal">Le workflow actuel de Francis — référence, pas cible à détruire.</h2>
+        <p class="reveal">Francis produit déjà avec une chaîne exigeante. Les outils ne sont pas le problème : c’est la <strong>dépendance économique et technique</strong> à une infra facturée au crédit, dès qu’on itère beaucoup.</p>
+
+        <div class="kpi-hero reveal" aria-label="Indicateur clé">
+          <div class="kpi-num">≈&nbsp;6&nbsp;000</div>
+          <div class="kpi-label">crédits consommés<br>sur un projet</div>
+          <p class="kpi-note">Plus d’itération = plus de crédits. La qualité créative se paie en volume de génération.</p>
+        </div>
+
+        <div class="tool-grid">
+          <article class="card reveal"><h3>Seedance 2.5</h3><p>Moteur de génération vidéo — cœur du workflow actuel.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Higgsfield</h3><p>Environnement / plateforme autour de la génération.</p></article>
+          <article class="card reveal reveal-delay-2"><h3>KREA</h3><p>Exploration visuelle et itérations complémentaires.</p></article>
+          <article class="card reveal reveal-delay-3"><h3>DaVinci Resolve</h3><p>Post-production, assemblage, finition.</p></article>
+          <article class="card reveal"><h3>Workflows &amp; prompts</h3><p>Recettes, agents d’assistance, expérience accumulée.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Itérations</h3><p>Beaucoup d’essais — c’est précisément ce qui fait monter la facture crédits.</p></article>
+        </div>
+
+        <div class="notice reveal" style="margin-top:22px">
+          <strong>Lecture importante.</strong>
+          Seedance, Higgsfield et le reste forment le <em>workflow de référence</em>. Le POC ne prétend pas qu’ils sont « mauvais » — il mesure s’il existe un second chemin plus ouvert, mesurable et progressivement maîtrisé.
+        </div>
+      </section>
+
+      <!-- ========== 2. PAS UN REMPLACEMENT ========== -->
+      <section class="section" id="pas-remplacement">
+        <p class="section-kicker reveal">02 · Positionnement</p>
+        <h2 class="reveal">Ce n’est pas un remplacement de Seedance.</h2>
+        <p class="reveal">Le POC <strong>ne demande pas</strong> à Francis d’abandonner Seedance, Higgsfield ni son environnement actuel. Il construit une <strong>deuxième voie en parallèle</strong>. Seedance / Higgsfield restent le <strong>benchmark de référence</strong> du POC.</p>
+
+        <div class="dual-chains">
+          <article class="chain chain-current reveal">
+            <p class="chain-kicker">Chaîne actuelle</p>
+            <h3>Workflow Francis</h3>
+            <ol class="chain-steps">
+              <li>Francis</li>
+              <li>Higgsfield</li>
+              <li>Seedance 2.5</li>
+              <li>Crédits</li>
+              <li>Sélection</li>
+              <li>DaVinci</li>
+            </ol>
+          </article>
+          <div class="chain-vs reveal reveal-delay-1" aria-hidden="true">
+            <span>//</span>
+            <small>en parallèle</small>
+          </div>
+          <article class="chain chain-exp reveal reveal-delay-2">
+            <p class="chain-kicker">Chaîne expérimentale</p>
+            <h3>POC Pascal Robotics</h3>
+            <ol class="chain-steps">
+              <li>Francis</li>
+              <li>Pascal Robotics</li>
+              <li>Orchestration</li>
+              <li>Modèle open-weight</li>
+              <li>GPU loué</li>
+              <li>Mesure Q / T / €</li>
+              <li>DaVinci / workflow Francis</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <!-- ========== 3. ORCHESTRATION ========== -->
+      <section class="section" id="orchestration">
+        <p class="section-kicker reveal">03 · Couche Pascal Robotics</p>
+        <h2 class="reveal">Orchestrateur · intégrateur · pilote de POC — pas un middleman.</h2>
+        <p class="reveal">Pascal Robotics n’est ni réalisateur, ni datacenter, ni nouveau modèle vidéo. La couche vise à <strong>relier</strong> création, modèles et compute — sans verrouiller le créateur à un seul vendeur.</p>
+
+        <blockquote class="quote-block reveal">
+          La valeur n’est pas seulement dans le modèle ou le GPU : elle est dans l’orchestration des modèles, de l’infra et des workflows créatifs — sans lock-in à un fournisseur unique.
+        </blockquote>
+
+        <p class="reveal orch-aspirational">Capacités <strong>visées</strong> par la couche (cible POC / trajectoire — pas un produit fini) :</p>
+        <ul class="cap-grid">
+          <li class="reveal">Choix de modèle</li>
+          <li class="reveal reveal-delay-1">Routage</li>
+          <li class="reveal reveal-delay-2">Lancement des générations</li>
+          <li class="reveal reveal-delay-3">Files d’attente compute</li>
+          <li class="reveal">Versions</li>
+          <li class="reveal reveal-delay-1">Paramètres</li>
+          <li class="reveal reveal-delay-2">Prompts</li>
+          <li class="reveal reveal-delay-3">Retries</li>
+          <li class="reveal">Stockage</li>
+          <li class="reveal reveal-delay-1">Logs</li>
+          <li class="reveal reveal-delay-2">Comparaison de résultats</li>
+          <li class="reveal reveal-delay-3">Mesure du temps GPU</li>
+          <li class="reveal">Mesure des coûts</li>
+          <li class="reveal reveal-delay-1">Suivi des échecs</li>
+          <li class="reveal reveal-delay-2">Validation humaine</li>
+          <li class="reveal reveal-delay-3">Automatisation</li>
+          <li class="reveal">API</li>
+          <li class="reveal reveal-delay-1">Basculement de modèle (optionnel)</li>
+        </ul>
+
+        <div class="orch-center reveal" aria-hidden="true">
+          <img src="assets/pipeline-ia/orch-center.svg" alt="" width="900" height="320" loading="lazy">
+        </div>
+      </section>
+
+      <!-- ========== 4. TABLEAU 3 ACTEURS ========== -->
+      <section class="section" id="acteurs">
+        <p class="section-kicker reveal">04 · Acteurs</p>
+        <h2 class="reveal">Trois acteurs. Trois apports. Une trajectoire de POC.</h2>
+        <div class="table-scroll reveal" role="region" aria-label="Tableau des acteurs" tabindex="0">
+          <table class="data-table actors-table">
+            <thead>
+              <tr>
+                <th scope="col">Acteur</th>
+                <th scope="col">Apport</th>
+                <th scope="col">Rôle dans le POC</th>
+                <th scope="col">Valeur recherchée</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Francis</th>
+                <td>Création, exigence qualitative, workflows Seedance / Higgsfield / KREA / DaVinci, prompts, agents, expérience</td>
+                <td>Cas d’usage réel et barre créative de référence — il continue à produire avec ses outils</td>
+                <td>Disposer d’un second chemin mesurable, sans abandonner ce qui marche déjà</td>
+              </tr>
+              <tr>
+                <th scope="row">Pascal Robotics</th>
+                <td>Orchestration, intégration, pilotage du POC, couche de connexion modèles ↔ infra ↔ workflow</td>
+                <td>Construire et opérer la couche expérimentale ; comparer, documenter, itérer</td>
+                <td>Prouver qu’une chaîne ouverte, portable et mesurable est tenable — sans se poser en middleman commercial</td>
+              </tr>
+              <tr>
+                <th scope="row">MCT <span class="th-sub">(Nicolas)</span></th>
+                <td>Puissance de calcul GPU (cible)</td>
+                <td><strong>Pas nécessairement en Phase&nbsp;1</strong> — phase suivante si le POC est concluant</td>
+                <td>Décider d’investir (ou non) sur des mesures concrètes : qualité, coût, fiabilité, charge réelle</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== 5. TROIS PHASES ========== -->
+      <section class="section" id="poc">
+        <p class="section-kicker reveal">05 · Trajectoire</p>
+        <h2 class="reveal">Trois phases. Une seule question : peut-on comparer, puis éventuellement exploiter&nbsp;?</h2>
+        <div class="phases" aria-label="Frise des trois phases">
+          <article class="phase phase-1 reveal">
+            <div class="phase-num">Phase 1</div>
+            <h3>Aujourd’hui</h3>
+            <p>Production avec les outils de Francis, crédits cloud, ≈&nbsp;6&nbsp;000 crédits / projet.</p>
+            <ul>
+              <li>Seedance / Higgsfield / KREA / DaVinci</li>
+              <li>Itération intensive</li>
+              <li>Économie au crédit</li>
+            </ul>
+            <span class="phase-tag">Produire</span>
+          </article>
+          <article class="phase phase-2 reveal reveal-delay-1">
+            <div class="phase-num">Phase 2</div>
+            <h3>POC Pascal Robotics</h3>
+            <p>Conduit <strong>par</strong> Pascal Robotics. <strong>Pas hébergé chez MCT au départ.</strong> Location de GPU à l’heure auprès d’un cloud GPU.</p>
+            <ul>
+              <li>Tester WAN, LTX et autres modèles open-weight pertinents</li>
+              <li>Mesurer : qualité, temps de gen, coût GPU, nb de gens, taux d’échec, taux de rendu utilisable, retries, temps humain, stockage, coût / séquence utilisable</li>
+              <li>Objectif : <strong>comparer</strong></li>
+            </ul>
+            <span class="phase-tag accent">Comparer</span>
+          </article>
+          <article class="phase phase-3 reveal reveal-delay-2">
+            <div class="phase-num">Phase 3</div>
+            <h3>Si validé</h3>
+            <p>Même orchestration, exécution sur infra GPU MCT. Le moteur d’orchestration reste ; l’infra d’exécution change.</p>
+            <ul>
+              <li>Portabilité de l’architecture</li>
+              <li>Mesure continue</li>
+              <li>Objectif : <strong>exploiter</strong></li>
+            </ul>
+            <span class="phase-tag">Exploiter</span>
+          </article>
+        </div>
+      </section>
+
+      <!-- ========== 6. TABLEAU COMPARAISON ========== -->
+      <section class="section" id="comparaison">
+        <p class="section-kicker reveal">06 · Comparaison</p>
+        <h2 class="reveal">Aujourd’hui · POC · Cible si validation.</h2>
+        <div class="table-scroll reveal" role="region" aria-label="Tableau de comparaison" tabindex="0">
+          <table class="data-table compare-table">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Aujourd’hui</th>
+                <th scope="col">POC Pascal Robotics</th>
+                <th scope="col">Cible si validation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Créatif</th>
+                <td>Francis + outils actuels (Seedance / Higgsfield / KREA / DaVinci)</td>
+                <td>Francis conserve son exigence et son workflow de référence ; le POC tourne en parallèle</td>
+                <td>Workflow créatif inchangé dans l’esprit — la barre reste celle de Francis</td>
+              </tr>
+              <tr>
+                <th scope="row">Génération</th>
+                <td>Seedance 2.5 via Higgsfield, facturation au crédit</td>
+                <td>Modèles open-weight (WAN, LTX, autres) + possibilité de routage hybride vers Seedance quand c’est le meilleur choix</td>
+                <td>Même logique de modèles, exécutée sur infra GPU MCT</td>
+              </tr>
+              <tr>
+                <th scope="row">Économie</th>
+                <td>≈ 6&nbsp;000 crédits / projet ; coût lié au volume d’itération</td>
+                <td>Coût GPU / heure + coût par séquence utilisable — à mesurer</td>
+                <td>Coût d’infra maîtrisé et traçable ; décision fondée sur les mesures du POC</td>
+              </tr>
+              <tr>
+                <th scope="row">Infrastructure</th>
+                <td>Cloud externe facturé au crédit</td>
+                <td>GPU loué à l’heure (cloud GPU) — <em>pas MCT en Phase&nbsp;1</em></td>
+                <td>Infrastructure GPU MCT</td>
+              </tr>
+              <tr>
+                <th scope="row">Orchestration</th>
+                <td>Principalement dans les outils / manuelle</td>
+                <td>Couche Pascal Robotics (routing, files, versions, retries, logs, mesure…)</td>
+                <td>Même moteur d’orchestration — seule l’exécution change</td>
+              </tr>
+              <tr>
+                <th scope="row">Mesure</th>
+                <td>Vision partielle (crédits, ressenti qualité)</td>
+                <td>Qualité, temps, échecs, retries, stockage, coût / séquence utilisable</td>
+                <td>Mesure continue en exploitation</td>
+              </tr>
+              <tr>
+                <th scope="row">Objectif</th>
+                <td>Produire</td>
+                <td>Comparer</td>
+                <td>Exploiter</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== 7. ARCHITECTURE ========== -->
+      <section class="section" id="architecture">
+        <p class="section-kicker reveal">07 · Architecture</p>
+        <h2 class="reveal">Le modèle peut changer. Le serveur peut changer. L’orchestration reste.</h2>
+        <p class="reveal">Schéma de principe pour le POC — rôles et interfaces à confirmer au fil des essais. Pas un produit industrialisé.</p>
+
+        <div class="arch-grand reveal">
+          <img src="assets/pipeline-ia/arch-grand.svg" alt="Architecture : workflow Francis à gauche, orchestration Pascal Robotics au centre, modèles open-weight, GPU loué puis éventuellement MCT" width="1100" height="640" loading="lazy">
+        </div>
+
+        <div class="mantra-row reveal">
+          <span>Le modèle peut changer</span>
+          <span>Le serveur peut changer</span>
+          <span>L’orchestration reste</span>
+        </div>
+      </section>
+
+      <!-- ========== 8. MOTEUR OUVERT / HYBRIDE ========== -->
+      <section class="section" id="hybride">
+        <p class="section-kicker reveal">08 · Modèles</p>
+        <h2 class="reveal">Open-weight, pas « open source » au sens large. Pipeline hybride.</h2>
+        <p class="reveal">On parle de <strong>modèles ouverts / open-weight</strong> (WAN, LTX, autres pertinents) — pas d’un blanket « open source ». Le pipeline cible est <strong>hybride</strong> : il peut encore router vers Seedance lorsque c’est le meilleur choix pour un shot donné.</p>
+        <div class="grid-3">
           <article class="card reveal">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M17 6.5c0-1.5-2.2-2.5-5-2.5S7 5 7 6.5 9.2 9 12 9s5 1.2 5 2.5-2.2 2.5-5 2.5-5 1-5 2.5 2.2 2.5 5 2.5 5-1 5-2.5"/></svg>
-            </div>
-            <h3>Coûts</h3>
-            <p>Chaque itération de génération vidéo IA consomme du compute. À volume créatif élevé, la facture cloud externe devient difficile à anticiper et à piloter.</p>
+            <h3>Open-weight</h3>
+            <p>Poids accessibles, exécutables sur GPU loué puis éventuellement MCT — portabilité et maîtrise technique.</p>
           </article>
           <article class="card reveal reveal-delay-1">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-            </div>
-            <h3>Dépendance</h3>
-            <p>S’adosser uniquement à des plateformes externes, c’est accepter leurs files d’attente, leurs changements de pricing et leurs contraintes de souveraineté des données.</p>
+            <h3>Routage hybride</h3>
+            <p>Example : open-weight pour une série d’essais ; Seedance pour un plan où le benchmark reste supérieur.</p>
           </article>
           <article class="card reveal reveal-delay-2">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
-            </div>
-            <h3>Complexité</h3>
-            <p>Brief, modèles, rendus, versions, stockage, post-prod : la chaîne se fragmente. Sans orchestration, l’équipe créative perd du temps à « coller » les briques.</p>
+            <h3>Anti lock-in</h3>
+            <p>L’orchestration évite qu’un seul modèle ou une seule infra devienne une dépendance structurelle.</p>
           </article>
-          <article class="card reveal reveal-delay-3">
-            <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c2-6 14-6 16 0"/><path d="M4 12c2 6 14 6 16 0"/><circle cx="12" cy="12" r="2.5"/></svg>
-            </div>
-            <h3>Itération</h3>
-            <p>Le vrai luxe créatif, c’est itérer vite. Quand le coût et la latence bloquent les essais, la qualité stagne — même avec les meilleurs modèles.</p>
+        </div>
+        <div class="notice reveal" style="margin-top:20px">
+          <strong>Pas de guerre de modèles.</strong>
+          Aucune affirmation que WAN / LTX égalent ou dépassent Seedance. Higgsfield / Seedance ne sont pas dénigrés — ils restent le benchmark.
+        </div>
+      </section>
+
+      <!-- ========== 9. PORTABILITÉ (souveraineté adoucie) ========== -->
+      <section class="section" id="portabilite">
+        <p class="section-kicker reveal">09 · Portabilité &amp; maîtrise</p>
+        <h2 class="reveal">D’abord : portabilité, maîtrise, mesure. La souveraineté stricte viendra — si elle vient — plus tard.</h2>
+        <p class="reveal">Un POC sur GPU loué, ce n’est pas encore de la souveraineté territoriale. C’est apprendre à <strong>porter</strong> la chaîne, à la <strong>maîtriser</strong>, à en <strong>mesurer</strong> l’économie, à rester <strong>modulaire</strong> et <strong>indépendant d’un modèle unique</strong>, et à pouvoir <strong>changer d’infra</strong>. Une souveraineté plus forte ne devient pertinente que si / quand le pipeline tourne sur une infra localisée MCT.</p>
+        <div class="soft-pillars">
+          <article class="pillar reveal"><h3>Portabilité</h3><p>Même orchestration, autre exécution.</p></article>
+          <article class="pillar reveal reveal-delay-1"><h3>Maîtrise</h3><p>Comprendre logs, files, échecs, versions.</p></article>
+          <article class="pillar reveal reveal-delay-2"><h3>Mesure économique</h3><p>€ / séquence utilisable, pas seulement des crédits.</p></article>
+          <article class="pillar reveal reveal-delay-3"><h3>Modularité</h3><p>Modèle et serveur interchangeables.</p></article>
+        </div>
+      </section>
+
+      <!-- ========== 10. CE QUE NOUS DEVONS PROUVER ========== -->
+      <section class="section" id="prouver">
+        <p class="section-kicker reveal">10 · Preuves à apporter</p>
+        <h2 class="reveal">Ce que nous devons prouver.</h2>
+        <p class="reveal">Questions ouvertes — le POC existe pour y répondre, pas pour les présumer.</p>
+        <div class="q-grid">
+          <article class="q-card reveal">
+            <div class="q-num">01</div>
+            <h3>Qualité utilisable&nbsp;?</h3>
+            <p>Un modèle open-weight (WAN, LTX, autre) peut-il produire des séquences que Francis juge utilisables face au benchmark Seedance / Higgsfield&nbsp;?</p>
+          </article>
+          <article class="q-card reveal reveal-delay-1">
+            <div class="q-num">02</div>
+            <h3>Coût réel&nbsp;?</h3>
+            <p>Quel est le coût GPU par séquence <em>utilisable</em> (pas seulement par génération brute) sur du compute loué à l’heure&nbsp;?</p>
+          </article>
+          <article class="q-card reveal reveal-delay-2">
+            <div class="q-num">03</div>
+            <h3>Profil opérationnel&nbsp;?</h3>
+            <p>Temps de génération, taux d’échec, retries, temps humain, stockage — quel est le profil réel de la chaîne&nbsp;?</p>
+          </article>
+          <article class="q-card reveal">
+            <div class="q-num">04</div>
+            <h3>Changement sans casse&nbsp;?</h3>
+            <p>L’orchestration permet-elle de changer de modèle ou d’infra sans casser le workflow créatif&nbsp;?</p>
+          </article>
+          <article class="q-card reveal reveal-delay-1">
+            <div class="q-num">05</div>
+            <h3>Hybride viable&nbsp;?</h3>
+            <p>Un routage hybride (open-weight + Seedance quand c’est le meilleur choix) tient-il en conditions réelles&nbsp;?</p>
+          </article>
+          <article class="q-card reveal reveal-delay-2">
+            <div class="q-num">06</div>
+            <h3>Infra MCT justifiée&nbsp;?</h3>
+            <p>Les mesures rendent-elles crédible une bascule progressive vers une infra GPU MCT — ou non&nbsp;?</p>
           </article>
         </div>
       </section>
 
-      <!-- C. La rencontre -->
-      <section class="section" id="rencontre">
-        <p class="section-kicker reveal">Rencontre</p>
-        <h2 class="reveal">La rencontre de deux mondes.</h2>
-        <p class="reveal">D’un côté, une culture créative exigeante. De l’autre, une capacité d’infrastructure GPU privée / hébergée. Le projet explore ce que devient le pipeline lorsqu’on les fait dialoguer.</p>
-        <div class="worlds">
-          <article class="world reveal">
-            <span class="role">Créatif · Workflows</span>
-            <h3>Francis Frankel</h3>
-            <p class="tagline">Haut de gamme — vidéo IA &amp; intention créative</p>
-            <ul>
-              <li>Workflows créatifs vidéo IA exigeants</li>
-              <li>Sens du brief, de l’intention et du rendu</li>
-              <li>Itérations rapides au service de la qualité</li>
-              <li>Culture production / post-production</li>
-            </ul>
-          </article>
-          <div class="world-bridge reveal reveal-delay-1" aria-hidden="true">
-            <div class="bridge-line"></div>
-            <div class="bridge-dot">×</div>
-            <div class="bridge-line"></div>
-          </div>
-          <article class="world mct reveal reveal-delay-2">
-            <span class="role">Infrastructure · GPU</span>
-            <h3>Nicolas Boulinguiez / MCT</h3>
-            <p class="tagline">GPU privé / hébergé — maîtrise &amp; proximité</p>
-            <ul>
-              <li>Infrastructure GPU privée ou hébergée</li>
-              <li>Maîtrise des coûts et de la capacité</li>
-              <li>Souveraineté et proximité opérationnelle</li>
-              <li>Base pour expérimenter hors cloud 100&nbsp;% externe</li>
-            </ul>
-          </article>
+      <!-- ========== 11. CE QUE FRANCIS Y GAGNE ========== -->
+      <section class="section" id="francis-gagne">
+        <p class="section-kicker reveal">11 · Pour Francis</p>
+        <h2 class="reveal">Ce que Francis y gagne — hors discours commercial.</h2>
+        <div class="grid-2">
+          <article class="card reveal"><h3>Second chemin</h3><p>Une voie expérimentale en parallèle — sans obligation d’abandonner Seedance / Higgsfield.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Visibilité économique</h3><p>Passer du « crédit opaque » à un coût mesuré par séquence utilisable.</p></article>
+          <article class="card reveal"><h3>Indépendance modèle</h3><p>Ne plus dépendre structurellement d’un seul moteur de génération.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Itération outillée</h3><p>Logs, versions, retries, comparaison — pour itérer avec plus de méthode.</p></article>
+          <article class="card reveal"><h3>Portabilité</h3><p>Une architecture qui peut suivre un changement d’infra plus tard.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Barre créative intacte</h3><p>Seedance reste le benchmark ; rien n’est « imposé » comme remplacement.</p></article>
         </div>
       </section>
 
-      <!-- D. Le pipeline -->
-      <section class="section" id="pipeline">
-        <p class="section-kicker reveal">Pipeline</p>
-        <h2 class="reveal">Cinq étapes. Une chaîne continue.</h2>
-        <p class="reveal">Du brief à la sortie optimisée : une trajectoire lisible pour expérimenter, mesurer et affiner — sans prétendre que tout est déjà industrialisé.</p>
-        <div class="pipeline" aria-label="Étapes du pipeline">
-          <article class="pipe-step">
-            <div class="n">01</div>
-            <h4>Brief / intention</h4>
-            <p>Cadrer le besoin créatif, le ton, les contraintes et les critères de réussite.</p>
-          </article>
-          <article class="pipe-step">
-            <div class="n">02</div>
-            <h4>Génération vidéo IA</h4>
-            <p>Produire, comparer, itérer — en gardant la main sur le rythme créatif.</p>
-          </article>
-          <article class="pipe-step">
-            <div class="n">03</div>
-            <h4>Orchestration technique</h4>
-            <p>Relier modèles, files, versions et stockage dans une chaîne cohérente.</p>
-          </article>
-          <article class="pipe-step">
-            <div class="n">04</div>
-            <h4>Exécution GPU</h4>
-            <p>Faire tourner le compute sur une infra maîtrisée (privée / hébergée MCT).</p>
-          </article>
-          <article class="pipe-step">
-            <div class="n">05</div>
-            <h4>Sortie / optimisation</h4>
-            <p>Livrer, mesurer coûts &amp; qualité, réinjecter les apprentissages dans le pipeline.</p>
-          </article>
+      <!-- ========== 12. CE QUE MCT PEUT Y GAGNER ========== -->
+      <section class="section" id="mct-gagne">
+        <p class="section-kicker reveal">12 · Pour MCT</p>
+        <h2 class="reveal">Ce que MCT peut y gagner — investir seulement après validation.</h2>
+        <p class="reveal">Le POC ne présuppose pas une capacité MCT déjà live. Il produit des <strong>sorties de mesure</strong> pour une décision d’investissement : qualité atteinte, coût GPU, charge réelle, fiabilité, profil d’usage. On n’investit qu’après validation — pas avant.</p>
+        <div class="grid-3">
+          <article class="card reveal"><h3>Signal de demande</h3><p>Charge et profil d’usage observés sur un cas créatif réel.</p></article>
+          <article class="card reveal reveal-delay-1"><h3>Économie documentée</h3><p>Coût / séquence utilisable avant d’engager du silicon.</p></article>
+          <article class="card reveal reveal-delay-2"><h3>Chemin clair</h3><p>Si oui → même orchestration sur GPU MCT. Si non → on arrête sans sur-investir.</p></article>
         </div>
       </section>
 
-      <!-- E. Cloud vs maîtrisé -->
-      <section class="section" id="comparaison">
-        <p class="section-kicker reveal">Comparaison</p>
-        <h2 class="reveal">Cloud externe vs infrastructure maîtrisée.</h2>
-        <p class="reveal">Deux logiques complémentaires — pas un dogme. L’ambition est de retrouver des leviers de contrôle là où le 100&nbsp;% externe devient trop opaque ou trop cher.</p>
-        <div class="compare">
-          <article class="compare-col cloud reveal">
-            <p class="col-kicker">Approche dominante</p>
-            <h3>Cloud 100&nbsp;% externe</h3>
-            <ul>
-              <li><span class="mark">–</span> Coûts variables, parfois peu prévisibles à l’itération</li>
-              <li><span class="mark">–</span> Dépendance aux files, quotas et roadmaps du fournisseur</li>
-              <li><span class="mark">–</span> Données et modèles soumis à des politiques tierces</li>
-              <li><span class="mark">–</span> Peu de levier sur le dimensionnement fin du GPU</li>
-              <li><span class="mark">+</span> Mise en route rapide, élasticité immédiate</li>
-            </ul>
-          </article>
-          <article class="compare-col mastered reveal reveal-delay-1">
-            <p class="col-kicker">Piste explorée</p>
-            <h3>Infrastructure maîtrisée</h3>
-            <ul>
-              <li><span class="mark">+</span> Visibilité accrue sur le coût par rendu / itération</li>
-              <li><span class="mark">+</span> Capacité GPU dimensionnée pour les pics créatifs</li>
-              <li><span class="mark">+</span> Souveraineté et proximité opérationnelle</li>
-              <li><span class="mark">+</span> Base pour un lab et des démonstrateurs contrôlés</li>
-              <li><span class="mark">≈</span> Exige orchestration, discipline ops et POC économique</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <!-- F. Ambition -->
-      <section class="section" id="ambition">
-        <p class="section-kicker reveal">Ambition</p>
-        <h2 class="reveal">Ce que le projet vise à prouver.</h2>
-        <p class="reveal">Une séquence d’apprentissages — technique, économique, démonstratif — avant toute industrialisation.</p>
-        <div class="ambition-grid">
-          <article class="ambition-card reveal">
-            <div class="num">01</div>
-            <h3>POC technique</h3>
-            <p>Faire tourner un bout de chaîne créative sur une infra GPU maîtrisée, de bout en bout.</p>
-          </article>
-          <article class="ambition-card reveal reveal-delay-1">
-            <div class="num">02</div>
-            <h3>POC économique</h3>
-            <p>Mesurer le coût réel par itération / minute de rendu vs scénario 100&nbsp;% cloud externe.</p>
-          </article>
-          <article class="ambition-card reveal reveal-delay-2">
-            <div class="num">03</div>
-            <h3>Démonstrateur infra</h3>
-            <p>Rendre visible une capacité GPU privée / hébergée utilisable par un workflow créatif.</p>
-          </article>
-          <article class="ambition-card reveal reveal-delay-3">
-            <div class="num">04</div>
-            <h3>Lab workflows</h3>
-            <p>Tester et documenter des recettes créatives réutilisables — brief → génération → sortie.</p>
-          </article>
-          <article class="ambition-card reveal reveal-delay-4">
-            <div class="num">05</div>
-            <h3>Amorce d’offres</h3>
-            <p>Esquisser, le cas échéant, des formats d’accompagnement — sans inventer un catalogue commercial.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- G. Architecture -->
-      <section class="section" id="architecture">
-        <p class="section-kicker reveal">Architecture</p>
-        <h2 class="reveal">Un écosystème modulaire, pas un monolithe.</h2>
-        <p class="reveal">Chaque brique garde son rôle. La valeur est dans les interfaces — intention créative, orchestration, exécution GPU, boucle d’optimisation.</p>
-        <div class="arch reveal">
-          <div class="arch-flow">
-            <div class="arch-node creative">
-              <strong>Francis Frankel</strong>
-              <span>Intention · workflows créatifs</span>
-            </div>
-            <span class="arch-arrow" aria-hidden="true">→</span>
-            <div class="arch-node bridge">
-              <strong>Orchestration</strong>
-              <span>Pipeline · versions · files</span>
-            </div>
-            <span class="arch-arrow" aria-hidden="true">→</span>
-            <div class="arch-node infra">
-              <strong>MCT / GPU</strong>
-              <span>Exécution privée / hébergée</span>
-            </div>
-            <span class="arch-arrow" aria-hidden="true">→</span>
-            <div class="arch-node">
-              <strong>Sortie</strong>
-              <span>Rendu · mesure · itération</span>
-            </div>
-          </div>
-          <p class="arch-note">Schéma de principe pour expérimentation et POC — les rôles et interfaces restent à confirmer au fil des essais.</p>
-        </div>
-      </section>
-
-      <!-- H. Vision -->
-      <section class="section" id="vision">
-        <p class="section-kicker reveal">Vision</p>
-        <h2 class="reveal">Maîtriser la chaîne, pas la figer.</h2>
+      <!-- ========== 16. CONCLUSION ========== -->
+      <section class="section" id="conclusion">
+        <p class="section-kicker reveal">Conclusion</p>
+        <h2 class="reveal">Francis crée. Pascal Robotics orchestre. MCT fournit la puissance — demain, si les mesures le justifient.</h2>
         <div class="vision-block reveal">
-          <p>L’ambition n’est pas de remplacer le cloud d’un trait, ni de promettre une usine déjà rodée. C’est de <strong>retrouver des leviers</strong> — coût, capacité, souveraineté, rythme d’itération — là où le créatif haut de gamme rencontre le compute GPU.</p>
-          <p>En faisant dialoguer <strong>Francis Frankel</strong> et <strong>Nicolas Boulinguiez / MCT</strong>, on explore une voie plus maîtrisée pour la génération vidéo IA : crédible, mesurable, et honnête sur ce qui reste à prouver.</p>
+          <p><strong>Francis</strong> apporte le cas d’usage réel et la barre créative. <strong>MCT</strong> est la puissance de calcul de demain — pas nécessairement d’aujourd’hui. <strong>Pascal Robotics</strong> est la couche pour tester, mesurer, orchestrer et déplacer les charges.</p>
+          <p>Le premier objectif n’est pas de vendre de l’infra. C’est de répondre à une question simple&nbsp;: <strong>peut-on construire une chaîne vidéo IA plus ouverte, mesurable et progressivement maîtrisée — sans demander au créateur d’abandonner les outils qui marchent déjà&nbsp;?</strong></p>
+          <p>Si oui, le POC devient la base d’une infra plus large. Si non, on l’aura appris avec des chiffres — pas avec un discours.</p>
+        </div>
+        <div class="principle-strip late reveal" style="margin-top:24px">
+          <p class="principle-mantra">Le modèle peut changer. L’infrastructure peut changer. Le workflow créatif reste. L’orchestration Pascal Robotics fait le lien.</p>
         </div>
       </section>
 
-      <!-- I. Footer -->
+      <!-- FOOTER -->
       <footer class="page-footer" id="contact-projet">
         <div class="footer-grid">
           <div>
             <h4>Projet</h4>
-            <p>Francis Frankel × Nicolas Boulinguiez / MCT</p>
-            <p>Pipeline IA — vision &amp; expérimentation</p>
-            <p>Porté dans le cadre Pascal Robotics (document de travail)</p>
+            <p>Francis × Pascal Robotics × MCT</p>
+            <p>Pipeline IA — document de travail / POC</p>
+            <p>Non industrialisé · non contractuel</p>
           </div>
           <div>
-            <h4>Infrastructure</h4>
-            <p>MCT — GPU privé / hébergé</p>
-            <p>Piste d’exécution maîtrisée</p>
+            <h4>Rôles</h4>
+            <p>Francis — création &amp; workflow</p>
+            <p>Pascal Robotics — orchestration &amp; POC</p>
+            <p>MCT — compute (phase suivante si validé)</p>
           </div>
           <div>
             <h4>Contact</h4>

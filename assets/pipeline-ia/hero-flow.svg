@@ -1,34 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img" aria-label="Flux créatif vers infrastructure GPU">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280" role="img" aria-label="Flux création → modèles → orchestration → compute">
   <defs>
-    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#55cbff" stop-opacity=".9"/>
-      <stop offset="50%" stop-color="#a78bfa" stop-opacity=".85"/>
-      <stop offset="100%" stop-color="#55cbff" stop-opacity=".7"/>
+      <stop offset="45%" stop-color="#9ce51a" stop-opacity=".75"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity=".85"/>
     </linearGradient>
-    <linearGradient id="g2" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#55cbff" stop-opacity=".25"/>
+    <linearGradient id="hg2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#55cbff" stop-opacity=".22"/>
       <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
     </linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="hglow"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
-  <rect width="1200" height="320" fill="#070b12"/>
-  <ellipse cx="900" cy="80" rx="220" ry="90" fill="url(#g2)"/>
-  <ellipse cx="280" cy="240" rx="180" ry="70" fill="url(#g2)"/>
-  <!-- flow lines -->
-  <path d="M80 180 C220 80, 380 260, 520 140 S780 60, 920 160 S1080 240, 1140 120" fill="none" stroke="url(#g1)" stroke-width="2.5" opacity=".7" filter="url(#glow)"/>
-  <path d="M60 220 C200 140, 340 280, 500 200 S760 120, 900 200 S1060 260, 1160 180" fill="none" stroke="#a78bfa" stroke-width="1.2" opacity=".35"/>
-  <!-- nodes -->
-  <g filter="url(#glow)">
-    <circle cx="160" cy="165" r="10" fill="#55cbff"/>
-    <circle cx="400" cy="195" r="8" fill="#8ae0ff"/>
-    <circle cx="620" cy="115" r="11" fill="#a78bfa"/>
-    <circle cx="860" cy="175" r="9" fill="#55cbff"/>
-    <circle cx="1080" cy="145" r="12" fill="#c4b5fd"/>
+  <rect width="1200" height="280" fill="#070b12"/>
+  <ellipse cx="280" cy="200" rx="200" ry="70" fill="url(#hg2)"/>
+  <ellipse cx="920" cy="70" rx="220" ry="80" fill="url(#hg2)"/>
+  <path d="M70 150 C200 70, 340 230, 480 130 S720 50, 860 150 S1020 220, 1130 110" fill="none" stroke="url(#hg1)" stroke-width="2.4" opacity=".75" filter="url(#hglow)"/>
+  <path d="M90 190 C230 120, 360 250, 520 170 S740 90, 900 180 S1060 240, 1140 160" fill="none" stroke="#a78bfa" stroke-width="1.1" opacity=".3"/>
+  <g filter="url(#hglow)">
+    <circle cx="140" cy="145" r="9" fill="#55cbff"/>
+    <circle cx="400" cy="165" r="8" fill="#8ae0ff"/>
+    <circle cx="640" cy="95" r="11" fill="#9ce51a"/>
+    <circle cx="880" cy="165" r="8" fill="#a78bfa"/>
+    <circle cx="1080" cy="125" r="10" fill="#c4b5fd"/>
   </g>
-  <!-- labels -->
-  <text x="160" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Brief</text>
-  <text x="400" y="270" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Génération IA</text>
-  <text x="620" y="70" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Orchestration</text>
-  <text x="860" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">GPU maîtrisé</text>
-  <text x="1080" y="80" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="600">Sortie</text>
+  <text x="140" y="230" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Francis · création</text>
+  <text x="400" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Modèles</text>
+  <text x="640" y="55" text-anchor="middle" fill="#c6ff5b" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700">Orchestration PR</text>
+  <text x="880" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">GPU loué → MCT?</text>
+  <text x="1080" y="70" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Mesure</text>
 </svg>

@@ -5,6 +5,9 @@
  * NOT server-side security: GitHub Pages serves static files publicly.
  * Anyone can read this source. The gate only deters casual browsing
  * during a working-document / experiment sharing phase.
+ *
+ * Password (unchanged): Francis2026
+ * sessionStorage key (unchanged): pr_francis_mct_v1
  */
 (function () {
   'use strict';
@@ -189,7 +192,9 @@
   function initReveals() {
     if (revealsReady) return;
     revealsReady = true;
-    var nodes = document.querySelectorAll('.reveal, .pipe-step');
+    var nodes = document.querySelectorAll(
+      '.reveal, .phase, .chain, .q-card, .pillar, .cap-grid li'
+    );
     if (!nodes.length) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       nodes.forEach(function (el) { el.classList.add('is-visible'); });
@@ -206,13 +211,8 @@
           io.unobserve(entry.target);
         }
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
-    nodes.forEach(function (el, i) {
-      if (el.classList.contains('pipe-step')) {
-        el.style.transitionDelay = (i % 5) * 0.08 + 's';
-      }
-      io.observe(el);
-    });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    nodes.forEach(function (el) { io.observe(el); });
   }
 
   // If already unlocked on load, reveals are started in unlock().
