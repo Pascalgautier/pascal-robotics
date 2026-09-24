@@ -1136,7 +1136,7 @@ a, p, span, div { overflow-wrap:break-word; }
   .hero-dt-bgs{
     background:#050708;
   }
-  .hero-dt-inner{padding:6px 0 52px;justify-content:flex-start}
+  .hero-dt-inner{padding:4px 0 40px;justify-content:flex-start}
   .hero-dt-bg{
     transform:none; /* no mobile zoom */
     object-fit:contain; /* full subject visible — accept letterboxing */
@@ -1151,15 +1151,97 @@ a, p, span, div { overflow-wrap:break-word; }
       radial-gradient(ellipse 80% 60% at 50% 48%,rgba(4,10,16,.22) 0%,rgba(4,10,16,.08) 58%,rgba(4,10,16,.14) 100%),
       linear-gradient(180deg,rgba(5,10,14,.12) 0%,rgba(5,10,14,.04) 40%,rgba(5,10,14,.32) 100%);
   }
-  /* Compact overlay so title + CTAs fit inside the 16:9 frame */
-  .hero-dt-logo{margin:0 0 4px}
-  .hero-dt-logo img{width:min(72px,22vw)}
-  .hero-dt-content .eyebrow{margin-bottom:4px;font-size:9px}
-  .hero-dt-content h1{font-size:clamp(22px,6.2vw,34px);margin:0 0 4px}
-  .hero-dt-actions{bottom:0;gap:8px;justify-content:flex-start;padding:8px 12px}
-  .hero-dt-actions .btn{min-height:40px;padding:0 14px;font-size:12px}
-  .hero-secondary{padding:28px 0 22px}
-  .hero-secondary h2{font-size:clamp(26px,8vw,36px)}
+  /* Compact overlay: image primary, CTAs secondary inside short 16:9 frame */
+  .hero-dt-logo{margin:0 0 2px}
+  .hero-dt-logo img{width:min(52px,16vw)}
+  .hero-dt-content .eyebrow{margin-bottom:2px;font-size:8px;letter-spacing:.12em}
+  .hero-dt-content h1{font-size:clamp(16px,4.6vw,24px);line-height:1.05;margin:0 0 2px}
+  /* Stay row + auto width — defeat ≤480px .actions grid / .btn width:100% stack */
+  .hero-dt-actions{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    bottom:0;
+    padding:5px 8px;
+    width:100%;
+    margin:0;
+    background:linear-gradient(180deg, rgba(4,8,12,0) 0%, rgba(4,8,12,.55) 38%, rgba(4,8,12,.78) 100%);
+  }
+  .hero-dt-actions .btn{
+    width:auto;
+    max-width:none;
+    flex:0 1 auto;
+    min-height:28px;
+    height:auto;
+    padding:4px 10px;
+    font-size:10px;
+    line-height:1.15;
+    border-radius:9px;
+    gap:4px;
+  }
+  /* Intro below hero: shrink title, lead, and action cartouches */
+  .hero-secondary{padding:18px 0 16px}
+  .hero-secondary .kicker{font-size:9px;letter-spacing:.12em;margin-bottom:6px}
+  .hero-secondary h2{
+    font-size:clamp(22px,6vw,30px);
+    line-height:1.02;
+    margin:0 0 8px;
+  }
+  .hero-secondary .lead{font-size:14px;margin:0 0 6px}
+  .hero-secondary .sub{font-size:12px;margin:0 auto 12px}
+  .hero-secondary .actions{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    max-width:none;
+    margin:0;
+  }
+  .hero-secondary .actions .btn{
+    width:auto;
+    max-width:none;
+    flex:0 1 auto;
+    min-height:34px;
+    padding:0 12px;
+    font-size:12px;
+    border-radius:10px;
+  }
+  .hero-secondary .place{margin-top:10px;font-size:9px}
+}
+
+/* Phones: keep hero/intro CTAs compact (override global ≤480px stacked .actions) */
+@media (max-width: 480px) {
+  .hero-dt-actions,
+  .hero-secondary .actions{
+    display:flex;
+    grid-template-columns:none;
+    width:100%;
+    max-width:none;
+    margin:0;
+  }
+  .hero-dt-actions .btn,
+  .hero-secondary .actions .btn{
+    width:auto;
+  }
+  .hero-dt-actions .btn{
+    min-height:26px;
+    padding:3px 8px;
+    font-size:9.5px;
+  }
+  .hero-secondary h2{font-size:clamp(20px,6.4vw,28px)}
+  .hero-secondary .lead{font-size:13px}
+  .hero-secondary .sub{font-size:11px;margin:0 auto 10px}
+  .hero-secondary .actions .btn{
+    min-height:32px;
+    padding:0 11px;
+    font-size:11px;
+  }
 }
 
 /* Keep old dt-banner styles unused but harmless if linked from elsewhere */
