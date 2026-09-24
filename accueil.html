@@ -38,8 +38,9 @@ img{display:block;max-width:100%}
 
 .nav{position:sticky;top:0;z-index:40;background:rgba(5,7,8,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.wordmark{font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
+.wordmark{display:inline-flex;align-items:center;line-height:0;font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
 .wordmark span{color:var(--green)}
+.nav-logo{height:34px;width:auto;display:block}
 .links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em}
 .links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
 .links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
@@ -342,8 +343,12 @@ a, p, span, div { overflow-wrap:break-word; }
     gap:8px;
   }
 
-  .links a:not(.contact-pill) {
+  .links a:not(.contact-pill):not(.nav-eco):not(.is-active) {
     display:none;
+  }
+
+  .nav-logo {
+    height:28px;
   }
 
   .contact-pill {
@@ -499,6 +504,10 @@ a, p, span, div { overflow-wrap:break-word; }
   .wordmark {
     font-size:10px;
     letter-spacing:.08em;
+  }
+
+  .nav-logo {
+    height:24px;
   }
 
   .contact-pill {
@@ -1518,7 +1527,9 @@ h2.title-parallax{
 
 <nav class="nav" aria-label="Navigation principale" data-i18n-aria="nav.aria">
   <div class="wrap navin">
-    <a class="wordmark" href="#top">PASCAL <span>ROBOTICS</span></a>
+    <a class="wordmark" href="#top" aria-label="Pascal Robotics" data-i18n-aria="logo.aria">
+      <img class="nav-logo" src="assets/logo-pascal-robotics.png" alt="Pascal Robotics" width="283" height="51" data-i18n-alt="logo.alt">
+    </a>
     <div class="links">
       <div class="lang-switch" role="group" aria-label="Langue" data-i18n-aria="lang.aria">
         <button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
@@ -1530,6 +1541,7 @@ h2.title-parallax{
       <a href="#applications" data-i18n="nav.applications">Applications</a>
       <a href="#method" data-i18n="nav.method">Méthode</a>
       <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
+      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème LAVAL</a>
       <a href="#faq" data-i18n="nav.faq">FAQ</a>
       <a class="contact-pill" href="#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
     </div>
@@ -2090,6 +2102,7 @@ const I18N = {
     "nav.faq": "FAQ",
     "nav.contact": "Parler de votre cas d’usage ↗",
     "nav.dt": "Digital Twin",
+    "nav.eco": "Écosystème LAVAL",
     "dt.banner.eyebrow": "Nouveau · Pipeline",
     "dt.banner.title": "Jumeaux numériques<br><span class=\"soft\">Digital Twin</span>",
     "dt.banner.body": "Pascal Robotics orchestre le pipeline Digital Twin jusqu’au robot incarné — de la simulation à la Physical AI sur le terrain industriel.",
@@ -2336,6 +2349,7 @@ const I18N = {
     "nav.faq": "FAQ",
     "nav.contact": "Talk about your use case ↗",
     "nav.dt": "Digital Twin",
+    "nav.eco": "LAVAL Ecosystem",
     "dt.banner.eyebrow": "New · Pipeline",
     "dt.banner.title": "Digital Twin<br><span class=\"soft\">Jumeaux numériques</span>",
     "dt.banner.body": "Pascal Robotics orchestrates the full Digital Twin pipeline through to the embodied robot — from simulation to Physical AI on the industrial floor.",

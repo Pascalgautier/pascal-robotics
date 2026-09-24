@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050708">
+<meta name="robots" content="noindex,nofollow">
+<title>Pascal Robotics — Écosystème LAVAL · Document de travail V8.7</title>
+<meta name="description" content="Document de travail (accès restreint) : Laval Physical AI · Consortium & modèle économique. Pascal Robotics.">
+<style>
+:root {
+  --bg:#050708;
+  --panel:#0c1114;
+  --panel2:#101820;
+  --line:#1b242a;
+  --text:#f4f7f8;
+  --muted:#a8b4ba;
+  --green:#9ce51a;
+  --green2:#c6ff5b;
+  --blue:#55cbff;
+  --max:1180px;
+  --nvidia:#76b900;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 82% 10%,rgba(85,203,255,.10),transparent 26%),
+    radial-gradient(circle at 18% 18%,rgba(156,229,26,.06),transparent 20%),
+    linear-gradient(180deg,#050708,#081015 100%);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  line-height:1.55;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%;height:auto}
+.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:16px;top:16px;z-index:999;background:#fff;color:#000;padding:10px 14px;border-radius:8px}
+
+.nav{position:sticky;top:0;z-index:40;background:rgba(5,7,8,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.wordmark{display:inline-flex;align-items:center;line-height:0}
+.nav-logo{height:34px;width:auto;display:block}
+.links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em;flex-wrap:wrap;justify-content:flex-end}
+.links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
+.links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
+.links a:not(.contact-pill).is-active{color:var(--green);border-bottom-color:rgba(156,229,26,.7)}
+.contact-pill{display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(156,229,26,.95),rgba(198,255,91,.85));color:#061008;font-weight:850;letter-spacing:.04em;box-shadow:0 10px 28px rgba(156,229,26,.18)}
+.contact-pill:hover{filter:brightness(1.05)}
+.lang-switch{display:inline-flex;align-items:center;gap:6px;margin-right:4px}
+.lang-switch button{appearance:none;border:0;background:transparent;color:#bac4c8;font:inherit;font-size:12px;font-weight:850;letter-spacing:.08em;cursor:pointer;padding:4px 2px}
+.lang-switch button:hover,.lang-switch button[aria-pressed="true"]{color:#fff}
+.lang-switch .sep{opacity:.35}
+
+/* Gate */
+.gate{
+  min-height:calc(100vh - 76px);
+  display:grid;place-items:center;
+  padding:48px 0 80px;
+}
+.gate-card{
+  width:min(440px,100%);
+  background:linear-gradient(180deg,rgba(12,17,20,.96),rgba(8,12,15,.98));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:28px 26px 24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35);
+}
+.gate-kicker{color:var(--green);font-size:11px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px}
+.gate-card h1{margin:0 0 10px;font-size:28px;letter-spacing:-.02em;line-height:1.15}
+.gate-card p{margin:0 0 18px;color:var(--muted);font-size:14px}
+.gate-card label{display:block;font-size:12px;font-weight:750;letter-spacing:.06em;color:#bac4c8;margin:0 0 8px}
+.gate-card input[type="password"]{
+  width:100%;padding:14px 14px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#070b0e;color:var(--text);font:inherit;font-size:15px;
+  outline:none;
+}
+.gate-card input[type="password"]:focus{border-color:rgba(156,229,26,.55);box-shadow:0 0 0 3px rgba(156,229,26,.12)}
+.gate-actions{display:flex;gap:10px;margin-top:16px;align-items:center}
+.gate-actions button{
+  appearance:none;border:0;cursor:pointer;
+  padding:12px 18px;border-radius:999px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#061008;font-weight:850;letter-spacing:.04em;font:inherit;font-size:13px;
+}
+.gate-actions button:hover{filter:brightness(1.05)}
+.gate-error{margin:12px 0 0;color:#ff8f8f;font-size:13px;font-weight:650;min-height:1.2em}
+.gate-note{margin:18px 0 0;font-size:11px;color:#6f7b82;line-height:1.45}
+
+#doc[hidden], #gate[hidden]{display:none !important}
+
+/* Document */
+.doc{padding:36px 0 80px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.03);
+  font-size:11px;font-weight:750;letter-spacing:.08em;color:#bac4c8;text-transform:uppercase;
+}
+.badge em{font-style:normal;color:var(--green)}
+.hero h1{margin:0 0 14px;font-size:clamp(34px,6vw,56px);letter-spacing:-.03em;line-height:1.05;font-weight:900}
+.hero h1 .soft{color:var(--muted);font-weight:750}
+.hero .lead{font-size:17px;max-width:62ch;margin:0 0 14px;color:#d7dee2}
+.hero .lead strong{color:#fff;font-weight:750}
+.notice{
+  margin:18px 0 0;padding:14px 16px;border-radius:14px;
+  border:1px solid rgba(156,229,26,.22);
+  background:rgba(156,229,26,.06);
+  color:#d7e6c8;font-size:13px;
+}
+.notice strong{color:var(--green2)}
+
+.section{margin-top:56px}
+.section-kicker{color:var(--green);font-size:11px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px}
+.section h2{margin:0 0 12px;font-size:clamp(26px,3.6vw,36px);letter-spacing:-.02em;line-height:1.15;font-weight:900}
+.section h3{margin:22px 0 8px;font-size:18px;font-weight:850;letter-spacing:-.01em}
+.section h4{margin:16px 0 6px;font-size:14px;font-weight:850;letter-spacing:.04em;color:var(--blue);text-transform:uppercase}
+.section p{margin:0 0 12px;color:#c9d2d7;max-width:72ch}
+.section p strong{color:#fff}
+
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.card{
+  background:linear-gradient(180deg,rgba(12,17,20,.92),rgba(8,12,15,.96));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:18px 16px;
+}
+.card .stat{font-size:28px;font-weight:900;color:var(--green);letter-spacing:-.02em;margin:0 0 6px}
+.card p{margin:0;font-size:14px;color:#b7c2c8}
+.card h3{margin:0 0 8px;font-size:16px}
+
+.prestige{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.prestige .card{display:flex;flex-direction:column;gap:12px;min-height:100%}
+.logo-slot{
+  display:grid;place-items:center;min-height:72px;padding:12px;
+  border-radius:14px;background:#fff;
+}
+.logo-slot img{max-height:48px;width:auto;max-width:100%;object-fit:contain}
+.logo-slot.nvidia{background:#fff}
+.disclaimer{
+  margin-top:10px;font-size:12px;color:#8b969c;border-left:2px solid rgba(118,185,0,.55);padding-left:10px;
+}
+
+.actors{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+.actor{
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;
+  background:rgba(255,255,255,.025);
+}
+.actor.featured{border-color:rgba(156,229,26,.28);background:rgba(156,229,26,.04)}
+.actor strong{display:block;margin:0 0 6px;font-size:14px;letter-spacing:.02em}
+.actor p{margin:0;font-size:13px;color:#b7c2c8}
+.actor .mini-logo{height:28px;width:auto;margin:0 0 10px;object-fit:contain;background:#fff;border-radius:6px;padding:4px 8px}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.step{border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+.step .n{color:var(--green);font-weight:900;font-size:12px;letter-spacing:.12em;margin:0 0 8px}
+.step h4{margin:0 0 6px;color:#fff;text-transform:none;letter-spacing:0;font-size:15px}
+.step p{margin:0;font-size:13px}
+
+.pocs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.poc-media{border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#000;margin:0 0 14px}
+.poc-media img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.poc ul{margin:8px 0 0;padding-left:18px;color:#b7c2c8;font-size:13px}
+.poc li{margin:4px 0}
+
+.model-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+.fund-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+
+.roadmap{display:grid;gap:10px;margin-top:16px}
+.road-item{
+  display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:start;
+  padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+.road-item .when{color:var(--green);font-weight:850;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.road-item h4{margin:0 0 4px;color:#fff;text-transform:none;letter-spacing:0;font-size:15px}
+.road-item p{margin:0;font-size:13px}
+
+.decisions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.decision{border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+.decision .num{color:var(--blue);font-weight:900;font-size:12px;letter-spacing:.1em;margin:0 0 8px}
+.decision h3{margin:0 0 6px;font-size:15px}
+.decision p{margin:0;font-size:13px}
+
+.closing{
+  margin-top:56px;padding:28px 24px;border-radius:22px;
+  border:1px solid rgba(156,229,26,.28);
+  background:
+    radial-gradient(circle at 20% 20%,rgba(156,229,26,.12),transparent 40%),
+    linear-gradient(180deg,rgba(12,17,20,.95),rgba(8,12,15,.98));
+}
+.closing h2{margin:0 0 12px;font-size:clamp(22px,3vw,30px);line-height:1.25}
+.closing p{margin:0;color:#c9d2d7;max-width:70ch}
+
+.links-out{margin-top:28px;font-size:13px;color:#8b969c}
+.links-out a{color:var(--blue);border-bottom:1px solid rgba(85,203,255,.35)}
+.links-out a:hover{color:#fff}
+.legal{margin-top:18px;font-size:12px;color:#6f7b82;max-width:80ch}
+
+.footer{padding:28px 0 40px;border-top:1px solid rgba(255,255,255,.06);margin-top:40px;color:#7a868c;font-size:12px}
+.footer a{color:#bac4c8}
+.lock-again{appearance:none;border:1px solid rgba(255,255,255,.12);background:transparent;color:#bac4c8;border-radius:999px;padding:8px 12px;font:inherit;font-size:12px;cursor:pointer;margin-left:10px}
+.lock-again:hover{color:#fff;border-color:rgba(156,229,26,.4)}
+
+@media (max-width: 900px){
+  .grid-3,.prestige,.fund-grid,.decisions{grid-template-columns:1fr}
+  .grid-2,.pocs,.actors,.model-grid{grid-template-columns:1fr}
+  .grid-4,.steps{grid-template-columns:1fr 1fr}
+  .road-item{grid-template-columns:1fr}
+}
+@media (max-width: 760px){
+  .wrap{width:calc(100% - 24px)}
+  .navin{min-height:62px;height:auto;padding:10px 0;gap:10px}
+  .nav-logo{height:28px}
+  .links{gap:8px}
+  .links a:not(.contact-pill):not(.nav-eco):not(.is-active){display:none}
+  .contact-pill{padding:8px 10px;font-size:11px}
+  .grid-4,.steps{grid-template-columns:1fr}
+  .gate-card{padding:22px 18px}
+}
+@media (max-width: 480px){
+  .nav-logo{height:24px}
+  .contact-pill{font-size:10px;padding:7px 8px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<nav class="nav" aria-label="Navigation principale" data-i18n-aria="nav.aria">
+  <div class="wrap navin">
+    <a class="wordmark" href="accueil.html#top" aria-label="Pascal Robotics" data-i18n-aria="logo.aria">
+      <img class="nav-logo" src="assets/logo-pascal-robotics.png" alt="Pascal Robotics" width="283" height="51" data-i18n-alt="logo.alt">
+    </a>
+    <div class="links">
+      <div class="lang-switch" role="group" aria-label="Langue" data-i18n-aria="lang.aria">
+        <button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+        <span class="sep" aria-hidden="true">|</span>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a href="accueil.html#why" data-i18n="nav.why">Pourquoi</a>
+      <a href="accueil.html#applications" data-i18n="nav.applications">Applications</a>
+      <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
+      <a class="nav-eco is-active" href="ecosysteme-laval.html" data-i18n="nav.eco" aria-current="page">Écosystème LAVAL</a>
+      <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <!-- GATE -->
+  <section id="gate" class="gate" aria-labelledby="gate-title">
+    <div class="wrap">
+      <div class="gate-card">
+        <p class="gate-kicker" data-i18n="gate.kicker">Accès restreint</p>
+        <h1 id="gate-title" data-i18n="gate.title">Écosystème LAVAL</h1>
+        <p data-i18n="gate.body">Document de travail consortium · Physical AI. Entrez le mot de passe pour afficher le contenu.</p>
+        <form id="gate-form" autocomplete="off">
+          <label for="gate-pw" data-i18n="gate.label">Mot de passe</label>
+          <input id="gate-pw" name="password" type="password" required autocomplete="current-password" enterkeyhint="go">
+          <div class="gate-actions">
+            <button type="submit" data-i18n="gate.submit">Déverrouiller</button>
+          </div>
+          <p id="gate-error" class="gate-error" role="alert" aria-live="polite"></p>
+        </form>
+        <p class="gate-note" data-i18n="gate.note">Contrôle côté navigateur uniquement (GitHub Pages) — ce n’est pas une sécurité serveur.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCUMENT (FR substance from Vercel V8.7) -->
+  <div id="doc" class="doc" hidden>
+    <div class="wrap">
+      <header class="hero">
+        <div class="badge-row">
+          <span class="badge"><em>Document de travail</em> · V8.7</span>
+          <span class="badge">Laval Physical AI</span>
+          <span class="badge">Non contractuel</span>
+        </div>
+        <p class="section-kicker">Laval Physical AI · Consortium &amp; modèle économique</p>
+        <h1>Du geste humain au <span class="soft">robot physique.</span></h1>
+        <p class="lead">Faire de Laval un territoire pilote de la Physical AI en réunissant <strong>l’excellence scientifique d’Arts et Métiers / CAPLAB</strong>, la puissance de l’<strong>écosystème NVIDIA Isaac</strong> et des plateformes robotiques humanoïdes et quadrupèdes capables d’agir dans le monde réel.</p>
+        <p class="lead">Pascal Robotics se positionne comme l’orchestrateur commercial et technique : <strong>Arts et Métiers / Institut de Laval et CAPLAB</strong> structurent le socle scientifique et expérimental ; <strong>Clarté</strong> relie XR, jumeaux numériques, capitalisation des savoir-faire et transfert technologique vers les entreprises ; <strong>NVIDIA Isaac</strong> apporte l’architecture de simulation et d’apprentissage de référence ; <strong>UNITREE</strong> apporte les robots ; Pascal Robotics assemble ces briques en POC et déploiements opérationnels.</p>
+        <div class="notice">
+          <strong>Un document évolutif, volontairement non figé.</strong>
+          Cette présentation est un document de travail développé par Pascal Robotics pour structurer et partager la vision du projet Laval Physical AI avec les acteurs de l’écosystème. Elle est non contractuelle et peut être ajustée, enrichie ou corrigée au fil des échanges, validations techniques et avancées du consortium.
+        </div>
+      </header>
+
+      <section class="section" id="piliers">
+        <p class="section-kicker">Piliers</p>
+        <h2>Arts et Métiers, NVIDIA, Clarté — et le chaînon physique.</h2>
+        <div class="prestige">
+          <article class="card">
+            <div class="logo-slot"><img src="assets/logo-ensam.png" alt="Arts et Métiers"></div>
+            <h3>Arts et Métiers au cœur du dispositif.</h3>
+            <p>Arts et Métiers / Institut de Laval, avec CAPLAB, apporte une profondeur scientifique déterminante : recherche, facteur humain, capture 4D, analyse du geste expert, expérimentation et transfert vers les usages industriels.</p>
+          </article>
+          <article class="card">
+            <div class="logo-slot nvidia"><img src="assets/logo-nvidia.png" alt="NVIDIA"></div>
+            <h3>NVIDIA donne au projet une dimension internationale.</h3>
+            <p>L’écosystème NVIDIA Isaac — Isaac Sim, Isaac Lab, Isaac GR00T, Isaac ROS et la plateforme de calcul embarqué — constitue la colonne vertébrale technologique mise en avant pour simuler, entraîner et déployer la Physical AI.</p>
+            <p class="disclaimer">Positionnement technologique : cette présentation ne revendique pas de partenariat officiel avec NVIDIA. Présence mise en avant comme socle technologique de référence.</p>
+          </article>
+          <article class="card">
+            <div class="logo-slot"><img src="assets/logo-clarte.png" alt="Clarté"></div>
+            <h3>Clarté fait le pont entre le virtuel et l’industrie réelle.</h3>
+            <p>Acteur historique de l’écosystème technologique lavallois, Clarté apporte l’expertise XR, la conception et l’exploitation de jumeaux numériques, la capitalisation des savoir-faire et le transfert technologique vers les entreprises. Dans le consortium, Clarté peut contribuer à transformer les travaux de recherche et les environnements de simulation en démonstrateurs compréhensibles, testables et transférables aux industriels.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="vision">
+        <p class="section-kicker">Vision</p>
+        <h2>Le chaînon manquant est physique.</h2>
+        <p>Laval dispose déjà des briques XR, capture du geste, jumeau numérique, recherche et industrie. L’opportunité consiste à fermer la boucle avec des robots capables d’agir dans le monde réel.</p>
+        <div class="grid-3">
+          <article class="card">
+            <p class="stat">XR</p>
+            <h3>Années d’écosystème XR</h3>
+            <p>Une base territoriale rare : Laval Virtual, Arts et Métiers, Clarté, recherche, industriels et culture du démonstrateur.</p>
+          </article>
+          <article class="card">
+            <p class="stat">2</p>
+            <h3>POC complémentaires</h3>
+            <p>Un humanoïde pour l’industrie et un quadrupède B2 Fire Rescue pour la sécurité civile et les milieux à risque.</p>
+          </article>
+          <article class="card">
+            <p class="stat">€</p>
+            <h3>Verrou principal</h3>
+            <p>Le sujet n’est plus d’abord technologique : il est financier, contractuel et organisationnel.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="acteurs">
+        <p class="section-kicker">Écosystème</p>
+        <h2>Un rôle clair pour chaque acteur.</h2>
+        <p>Le modèle n’exige pas que Pascal Robotics possède toutes les compétences. Sa valeur est d’assembler les briques, sécuriser les interfaces et faire émerger des POC visibles et réplicables. <strong>À ce stade, les rôles ci-dessous sont pressentis et restent à confirmer avec chacun</strong> : le schéma décrit la cible visée, pas des engagements signés.</p>
+        <div class="actors">
+          <article class="actor featured"><strong>Pascal Robotics</strong><p>UNITREE, intégration Physical AI, orchestration et développement des POC.</p></article>
+          <article class="actor featured">
+            <img class="mini-logo" src="assets/logo-ensam.png" alt="">
+            <strong>Arts et Métiers / Institut de Laval · CAPLAB</strong>
+            <p>Simon Richir / équipes : pilier scientifique du dispositif, recherche appliquée, facteur humain, capture 4D, motion capture, analyse et transmission des gestes experts.</p>
+          </article>
+          <article class="actor"><strong>AMVALOR</strong><p>Filiale de valorisation d’Arts et Métiers : interface contractuelle pressentie avec les entreprises, montage et facturation des prestations de R&amp;D, études, essais et transfert technologique.</p></article>
+          <article class="actor featured">
+            <img class="mini-logo" src="assets/logo-clarte.png" alt="">
+            <strong>Clarté · passerelle XR, jumeau numérique et industrie</strong>
+            <p>Expertise XR et digital twin, capitalisation des savoir-faire, transfert technologique et accompagnement des entreprises. Passerelle entre les briques de recherche / simulation et les usages industriels.</p>
+          </article>
+          <article class="actor featured">
+            <img class="mini-logo" src="assets/logo-nvidia.png" alt="">
+            <strong>NVIDIA Isaac · écosystème technologique de référence</strong>
+            <p>Simulation, apprentissage et déploiement Physical AI autour d’Isaac Sim, Isaac Lab, Isaac GR00T et Isaac ROS. Socle technologique mis en avant, sans revendiquer de partenariat officiel.</p>
+          </article>
+          <article class="actor"><strong>Laval Virtual</strong><p>Vitrine internationale et échéance de preuve industrielle en avril 2027.</p></article>
+          <article class="actor"><strong>LABADIS</strong><p>Terrain pilote humanoïde : gestes, flux, ergonomie, logistique.</p></article>
+          <article class="actor"><strong>Industriels</strong><p>GYS, Wilo, Gruau, Séché, Valeo : financeurs ou co-industriels selon les usages (pressentis).</p></article>
+          <article class="actor"><strong>SDIS 53</strong><p>Terrain B2 Fire Rescue : reconnaissance, cartographie et poste de commandement.</p></article>
+          <article class="actor"><strong>Chaîne de valeur</strong><p>Recherche XR / Digital Twin → Transfert technologique → Technologie → Industrie / Sécurité civile.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="laval-virtual">
+        <p class="section-kicker">Laval Virtual</p>
+        <h2>La vitrine naturelle du consortium.</h2>
+        <p>Laval Virtual n’est pas seulement un salon : c’est la scène de démonstration idéale pour rendre visible un premier démonstrateur de téléopération, jumeau numérique et robotique incarnée issu de l’écosystème lavallois.</p>
+        <div class="grid-3">
+          <article class="card"><h3>Un ancrage local visible.</h3><p>Le Laval Virtual Center matérialise l’écosystème XR, innovation et expérimentation au cœur de Laval.</p></article>
+          <article class="card"><h3>Une marque immédiatement reconnaissable.</h3><p>Ce rendez-vous renforce la lisibilité publique du projet et nourrit l’imaginaire immersif de Pascal Robotics.</p></article>
+          <article class="card"><h3>Une trajectoire lisible jusqu’au salon.</h3><p>La séquence doit être courte, visible et pilotable : coalition, financement, installation, intégration, démonstration.</p></article>
+        </div>
+        <div class="steps">
+          <article class="step"><div class="n">01</div><h4>Coalition</h4><p>Formaliser le noyau : Pascal Robotics, ENSAM/CAPLAB, AMVALOR, Clarté, UNITREE et un industriel chef de file.</p></article>
+          <article class="step"><div class="n">02</div><h4>Financement</h4><p>Sécuriser le montage H2 Plus, contributions partenaires et cadre contractuel des premiers POC.</p></article>
+          <article class="step"><div class="n">03</div><h4>Intégration</h4><p>Installation du robot, tests de téléopération, jumeau numérique et scénarios industriels / sécurité civile.</p></article>
+          <article class="step"><div class="n">04</div><h4>Démonstration</h4><p>Répétitions finales, récit de consortium et présentation publique à Laval Virtual 2027.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="poc">
+        <p class="section-kicker">POC</p>
+        <h2>Deux POC qui se renforcent.</h2>
+        <p>Le H2 Plus crédibilise Pascal Robotics sur la Physical AI industrielle. Le B2 crédibilise l’entreprise sur la robotique de terrain et les environnements à risque. Les deux partagent les briques données, simulation, supervision et jumeau numérique.</p>
+        <div class="pocs">
+          <article class="card poc">
+            <div class="poc-media"><img src="assets/poc-h2-plus.png" alt="UNITREE H2 Plus — humanoïde industriel" loading="lazy"></div>
+            <h3>H2 Plus téléopéré</h3>
+            <p>Un humanoïde au service d’une vraie tâche industrielle : capture du geste, jumeau numérique, téléopération, apprentissage et démonstration publique à Laval Virtual.</p>
+            <ul>
+              <li>Capacité à porter et manipuler en contexte industriel</li>
+              <li>Point-clé sécurité pour démonstration et exploitation</li>
+              <li>Manipulation fine : narratif téléopération + geste expert</li>
+            </ul>
+          </article>
+          <article class="card poc">
+            <div class="poc-media"><img src="assets/poc-b2-fire.png" alt="UNITREE B2 Fire Rescue — quadrupède terrain" loading="lazy"></div>
+            <h3>B2 Fire Rescue</h3>
+            <p>Un capteur mobile intelligent pour reconnaître, cartographier et alimenter le PC de commandement.</p>
+            <ul>
+              <li>Quadrupède de terrain pour la sécurité civile et les milieux à risque</li>
+              <li>Vidéo, thermique, télémétrie et retour terrain vers le PC</li>
+              <li>Transformer la reconnaissance du terrain en représentation utile et partageable</li>
+            </ul>
+            <div class="poc-media" style="margin-top:14px"><img src="assets/poc-b2-field.jpg" alt="Exemple terrain B2 Fire Rescue avec équipes de secours" loading="lazy"></div>
+            <p style="font-size:12px;color:#8b969c;margin:8px 0 0">Exemple terrain : démonstration du B2 Fire Rescue avec des équipes de secours et des véhicules d’intervention.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="unitree">
+        <p class="section-kicker">UNITREE</p>
+        <h2>Un partenaire mondial, un dialogue déjà engagé.</h2>
+        <p>Un premier échange avec David Yu montre que le projet lavallois est reçu comme un vrai scénario de démonstration industrielle. Reste à cadrer, étape par étape, le support, le calendrier, l’allocation et la forme contractuelle.</p>
+        <p>Unitree Robotics est une entreprise de robotique civile fondée en 2016 à Hangzhou par Wang Xingxing. Elle développe des robots quadrupèdes et humanoïdes, ainsi que plusieurs briques-clés en interne : moteurs, réducteurs, contrôleurs, LiDAR et algorithmes de perception / contrôle.</p>
+        <h3>Synthèse actionnable</h3>
+        <div class="model-grid">
+          <article class="card"><h3>H2 prioritaire</h3><p>Le H2 est présenté comme plus pertinent pour un scénario de téléopération industrielle et d’évolution vers un vrai POC terrain.</p></article>
+          <article class="card"><h3>Architecture Physical AI</h3><p>Le robot est jugé cohérent avec une architecture orientée simulation, jumeau numérique et transfert vers la réalité.</p></article>
+          <article class="card"><h3>Porte ouverte</h3><p>Le message ouvre la porte à des échanges sur les USD assets, la simulation, la téléopération, les mains / effecteurs et la coopération avec l’équipe technique.</p></article>
+          <article class="card"><h3>Prochaine étape</h3><p>Transformer l’intérêt en paquet concret : délai, conditions commerciales, support, lettre de soutien et scénario Laval Virtual. Si le projet avance vers un achat, une demande interne de soutien à la disponibilité pourrait être envisagée côté Unitree.</p></article>
+        </div>
+        <h3>Ce que ça apporte au projet</h3>
+        <div class="grid-2">
+          <article class="card"><p>Associer la profondeur scientifique d’Arts et Métiers / CAPLAB, la vitrine Laval Virtual, l’écosystème NVIDIA Isaac et les plateformes UNITREE donne au dossier une stature immédiatement internationale.</p></article>
+          <article class="card"><p>Le projet n’est pas théorique : il existe déjà un échange commercial et technique avec un constructeur robotique de premier plan.</p></article>
+          <article class="card"><p>H2 Plus pour l’industrie, B2 Fire Rescue pour la sécurité civile : deux portes d’entrée très lisibles pour un financeur.</p></article>
+          <article class="card"><p>Un fabricant coté, profitable et leader mondial du volume : la pérennité de la plateforme est un argument pour un financeur.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="modele">
+        <p class="section-kicker">Modèle économique</p>
+        <h2>Pascal Robotics capte la valeur créée.</h2>
+        <p>Le consortium augmente la capacité d’exécution. Pascal Robotics doit rester l’architecte et le point d’entrée commercial : un client, un programme, plusieurs couches de revenus.</p>
+        <div class="model-grid">
+          <article class="card"><h3>Robots &amp; équipements</h3><p>Sourcing UNITREE, mains dextrales, capteurs, computing et accessoires. Sélection, configuration et logistique.</p></article>
+          <article class="card"><h3>Architecture &amp; déploiement</h3><p>Conception système, sécurité, réseau, commissioning, intégration des capteurs et environnement industriel.</p></article>
+          <article class="card"><h3>POC &amp; ingénierie</h3><p>Digital twin, téléopération, mocap, Isaac Sim / GR00T, apprentissage du geste et scénarios opérationnels.</p></article>
+          <article class="card"><h3>Support &amp; formation</h3><p>Formation opérateurs, maintenance, support, évolution des usages et piste Robot-as-a-Service.</p></article>
+        </div>
+        <div class="notice" style="margin-top:16px">
+          <strong>Le consortium n’est pas le produit.</strong> Pascal Robotics pilote la chaîne de valeur. Les partenaires scientifiques et techniques interviennent dans leur périmètre. Pascal Robotics orchestre la relation client, l’intégration et la livraison de la solution ; chaque partenaire intervient et facture dans son périmètre via la structure appropriée.
+        </div>
+      </section>
+
+      <section class="section" id="financement">
+        <p class="section-kicker">Financement</p>
+        <h2>Ne pas « vendre un robot ».</h2>
+        <p>Le bon produit à financer est une plateforme territoriale de R&amp;D et de démonstration. L’industriel chef de file achète une position de pionnier, un accès prioritaire aux POC et une visibilité internationale — pas seulement un H2 Plus.</p>
+        <div class="fund-grid">
+          <article class="card"><h3>Industriel chef de file</h3><p>Un partenaire industriel porte la position de pionnier et l’essentiel du financement, en échange d’un accès prioritaire aux POC et à l’intégration.</p></article>
+          <article class="card"><h3>Aides à l’innovation</h3><p>Dispositifs régionaux et nationaux de soutien à la R&amp;D et à la démonstration technologique, mobilisés en complément.</p></article>
+          <article class="card"><h3>Co-industriels &amp; apports en nature</h3><p>Contributions complémentaires d’autres industriels et des partenaires technologiques, en numéraire ou en moyens : plateformes, temps, terrain.</p></article>
+        </div>
+        <p style="margin-top:14px">Le montage précis — enveloppe, répartition, calendrier d’engagement — se construit avec le premier industriel chef de file, une fois le cas d’usage arrêté.</p>
+      </section>
+
+      <section class="section" id="roadmap">
+        <p class="section-kicker">Roadmap</p>
+        <h2>Avril 2027 doit être une preuve industrielle.</h2>
+        <p>Laval Virtual ne doit pas montrer un humanoïde qui « fait une démo ». Il doit montrer la chaîne complète : geste humain → capture → jumeau numérique → téléopération / apprentissage → tâche industrielle réelle.</p>
+        <div class="roadmap">
+          <article class="road-item"><div class="when">Phase 1</div><div><h4>Coalition et financeur</h4><p>Identifier un industriel chef de file, deux co-industriels, formaliser l’appui Arts et Métiers / Institut de Laval, CAPLAB et Clarté.</p></div></article>
+          <article class="road-item"><div class="when">Phase 2</div><div><h4>Contrat et cas d’usage</h4><p>Choisir la tâche industrielle, préciser la propriété du robot, les droits d’usage et les prestations Pascal Robotics.</p></div></article>
+          <article class="road-item"><div class="when">Phase 3</div><div><h4>H2 Plus à Laval</h4><p>Fenêtre cible recommandée pour disposer de plusieurs mois d’intégration, essais et sécurité.</p></div></article>
+          <article class="road-item"><div class="when">Phase 4</div><div><h4>Intégration Physical AI</h4><p>Capture, digital twin, Isaac Sim, téléopération, mains dextrales, répétitions et métriques du POC.</p></div></article>
+          <article class="road-item"><div class="when">7–9 avr. 2027</div><div><h4>Laval Virtual</h4><p>Démonstrateur public d’une tâche industrielle réelle, avec partenaires locaux et plateforme UNITREE.</p></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="decisions">
+        <p class="section-kicker">Prochaines étapes</p>
+        <h2>Six décisions à obtenir.</h2>
+        <p>La dynamique existe déjà. La prochaine étape est de transformer les intentions individuelles en engagements coordonnés.</p>
+        <div class="decisions">
+          <article class="decision"><div class="num">01</div><h3>Industriel chef de file</h3><p>Identifier un industriel prêt à porter la position de pionnier et le financement du premier démonstrateur.</p></article>
+          <article class="decision"><div class="num">02</div><h3>POC H2</h3><p>Choisir une première tâche industrielle simple sur un site pilote.</p></article>
+          <article class="decision"><div class="num">03</div><h3>UNITREE</h3><p>Faire évoluer le dialogue avec le constructeur vers un calendrier, un support et des conditions.</p></article>
+          <article class="decision"><div class="num">04</div><h3>Arts et Métiers / CAPLAB</h3><p>Confirmer le rôle scientifique, expérimental et méthodologique d’Arts et Métiers / Institut de Laval et de CAPLAB, avec AMVALOR pour la voie contractuelle adaptée.</p></article>
+          <article class="decision"><div class="num">05</div><h3>B2 / SDIS</h3><p>Préparer reconnaissance, thermique, cartographie et jumeau numérique temps réel au PC.</p></article>
+          <article class="decision"><div class="num">06</div><h3>Laval Virtual</h3><p>Concevoir le rendez-vous comme une échéance de preuve industrielle, pas comme un show robotique.</p></article>
+        </div>
+      </section>
+
+      <section class="closing" id="closing">
+        <h2>Pascal Robotics = intégrateur, orchestrateur et point d’entrée commercial de la Physical AI lavalloise.</h2>
+        <p>L’objectif n’est pas de posséder toutes les briques, mais de les connecter et de monétiser leur intégration : savoir-faire humain, capture, jumeau numérique, IA, robot, partenaires contractuels et terrain réel.</p>
+      </section>
+
+      <div class="links-out">
+        <p>
+          UNITREE H2 Plus : <a href="https://www.unitree.com/H2plus" target="_blank" rel="noopener noreferrer">unitree.com/H2plus</a>
+          · Boutique : <a href="https://shop.unitree.com" target="_blank" rel="noopener noreferrer">shop.unitree.com</a>
+          · About : <a href="https://www.unitree.com/about" target="_blank" rel="noopener noreferrer">unitree.com/about</a>
+          · Investor Relations : <a href="https://www.unitree.com/investor" target="_blank" rel="noopener noreferrer">unitree.com/investor</a>
+        </p>
+        <p>
+          CAPLAB — Arts et Métiers : <a href="https://artsetmetiers.fr" target="_blank" rel="noopener noreferrer">artsetmetiers.fr</a>
+          · Clarté : <a href="https://www.clarte-lab.fr" target="_blank" rel="noopener noreferrer">clarte-lab.fr</a>
+          · Laval Virtual : <a href="https://www.laval-virtual.com" target="_blank" rel="noopener noreferrer">laval-virtual.com</a>
+          · Wilo : <a href="https://www.wilo.com" target="_blank" rel="noopener noreferrer">wilo.com</a>
+        </p>
+      </div>
+      <p class="legal">Les informations concernant les échanges avec David Yu / UNITREE et les contacts locaux proviennent des éléments communiqués par Pascal Gautier. Les rôles des partenaires décrits dans ce document sont pressentis et restent à confirmer avec chacun ; ils ne constituent pas des engagements signés. Les éléments sur la cotation d’UNITREE sont donnés à titre de repère public et ne constituent pas un conseil financier. NVIDIA est cité comme écosystème technologique de référence, sans revendication de partenariat officiel.</p>
+
+      <footer class="footer">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+          <span>© Pascal Robotics · Document de travail V8.7 · <a href="accueil.html">pascal-robotics.fr</a></span>
+          <button type="button" class="lock-again" id="lock-again" data-i18n="gate.lock">Verrouiller à nouveau</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+</main>
+
+<script>
+/*
+ * Client-side password gate only.
+ * This is NOT server-side security: GitHub Pages serves static files publicly.
+ * Anyone can read this HTML/JS source. The gate only deters casual browsing
+ * during a working-document sharing phase. Do not treat the password as a secret
+ * for confidential / regulated material.
+ */
+(function () {
+  var STORAGE_KEY = 'pr_eco_laval_v87';
+  // Light obfuscation — not cryptography.
+  var EXPECTED = atob('TGF2YWwyMDI3'); // Laval2027
+
+  var gate = document.getElementById('gate');
+  var doc = document.getElementById('doc');
+  var form = document.getElementById('gate-form');
+  var input = document.getElementById('gate-pw');
+  var err = document.getElementById('gate-error');
+  var lockBtn = document.getElementById('lock-again');
+
+  var I18N = {
+    fr: {
+      "nav.aria": "Navigation principale",
+      "lang.aria": "Langue",
+      "logo.aria": "Pascal Robotics — accueil",
+      "logo.alt": "Pascal Robotics",
+      "nav.why": "Pourquoi",
+      "nav.applications": "Applications",
+      "nav.dt": "Digital Twin",
+      "nav.eco": "Écosystème LAVAL",
+      "nav.contact": "Parler de votre cas d’usage ↗",
+      "gate.kicker": "Accès restreint",
+      "gate.title": "Écosystème LAVAL",
+      "gate.body": "Document de travail consortium · Physical AI. Entrez le mot de passe pour afficher le contenu.",
+      "gate.label": "Mot de passe",
+      "gate.submit": "Déverrouiller",
+      "gate.note": "Contrôle côté navigateur uniquement (GitHub Pages) — ce n’est pas une sécurité serveur.",
+      "gate.error": "Mot de passe incorrect. Réessayez.",
+      "gate.lock": "Verrouiller à nouveau"
+    },
+    en: {
+      "nav.aria": "Main navigation",
+      "lang.aria": "Language",
+      "logo.aria": "Pascal Robotics — home",
+      "logo.alt": "Pascal Robotics",
+      "nav.why": "Why us",
+      "nav.applications": "Applications",
+      "nav.dt": "Digital Twin",
+      "nav.eco": "LAVAL Ecosystem",
+      "nav.contact": "Talk about your use case ↗",
+      "gate.kicker": "Restricted access",
+      "gate.title": "LAVAL Ecosystem",
+      "gate.body": "Consortium working document · Physical AI. Enter the password to view the content.",
+      "gate.label": "Password",
+      "gate.submit": "Unlock",
+      "gate.note": "Browser-side check only (GitHub Pages) — not server-side security.",
+      "gate.error": "Incorrect password. Please try again.",
+      "gate.lock": "Lock again"
+    }
+  };
+
+  var LANG_KEY = 'pr_lang';
+  var currentLang = 'fr';
+  try {
+    var stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'fr') currentLang = stored;
+  } catch (e) {}
+
+  function applyLang(lang) {
+    if (!I18N[lang]) lang = 'fr';
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    var dict = I18N[lang];
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (dict[key] != null) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-aria');
+      if (dict[key] != null) el.setAttribute('aria-label', dict[key]);
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-alt');
+      if (dict[key] != null) el.setAttribute('alt', dict[key]);
+    });
+    document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
+      btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+    });
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    if (err && err.dataset.active === '1') {
+      err.textContent = dict['gate.error'] || '';
+    }
+  }
+
+  document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      applyLang(btn.getAttribute('data-set-lang'));
+    });
+  });
+  applyLang(currentLang);
+
+  function unlock() {
+    gate.hidden = true;
+    doc.hidden = false;
+    try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+    if (location.hash) {
+      var t = document.querySelector(location.hash);
+      if (t) t.scrollIntoView();
+    }
+  }
+
+  function lock() {
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    doc.hidden = true;
+    gate.hidden = false;
+    err.textContent = '';
+    err.dataset.active = '';
+    if (input) { input.value = ''; input.focus(); }
+    window.scrollTo(0, 0);
+  }
+
+  try {
+    if (sessionStorage.getItem(STORAGE_KEY) === '1') unlock();
+  } catch (e) {}
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var val = (input && input.value) ? input.value.trim() : '';
+      if (val === EXPECTED) {
+        err.textContent = '';
+        err.dataset.active = '';
+        unlock();
+      } else {
+        err.dataset.active = '1';
+        err.textContent = (I18N[currentLang]['gate.error'] || 'Mot de passe incorrect.');
+        if (input) { input.value = ''; input.focus(); }
+      }
+    });
+  }
+  if (lockBtn) lockBtn.addEventListener('click', lock);
+})();
+</script>
+</body>
+</html>
