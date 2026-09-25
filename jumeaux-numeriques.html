@@ -41,11 +41,11 @@ img{display:block;max-width:100%}
 .wordmark{display:inline-flex;align-items:center;line-height:0;font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
 .wordmark span{color:var(--green)}
 .nav-logo{height:34px;width:auto;display:block}
-.links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em}
+.links{display:flex;align-items:center;gap:10px;color:#bac4c8;font-size:10px;font-weight:750;letter-spacing:.03em}
 .links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
 .links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
 .links a:not(.contact-pill).is-active{color:var(--green);border-bottom-color:rgba(156,229,26,.7)}
-.contact-pill{border:1px solid rgba(156,229,26,.42);padding:10px 14px;border-radius:999px;color:#ecffd7!important;letter-spacing:.02em;font-weight:800;white-space:nowrap;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.contact-pill{border:1px solid rgba(156,229,26,.42);padding:8px 11px;border-radius:999px;color:#ecffd7!important;letter-spacing:.02em;font-weight:800;font-size:10px;white-space:nowrap;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
 .contact-pill:hover,.contact-pill:focus-visible{border-color:rgba(156,229,26,.75);background:rgba(156,229,26,.08);box-shadow:0 0 0 1px rgba(156,229,26,.12);outline:none}
 #content section[id],#film,#visuals,#pipeline,#pillars,#contact{scroll-margin-top:92px}
 
@@ -312,7 +312,8 @@ h2.title-parallax{
 .lang-switch button:hover{color:#fff}
 .lang-switch button[aria-pressed="true"]{color:var(--green)}
 .lang-switch .sep{color:#5a666c;font-size:10px;opacity:.55;padding:0 1px;user-select:none}
-.nav-links{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;align-items:center;gap:10px}
+.nav-links a:not(.contact-pill){white-space:nowrap;flex-shrink:0}
 .nav-more{
   display:none;appearance:none;border:0;background:transparent;color:#e8eef0;
   width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;
