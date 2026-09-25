@@ -386,6 +386,44 @@ img,svg{display:block;max-width:100%;height:auto}
 .cap-grid li:hover{border-color:rgba(156,229,26,.3);background:rgba(156,229,26,.04)}
 .orch-center{margin-top:28px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
 
+
+/* ---------- OrchestrAI maquette ---------- */
+.orchestrai-figure{margin:28px 0 8px;padding:0;border:0}
+.orchestrai-frame{
+  position:relative;border-radius:22px;overflow:hidden;
+  border:1px solid rgba(85,203,255,.22);
+  background:#060a12;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 0 90px rgba(85,203,255,.12),
+    0 0 140px rgba(167,139,250,.06);
+}
+.orchestrai-frame::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(180deg,rgba(85,203,255,.06),transparent 18%,transparent 82%,rgba(5,7,12,.35));
+  border-radius:inherit;
+}
+.orchestrai-frame img{
+  display:block;width:100%;height:auto;max-width:100%;
+  vertical-align:middle;
+}
+.orchestrai-figure figcaption{
+  margin:14px 4px 0;font-size:12px;line-height:1.5;color:#8a969e;
+  max-width:78ch;
+}
+.orchestrai-tagline{margin-top:22px}
+.orchestrai-modes{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;
+}
+.orchestrai-modes .card{min-height:0}
+.orchestrai-modes .mode-kicker{
+  margin:0 0 8px;font-size:11px;font-weight:900;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);
+}
+.orchestrai-modes h3{margin:0 0 8px;font-size:15px}
+.orchestrai-modes p{margin:0;font-size:13px;color:#a8b4be}
+
 /* ---------- Tables ---------- */
 .table-scroll{
   margin-top:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;
@@ -559,6 +597,7 @@ img,svg{display:block;max-width:100%;height:auto}
   .soft-pillars{grid-template-columns:repeat(2,1fr)}
   .cap-grid{grid-template-columns:repeat(2,1fr)}
   .tool-grid{grid-template-columns:repeat(2,1fr)}
+  .orchestrai-modes{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:900px){
   .grid-2,.grid-3{grid-template-columns:1fr 1fr}
@@ -611,7 +650,7 @@ img,svg{display:block;max-width:100%;height:auto}
     justify-content:center;align-items:center;text-align:center;
     padding:11px 14px;font-size:12px;white-space:normal;
   }
-  .grid-2,.grid-3,.tool-grid,.q-grid,.soft-pillars,.cap-grid{grid-template-columns:1fr}
+  .grid-2,.grid-3,.tool-grid,.q-grid,.soft-pillars,.cap-grid,.orchestrai-modes{grid-template-columns:1fr}
   .gate-card{padding:22px 18px}
   .hero{padding:36px 0 20px}
   .hero-ctas{flex-direction:column;align-items:stretch}

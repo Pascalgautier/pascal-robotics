@@ -93,6 +93,7 @@
 
         <div class="hero-ctas reveal reveal-delay-3">
           <a class="btn-primary" href="#workflow">Voir le workflow actuel</a>
+          <a class="btn-ghost" href="#orchestrai">Voir OrchestrAI</a>
           <a class="btn-ghost" href="#poc">Comprendre le POC</a>
           <a class="btn-ghost" href="#architecture">Voir l’architecture</a>
         </div>
@@ -221,9 +222,77 @@
         </div>
       </section>
 
-      <!-- ========== 4. TABLEAU 3 ACTEURS ========== -->
+
+      <!-- ========== 04. ORCHESTRAI (maquette) ========== -->
+      <section class="section" id="orchestrai">
+        <p class="section-kicker reveal">04 · Interface · OrchestrAI</p>
+        <div class="badge-row reveal">
+          <span class="badge"><em>Maquette</em></span>
+          <span class="badge">OrchestrAI</span>
+          <span class="badge">Pascal Robotics</span>
+          <span class="badge">Vision d’interface</span>
+          <span class="badge">Document de travail</span>
+        </div>
+        <h2 class="reveal">OrchestrAI — une surface pour orchestrer création, modèles et compute.</h2>
+        <p class="reveal"><strong>OrchestrAI</strong> (<em>ORCHESTR-AI · AI Orchestration Platform by Pascal&nbsp;Robotics</em>) est le concept logiciel / l’interface que Pascal&nbsp;Robotics conçoit pour la couche d’orchestration de ce&nbsp;POC&nbsp;: une seule surface pour la génération créative, le routage multi-modèles, le choix d’infra (GPU cloud loué / plus tard MCT), la mesure coût &amp; qualité, et la comparaison — pour relier le workflow créatif de Francis au compute <strong>sans lui demander d’administrer des GPU</strong>.</p>
+
+        <div class="notice reveal" style="margin-top:18px">
+          <strong>Maquette · vision d’interface · document de travail.</strong>
+          Ce n’est <em>pas</em> un produit livré, <em>pas</em> industrialisé, <em>pas</em> un cluster MCT live. Les chiffres, jobs et métriques affichés sur la maquette sont <strong>illustratifs</strong> — aucun partenariat signé, aucune capacité MCT déjà en production.
+        </div>
+
+        <figure class="orchestrai-figure reveal">
+          <div class="orchestrai-frame">
+            <img
+              src="assets/pipeline-ia/orchestr-ai-interface.jpg"
+              alt="Maquette OrchestrAI : Mode Create, Résultats, Mode Advanced, Control Room et Vue globale — vision d’interface Pascal Robotics (document de travail, non industrialisé)"
+              width="1672"
+              height="941"
+              loading="lazy"
+              decoding="async">
+          </div>
+          <figcaption>
+            Maquette OrchestrAI — document de travail. Modules illustrés&nbsp;: Create, Résultats, Advanced, Control Room, Vue globale. Chiffres et états UI non opérationnels.
+          </figcaption>
+        </figure>
+
+        <blockquote class="quote-block orchestrai-tagline reveal">
+          Plusieurs modèles. Plusieurs infrastructures. Une interface simple. Une seule intelligence d’orchestration.
+        </blockquote>
+
+        <p class="reveal orch-aspirational">Ce que la maquette montre — <strong>comme vision</strong>, pas comme produit live&nbsp;:</p>
+        <div class="orchestrai-modes">
+          <article class="card reveal">
+            <p class="mode-kicker">01</p>
+            <h3>Mode Create</h3>
+            <p>Interface simple pour Francis&nbsp;: prompts, références, options rapides (style, format, qualité, durée), génération.</p>
+          </article>
+          <article class="card reveal reveal-delay-1">
+            <p class="mode-kicker">02</p>
+            <h3>Résultats</h3>
+            <p>Variantes, métadonnées coût / temps / modèle, export vers DaVinci — pour comparer sans quitter le flux créatif.</p>
+          </article>
+          <article class="card reveal reveal-delay-2">
+            <p class="mode-kicker">03</p>
+            <h3>Mode Advanced</h3>
+            <p>Paramètres fins, sélection d’infra (cloud loué / GPU local), contrôles techniques — quand le simple ne suffit plus.</p>
+          </article>
+          <article class="card reveal">
+            <p class="mode-kicker">04</p>
+            <h3>Control Room</h3>
+            <p>Pour Nicolas / MCT&nbsp;: usage GPU, jobs, coûts — une vue ops distincte de la surface créative.</p>
+          </article>
+          <article class="card reveal reveal-delay-1">
+            <p class="mode-kicker">05</p>
+            <h3>Vue globale</h3>
+            <p>Modules (vidéo, Digital Twin, Physical&nbsp;AI, modèles) — vision plateforme plus longue, au-delà du POC vidéo.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ========== 5. TABLEAU 3 ACTEURS ========== -->
       <section class="section" id="acteurs">
-        <p class="section-kicker reveal">04 · Acteurs</p>
+        <p class="section-kicker reveal">05 · Acteurs</p>
         <h2 class="reveal">Trois acteurs. Trois apports. Une trajectoire de POC.</h2>
         <div class="table-scroll reveal" role="region" aria-label="Tableau des acteurs" tabindex="0">
           <table class="data-table actors-table">
@@ -259,9 +328,9 @@
         </div>
       </section>
 
-      <!-- ========== 5. TROIS PHASES ========== -->
+      <!-- ========== 6. TROIS PHASES ========== -->
       <section class="section" id="poc">
-        <p class="section-kicker reveal">05 · Trajectoire</p>
+        <p class="section-kicker reveal">06 · Trajectoire</p>
         <h2 class="reveal">Trois phases. Une seule question : peut-on comparer, puis éventuellement exploiter&nbsp;?</h2>
         <div class="phases" aria-label="Frise des trois phases">
           <article class="phase phase-1 reveal">
@@ -300,9 +369,9 @@
         </div>
       </section>
 
-      <!-- ========== 6. TABLEAU COMPARAISON ========== -->
+      <!-- ========== 7. TABLEAU COMPARAISON ========== -->
       <section class="section" id="comparaison">
-        <p class="section-kicker reveal">06 · Comparaison</p>
+        <p class="section-kicker reveal">07 · Comparaison</p>
         <h2 class="reveal">Aujourd’hui · POC · Cible si validation.</h2>
         <div class="table-scroll reveal" role="region" aria-label="Tableau de comparaison" tabindex="0">
           <table class="data-table compare-table">
@@ -362,9 +431,9 @@
         </div>
       </section>
 
-      <!-- ========== 7. ARCHITECTURE ========== -->
+      <!-- ========== 8. ARCHITECTURE ========== -->
       <section class="section" id="architecture">
-        <p class="section-kicker reveal">07 · Architecture</p>
+        <p class="section-kicker reveal">08 · Architecture</p>
         <h2 class="reveal">Le modèle peut changer. Le serveur peut changer. L’orchestration reste.</h2>
         <p class="reveal">Schéma de principe pour le POC — rôles et interfaces à confirmer au fil des essais. Pas un produit industrialisé.</p>
 
@@ -379,9 +448,9 @@
         </div>
       </section>
 
-      <!-- ========== 8. MOTEUR OUVERT / HYBRIDE ========== -->
+      <!-- ========== 9. MOTEUR OUVERT / HYBRIDE ========== -->
       <section class="section" id="hybride">
-        <p class="section-kicker reveal">08 · Modèles</p>
+        <p class="section-kicker reveal">09 · Modèles</p>
         <h2 class="reveal">Open-weight, pas « open source » au sens large. Pipeline hybride.</h2>
         <p class="reveal">On parle de <strong>modèles ouverts / open-weight</strong> (WAN, LTX, autres pertinents) — pas d’un blanket « open source ». Le pipeline cible est <strong>hybride</strong> : il peut encore router vers Seedance lorsque c’est le meilleur choix pour un shot donné.</p>
         <div class="grid-3">
@@ -404,9 +473,9 @@
         </div>
       </section>
 
-      <!-- ========== 9. PORTABILITÉ (souveraineté adoucie) ========== -->
+      <!-- ========== 10. PORTABILITÉ (souveraineté adoucie) ========== -->
       <section class="section" id="portabilite">
-        <p class="section-kicker reveal">09 · Portabilité &amp; maîtrise</p>
+        <p class="section-kicker reveal">10 · Portabilité &amp; maîtrise</p>
         <h2 class="reveal">D’abord : portabilité, maîtrise, mesure. La souveraineté stricte viendra — si elle vient — plus tard.</h2>
         <p class="reveal">Un POC sur GPU loué, ce n’est pas encore de la souveraineté territoriale. C’est apprendre à <strong>porter</strong> la chaîne, à la <strong>maîtriser</strong>, à en <strong>mesurer</strong> l’économie, à rester <strong>modulaire</strong> et <strong>indépendant d’un modèle unique</strong>, et à pouvoir <strong>changer d’infra</strong>. Une souveraineté plus forte ne devient pertinente que si / quand le pipeline tourne sur une infra localisée MCT.</p>
         <div class="soft-pillars">
@@ -417,9 +486,9 @@
         </div>
       </section>
 
-      <!-- ========== 10. CE QUE NOUS DEVONS PROUVER ========== -->
+      <!-- ========== 11. CE QUE NOUS DEVONS PROUVER ========== -->
       <section class="section" id="prouver">
-        <p class="section-kicker reveal">10 · Preuves à apporter</p>
+        <p class="section-kicker reveal">11 · Preuves à apporter</p>
         <h2 class="reveal">Ce que nous devons prouver.</h2>
         <p class="reveal">Questions ouvertes — le POC existe pour y répondre, pas pour les présumer.</p>
         <div class="q-grid">
@@ -456,9 +525,9 @@
         </div>
       </section>
 
-      <!-- ========== 11. CE QUE FRANCIS Y GAGNE ========== -->
+      <!-- ========== 12. CE QUE FRANCIS Y GAGNE ========== -->
       <section class="section" id="francis-gagne">
-        <p class="section-kicker reveal">11 · Pour Francis</p>
+        <p class="section-kicker reveal">12 · Pour Francis</p>
         <h2 class="reveal">Ce que Francis y gagne — hors discours commercial.</h2>
         <div class="grid-2">
           <article class="card reveal"><h3>Second chemin</h3><p>Une voie expérimentale en parallèle — sans obligation d’abandonner Seedance / Higgsfield.</p></article>
@@ -470,9 +539,9 @@
         </div>
       </section>
 
-      <!-- ========== 12. CE QUE MCT PEUT Y GAGNER ========== -->
+      <!-- ========== 13. CE QUE MCT PEUT Y GAGNER ========== -->
       <section class="section" id="mct-gagne">
-        <p class="section-kicker reveal">12 · Pour MCT</p>
+        <p class="section-kicker reveal">13 · Pour MCT</p>
         <h2 class="reveal">Ce que MCT peut y gagner — investir seulement après validation.</h2>
         <p class="reveal">Le POC ne présuppose pas une capacité MCT déjà live. Il produit des <strong>sorties de mesure</strong> pour une décision d’investissement : qualité atteinte, coût GPU, charge réelle, fiabilité, profil d’usage. On n’investit qu’après validation — pas avant.</p>
         <div class="grid-3">
