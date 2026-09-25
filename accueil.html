@@ -38,9 +38,9 @@ img{display:block;max-width:100%}
 
 .nav{position:sticky;top:0;z-index:40;background:rgba(5,7,8,.72);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 28px rgba(0,0,0,.18)}
 .navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.wordmark{display:inline-flex;align-items:center;line-height:0;font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
+.wordmark{display:inline-flex;align-items:center;line-height:0;flex-shrink:0;font-weight:900;letter-spacing:.16em;font-size:13px;white-space:nowrap}
 .wordmark span{color:var(--green)}
-.nav-logo{height:34px;width:auto;display:block}
+.nav-logo{height:34px;width:auto;display:block;flex-shrink:0}
 .links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em}
 .links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
 .links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(156,229,26,.55);outline:none}
@@ -1523,7 +1523,16 @@ h2.title-parallax{
 .lang-switch button:hover{color:#fff}
 .lang-switch button[aria-pressed="true"]{color:var(--green)}
 .lang-switch .sep{color:#5a666c;font-size:10px;opacity:.55;padding:0 1px;user-select:none}
-.nav-links{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;align-items:center;gap:18px;flex-wrap:nowrap}
+.nav-links a:not(.contact-pill){
+  white-space:nowrap;overflow-wrap:normal;word-break:normal;
+}
+@media (min-width:1101px) and (max-width:1280px){
+  .nav-links{gap:11px}
+  .links{gap:12px;font-size:11px;letter-spacing:.04em}
+  .nav-links a:not(.contact-pill){letter-spacing:.04em}
+  .contact-pill{padding:8px 12px;font-size:11px}
+}
 .nav-more{
   display:none;appearance:none;border:0;background:transparent;color:#e8eef0;
   width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;
@@ -1533,7 +1542,7 @@ h2.title-parallax{
 .nav-more:hover,.nav-more:focus-visible{background:rgba(255,255,255,.06);color:#fff;outline:none}
 .nav-more[aria-expanded="true"]{background:rgba(156,229,26,.1);color:var(--green)}
 .nav-more svg{display:block;width:18px;height:18px}
-@media (max-width:760px){
+@media (max-width:1100px){
   .lang-switch{padding:2px 6px;margin-right:0}
   .lang-switch button{font-size:10px;padding:1px 4px;letter-spacing:.03em}
   .nav-more{display:inline-flex}

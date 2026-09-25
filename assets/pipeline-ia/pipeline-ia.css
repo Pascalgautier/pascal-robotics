@@ -53,8 +53,8 @@ img,svg{display:block;max-width:100%;height:auto}
   box-shadow:0 8px 28px rgba(0,0,0,.22);
 }
 .navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.wordmark{display:inline-flex;align-items:center;line-height:0}
-.nav-logo{height:34px;width:auto;display:block}
+.wordmark{display:inline-flex;align-items:center;line-height:0;flex-shrink:0}
+.nav-logo{height:34px;width:auto;display:block;flex-shrink:0}
 .links{display:flex;align-items:center;gap:18px;color:#bac4c8;font-size:12px;font-weight:750;letter-spacing:.06em;justify-content:flex-end;position:relative;flex-wrap:nowrap}
 .links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
 .links a:not(.contact-pill):hover,
@@ -81,7 +81,16 @@ img,svg{display:block;max-width:100%;height:auto}
 .lang-switch button:hover{color:#fff}
 .lang-switch button[aria-pressed="true"]{color:var(--cyan)}
 .lang-switch .sep{color:#5a666c;font-size:10px;opacity:.55;padding:0 1px;user-select:none}
-.nav-links{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;align-items:center;gap:18px;flex-wrap:nowrap}
+.nav-links a:not(.contact-pill){
+  white-space:nowrap;overflow-wrap:normal;word-break:normal;
+}
+@media (min-width:1101px) and (max-width:1280px){
+  .nav-links{gap:11px}
+  .links{gap:12px;font-size:11px;letter-spacing:.04em}
+  .nav-links a:not(.contact-pill){letter-spacing:.04em}
+  .contact-pill{padding:8px 12px;font-size:11px}
+}
 .nav-more{
   display:none;appearance:none;border:0;background:transparent;color:#e8eef0;
   width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;
@@ -613,12 +622,7 @@ img,svg{display:block;max-width:100%;height:auto}
   /* tables stay scrollable; cards unused (kept in DOM for future) */
   .actors-cards{display:none}
 }
-@media (max-width:760px){
-  .wrap{width:calc(100% - 24px)}
-  .navin{min-height:62px;height:auto;padding:10px 0;gap:10px}
-  .nav-logo{height:28px}
-  .links{gap:8px}
-  .contact-pill{padding:8px 10px;font-size:11px}
+@media (max-width:1100px){
   .lang-switch{padding:2px 6px;margin-right:0}
   .lang-switch button{font-size:10px;padding:1px 4px;letter-spacing:.03em}
   .nav-more{display:inline-flex}
@@ -650,6 +654,13 @@ img,svg{display:block;max-width:100%;height:auto}
     justify-content:center;align-items:center;text-align:center;
     padding:11px 14px;font-size:12px;white-space:normal;
   }
+}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 24px)}
+  .navin{min-height:62px;height:auto;padding:10px 0;gap:10px}
+  .nav-logo{height:28px}
+  .links{gap:8px}
+  .contact-pill{padding:8px 10px;font-size:11px}
   .grid-2,.grid-3,.tool-grid,.q-grid,.soft-pillars,.cap-grid,.orchestrai-modes{grid-template-columns:1fr}
   .gate-card{padding:22px 18px}
   .hero{padding:36px 0 20px}
