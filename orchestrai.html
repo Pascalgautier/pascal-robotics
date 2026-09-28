@@ -35,6 +35,7 @@
   --blue2:#7fb2ff;
   --cyan:#62d7e8;
   --max:1180px;
+  --pr-green:#9ce51a;   /* Pascal Robotics green (= --green of accueil / logo) — 3 discreet accents only */
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -183,119 +184,43 @@ section[id]{scroll-margin-top:84px}
 .oai-verbs{text-wrap:balance;margin:clamp(18px,3svh,30px) 0 0;font-size:clamp(14px,1.55vw,19px);letter-spacing:.3em;font-weight:750;color:#f0f5ff;padding-left:.3em}
 .hero .lead{margin:14px auto 26px;max-width:700px;color:var(--muted);font-size:clamp(15px,1.3vw,17.5px)}
 
-/* ===== PROBLEM ===== */
+/* Pascal Robotics signature accent — used only 3 times: under « by Pascal Robotics », entry of #pascal-robotics, above the final CTA */
+.oai-by::after{content:"";display:block;width:26px;height:1.5px;margin:9px auto 0;border-radius:2px;background:var(--pr-green);opacity:.85}
+.pr-rule{display:block;width:44px;height:1px;margin:0 0 26px;background:var(--pr-green);opacity:.8}
+.final .pr-rule{margin:0 auto 26px}
+
+/* ===== 01 WHY ===== */
 .split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,6vw,90px);align-items:start}
-.chips4{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
-.chip4{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:18px 18px 16px;font-size:15px;font-weight:700;color:#e2eafa;line-height:1.35;position:relative}
-.chip4 small{display:block;font-size:10px;letter-spacing:.18em;color:var(--dim);font-weight:800;margin-bottom:10px}
-.pb-aim{margin:28px 0 0;font-size:clamp(17px,1.5vw,20px);color:#cfdcef;line-height:1.6;max-width:640px}
-.pb-aim strong{color:#fff;font-weight:750}
 .bigline{margin:clamp(56px,8vw,96px) 0 0;font-size:clamp(28px,4.2vw,56px);line-height:1.1;letter-spacing:-.035em;font-weight:750;color:#f2f6ff;max-width:1060px}
 .bigline .accent{color:var(--blue2)}
+/* Simple route schema: NEED -> ORCHESTR-AI -> RIGHT AI ROUTE (connectors drawn in CSS) */
+.route-wrap{--g:64px;margin:48px 0 0;max-width:1060px}
+.route{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--g);align-items:stretch}
+.route li{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;min-height:128px;padding:22px 18px;border:1px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,rgba(18,36,74,.55),rgba(10,22,48,.4))}
+.route li:not(:last-child)::after{content:"";position:absolute;top:50%;left:calc(100% + 8px);width:calc(var(--g) - 16px);height:1px;background:linear-gradient(90deg,rgba(127,178,255,.12),rgba(127,178,255,.8))}
+.route li:not(:last-child)::before{content:"";position:absolute;top:50%;left:calc(100% + var(--g) - 9px);width:7px;height:7px;margin:-4px 0 0 -6px;border-top:1.5px solid rgba(127,178,255,.9);border-right:1.5px solid rgba(127,178,255,.9);transform:rotate(45deg)}
+.route-t{font-size:clamp(15px,1.4vw,18px);font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f3f7ff;line-height:1.25}
+.route-d{font-size:13.5px;color:var(--muted);line-height:1.45}
+.route li.is-core{border-color:rgba(61,139,255,.6);background:radial-gradient(ellipse at 50% 0%,rgba(61,139,255,.22),rgba(10,22,48,.5) 72%);box-shadow:0 0 0 1px rgba(61,139,255,.12),0 18px 50px rgba(61,139,255,.12)}
+.route li.is-core .route-t{font-size:clamp(20px,2vw,26px);letter-spacing:.035em}
+.route .dash{color:var(--blue)}
+.route .ai{color:var(--blue2)}
+.route-dest{margin:16px 0 0 auto;width:calc((100% - 2 * var(--g)) / 3);text-align:center;font-size:10.5px;letter-spacing:.3em;font-weight:750;color:var(--dim);padding-left:.3em}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-/* ===== PRINCIPLE ===== */
-.chain{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}
-.chain li{position:relative;border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px 18px 18px;min-height:150px}
-.chain li::after{content:"";position:absolute;top:50%;right:-11px;width:8px;height:8px;border-top:1.5px solid rgba(127,178,255,.55);border-right:1.5px solid rgba(127,178,255,.55);transform:translateY(-50%) rotate(45deg)}
-.chain li:nth-child(4n)::after,.chain li:last-child::after{content:none}
-.chain .n{display:block;font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--blue2);margin-bottom:12px}
-.chain .t{display:block;font-size:17px;font-weight:800;letter-spacing:.01em;text-transform:uppercase;color:#f3f7ff;margin-bottom:8px}
-.chain .d{display:block;font-size:13.5px;color:var(--muted);line-height:1.5}
-.chain li.is-vision{border-style:dashed;background:transparent}
-.chain li.is-vision .t{color:#cfd9ea}
-.honest{margin:22px 0 0;padding:14px 16px;border-left:2px solid rgba(127,178,255,.45);background:rgba(61,139,255,.05);border-radius:0 12px 12px 0;font-size:14px;color:#b9c8e0;max-width:900px;line-height:1.6}
-.criteria{margin:54px 0 0}
-.criteria h3{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#dbe6f7;margin:0 0 16px;font-weight:800}
-.crit{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:0;padding:0}
-.crit li{padding:10px 16px;border:1px solid var(--line2);border-radius:999px;font-size:14px;font-weight:700;color:#e2eafa;background:rgba(10,22,48,.5)}
-
-/* ===== ARCHITECTURE ===== */
-.arch{position:relative;margin:48px 0 0;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;grid-template-rows:auto minmax(190px,auto) auto auto;
-  grid-template-areas:"n1 a12 n2 a23 n3" "a61 core core core a34" "n6 a56 n5 a45 n4" "loop loop loop loop loop";align-items:stretch}
-.node{position:relative;border:1px solid var(--line2);background:linear-gradient(180deg,rgba(18,36,74,.62),rgba(10,22,48,.5));border-radius:18px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px;min-height:132px}
-.node .num{font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--dim)}
-.node h3{margin:0;font-size:14.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#f2f6ff;line-height:1.3}
-.node p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5;flex:1}
-.node .st{align-self:flex-start}
-.node-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.node.is-future{border-style:dashed;background:rgba(10,22,48,.35)}
-.n1{grid-area:n1}.n2{grid-area:n2}.n3{grid-area:n3}.n4{grid-area:n4}.n5{grid-area:n5}.n6{grid-area:n6}
-.arr{display:flex;align-items:center;justify-content:center;color:rgba(127,178,255,.7)}
-.arr svg{width:22px;height:22px;display:block}
-.a12{grid-area:a12}.a23{grid-area:a23}.a34{grid-area:a34}.a45{grid-area:a45}.a56{grid-area:a56}.a61{grid-area:a61}
-.a34 svg{transform:rotate(90deg)}.a45 svg,.a56 svg{transform:rotate(180deg)}.a61 svg{transform:rotate(-90deg)}
-.a34,.a61{position:relative;padding:14px 0}
-.a34::before,.a61::before{content:"";position:absolute;top:10px;bottom:10px;left:50%;border-left:1px dashed rgba(127,178,255,.28)}
-.a34 svg,.a61 svg{position:relative;background:#060d20;border-radius:50%;padding:2px;width:26px;height:26px}
-.core{grid-area:core;align-self:center;justify-self:center;width:min(100%,560px);margin:18px 0;text-align:center;border:1px dashed rgba(174,186,208,.45);border-radius:24px;padding:22px 22px 20px;position:relative;
-  background:radial-gradient(ellipse at 50% 0%,rgba(61,139,255,.14),rgba(10,22,48,.35) 70%)}
-.core h3{margin:12px 0 6px;font-size:clamp(17px,1.7vw,21px);letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#f4f8ff}
-.core .verbs{margin:0;font-size:11.5px;letter-spacing:.2em;color:var(--blue2);font-weight:750}
-.de{margin:16px auto 0;display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:9px 12px;border:1px dashed rgba(174,186,208,.35);border-radius:12px;font-size:12.5px;color:var(--muted)}
-.de b{color:#e3ebf8;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:11.5px}
-.loop{grid-area:loop;margin:18px 0 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13.5px;color:#b9c8e0}
-@media (prefers-reduced-motion:no-preference){
-  .arch.is-live .node:not(.is-future){animation:oai-step 12s ease-in-out infinite}
-  .arch.is-live .node.n1{animation-delay:0s}.arch.is-live .node.n2{animation-delay:2s}.arch.is-live .node.n3{animation-delay:4s}
-  .arch.is-live .node.n4{animation-delay:6s}.arch.is-live .node.n5{animation-delay:8s}
-  @keyframes oai-step{0%,16%,100%{border-color:rgba(150,185,255,.22);box-shadow:none}5%,10%{border-color:rgba(127,178,255,.7);box-shadow:0 0 0 1px rgba(61,139,255,.18),0 14px 40px rgba(61,139,255,.12)}}
-}
-
-/* ===== ORCHESTRATE ===== */
-.quote{margin:0 0 20px;font-size:clamp(22px,2.4vw,32px);line-height:1.3;letter-spacing:-.02em;font-weight:650;color:#f2f6ff;max-width:640px}
-.eco{margin:48px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.eco-g{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(10,22,48,.4)}
-.eco-g h3{margin:0 0 12px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:800}
-.eco-g ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.eco-g li{font-size:13.5px;font-weight:700;color:#dfe8f7;padding:5px 10px;border-radius:8px;border:1px solid rgba(150,185,255,.14)}
-
-/* ===== TESTBED ===== */
+/* ===== 02 TODAY ===== */
+.sub{margin:0 0 14px;font-size:clamp(20px,2vw,26px);line-height:1.25;letter-spacing:-.02em;font-weight:750;color:#f2f6ff}
 .panel{border:1px solid var(--line2);border-radius:22px;background:linear-gradient(180deg,rgba(18,36,74,.5),rgba(10,22,48,.4));padding:24px}
 .panel h3{margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:#dbe6f7}
-.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
-.checks li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:#dce6f5;line-height:1.4}
-.checks li::before{content:"";flex:0 0 auto;width:5px;height:9px;margin:3px 5px 0 4px;border-right:2px solid var(--blue2);border-bottom:2px solid var(--blue2);transform:rotate(45deg)}
-.checks li.is-future{color:#aebad0}
-.checks li.is-future::before{width:8px;height:8px;margin:5px 4px 0 2px;border:1.5px dashed #aebad0;border-radius:50%;transform:none}
-.status-rows{margin:22px 0 0;padding:18px 0 0;border-top:1px solid var(--line);display:grid;gap:10px}
-.status-rows div{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;font-size:13.5px;color:#c6d4ea}
+.status-panel{margin:clamp(36px,5vw,56px) 0 0}
+.status-rows{margin:0;padding:0;display:grid;gap:12px}
+.status-rows div{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center;font-size:14px;color:#c6d4ea;line-height:1.5}
 .status-rows .st{justify-self:start}
+.status-panel .note{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);max-width:none}
+.arch-link{margin:26px 0 0;font-size:14px}
 
-/* ===== WHY PASCAL ROBOTICS ===== */
-.duo{margin:40px 0 0;display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch}
-.duo-card{border:1px solid var(--line2);border-radius:20px;padding:22px;background:var(--panel)}
-.duo-card.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
-.duo-card .k{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:#dbe6f7}
-.duo-card p{margin:0;font-size:clamp(16px,1.4vw,18.5px);line-height:1.5;color:#e6eefb}
-.duo-arrow{display:flex;align-items:center;color:rgba(127,178,255,.7)}
-.duo-arrow svg{width:26px;height:26px}
-.domains{margin:24px 0 0;display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
-.domains li{padding:8px 13px;border:1px dashed rgba(174,186,208,.35);border-radius:999px;font-size:13px;font-weight:700;color:#cfd9ea}
+/* ===== 03 VIDEO FIRST ===== */
 .links-row{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:12px 28px;font-size:14px}
-
-/* ===== DESTINATIONS ===== */
-.dest{margin:44px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.dest-card{border:1px solid var(--line2);border-radius:22px;padding:24px 22px;background:linear-gradient(180deg,rgba(18,36,74,.55),rgba(10,22,48,.35));display:flex;flex-direction:column;gap:12px}
-.dest-card.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
-.dest-top{display:flex;justify-content:space-between;align-items:center}
-.dest-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(127,178,255,.3);color:var(--blue2);background:rgba(61,139,255,.08)}
-.dest-ico svg{width:20px;height:20px}
-.dest-card h3{margin:4px 0 0;font-size:20px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
-.dest-card p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.55}
-.dest-card .for{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px;color:#c8d6ec}
-.dest-card .for b{color:#e8effb}
-
-/* ===== STATUS ===== */
-.legend{margin:36px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.legend div{display:flex;flex-direction:column;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);line-height:1.5}
-.road{margin:28px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.road-col{border:1px solid var(--line2);border-radius:20px;padding:20px 20px 12px;background:var(--panel)}
-.road-col.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
-.road-col h3{margin:0 0 12px}
-.road-col ul{list-style:none;margin:0;padding:0}
-.road-col li{padding:12px 0;border-top:1px solid var(--line);font-size:14px;color:#dce6f5;line-height:1.45}
-.road-col li:first-child{border-top:0}
-.road-col.is-future li{color:#bac6da}
 
 /* ===== LAB + CTA ===== */
 .lab{display:flex;gap:22px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line2);border-radius:22px;padding:24px 26px;background:linear-gradient(90deg,rgba(61,139,255,.1),rgba(10,22,48,.4));transition:border-color .2s ease,background .2s ease}
@@ -330,28 +255,8 @@ section[id]{scroll-margin-top:84px}
 .back-home a:hover{color:#fff}
 
 /* ===== Responsive ===== */
-@media (max-width:1060px){
-  .eco{grid-template-columns:repeat(3,1fr)}
-  .chain{grid-template-columns:repeat(2,1fr)}
-  .chain li:nth-child(4n)::after{content:""}
-  .chain li:nth-child(2n)::after{content:none}
-}
 @media (max-width:900px){
   .split{grid-template-columns:1fr}
-  .arch{display:flex;flex-direction:column;align-items:stretch;gap:0}
-  .arch .arr{padding:6px 0;height:34px}
-  .arch .arr::before{content:none}
-  .arch .arr svg{background:none;width:22px;height:22px;padding:0}
-  .arch .arr svg{transform:rotate(90deg)!important}
-  .a61{display:none!important}
-  .loop{order:12;margin:14px 0 0;padding:14px 16px;border:1px dashed rgba(174,186,208,.35);border-radius:14px}
-  .core{order:13;width:100%;margin:22px 0 0}
-  .n1{order:1}.a12{order:2}.n2{order:3}.a23{order:4}.n3{order:5}.a34{order:6}.n4{order:7}.a45{order:8}.n5{order:9}.a56{order:10}.n6{order:11}
-  .node{min-height:0}
-  .duo{grid-template-columns:1fr}
-  .duo-arrow{justify-content:center}
-  .duo-arrow svg{transform:rotate(90deg)}
-  .dest,.road,.legend{grid-template-columns:1fr}
 }
 @media (max-width:760px){
   .hero{padding-top:22px}
@@ -360,27 +265,23 @@ section[id]{scroll-margin-top:84px}
   .oai-mark{font-size:clamp(30px,11vw,60px)}
   .orb{height:clamp(200px,30svh,280px)}
   .orb-state{font-size:9.5px;letter-spacing:.2em}
-  .chain{grid-template-columns:1fr}
-  .chain li{min-height:0}
-  .chain li::after{content:""!important;top:auto;bottom:-11px;right:auto;left:26px;transform:rotate(135deg)}
-  .chain li:last-child::after{content:none!important}
-  .eco{grid-template-columns:1fr 1fr}
-  .checks{grid-template-columns:1fr}
+  .route-wrap{--g:40px;margin-top:36px}
+  .route{grid-template-columns:1fr}
+  .route li{min-height:0;padding:18px 16px}
+  .route li:not(:last-child)::after{top:calc(100% + 6px);left:50%;width:1px;height:calc(var(--g) - 12px);background:linear-gradient(180deg,rgba(127,178,255,.12),rgba(127,178,255,.8))}
+  .route li:not(:last-child)::before{top:calc(100% + var(--g) - 9px);left:50%;margin:-5px 0 0 -4px;transform:rotate(135deg)}
+  .route-dest{width:auto;margin:18px 0 0}
   .status-rows div{grid-template-columns:1fr;gap:6px}
   .actions .btn{width:100%}
   .lab{padding:20px}
   .section{padding:72px 0}
-}
-@media (max-width:420px){
-  .eco{grid-template-columns:1fr}
-  .chips4{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js .reveal{opacity:1;transform:none;transition:none}
   .hero-badge i{animation:none}
   .orb-state b{transition:none}
-  .btn,.links a,.contact-pill{transition:none}
+  .btn,.links a,.contact-pill,.tlink,.lab{transition:none}
 }
 </style>
 </head>
@@ -435,226 +336,70 @@ section[id]{scroll-margin-top:84px}
     <p class="oai-verbs" data-i18n="hero.verbs">COMPREND. ORCHESTRE. MESURE. APPREND.</p>
     <p class="lead" data-i18n="hero.lead">Une couche d’orchestration en développement pour relier modèles d’IA, fournisseurs de calcul et infrastructures — et aider à choisir, pour chaque besoin, la combinaison la plus adaptée.</p>
     <div class="actions">
-      <a class="btn primary" href="#principe" data-i18n="hero.cta1">Comprendre le principe ↓</a>
+      <a class="btn primary" href="#pourquoi" data-i18n="hero.cta1">Comprendre le principe ↓</a>
       <a class="btn" href="accueil.html#contact" data-i18n="hero.cta2">Parler de votre projet ↗</a>
     </div>
   </div>
 </header>
-
-<!-- ================= 01 PROBLEM ================= -->
-<section class="section" id="constat" aria-labelledby="pb-title">
-  <div class="wrap">
-    <div class="split">
-      <div class="reveal">
-        <p class="eyebrow" data-i18n="pb.eyebrow">01 / Le constat</p>
-        <h2 id="pb-title" data-i18n-html="pb.title">Un écosystème IA foisonnant.<br><span class="soft">Et fragmenté.</span></h2>
-        <p class="body" data-i18n="pb.body">Aujourd’hui, un créateur, une entreprise ou un industriel peut jongler avec plusieurs modèles d’IA, plusieurs plateformes et plusieurs fournisseurs de GPU. Chacun a sa qualité, ses délais, ses prix et ses limites — et tout évolue vite. Choisir devient un travail à part entière.</p>
-      </div>
-      <div class="reveal">
-        <div class="chips4">
-          <div class="chip4"><small>01</small><span data-i18n="pb.c1">Plusieurs modèles</span></div>
-          <div class="chip4"><small>02</small><span data-i18n="pb.c2">Plusieurs plateformes</span></div>
-          <div class="chip4"><small>03</small><span data-i18n="pb.c3">Plusieurs fournisseurs GPU</span></div>
-          <div class="chip4"><small>04</small><span data-i18n="pb.c4">Qualité, délais et prix variables</span></div>
-        </div>
-        <p class="pb-aim" data-i18n-html="pb.aim">OrchestrAI vise à devenir la couche qui aide à <strong>comprendre</strong>, <strong>comparer</strong>, <strong>mesurer</strong> et <strong>orchestrer</strong> cet écosystème.</p>
-      </div>
-    </div>
-    <p class="bigline reveal" data-i18n-html="pb.big">Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class="accent">Pour le bon besoin.</span></p>
-  </div>
-</section>
-
-<!-- ================= 02 PRINCIPLE ================= -->
-<section class="section" id="principe" aria-labelledby="pr-title">
+<!-- ================= 01 WHY ORCHESTRAI (constat + principe, simplified) ================= -->
+<section class="section" id="pourquoi" aria-labelledby="why-title">
   <div class="wrap">
     <div class="reveal">
-      <p class="eyebrow" data-i18n="pr.eyebrow">02 / Le principe</p>
-      <h2 id="pr-title" data-i18n-html="pr.title">Une chaîne simple,<br><span class="soft">de l’intention à la recommandation.</span></h2>
-      <p class="lead" data-i18n="pr.intro">Le principe d’OrchestrAI tient en une chaîne. Chaque étape produit des informations utiles à la suivante — et, à terme, aux projets suivants.</p>
+      <p class="eyebrow" data-i18n="why.eyebrow">01 / L’idée</p>
+      <h2 id="why-title" data-i18n-html="why.title">Pourquoi OrchestrAI&nbsp;?</h2>
+      <p class="lead" data-i18n="why.body">Modèles d’IA, plateformes, fournisseurs de GPU dans le cloud, infrastructures locales ou privées : les options se multiplient, chacune avec sa qualité, ses délais et son coût. OrchestrAI vise à aider à choisir — et à orchestrer — la bonne combinaison pour chaque besoin.</p>
     </div>
-    <ol class="chain reveal">
-      <li><span class="n">01</span><span class="t" data-i18n="pr.s1.t">Intention</span><span class="d" data-i18n="pr.s1.d">Ce que vous voulez obtenir, avec vos références et vos contraintes.</span></li>
-      <li><span class="n">02</span><span class="t" data-i18n="pr.s2.t">Comprendre</span><span class="d" data-i18n="pr.s2.d">Clarifier le besoin et le traduire pour chaque modèle.</span></li>
-      <li><span class="n">03</span><span class="t" data-i18n="pr.s3.t">Orchestrer</span><span class="d" data-i18n="pr.s3.d">Choisir modèles, fournisseurs et infrastructure.</span></li>
-      <li><span class="n">04</span><span class="t" data-i18n="pr.s4.t">Générer / Exécuter</span><span class="d" data-i18n="pr.s4.d">Lancer les traitements là où c’est pertinent.</span></li>
-      <li><span class="n">05</span><span class="t" data-i18n="pr.s5.t">Mesurer</span><span class="d" data-i18n="pr.s5.d">Temps, coût, disponibilité, échecs.</span></li>
-      <li><span class="n">06</span><span class="t" data-i18n="pr.s6.t">Évaluer</span><span class="d" data-i18n="pr.s6.d">Qualité et fidélité à l’intention : revue humaine, puis analyse IA à terme.</span></li>
-      <li class="is-vision"><span class="n">07</span><span class="t" data-i18n="pr.s7.t">Apprendre</span><span class="d" data-i18n="pr.s7.d">Capitaliser sur chaque résultat.</span></li>
-      <li class="is-vision"><span class="n">08</span><span class="t" data-i18n="pr.s8.t">Recommander</span><span class="d" data-i18n="pr.s8.d">Proposer la combinaison la plus adaptée au prochain besoin.</span></li>
-    </ol>
-    <p class="honest reveal" data-i18n="pr.honest">Aujourd’hui, une partie de cette chaîne est réalisée manuellement ou de façon expérimentale ; les étapes « Apprendre » et « Recommander » relèvent de la vision à terme. Le statut de chaque brique est détaillé plus bas.</p>
-    <div class="criteria reveal">
-      <h3 data-i18n="pr.crit.title">Critères d’arbitrage</h3>
-      <ul class="crit">
-        <li data-i18n="pr.k1">Qualité</li><li data-i18n="pr.k2">Coût</li><li data-i18n="pr.k3">Temps / latence</li><li data-i18n="pr.k4">Disponibilité</li>
-        <li data-i18n="pr.k5">Confidentialité</li><li data-i18n="pr.k6">Souveraineté</li><li data-i18n="pr.k7">Capacités matérielles</li>
-      </ul>
-      <p class="note" data-i18n="pr.crit.note">Le poids de chaque critère dépend du projet : un studio créatif, un industriel ou un laboratoire n’arbitrent pas de la même façon.</p>
+    <div class="route-wrap reveal">
+      <ol class="route" aria-label="Principe d’OrchestrAI : du besoin à la bonne route IA" data-i18n-aria="why.route.aria">
+        <li><span class="route-t" data-i18n="why.r1.t">Besoin</span><span class="route-d" data-i18n="why.r1.d">Votre intention et vos contraintes</span></li>
+        <li class="is-core"><span class="route-t"><span aria-hidden="true">ORCHESTR<span class="dash">-</span><span class="ai">AI</span></span><span class="sr">OrchestrAI</span></span><span class="route-d" data-i18n="why.r2.d">Compare, arbitre, orchestre</span></li>
+        <li><span class="route-t" data-i18n="why.r3.t">Bonne route IA</span><span class="route-d" data-i18n="why.r3.d">Modèle, fournisseur, infrastructure</span></li>
+      </ol>
+      <p class="route-dest">CLOUD · LOCAL · ON-PREMISE</p>
     </div>
+    <p class="bigline reveal" data-i18n-html="why.big">Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class="accent">Pour le bon besoin.</span></p>
   </div>
 </section>
 
-<!-- ================= 03 ARCHITECTURE ================= -->
-<section class="section" id="architecture" aria-labelledby="ar-title">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow" data-i18n="ar.eyebrow">03 / Architecture</p>
-      <h2 id="ar-title" data-i18n-html="ar.title">Une boucle qui mesure,<br><span class="soft">puis apprend.</span></h2>
-      <p class="lead" data-i18n="ar.intro">Vue simplifiée de l’architecture visée. Chaque brique porte son statut réel : actif, expérimental ou futur.</p>
-    </div>
-    <div class="arch reveal" role="group" aria-label="Schéma de l’architecture OrchestrAI : une boucle en six étapes autour d’un agent central futur" data-i18n-aria="ar.aria">
-      <article class="node n1"><div class="node-top"><span class="num">01</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n1.t">Intentions &amp; références</h3><p data-i18n="ar.n1.d">Brief, prompt, images de référence, contraintes.</p></article>
-      <div class="arr a12" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <article class="node n2"><div class="node-top"><span class="num">02</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><h3 data-i18n="ar.n2.t">Prompt Intelligence</h3><p data-i18n="ar.n2.d">Structurer et adapter le prompt à chaque modèle.</p></article>
-      <div class="arr a23" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <article class="node n3"><div class="node-top"><span class="num">03</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n3.t">Modèles &amp; providers</h3><p data-i18n="ar.n3.d">Plusieurs modèles, via plusieurs fournisseurs.</p></article>
-      <div class="arr a34" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <article class="node n4"><div class="node-top"><span class="num">04</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n4.t">Génération / exécution</h3><p data-i18n="ar.n4.d">Jobs lancés côte à côte pour comparaison.</p></article>
-      <div class="arr a45" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <article class="node n5"><div class="node-top"><span class="num">05</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><h3 data-i18n="ar.n5.t">Évaluation &amp; analyse</h3><p data-i18n="ar.n5.d">Revue humaine aujourd’hui ; analyse IA à terme.</p></article>
-      <div class="arr a56" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <article class="node n6 is-future"><div class="node-top"><span class="num">06</span><span class="st st-future" data-i18n="st.future">Futur</span></div><h3 data-i18n="ar.n6.t">Knowledge Base</h3><p data-i18n="ar.n6.d">Mémoire des résultats, pour mieux recommander.</p></article>
-      <p class="loop"><span data-i18n="ar.loop">↺ La boucle se referme : chaque projet enrichit le suivant.</span> <span class="st st-future" data-i18n="st.future">Futur</span></p>
-      <div class="arr a61" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <div class="core">
-        <span class="st st-future" data-i18n="st.future">Futur</span>
-        <h3 data-i18n="ar.core.t">OAI Intelligence Agent</h3>
-        <p class="verbs" data-i18n="ar.core.v">COMPREND · ANALYSE · APPREND · RECOMMANDE</p>
-        <div class="de"><b data-i18n="ar.de.t">Decision Engine</b><span data-i18n="ar.de.d">Arbitrage automatique selon les critères du projet.</span><span class="st st-future" data-i18n="st.future">Futur</span></div>
-      </div>
-    </div>
-    <p class="honest reveal" data-i18n="ar.note">Aujourd’hui, la boucle est pilotée par l’humain. L’agent central et le Decision Engine sont des briques futures, non opérationnelles à ce jour.</p>
-  </div>
-</section>
-
-<!-- ================= 04 ORCHESTRATE, NOT REPLACE ================= -->
-<section class="section" id="orchestrer" aria-labelledby="or-title">
+<!-- ================= 02 WHAT WE ARE TESTING TODAY (orchestrer + banc vidéo, simplified) ================= -->
+<section class="section" id="aujourdhui" aria-labelledby="now-title">
   <div class="wrap">
     <div class="split">
       <div class="reveal">
-        <p class="eyebrow" data-i18n="or.eyebrow">04 / Positionnement</p>
-        <h2 id="or-title" data-i18n-html="or.title">Orchestrer,<br><span class="soft">pas remplacer.</span></h2>
+        <p class="eyebrow" data-i18n="now.eyebrow">02 / Ce que nous testons aujourd’hui</p>
+        <h2 id="now-title" data-i18n-html="now.title">Orchestrer,<br><span class="soft">pas remplacer.</span></h2>
+        <p class="body" data-i18n="now.body">OrchestrAI ne cherche pas à remplacer les outils d’IA spécialisés : il vise à les coordonner. Chaque modèle, plateforme ou fournisseur de calcul garde ses forces ; OrchestrAI aide à choisir lequel utiliser, et quand.</p>
       </div>
       <div class="reveal">
-        <p class="quote" data-i18n="or.quote">OrchestrAI ne cherche pas à remplacer les outils spécialisés. Il vise à les orchestrer.</p>
-        <p class="body" data-i18n="or.body">Plateformes de création, API d’inférence, GPU à la demande, workflows open source, modèles vidéo : chacun excelle dans son domaine. Ces outils peuvent devenir des moteurs, des modèles, des fournisseurs ou des services utilisés par OrchestrAI.</p>
+        <h3 class="sub" data-i18n="now.video.t">Premier terrain d’expérimentation : la vidéo IA</h3>
+        <p class="body" data-i18n="now.video.d">Notre POC lance une même intention sur plusieurs modèles et compare le temps de génération, le coût, la qualité et la fidélité au prompt. Les écarts y sont bien visibles : un bon terrain pour éprouver la logique d’orchestration.</p>
       </div>
     </div>
-    <div class="eco reveal">
-      <div class="eco-g"><h3 data-i18n-html="or.g1">Plateformes de création</h3><ul><li>Higgsfield</li><li>Runway</li></ul></div>
-      <div class="eco-g"><h3 data-i18n-html="or.g2">Modèles vidéo</h3><ul><li>Seedance</li><li>WAN</li><li>LTX</li></ul></div>
-      <div class="eco-g"><h3 data-i18n-html="or.g3">API &amp; inférence</h3><ul><li>fal.ai</li></ul></div>
-      <div class="eco-g"><h3 data-i18n-html="or.g4">Calcul GPU</h3><ul><li>RunPod</li></ul></div>
-      <div class="eco-g"><h3 data-i18n-html="or.g5">Workflows</h3><ul><li>ComfyUI</li></ul></div>
+    <div class="panel status-panel reveal">
+      <h3 data-i18n="now.st.title">État des briques</h3>
+      <div class="status-rows">
+        <div><span class="st st-active" data-i18n="st.active">Actif</span><span data-i18n="now.st.a">Prompt Intelligence · Knowledge Base (mémoire structurée) · génération multi-modèles · évaluation humaine · analyse vidéo technique locale</span></div>
+        <div><span class="st st-exp" data-i18n="st.exp">Expérimental</span><span data-i18n="now.st.e">Analyse sémantique IA</span></div>
+        <div><span class="st st-future" data-i18n="st.future">Futur</span><span data-i18n="now.st.f">OAI Intelligence Agent · Decision Engine automatique</span></div>
+      </div>
+      <p class="note" data-i18n="now.st.note">Actif : utilisé aujourd’hui dans nos POC, encore largement piloté par l’humain. Pas de chiffres ici : les mesures servent d’abord à comparer.</p>
     </div>
-    <p class="note reveal" data-i18n="or.note">Noms cités à titre d’exemples de l’écosystème. Aucun partenariat n’est sous-entendu ; les marques citées appartiennent à leurs détenteurs respectifs.</p>
+    <p class="arch-link reveal"><a class="tlink" href="orchestrai-architecture" data-i18n="now.arch">Voir l’architecture technique →</a></p>
   </div>
 </section>
 
-<!-- ================= 05 FIRST TESTBED: AI VIDEO ================= -->
-<section class="section" id="banc-video" aria-labelledby="tb-title">
-  <div class="wrap">
-    <div class="split">
-      <div class="reveal">
-        <p class="eyebrow" data-i18n="tb.eyebrow">05 / Premier banc d’essai</p>
-        <h2 id="tb-title" data-i18n-html="tb.title">Premier terrain d’expérimentation :<br><span class="soft">la vidéo IA.</span></h2>
-        <p class="body" data-i18n="tb.body">La génération vidéo est aujourd’hui notre premier banc d’essai. Les modèles s’y multiplient et les écarts de qualité, de délai et de coût y sont visibles : un bon terrain pour éprouver la logique d’orchestration.</p>
-        <p class="note" data-i18n="tb.note">Pas de chiffres ici : les mesures servent d’abord à comparer, pas à promettre des économies.</p>
-      </div>
-      <div class="panel reveal">
-        <h3 data-i18n="tb.list.title">Ce que nous comparons</h3>
-        <ul class="checks">
-          <li data-i18n="tb.l1">La même intention</li><li data-i18n="tb.l2">Le même prompt, lorsque c’est pertinent</li><li data-i18n="tb.l3">Le temps de génération</li><li data-i18n="tb.l4">Le coût</li>
-          <li data-i18n="tb.l5">La qualité perçue</li><li data-i18n="tb.l6">La fidélité au prompt</li><li data-i18n="tb.l7">La revue humaine</li><li class="is-future" data-i18n="tb.l8">À terme, l’analyse par IA</li>
-        </ul>
-        <div class="status-rows">
-          <div><span class="st st-active" data-i18n="st.active">Actif</span><span data-i18n="tb.s1">Génération sur plusieurs modèles et revue humaine</span></div>
-          <div><span class="st st-exp" data-i18n="st.exp">Expérimental</span><span data-i18n="tb.s2">Banc de comparaison structuré multi-fournisseurs</span></div>
-          <div><span class="st st-future" data-i18n="st.future">Futur</span><span data-i18n="tb.s3">Analyse automatisée par IA</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 06 WHY PASCAL ROBOTICS ================= -->
+<!-- ================= 03 VIDEO FIRST, INDUSTRY NEXT ================= -->
 <section class="section" id="pascal-robotics" aria-labelledby="pr2-title">
   <div class="wrap">
     <div class="reveal">
-      <p class="eyebrow" data-i18n="pr2.eyebrow">06 / Pourquoi Pascal Robotics</p>
+      <span class="pr-rule" aria-hidden="true"></span>
+      <p class="eyebrow" data-i18n="pr2.eyebrow">03 / Pourquoi Pascal Robotics</p>
       <h2 id="pr2-title" data-i18n-html="pr2.title">La vidéo d’abord.<br><span class="soft">L’industrie ensuite.</span></h2>
-      <p class="lead" data-i18n="pr2.body">Pascal Robotics relie le monde réel, la simulation et l’intelligence artificielle. La vidéo est le premier terrain expérimental d’OrchestrAI ; l’architecture vise à s’étendre au Digital Twin, à la simulation, à l’IA locale, à la Physical AI, à la robotique, aux infrastructures GPU et aux cas d’usage industriels.</p>
+      <p class="lead" data-i18n="pr2.body">La vidéo est le premier terrain d’OrchestrAI. La même logique d’orchestration a vocation à s’étendre progressivement au Digital Twin, à la simulation, à la Physical AI et à la robotique — le cœur de métier de Pascal Robotics.</p>
+      <div class="links-row">
+        <a class="tlink" href="jumeaux-numeriques.html" data-i18n="pr2.link2">Le Digital Twin selon Pascal Robotics →</a>
+      </div>
     </div>
-    <div class="duo reveal">
-      <div class="duo-card"><div class="k"><span data-i18n="pr2.a.k">Dans la vidéo</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><p data-i18n="pr2.a.d">OrchestrAI peut arbitrer entre modèles et infrastructures de génération.</p></div>
-      <div class="duo-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
-      <div class="duo-card is-future"><div class="k"><span data-i18n="pr2.b.k">Demain dans l’industrie</span><span class="st st-future" data-i18n="st.future">Futur</span></div><p data-i18n="pr2.b.d">La même logique d’orchestration pourra s’appliquer à des modèles, agents, simulations, ressources GPU et systèmes physiques.</p></div>
-    </div>
-    <ul class="domains reveal">
-      <li data-i18n="pr2.d1">Digital Twin</li><li data-i18n="pr2.d2">Simulation · Isaac Sim · Isaac Lab</li><li data-i18n="pr2.d3">IA locale · Edge AI</li><li data-i18n="pr2.d4">Physical AI</li>
-      <li data-i18n="pr2.d5">Robotique</li><li data-i18n="pr2.d6">Infrastructures GPU</li><li data-i18n="pr2.d7">Cas d’usage industriels</li>
-    </ul>
-    <p class="note reveal" data-i18n="pr2.note">Ces extensions ne sont pas déployées : elles décrivent la direction de l’architecture.</p>
-    <div class="links-row reveal">
-      <a class="tlink" href="accueil.html" data-i18n="pr2.link1">Découvrir Pascal Robotics →</a>
-      <a class="tlink" href="jumeaux-numeriques.html" data-i18n="pr2.link2">Le Digital Twin selon Pascal Robotics →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 07 EXECUTION DESTINATIONS ================= -->
-<section class="section" id="destinations" aria-labelledby="de-title">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow" data-i18n="de.eyebrow">07 / Où exécuter</p>
-      <h2 id="de-title" data-i18n-html="de.title">Cloud, local ou on-premise.<br><span class="soft">L’exécution au bon endroit.</span></h2>
-      <p class="lead" data-i18n="de.intro">Une architecture provider-agnostic : aucun fournisseur n’est imposé. Le lieu d’exécution devient un critère d’arbitrage comme les autres.</p>
-    </div>
-    <div class="dest reveal">
-      <article class="dest-card">
-        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/></svg></span><span class="st st-active" data-i18n="st.active">Actif</span></div>
-        <h3 data-i18n="de.c1.t">Cloud</h3>
-        <p data-i18n="de.c1.d">Services externes, API, fournisseurs de calcul à la demande.</p>
-        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c1.f">Accès rapide à de nombreux modèles, capacité élastique.</span></p>
-      </article>
-      <article class="dest-card">
-        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M2.5 19h19"/></svg></span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div>
-        <h3 data-i18n="de.c2.t">Local</h3>
-        <p data-i18n="de.c2.d">Mac, PC équipé d’un GPU, modèles exécutés localement.</p>
-        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c2.f">Itération, confidentialité, maîtrise des coûts.</span></p>
-      </article>
-      <article class="dest-card is-future">
-        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg></span><span class="st st-future" data-i18n="st.future">Futur</span></div>
-        <h3 data-i18n="de.c3.t">On-premise</h3>
-        <p data-i18n="de.c3.d">Serveurs GPU privés, infrastructure du client, infrastructure souveraine.</p>
-        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c3.f">Données sensibles, souveraineté, charges industrielles.</span></p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 08 STATUS / ROADMAP ================= -->
-<section class="section" id="statut" aria-labelledby="st2-title">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow" data-i18n-html="st2.eyebrow">08 / Statut &amp; feuille de route</p>
-      <h2 id="st2-title" data-i18n-html="st2.title">Ce qui existe. Ce qui s’expérimente.<br><span class="soft">Ce qui viendra.</span></h2>
-    </div>
-    <div class="legend reveal">
-      <div><span class="st st-active" data-i18n="st.active">Actif</span><span data-i18n="st2.leg.a">Utilisé aujourd’hui dans nos POC, de façon encore manuelle ou semi-manuelle.</span></div>
-      <div><span class="st st-exp" data-i18n="st.exp">Expérimental</span><span data-i18n="st2.leg.e">En test sur des cas limités ; peut évoluer ou être abandonné.</span></div>
-      <div><span class="st st-future" data-i18n="st.future">Futur</span><span data-i18n="st2.leg.f">Vision d’architecture, non développée à ce jour.</span></div>
-    </div>
-    <div class="road reveal">
-      <div class="road-col"><h3><span class="st st-active" data-i18n="st.active">Actif</span></h3><ul>
-        <li data-i18n="st2.a1">Lancement de générations sur plusieurs modèles via des fournisseurs externes, pour comparaison</li><li data-i18n="st2.a2">Comparaison manuelle des résultats (revue humaine)</li><li data-i18n="st2.a3">Premier terrain d’essai : la génération vidéo IA</li></ul></div>
-      <div class="road-col"><h3><span class="st st-exp" data-i18n="st.exp">Expérimental</span></h3><ul>
-        <li data-i18n="st2.e1">Banc de comparaison multi-fournisseurs : même intention, temps, coût, qualité</li><li data-i18n="st2.e2">Prompt Intelligence : adaptation du prompt selon le modèle</li><li data-i18n="st2.e3">Exécution locale (Mac, PC GPU) sur des cas ciblés</li></ul></div>
-      <div class="road-col is-future"><h3><span class="st st-future" data-i18n="st.future">Futur</span></h3><ul>
-        <li data-i18n="st2.f1">OAI Intelligence Agent (agent central)</li><li data-i18n="st2.f2">Decision Engine : arbitrage automatique selon les critères du projet</li><li data-i18n="st2.f3">Knowledge Base : apprentissage à partir des résultats</li>
-        <li data-i18n="st2.f4">Évaluation automatisée par IA</li><li data-i18n="st2.f5">Routage local / on-premise à l’échelle</li><li data-i18n="st2.f6">Extensions industrielles : Digital Twin, simulation, Physical AI, robotique, ressources GPU</li></ul></div>
-    </div>
-    <p class="note reveal" data-i18n="st2.note">Feuille de route indicative, sans calendrier ni engagement contractuel.</p>
   </div>
 </section>
 
@@ -673,8 +418,9 @@ section[id]{scroll-margin-top:84px}
 
 <section class="section final" id="contact" aria-labelledby="cta-title">
   <div class="wrap reveal">
+    <span class="pr-rule" aria-hidden="true"></span>
     <h2 id="cta-title" data-i18n-html="cta.title">Un cas d’usage à orchestrer&nbsp;?</h2>
-    <p class="lead" data-i18n="cta.body">Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte et de vos contraintes. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.</p>
+    <p class="lead" data-i18n="cta.body">Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.</p>
     <div class="actions">
       <a class="btn primary" href="accueil.html#contact" data-i18n="cta.b1">Parler de votre projet ↗</a>
       <a class="btn" href="accueil.html" data-i18n="cta.b2">Découvrir Pascal Robotics →</a>
@@ -738,147 +484,14 @@ var I18N = {
   "orb.states": "ANALYSE|RECHERCHE|ORCHESTRATION|ÉVALUATION|APPRENTISSAGE",
   "orb.kicker": "État suggéré",
   "orb.caption": "Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.",
-  "pb.eyebrow": "01 / Le constat",
-  "pb.title": "Un écosystème IA foisonnant.<br><span class=\"soft\">Et fragmenté.</span>",
-  "pb.body": "Aujourd’hui, un créateur, une entreprise ou un industriel peut jongler avec plusieurs modèles d’IA, plusieurs plateformes et plusieurs fournisseurs de GPU. Chacun a sa qualité, ses délais, ses prix et ses limites — et tout évolue vite. Choisir devient un travail à part entière.",
-  "pb.c1": "Plusieurs modèles",
-  "pb.c2": "Plusieurs plateformes",
-  "pb.c3": "Plusieurs fournisseurs GPU",
-  "pb.c4": "Qualité, délais et prix variables",
-  "pb.aim": "OrchestrAI vise à devenir la couche qui aide à <strong>comprendre</strong>, <strong>comparer</strong>, <strong>mesurer</strong> et <strong>orchestrer</strong> cet écosystème.",
-  "pb.big": "Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class=\"accent\">Pour le bon besoin.</span>",
-  "pr.eyebrow": "02 / Le principe",
-  "pr.title": "Une chaîne simple,<br><span class=\"soft\">de l’intention à la recommandation.</span>",
-  "pr.intro": "Le principe d’OrchestrAI tient en une chaîne. Chaque étape produit des informations utiles à la suivante — et, à terme, aux projets suivants.",
-  "pr.s1.t": "Intention",
-  "pr.s1.d": "Ce que vous voulez obtenir, avec vos références et vos contraintes.",
-  "pr.s2.t": "Comprendre",
-  "pr.s2.d": "Clarifier le besoin et le traduire pour chaque modèle.",
-  "pr.s3.t": "Orchestrer",
-  "pr.s3.d": "Choisir modèles, fournisseurs et infrastructure.",
-  "pr.s4.t": "Générer / Exécuter",
-  "pr.s4.d": "Lancer les traitements là où c’est pertinent.",
-  "pr.s5.t": "Mesurer",
-  "pr.s5.d": "Temps, coût, disponibilité, échecs.",
-  "pr.s6.t": "Évaluer",
-  "pr.s6.d": "Qualité et fidélité à l’intention : revue humaine, puis analyse IA à terme.",
-  "pr.s7.t": "Apprendre",
-  "pr.s7.d": "Capitaliser sur chaque résultat.",
-  "pr.s8.t": "Recommander",
-  "pr.s8.d": "Proposer la combinaison la plus adaptée au prochain besoin.",
-  "pr.honest": "Aujourd’hui, une partie de cette chaîne est réalisée manuellement ou de façon expérimentale ; les étapes « Apprendre » et « Recommander » relèvent de la vision à terme. Le statut de chaque brique est détaillé plus bas.",
-  "pr.crit.title": "Critères d’arbitrage",
-  "pr.k1": "Qualité",
-  "pr.k2": "Coût",
-  "pr.k3": "Temps / latence",
-  "pr.k4": "Disponibilité",
-  "pr.k5": "Confidentialité",
-  "pr.k6": "Souveraineté",
-  "pr.k7": "Capacités matérielles",
-  "pr.crit.note": "Le poids de chaque critère dépend du projet : un studio créatif, un industriel ou un laboratoire n’arbitrent pas de la même façon.",
-  "ar.eyebrow": "03 / Architecture",
-  "ar.title": "Une boucle qui mesure,<br><span class=\"soft\">puis apprend.</span>",
-  "ar.intro": "Vue simplifiée de l’architecture visée. Chaque brique porte son statut réel : actif, expérimental ou futur.",
-  "ar.aria": "Schéma de l’architecture OrchestrAI : une boucle en six étapes autour d’un agent central futur",
-  "ar.n1.t": "Intentions & références",
-  "ar.n1.d": "Brief, prompt, images de référence, contraintes.",
-  "ar.n2.t": "Prompt Intelligence",
-  "ar.n2.d": "Structurer et adapter le prompt à chaque modèle.",
-  "ar.n3.t": "Modèles & providers",
-  "ar.n3.d": "Plusieurs modèles, via plusieurs fournisseurs.",
-  "ar.n4.t": "Génération / exécution",
-  "ar.n4.d": "Jobs lancés côte à côte pour comparaison.",
-  "ar.n5.t": "Évaluation & analyse",
-  "ar.n5.d": "Revue humaine aujourd’hui ; analyse IA à terme.",
-  "ar.n6.t": "Knowledge Base",
-  "ar.n6.d": "Mémoire des résultats, pour mieux recommander.",
-  "ar.loop": "↺ La boucle se referme : chaque projet enrichit le suivant.",
-  "ar.core.t": "OAI Intelligence Agent",
-  "ar.core.v": "COMPREND · ANALYSE · APPREND · RECOMMANDE",
-  "ar.de.t": "Decision Engine",
-  "ar.de.d": "Arbitrage automatique selon les critères du projet.",
-  "ar.note": "Aujourd’hui, la boucle est pilotée par l’humain. L’agent central et le Decision Engine sont des briques futures, non opérationnelles à ce jour.",
-  "or.eyebrow": "04 / Positionnement",
-  "or.title": "Orchestrer,<br><span class=\"soft\">pas remplacer.</span>",
-  "or.quote": "OrchestrAI ne cherche pas à remplacer les outils spécialisés. Il vise à les orchestrer.",
-  "or.body": "Plateformes de création, API d’inférence, GPU à la demande, workflows open source, modèles vidéo : chacun excelle dans son domaine. Ces outils peuvent devenir des moteurs, des modèles, des fournisseurs ou des services utilisés par OrchestrAI.",
-  "or.g1": "Plateformes de création",
-  "or.g2": "Modèles vidéo",
-  "or.g3": "API &amp; inférence",
-  "or.g4": "Calcul GPU",
-  "or.g5": "Workflows",
-  "or.note": "Noms cités à titre d’exemples de l’écosystème. Aucun partenariat n’est sous-entendu ; les marques citées appartiennent à leurs détenteurs respectifs.",
-  "tb.eyebrow": "05 / Premier banc d’essai",
-  "tb.title": "Premier terrain d’expérimentation :<br><span class=\"soft\">la vidéo IA.</span>",
-  "tb.body": "La génération vidéo est aujourd’hui notre premier banc d’essai. Les modèles s’y multiplient et les écarts de qualité, de délai et de coût y sont visibles : un bon terrain pour éprouver la logique d’orchestration.",
-  "tb.list.title": "Ce que nous comparons",
-  "tb.l1": "La même intention",
-  "tb.l2": "Le même prompt, lorsque c’est pertinent",
-  "tb.l3": "Le temps de génération",
-  "tb.l4": "Le coût",
-  "tb.l5": "La qualité perçue",
-  "tb.l6": "La fidélité au prompt",
-  "tb.l7": "La revue humaine",
-  "tb.l8": "À terme, l’analyse par IA",
-  "tb.status.title": "Statut",
-  "tb.s1": "Génération sur plusieurs modèles et revue humaine",
-  "tb.s2": "Banc de comparaison structuré multi-fournisseurs",
-  "tb.s3": "Analyse automatisée par IA",
-  "tb.note": "Pas de chiffres ici : les mesures servent d’abord à comparer, pas à promettre des économies.",
-  "pr2.eyebrow": "06 / Pourquoi Pascal Robotics",
   "pr2.title": "La vidéo d’abord.<br><span class=\"soft\">L’industrie ensuite.</span>",
-  "pr2.body": "Pascal Robotics relie le monde réel, la simulation et l’intelligence artificielle. La vidéo est le premier terrain expérimental d’OrchestrAI ; l’architecture vise à s’étendre au Digital Twin, à la simulation, à l’IA locale, à la Physical AI, à la robotique, aux infrastructures GPU et aux cas d’usage industriels.",
-  "pr2.a.k": "Dans la vidéo",
-  "pr2.a.d": "OrchestrAI peut arbitrer entre modèles et infrastructures de génération.",
-  "pr2.b.k": "Demain dans l’industrie",
-  "pr2.b.d": "La même logique d’orchestration pourra s’appliquer à des modèles, agents, simulations, ressources GPU et systèmes physiques.",
-  "pr2.d1": "Digital Twin",
-  "pr2.d2": "Simulation · Isaac Sim · Isaac Lab",
-  "pr2.d3": "IA locale · Edge AI",
-  "pr2.d4": "Physical AI",
-  "pr2.d5": "Robotique",
-  "pr2.d6": "Infrastructures GPU",
-  "pr2.d7": "Cas d’usage industriels",
-  "pr2.note": "Ces extensions ne sont pas déployées : elles décrivent la direction de l’architecture.",
-  "pr2.link1": "Découvrir Pascal Robotics →",
   "pr2.link2": "Le Digital Twin selon Pascal Robotics →",
-  "de.eyebrow": "07 / Où exécuter",
-  "de.title": "Cloud, local ou on-premise.<br><span class=\"soft\">L’exécution au bon endroit.</span>",
-  "de.intro": "Une architecture provider-agnostic : aucun fournisseur n’est imposé. Le lieu d’exécution devient un critère d’arbitrage comme les autres.",
-  "de.c1.t": "Cloud",
-  "de.c1.d": "Services externes, API, fournisseurs de calcul à la demande.",
-  "de.c1.f": "Accès rapide à de nombreux modèles, capacité élastique.",
-  "de.c2.t": "Local",
-  "de.c2.d": "Mac, PC équipé d’un GPU, modèles exécutés localement.",
-  "de.c2.f": "Itération, confidentialité, maîtrise des coûts.",
-  "de.c3.t": "On-premise",
-  "de.c3.d": "Serveurs GPU privés, infrastructure du client, infrastructure souveraine.",
-  "de.c3.f": "Données sensibles, souveraineté, charges industrielles.",
-  "de.for": "Pour :",
-  "st2.eyebrow": "08 / Statut &amp; feuille de route",
-  "st2.title": "Ce qui existe. Ce qui s’expérimente.<br><span class=\"soft\">Ce qui viendra.</span>",
-  "st2.leg.a": "Utilisé aujourd’hui dans nos POC, de façon encore manuelle ou semi-manuelle.",
-  "st2.leg.e": "En test sur des cas limités ; peut évoluer ou être abandonné.",
-  "st2.leg.f": "Vision d’architecture, non développée à ce jour.",
-  "st2.a1": "Lancement de générations sur plusieurs modèles via des fournisseurs externes, pour comparaison",
-  "st2.a2": "Comparaison manuelle des résultats (revue humaine)",
-  "st2.a3": "Premier terrain d’essai : la génération vidéo IA",
-  "st2.e1": "Banc de comparaison multi-fournisseurs : même intention, temps, coût, qualité",
-  "st2.e2": "Prompt Intelligence : adaptation du prompt selon le modèle",
-  "st2.e3": "Exécution locale (Mac, PC GPU) sur des cas ciblés",
-  "st2.f1": "OAI Intelligence Agent (agent central)",
-  "st2.f2": "Decision Engine : arbitrage automatique selon les critères du projet",
-  "st2.f3": "Knowledge Base : apprentissage à partir des résultats",
-  "st2.f4": "Évaluation automatisée par IA",
-  "st2.f5": "Routage local / on-premise à l’échelle",
-  "st2.f6": "Extensions industrielles : Digital Twin, simulation, Physical AI, robotique, ressources GPU",
-  "st2.note": "Feuille de route indicative, sans calendrier ni engagement contractuel.",
   "lab.kicker": "Laboratoire",
   "lab.title": "Un laboratoire d’OrchestrAI : le pipeline vidéo IA (accès protégé)",
   "lab.body": "Document de travail détaillant un premier POC de pipeline vidéo IA. Accès protégé par mot de passe.",
   "lab.cta": "Ouvrir le laboratoire →",
   "cta.title": "Un cas d’usage à orchestrer&nbsp;?",
-  "cta.body": "Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte et de vos contraintes. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.",
+  "cta.body": "Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.",
   "cta.b1": "Parler de votre projet ↗",
   "cta.b2": "Découvrir Pascal Robotics →",
   "footer.sig.alt": "Signature Pascal Robotics",
@@ -886,7 +499,30 @@ var I18N = {
   "footer.tagline": "Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration",
   "footer.line": "© 2026 · Laval, France",
   "footer.linkedin": "LinkedIn",
-  "footer.back": "← Retour à l’accueil Pascal Robotics"
+  "footer.back": "← Retour à l’accueil Pascal Robotics",
+  "why.eyebrow": "01 / L’idée",
+  "why.title": "Pourquoi OrchestrAI&nbsp;?",
+  "why.body": "Modèles d’IA, plateformes, fournisseurs de GPU dans le cloud, infrastructures locales ou privées : les options se multiplient, chacune avec sa qualité, ses délais et son coût. OrchestrAI vise à aider à choisir — et à orchestrer — la bonne combinaison pour chaque besoin.",
+  "why.route.aria": "Principe d’OrchestrAI : du besoin à la bonne route IA",
+  "why.r1.t": "Besoin",
+  "why.r1.d": "Votre intention et vos contraintes",
+  "why.r2.d": "Compare, arbitre, orchestre",
+  "why.r3.t": "Bonne route IA",
+  "why.r3.d": "Modèle, fournisseur, infrastructure",
+  "why.big": "Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class=\"accent\">Pour le bon besoin.</span>",
+  "now.eyebrow": "02 / Ce que nous testons aujourd’hui",
+  "now.title": "Orchestrer,<br><span class=\"soft\">pas remplacer.</span>",
+  "now.body": "OrchestrAI ne cherche pas à remplacer les outils d’IA spécialisés : il vise à les coordonner. Chaque modèle, plateforme ou fournisseur de calcul garde ses forces ; OrchestrAI aide à choisir lequel utiliser, et quand.",
+  "now.video.t": "Premier terrain d’expérimentation : la vidéo IA",
+  "now.video.d": "Notre POC lance une même intention sur plusieurs modèles et compare le temps de génération, le coût, la qualité et la fidélité au prompt. Les écarts y sont bien visibles : un bon terrain pour éprouver la logique d’orchestration.",
+  "now.st.title": "État des briques",
+  "now.st.a": "Prompt Intelligence · Knowledge Base (mémoire structurée) · génération multi-modèles · évaluation humaine · analyse vidéo technique locale",
+  "now.st.e": "Analyse sémantique IA",
+  "now.st.f": "OAI Intelligence Agent · Decision Engine automatique",
+  "now.st.note": "Actif : utilisé aujourd’hui dans nos POC, encore largement piloté par l’humain. Pas de chiffres ici : les mesures servent d’abord à comparer.",
+  "now.arch": "Voir l’architecture technique →",
+  "pr2.eyebrow": "03 / Pourquoi Pascal Robotics",
+  "pr2.body": "La vidéo est le premier terrain d’OrchestrAI. La même logique d’orchestration a vocation à s’étendre progressivement au Digital Twin, à la simulation, à la Physical AI et à la robotique — le cœur de métier de Pascal Robotics."
  },
  "en": {
   "meta.title": "OrchestrAI — AI Orchestration Platform | Pascal Robotics",
@@ -918,147 +554,14 @@ var I18N = {
   "orb.states": "ANALYSIS|RESEARCH|ORCHESTRATION|EVALUATION|LEARNING",
   "orb.kicker": "Suggested state",
   "orb.caption": "Visual representation of the concept — not an operational, real-time intelligence.",
-  "pb.eyebrow": "01 / The problem",
-  "pb.title": "A thriving AI ecosystem.<br><span class=\"soft\">And a fragmented one.</span>",
-  "pb.body": "Today, a creator, a company or an industrial player may juggle several AI models, several platforms and several GPU providers. Each has its own quality, lead times, prices and limits — and everything changes fast. Choosing becomes a job in itself.",
-  "pb.c1": "Several models",
-  "pb.c2": "Several platforms",
-  "pb.c3": "Several GPU providers",
-  "pb.c4": "Varying quality, lead times and prices",
-  "pb.aim": "OrchestrAI aims to become the layer that helps <strong>understand</strong>, <strong>compare</strong>, <strong>measure</strong> and <strong>orchestrate</strong> this ecosystem.",
-  "pb.big": "The right model. The right provider. The right infrastructure. <span class=\"accent\">For the right need.</span>",
-  "pr.eyebrow": "02 / The principle",
-  "pr.title": "A simple chain,<br><span class=\"soft\">from intention to recommendation.</span>",
-  "pr.intro": "OrchestrAI’s principle fits in a single chain. Each step produces information that is useful to the next one — and, eventually, to future projects.",
-  "pr.s1.t": "Intention",
-  "pr.s1.d": "What you want to achieve, with your references and constraints.",
-  "pr.s2.t": "Understand",
-  "pr.s2.d": "Clarify the need and translate it for each model.",
-  "pr.s3.t": "Orchestrate",
-  "pr.s3.d": "Select models, providers and infrastructure.",
-  "pr.s4.t": "Generate / Execute",
-  "pr.s4.d": "Run the jobs where it makes sense.",
-  "pr.s5.t": "Measure",
-  "pr.s5.d": "Time, cost, availability, failures.",
-  "pr.s6.t": "Evaluate",
-  "pr.s6.d": "Quality and fidelity to intent: human review, then AI analysis eventually.",
-  "pr.s7.t": "Learn",
-  "pr.s7.d": "Build on every result.",
-  "pr.s8.t": "Recommend",
-  "pr.s8.d": "Suggest the best-suited combination for the next need.",
-  "pr.honest": "Today, part of this chain is carried out manually or experimentally; the “Learn” and “Recommend” steps belong to the longer-term vision. The status of each building block is detailed below.",
-  "pr.crit.title": "Arbitration criteria",
-  "pr.k1": "Quality",
-  "pr.k2": "Cost",
-  "pr.k3": "Time / latency",
-  "pr.k4": "Availability",
-  "pr.k5": "Confidentiality",
-  "pr.k6": "Sovereignty",
-  "pr.k7": "Hardware capabilities",
-  "pr.crit.note": "The weight of each criterion depends on the project: a creative studio, an industrial player and a lab do not arbitrate the same way.",
-  "ar.eyebrow": "03 / Architecture",
-  "ar.title": "A loop that measures,<br><span class=\"soft\">then learns.</span>",
-  "ar.intro": "Simplified view of the target architecture. Each block carries its actual status: active, experimental or future.",
-  "ar.aria": "OrchestrAI architecture diagram: a six-step loop around a future central agent",
-  "ar.n1.t": "Intentions & references",
-  "ar.n1.d": "Brief, prompt, reference images, constraints.",
-  "ar.n2.t": "Prompt Intelligence",
-  "ar.n2.d": "Structure and adapt the prompt for each model.",
-  "ar.n3.t": "Models & providers",
-  "ar.n3.d": "Several models, through several providers.",
-  "ar.n4.t": "Generation / execution",
-  "ar.n4.d": "Jobs run side by side for comparison.",
-  "ar.n5.t": "Evaluation & analysis",
-  "ar.n5.d": "Human review today; AI analysis eventually.",
-  "ar.n6.t": "Knowledge Base",
-  "ar.n6.d": "A memory of results, to recommend better.",
-  "ar.loop": "↺ The loop closes: each project informs the next.",
-  "ar.core.t": "OAI Intelligence Agent",
-  "ar.core.v": "UNDERSTANDS · ANALYSES · LEARNS · RECOMMENDS",
-  "ar.de.t": "Decision Engine",
-  "ar.de.d": "Automatic arbitration based on project criteria.",
-  "ar.note": "Today, the loop is human-driven. The central agent and the Decision Engine are future building blocks, not operational to date.",
-  "or.eyebrow": "04 / Positioning",
-  "or.title": "Orchestrate,<br><span class=\"soft\">not replace.</span>",
-  "or.quote": "OrchestrAI does not seek to replace specialised tools. It aims to orchestrate them.",
-  "or.body": "Creation platforms, inference APIs, on-demand GPUs, open-source workflows, video models: each excels in its own field. These tools can become engines, models, providers or services used by OrchestrAI.",
-  "or.g1": "Creation platforms",
-  "or.g2": "Video models",
-  "or.g3": "APIs &amp; inference",
-  "or.g4": "GPU compute",
-  "or.g5": "Workflows",
-  "or.note": "Names cited as examples of the ecosystem. No partnership is implied; trademarks belong to their respective owners.",
-  "tb.eyebrow": "05 / First testbed",
-  "tb.title": "First testbed:<br><span class=\"soft\">AI video.</span>",
-  "tb.body": "Video generation is currently our first testbed. Models multiply there, and differences in quality, lead time and cost are visible: good ground to put the orchestration logic to the test.",
-  "tb.list.title": "What we compare",
-  "tb.l1": "The same intention",
-  "tb.l2": "The same prompt, when relevant",
-  "tb.l3": "Generation time",
-  "tb.l4": "Cost",
-  "tb.l5": "Perceived quality",
-  "tb.l6": "Prompt fidelity",
-  "tb.l7": "Human review",
-  "tb.l8": "Eventually, AI analysis",
-  "tb.status.title": "Status",
-  "tb.s1": "Generation on several models and human review",
-  "tb.s2": "Structured multi-provider comparison bench",
-  "tb.s3": "Automated AI analysis",
-  "tb.note": "No figures here: measurements are first used to compare, not to promise savings.",
-  "pr2.eyebrow": "06 / Why Pascal Robotics",
   "pr2.title": "Video first.<br><span class=\"soft\">Industry next.</span>",
-  "pr2.body": "Pascal Robotics connects the real world, simulation and artificial intelligence. Video is OrchestrAI’s first experimental field; the architecture aims to extend to Digital Twin, simulation, local AI, Physical AI, robotics, GPU infrastructure and industrial use cases.",
-  "pr2.a.k": "In video",
-  "pr2.a.d": "OrchestrAI can arbitrate between generation models and infrastructures.",
-  "pr2.b.k": "Tomorrow in industry",
-  "pr2.b.d": "The same orchestration logic could apply to models, agents, simulations, GPU resources and physical systems.",
-  "pr2.d1": "Digital Twin",
-  "pr2.d2": "Simulation · Isaac Sim · Isaac Lab",
-  "pr2.d3": "Local AI · Edge AI",
-  "pr2.d4": "Physical AI",
-  "pr2.d5": "Robotics",
-  "pr2.d6": "GPU infrastructure",
-  "pr2.d7": "Industrial use cases",
-  "pr2.note": "These extensions are not deployed: they describe the direction of the architecture.",
-  "pr2.link1": "Discover Pascal Robotics →",
   "pr2.link2": "Digital Twin at Pascal Robotics →",
-  "de.eyebrow": "07 / Where to run",
-  "de.title": "Cloud, local or on-premise.<br><span class=\"soft\">Run it in the right place.</span>",
-  "de.intro": "A provider-agnostic architecture: no provider is imposed. Where a job runs becomes an arbitration criterion like any other.",
-  "de.c1.t": "Cloud",
-  "de.c1.d": "External services, APIs, on-demand compute providers.",
-  "de.c1.f": "Fast access to many models, elastic capacity.",
-  "de.c2.t": "Local",
-  "de.c2.d": "Mac, GPU-equipped PC, locally run models.",
-  "de.c2.f": "Iteration, confidentiality, cost control.",
-  "de.c3.t": "On-premise",
-  "de.c3.d": "Private GPU servers, client infrastructure, sovereign infrastructure.",
-  "de.c3.f": "Sensitive data, sovereignty, industrial workloads.",
-  "de.for": "For:",
-  "st2.eyebrow": "08 / Status &amp; roadmap",
-  "st2.title": "What exists. What is being tested.<br><span class=\"soft\">What comes next.</span>",
-  "st2.leg.a": "Used today in our POCs, still manually or semi-manually.",
-  "st2.leg.e": "Being tested on limited cases; may change or be dropped.",
-  "st2.leg.f": "Architecture vision, not developed to date.",
-  "st2.a1": "Running generations on several models via external providers, for comparison",
-  "st2.a2": "Manual comparison of outputs (human review)",
-  "st2.a3": "First testbed: AI video generation",
-  "st2.e1": "Multi-provider comparison bench: same intention, time, cost, quality",
-  "st2.e2": "Prompt Intelligence: adapting the prompt to each model",
-  "st2.e3": "Local execution (Mac, GPU PC) on targeted cases",
-  "st2.f1": "OAI Intelligence Agent (central agent)",
-  "st2.f2": "Decision Engine: automatic arbitration based on project criteria",
-  "st2.f3": "Knowledge Base: learning from results",
-  "st2.f4": "Automated AI evaluation",
-  "st2.f5": "Local / on-premise routing at scale",
-  "st2.f6": "Industrial extensions: Digital Twin, simulation, Physical AI, robotics, GPU resources",
-  "st2.note": "Indicative roadmap, with no timeline and no contractual commitment.",
   "lab.kicker": "Lab",
   "lab.title": "An OrchestrAI lab: the AI video pipeline (protected access)",
   "lab.body": "Working document detailing a first AI video pipeline POC. Password-protected access.",
   "lab.cta": "Open the lab →",
   "cta.title": "A use case to orchestrate?",
-  "cta.body": "Creative, industrial, lab or GPU infrastructure: let’s talk about your context and constraints. We will tell you clearly what OrchestrAI can bring today — and what is still vision.",
+  "cta.body": "Creative, industrial, lab or GPU infrastructure: let’s talk about your context. We will tell you clearly what OrchestrAI can bring today — and what is still vision.",
   "cta.b1": "Discuss your project ↗",
   "cta.b2": "Discover Pascal Robotics →",
   "footer.sig.alt": "Pascal Robotics signature",
@@ -1066,7 +569,30 @@ var I18N = {
   "footer.tagline": "Mobile &amp; humanoid robotics · Digital Twin · Physical AI · Integration",
   "footer.line": "© 2026 · Laval, France",
   "footer.linkedin": "LinkedIn",
-  "footer.back": "← Back to Pascal Robotics home"
+  "footer.back": "← Back to Pascal Robotics home",
+  "why.eyebrow": "01 / The idea",
+  "why.title": "Why OrchestrAI?",
+  "why.body": "AI models, platforms, cloud GPU providers, local or private infrastructure: options keep multiplying, each with its own quality, lead times and cost. OrchestrAI aims to help choose — and orchestrate — the right combination for each need.",
+  "why.route.aria": "OrchestrAI principle: from the need to the right AI route",
+  "why.r1.t": "Need",
+  "why.r1.d": "Your intention and constraints",
+  "why.r2.d": "Compares, arbitrates, orchestrates",
+  "why.r3.t": "Right AI route",
+  "why.r3.d": "Model, provider, infrastructure",
+  "why.big": "The right model. The right provider. The right infrastructure. <span class=\"accent\">For the right need.</span>",
+  "now.eyebrow": "02 / What we are testing today",
+  "now.title": "Orchestrate,<br><span class=\"soft\">not replace.</span>",
+  "now.body": "OrchestrAI does not seek to replace specialised AI tools: it aims to coordinate them. Each model, platform or compute provider keeps its strengths; OrchestrAI helps decide which one to use, and when.",
+  "now.video.t": "First testbed: AI video",
+  "now.video.d": "Our POC runs the same intention on several models and compares generation time, cost, quality and prompt fidelity. The differences are clearly visible: good ground to put the orchestration logic to the test.",
+  "now.st.title": "Building-block status",
+  "now.st.a": "Prompt Intelligence · Knowledge Base (structured memory) · multi-model generation · human evaluation · local technical video analysis",
+  "now.st.e": "AI semantic analysis",
+  "now.st.f": "OAI Intelligence Agent · automatic Decision Engine",
+  "now.st.note": "Active: used today in our POCs, still largely human-driven. No figures here: measurements are first used to compare.",
+  "now.arch": "See the technical architecture →",
+  "pr2.eyebrow": "03 / Why Pascal Robotics",
+  "pr2.body": "Video is OrchestrAI’s first testbed. The same orchestration logic is meant to extend progressively to Digital Twin, simulation, Physical AI and robotics — Pascal Robotics’ core business."
  }
 };
 var LANG_KEY = 'pr-lang';        /* key used by accueil / Digital Twin */
@@ -1124,15 +650,6 @@ applyLang(getStoredLang());
     entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } });
   }, { threshold: .08, rootMargin: '0px 0px -4% 0px' });
   els.forEach(function(el){ io.observe(el); });
-})();
-
-/* ===== Architecture loop highlight: only animates while visible ===== */
-(function(){
-  var arch = document.querySelector('.arch');
-  if (!arch || !('IntersectionObserver' in window)) return;
-  new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ arch.classList.toggle('is-live', e.isIntersecting); });
-  }, { threshold: .15 }).observe(arch);
 })();
 
 /* ===== Mobile ⋮ menu (same behaviour as the other pages) ===== */
