@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050b18">
+<title>OrchestrAI — AI Orchestration Platform | Pascal Robotics</title>
+<meta name="description" content="OrchestrAI est une plateforme d’orchestration IA en développement par Pascal Robotics, conçue pour comparer et coordonner modèles, providers et infrastructures selon le coût, le temps, la qualité et les contraintes du projet.">
+<link rel="canonical" href="https://pascal-robotics.fr/orchestrai">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pascal Robotics">
+<meta property="og:url" content="https://pascal-robotics.fr/orchestrai">
+<meta property="og:title" content="OrchestrAI — AI Orchestration Platform | Pascal Robotics">
+<meta property="og:description" content="OrchestrAI est une plateforme d’orchestration IA en développement par Pascal Robotics, conçue pour comparer et coordonner modèles, providers et infrastructures selon le coût, le temps, la qualité et les contraintes du projet.">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:image" content="https://pascal-robotics.fr/assets/orchestrai/og-orchestrai.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --bg:#050b18;
+  --bg2:#07102a;
+  --panel:rgba(14,28,58,.46);
+  --panel2:rgba(18,36,74,.55);
+  --line:rgba(150,185,255,.12);
+  --line2:rgba(150,185,255,.22);
+  --text:#eef4ff;
+  --muted:#a2b4d0;
+  --dim:#7288ab;
+  --soft:#7f96bd;
+  --blue:#3d8bff;
+  --blue2:#7fb2ff;
+  --cyan:#62d7e8;
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 0%,rgba(61,139,255,.13),transparent 62%),
+    radial-gradient(ellipse 50% 30% at 90% 38%,rgba(61,139,255,.05),transparent 70%),
+    linear-gradient(180deg,#050b18 0%,#060d20 48%,#050a17 100%);
+  background-color:var(--bg);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  line-height:1.55;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
+.skip{position:absolute;left:-9999px;top:auto}
+.skip:focus{left:16px;top:16px;z-index:999;background:#fff;color:#000;padding:10px 14px;border-radius:8px}
+:focus-visible{outline:2px solid var(--blue2);outline-offset:3px}
+
+/* ===== Nav — same structure as the rest of the site, re-tinted navy / electric blue ===== */
+.nav{position:sticky;top:0;z-index:40;background:rgba(5,11,24,.74);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid rgba(150,185,255,.1);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.wordmark{display:inline-flex;align-items:center;line-height:0;white-space:nowrap}
+.nav-logo{height:34px;width:auto;display:block}
+.links{display:flex;align-items:center;gap:10px;color:#b4c3dc;font-size:10px;font-weight:750;letter-spacing:.03em;position:relative;flex-wrap:nowrap}
+.links a:not(.contact-pill){padding:6px 0;border-bottom:1px solid transparent;transition:color .18s ease,border-color .18s ease}
+.links a:not(.contact-pill):hover,.links a:not(.contact-pill):focus-visible{color:#fff;border-bottom-color:rgba(127,178,255,.6);outline:none}
+.links a:not(.contact-pill).is-active{color:var(--blue2);border-bottom-color:rgba(127,178,255,.75)}
+.contact-pill{border:1px solid rgba(61,139,255,.5);padding:8px 11px;border-radius:999px;color:#e8f0ff!important;letter-spacing:.02em;font-weight:800;font-size:10px;white-space:nowrap;transition:border-color .18s ease,background .18s ease}
+.contact-pill:hover,.contact-pill:focus-visible{border-color:rgba(127,178,255,.9);background:rgba(61,139,255,.12);outline:none}
+.lang-switch{display:inline-flex;align-items:center;gap:1px;flex-shrink:0;white-space:nowrap;margin-right:2px;padding:3px 7px;border-radius:999px;border:1px solid rgba(150,185,255,.16);background:rgba(150,185,255,.05)}
+.lang-switch button{appearance:none;border:0;background:transparent;color:#b4c3dc;font:inherit;font-size:11px;font-weight:800;letter-spacing:.04em;line-height:1.2;cursor:pointer;padding:2px 5px;white-space:nowrap;border-radius:6px}
+.lang-switch button:hover{color:#fff}
+.lang-switch button[aria-pressed="true"]{color:var(--blue2)}
+.lang-switch .sep{color:#51627f;font-size:10px;opacity:.6;padding:0 1px;user-select:none}
+.nav-links{display:flex;align-items:center;gap:10px}
+.nav-links a:not(.contact-pill){white-space:nowrap;flex-shrink:0}
+.nav-links a.nav-orch::before{content:"";display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#3d8bff;box-shadow:0 0 0 2px rgba(61,139,255,.2);vertical-align:middle;position:relative;top:-1px}
+.nav-more{display:none;appearance:none;border:0;background:transparent;color:#e8eef8;width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s ease,color .18s ease}
+.nav-more:hover,.nav-more:focus-visible{background:rgba(150,185,255,.08);color:#fff;outline:none}
+.nav-more[aria-expanded="true"]{background:rgba(61,139,255,.14);color:var(--blue2)}
+.nav-more svg{display:block;width:18px;height:18px}
+@media (max-width:760px){
+  .wrap{width:calc(100% - 24px)}
+  .navin{min-height:62px;height:auto;padding:10px 0;gap:10px}
+  .links{gap:8px}
+  .nav-logo{height:28px}
+  .lang-switch{padding:2px 6px;margin-right:0}
+  .lang-switch button{font-size:10px;padding:1px 4px;letter-spacing:.03em}
+  .nav-more{display:inline-flex}
+  .nav-links{
+    display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:50;
+    min-width:min(280px,calc(100vw - 28px));max-width:min(320px,calc(100vw - 28px));
+    flex-direction:column;align-items:stretch;gap:2px;padding:10px;border-radius:16px;
+    border:1px solid rgba(150,185,255,.14);background:rgba(7,14,32,.95);
+    backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+    box-shadow:0 18px 48px rgba(0,0,0,.5);
+  }
+  .nav.is-open .nav-links{display:flex}
+  .nav-links a:not(.contact-pill){display:block;padding:11px 12px;border-radius:10px;border-bottom:0;color:#d5e0f0;font-size:13px;letter-spacing:.03em;font-weight:750}
+  .nav-links a:not(.contact-pill):hover,.nav-links a:not(.contact-pill):focus-visible{color:#fff;background:rgba(150,185,255,.08);border-bottom-color:transparent}
+  .nav-links a:not(.contact-pill).is-active{color:var(--blue2);background:rgba(61,139,255,.12);border-bottom-color:transparent}
+  .nav-links .contact-pill{display:flex;width:100%;margin-top:6px;justify-content:center;align-items:center;text-align:center;padding:11px 14px;font-size:12px;white-space:normal}
+}
+@media (max-width:380px){ .navin{min-height:58px} .nav-logo{height:24px} }
+/* Tablet / small-laptop range (761–1060px): identical rules to the other pages (⋮ threshold unchanged). */
+@media (min-width:761px) and (max-width:1060px){
+  .navin{gap:12px}
+  .wordmark{flex-shrink:0}
+  .nav-logo{height:26px}
+  .links{gap:6px}
+  .nav-links{gap:7px}
+  .lang-switch{padding:2px 5px;margin-right:0}
+  .lang-switch button{padding:2px 3px}
+  .contact-pill{padding:7px 10px}
+}
+@media (min-width:761px) and (max-width:980px){
+  .nav-links{gap:6px}
+  .links a:not(.contact-pill){font-size:9.5px;letter-spacing:.015em}
+  .contact-pill{font-size:0;letter-spacing:0}
+  .contact-pill::after{content:"Contact ↗";content:"Contact ↗" / "";font-size:10px;letter-spacing:.02em}
+}
+@media (min-width:761px) and (max-width:800px){
+  .nav-logo{height:22px}
+  .nav-links{gap:5px}
+  .links a:not(.contact-pill){font-size:9px;letter-spacing:.01em}
+}
+
+/* ===== Shared type ===== */
+.eyebrow{color:var(--blue2);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin:0 0 16px}
+h2{font-size:clamp(34px,4.4vw,58px);line-height:1;letter-spacing:-.045em;font-weight:800;margin:0 0 22px}
+h2 .soft,.soft{color:var(--soft)}
+.lead{font-size:clamp(17px,1.5vw,20px);color:#cfdcef;line-height:1.6;margin:0 0 18px;max-width:760px}
+.body{font-size:16px;color:var(--muted);line-height:1.7;margin:0 0 16px;max-width:720px}
+.note{font-size:13px;color:var(--dim);line-height:1.6;margin:18px 0 0;max-width:760px}
+.section{padding:clamp(76px,11vw,132px) 0;position:relative}
+.section + .section{border-top:1px solid rgba(150,185,255,.06)}
+section[id]{scroll-margin-top:84px}
+
+/* Status tags */
+.st{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1;padding:5px 9px 5px 8px;border-radius:999px;white-space:nowrap;border:1px solid;vertical-align:middle}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.st-active{color:var(--cyan);border-color:rgba(98,215,232,.38);background:rgba(98,215,232,.07)}
+.st-active::before{background:var(--cyan)}
+.st-exp{color:var(--blue2);border-color:rgba(127,178,255,.4);background:rgba(61,139,255,.09)}
+.st-exp::before{background:transparent;box-shadow:inset 0 0 0 1.5px var(--blue2);background-image:linear-gradient(90deg,var(--blue2) 50%,transparent 50%)}
+.st-future{color:#aebad0;border-color:rgba(174,186,208,.42);border-style:dashed;background:transparent}
+.st-future::before{box-shadow:inset 0 0 0 1.5px #aebad0}
+
+/* Buttons */
+.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:12px;border:1px solid var(--line2);background:rgba(10,20,44,.6);font-size:14px;font-weight:800;letter-spacing:.01em;color:#e8f0ff;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+.btn:hover{border-color:rgba(127,178,255,.6);background:rgba(20,40,84,.7)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(61,139,255,.22)}
+.btn.primary:hover{background:#5a9cff;border-color:#5a9cff}
+.btn:focus-visible{outline:2px solid #cfe0ff;outline-offset:3px}
+.tlink{color:var(--blue2);font-weight:750;border-bottom:1px solid rgba(127,178,255,.35);transition:color .18s ease,border-color .18s ease}
+.tlink:hover{color:#fff;border-bottom-color:#fff}
+
+/* Reveal (only when JS runs) */
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.on{opacity:1;transform:none}
+
+/* ===== HERO ===== */
+.hero{position:relative;text-align:center;padding:clamp(26px,4.5svh,56px) 0 clamp(48px,7svh,84px);overflow:hidden}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(127,178,255,.18),transparent)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid rgba(98,215,232,.3);background:rgba(98,215,232,.06);color:#bfeef5;font-size:11px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
+.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 0 rgba(98,215,232,.5);animation:oai-ping 2.8s ease-out infinite}
+@keyframes oai-ping{0%{box-shadow:0 0 0 0 rgba(98,215,232,.45)}70%,100%{box-shadow:0 0 0 7px rgba(98,215,232,0)}}
+.oai-mark{margin:18px 0 0;font-size:clamp(44px,8vw,104px);line-height:.95;font-weight:800;letter-spacing:.035em;color:#f4f8ff}
+.oai-mark .dash{color:var(--blue);margin:0 .02em}
+.oai-mark .ai{color:var(--blue2)}
+.oai-platform{margin:14px 0 0;font-size:clamp(11px,1.05vw,13px);letter-spacing:.42em;text-transform:uppercase;font-weight:700;color:#c3d2ea;padding-left:.42em}
+.oai-by{margin:8px 0 0;font-size:13px;color:var(--dim);letter-spacing:.04em}
+.oai-by a{color:#dfe8f7;font-weight:700;border-bottom:1px solid rgba(223,232,247,.25)}
+.oai-by a:hover{color:#fff;border-bottom-color:#fff}
+.orb{position:relative;height:clamp(210px,31svh,370px);max-width:980px;margin:clamp(6px,1.5svh,18px) auto 0}
+.orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.orb-state{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#8ea4c7;white-space:nowrap;pointer-events:none}
+.orb-state b{color:#e4eeff;font-weight:750;letter-spacing:.28em;transition:opacity .6s ease}
+.orb-state b.fade{opacity:0}
+.orb-state i{width:5px;height:5px;border-radius:50%;background:var(--blue2)}
+.orb-caption{margin:10px auto 0;font-size:11.5px;color:#61779b;max-width:520px;line-height:1.5}
+.oai-verbs{text-wrap:balance;margin:clamp(18px,3svh,30px) 0 0;font-size:clamp(14px,1.55vw,19px);letter-spacing:.3em;font-weight:750;color:#f0f5ff;padding-left:.3em}
+.hero .lead{margin:14px auto 26px;max-width:700px;color:var(--muted);font-size:clamp(15px,1.3vw,17.5px)}
+
+/* ===== PROBLEM ===== */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,6vw,90px);align-items:start}
+.chips4{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.chip4{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:18px 18px 16px;font-size:15px;font-weight:700;color:#e2eafa;line-height:1.35;position:relative}
+.chip4 small{display:block;font-size:10px;letter-spacing:.18em;color:var(--dim);font-weight:800;margin-bottom:10px}
+.pb-aim{margin:28px 0 0;font-size:clamp(17px,1.5vw,20px);color:#cfdcef;line-height:1.6;max-width:640px}
+.pb-aim strong{color:#fff;font-weight:750}
+.bigline{margin:clamp(56px,8vw,96px) 0 0;font-size:clamp(28px,4.2vw,56px);line-height:1.1;letter-spacing:-.035em;font-weight:750;color:#f2f6ff;max-width:1060px}
+.bigline .accent{color:var(--blue2)}
+
+/* ===== PRINCIPLE ===== */
+.chain{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:step}
+.chain li{position:relative;border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:20px 18px 18px;min-height:150px}
+.chain li::after{content:"";position:absolute;top:50%;right:-11px;width:8px;height:8px;border-top:1.5px solid rgba(127,178,255,.55);border-right:1.5px solid rgba(127,178,255,.55);transform:translateY(-50%) rotate(45deg)}
+.chain li:nth-child(4n)::after,.chain li:last-child::after{content:none}
+.chain .n{display:block;font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--blue2);margin-bottom:12px}
+.chain .t{display:block;font-size:17px;font-weight:800;letter-spacing:.01em;text-transform:uppercase;color:#f3f7ff;margin-bottom:8px}
+.chain .d{display:block;font-size:13.5px;color:var(--muted);line-height:1.5}
+.chain li.is-vision{border-style:dashed;background:transparent}
+.chain li.is-vision .t{color:#cfd9ea}
+.honest{margin:22px 0 0;padding:14px 16px;border-left:2px solid rgba(127,178,255,.45);background:rgba(61,139,255,.05);border-radius:0 12px 12px 0;font-size:14px;color:#b9c8e0;max-width:900px;line-height:1.6}
+.criteria{margin:54px 0 0}
+.criteria h3{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#dbe6f7;margin:0 0 16px;font-weight:800}
+.crit{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:0;padding:0}
+.crit li{padding:10px 16px;border:1px solid var(--line2);border-radius:999px;font-size:14px;font-weight:700;color:#e2eafa;background:rgba(10,22,48,.5)}
+
+/* ===== ARCHITECTURE ===== */
+.arch{position:relative;margin:48px 0 0;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;grid-template-rows:auto minmax(190px,auto) auto auto;
+  grid-template-areas:"n1 a12 n2 a23 n3" "a61 core core core a34" "n6 a56 n5 a45 n4" "loop loop loop loop loop";align-items:stretch}
+.node{position:relative;border:1px solid var(--line2);background:linear-gradient(180deg,rgba(18,36,74,.62),rgba(10,22,48,.5));border-radius:18px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px;min-height:132px}
+.node .num{font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--dim)}
+.node h3{margin:0;font-size:14.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#f2f6ff;line-height:1.3}
+.node p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5;flex:1}
+.node .st{align-self:flex-start}
+.node-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.node.is-future{border-style:dashed;background:rgba(10,22,48,.35)}
+.n1{grid-area:n1}.n2{grid-area:n2}.n3{grid-area:n3}.n4{grid-area:n4}.n5{grid-area:n5}.n6{grid-area:n6}
+.arr{display:flex;align-items:center;justify-content:center;color:rgba(127,178,255,.7)}
+.arr svg{width:22px;height:22px;display:block}
+.a12{grid-area:a12}.a23{grid-area:a23}.a34{grid-area:a34}.a45{grid-area:a45}.a56{grid-area:a56}.a61{grid-area:a61}
+.a34 svg{transform:rotate(90deg)}.a45 svg,.a56 svg{transform:rotate(180deg)}.a61 svg{transform:rotate(-90deg)}
+.a34,.a61{position:relative;padding:14px 0}
+.a34::before,.a61::before{content:"";position:absolute;top:10px;bottom:10px;left:50%;border-left:1px dashed rgba(127,178,255,.28)}
+.a34 svg,.a61 svg{position:relative;background:#060d20;border-radius:50%;padding:2px;width:26px;height:26px}
+.core{grid-area:core;align-self:center;justify-self:center;width:min(100%,560px);margin:18px 0;text-align:center;border:1px dashed rgba(174,186,208,.45);border-radius:24px;padding:22px 22px 20px;position:relative;
+  background:radial-gradient(ellipse at 50% 0%,rgba(61,139,255,.14),rgba(10,22,48,.35) 70%)}
+.core h3{margin:12px 0 6px;font-size:clamp(17px,1.7vw,21px);letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#f4f8ff}
+.core .verbs{margin:0;font-size:11.5px;letter-spacing:.2em;color:var(--blue2);font-weight:750}
+.de{margin:16px auto 0;display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:9px 12px;border:1px dashed rgba(174,186,208,.35);border-radius:12px;font-size:12.5px;color:var(--muted)}
+.de b{color:#e3ebf8;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:11.5px}
+.loop{grid-area:loop;margin:18px 0 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13.5px;color:#b9c8e0}
+@media (prefers-reduced-motion:no-preference){
+  .arch.is-live .node:not(.is-future){animation:oai-step 12s ease-in-out infinite}
+  .arch.is-live .node.n1{animation-delay:0s}.arch.is-live .node.n2{animation-delay:2s}.arch.is-live .node.n3{animation-delay:4s}
+  .arch.is-live .node.n4{animation-delay:6s}.arch.is-live .node.n5{animation-delay:8s}
+  @keyframes oai-step{0%,16%,100%{border-color:rgba(150,185,255,.22);box-shadow:none}5%,10%{border-color:rgba(127,178,255,.7);box-shadow:0 0 0 1px rgba(61,139,255,.18),0 14px 40px rgba(61,139,255,.12)}}
+}
+
+/* ===== ORCHESTRATE ===== */
+.quote{margin:0 0 20px;font-size:clamp(22px,2.4vw,32px);line-height:1.3;letter-spacing:-.02em;font-weight:650;color:#f2f6ff;max-width:640px}
+.eco{margin:48px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.eco-g{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(10,22,48,.4)}
+.eco-g h3{margin:0 0 12px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:800}
+.eco-g ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.eco-g li{font-size:13.5px;font-weight:700;color:#dfe8f7;padding:5px 10px;border-radius:8px;border:1px solid rgba(150,185,255,.14)}
+
+/* ===== TESTBED ===== */
+.panel{border:1px solid var(--line2);border-radius:22px;background:linear-gradient(180deg,rgba(18,36,74,.5),rgba(10,22,48,.4));padding:24px}
+.panel h3{margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:#dbe6f7}
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.checks li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:#dce6f5;line-height:1.4}
+.checks li::before{content:"";flex:0 0 auto;width:5px;height:9px;margin:3px 5px 0 4px;border-right:2px solid var(--blue2);border-bottom:2px solid var(--blue2);transform:rotate(45deg)}
+.checks li.is-future{color:#aebad0}
+.checks li.is-future::before{width:8px;height:8px;margin:5px 4px 0 2px;border:1.5px dashed #aebad0;border-radius:50%;transform:none}
+.status-rows{margin:22px 0 0;padding:18px 0 0;border-top:1px solid var(--line);display:grid;gap:10px}
+.status-rows div{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;font-size:13.5px;color:#c6d4ea}
+.status-rows .st{justify-self:start}
+
+/* ===== WHY PASCAL ROBOTICS ===== */
+.duo{margin:40px 0 0;display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch}
+.duo-card{border:1px solid var(--line2);border-radius:20px;padding:22px;background:var(--panel)}
+.duo-card.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
+.duo-card .k{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:#dbe6f7}
+.duo-card p{margin:0;font-size:clamp(16px,1.4vw,18.5px);line-height:1.5;color:#e6eefb}
+.duo-arrow{display:flex;align-items:center;color:rgba(127,178,255,.7)}
+.duo-arrow svg{width:26px;height:26px}
+.domains{margin:24px 0 0;display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.domains li{padding:8px 13px;border:1px dashed rgba(174,186,208,.35);border-radius:999px;font-size:13px;font-weight:700;color:#cfd9ea}
+.links-row{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:12px 28px;font-size:14px}
+
+/* ===== DESTINATIONS ===== */
+.dest{margin:44px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dest-card{border:1px solid var(--line2);border-radius:22px;padding:24px 22px;background:linear-gradient(180deg,rgba(18,36,74,.55),rgba(10,22,48,.35));display:flex;flex-direction:column;gap:12px}
+.dest-card.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
+.dest-top{display:flex;justify-content:space-between;align-items:center}
+.dest-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(127,178,255,.3);color:var(--blue2);background:rgba(61,139,255,.08)}
+.dest-ico svg{width:20px;height:20px}
+.dest-card h3{margin:4px 0 0;font-size:20px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
+.dest-card p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.55}
+.dest-card .for{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:13.5px;color:#c8d6ec}
+.dest-card .for b{color:#e8effb}
+
+/* ===== STATUS ===== */
+.legend{margin:36px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.legend div{display:flex;flex-direction:column;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--muted);line-height:1.5}
+.road{margin:28px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.road-col{border:1px solid var(--line2);border-radius:20px;padding:20px 20px 12px;background:var(--panel)}
+.road-col.is-future{border-style:dashed;background:rgba(10,22,48,.3)}
+.road-col h3{margin:0 0 12px}
+.road-col ul{list-style:none;margin:0;padding:0}
+.road-col li{padding:12px 0;border-top:1px solid var(--line);font-size:14px;color:#dce6f5;line-height:1.45}
+.road-col li:first-child{border-top:0}
+.road-col.is-future li{color:#bac6da}
+
+/* ===== LAB + CTA ===== */
+.lab{display:flex;gap:22px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line2);border-radius:22px;padding:24px 26px;background:linear-gradient(90deg,rgba(61,139,255,.1),rgba(10,22,48,.4));transition:border-color .2s ease,background .2s ease}
+.lab:hover{border-color:rgba(127,178,255,.55)}
+.lab-l{display:flex;gap:16px;align-items:flex-start;max-width:760px}
+.lab-ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(127,178,255,.3);color:var(--blue2)}
+.lab-ico svg{width:20px;height:20px}
+.lab small{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:800;margin-bottom:6px}
+.lab strong{display:block;font-size:clamp(17px,1.6vw,20px);line-height:1.35;color:#f2f6ff;margin-bottom:6px}
+.lab span.d{display:block;font-size:14px;color:var(--muted)}
+.lab .go{font-size:14px;font-weight:800;color:var(--blue2);white-space:nowrap}
+#laboratoire{padding:clamp(40px,6vw,72px) 0}
+#laboratoire + .final{border-top:0;padding-top:clamp(40px,6vw,80px)}
+.final{text-align:center}
+.final h2{margin-bottom:16px}
+.final .lead{margin:0 auto 28px;color:var(--muted)}
+
+/* ===== FOOTER ===== */
+.signature{padding:34px 0 30px;border-top:1px solid rgba(150,185,255,.08)}
+.signature-centered{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.signature-logo-plain img{width:min(250px,52vw);height:auto;display:block;opacity:.95}
+.signature-copy{color:#7085a6;font-size:12px;display:flex;flex-direction:column;gap:3px}
+.signature-copy strong{color:#e6eefb;font-size:13px}
+.signature-copy .product{color:var(--blue2);font-weight:700;letter-spacing:.02em}
+.footerline{margin-top:4px;color:#62779a}
+.signature-contact{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.signature-contact .sig-link{display:block;color:#eef3fb;font-size:15px;font-weight:800;letter-spacing:.01em;line-height:1.35}
+.signature-contact .sig-link:hover{color:var(--blue2);text-decoration:underline}
+.footer-linkedin{display:block;margin-top:8px;color:var(--blue2);font-size:14px;font-weight:850;letter-spacing:.04em}
+.back-home{margin-top:6px;font-size:13px}
+.back-home a{color:#b9c8e0;font-weight:700}
+.back-home a:hover{color:#fff}
+
+/* ===== Responsive ===== */
+@media (max-width:1060px){
+  .eco{grid-template-columns:repeat(3,1fr)}
+  .chain{grid-template-columns:repeat(2,1fr)}
+  .chain li:nth-child(4n)::after{content:""}
+  .chain li:nth-child(2n)::after{content:none}
+}
+@media (max-width:900px){
+  .split{grid-template-columns:1fr}
+  .arch{display:flex;flex-direction:column;align-items:stretch;gap:0}
+  .arch .arr{padding:6px 0;height:34px}
+  .arch .arr::before{content:none}
+  .arch .arr svg{background:none;width:22px;height:22px;padding:0}
+  .arch .arr svg{transform:rotate(90deg)!important}
+  .a61{display:none!important}
+  .loop{order:12;margin:14px 0 0;padding:14px 16px;border:1px dashed rgba(174,186,208,.35);border-radius:14px}
+  .core{order:13;width:100%;margin:22px 0 0}
+  .n1{order:1}.a12{order:2}.n2{order:3}.a23{order:4}.n3{order:5}.a34{order:6}.n4{order:7}.a45{order:8}.n5{order:9}.a56{order:10}.n6{order:11}
+  .node{min-height:0}
+  .duo{grid-template-columns:1fr}
+  .duo-arrow{justify-content:center}
+  .duo-arrow svg{transform:rotate(90deg)}
+  .dest,.road,.legend{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .hero{padding-top:22px}
+  .oai-platform{letter-spacing:.3em;padding-left:.3em}
+  .oai-verbs{letter-spacing:.12em;padding-left:.12em;font-size:12px;line-height:1.7}
+  .oai-mark{font-size:clamp(30px,11vw,60px)}
+  .orb{height:clamp(200px,30svh,280px)}
+  .orb-state{font-size:9.5px;letter-spacing:.2em}
+  .chain{grid-template-columns:1fr}
+  .chain li{min-height:0}
+  .chain li::after{content:""!important;top:auto;bottom:-11px;right:auto;left:26px;transform:rotate(135deg)}
+  .chain li:last-child::after{content:none!important}
+  .eco{grid-template-columns:1fr 1fr}
+  .checks{grid-template-columns:1fr}
+  .status-rows div{grid-template-columns:1fr;gap:6px}
+  .actions .btn{width:100%}
+  .lab{padding:20px}
+  .section{padding:72px 0}
+}
+@media (max-width:420px){
+  .eco{grid-template-columns:1fr}
+  .chips4{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .hero-badge i{animation:none}
+  .orb-state b{transition:none}
+  .btn,.links a,.contact-pill{transition:none}
+}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
+
+<nav class="nav" aria-label="Navigation principale" data-i18n-aria="nav.aria">
+  <div class="wrap navin">
+    <a class="wordmark" href="accueil.html#top" aria-label="Pascal Robotics — accueil" data-i18n-aria="logo.aria">
+      <img class="nav-logo" src="assets/logo-pascal-robotics.png" alt="Pascal Robotics" width="283" height="51" data-i18n-alt="logo.alt">
+    </a>
+    <div class="links">
+      <div class="lang-switch" role="group" aria-label="Langue" data-i18n-aria="lang.aria">
+        <button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+        <span class="sep" aria-hidden="true">|</span>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <div class="nav-links" id="nav-panel">
+      <a href="accueil.html#why" data-i18n="nav.why">Pourquoi</a>
+      <a class="nav-orch is-active" href="orchestrai" data-i18n="nav.orchestrai" aria-current="page">OrchestrAI</a>
+      <a href="accueil.html#applications" data-i18n="nav.applications">Applications</a>
+      <a href="accueil.html#method" data-i18n="nav.method">Méthode</a>
+      <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
+      <a class="nav-pipeline" href="pipeline-ia.html" data-i18n="nav.pipeline">Pipeline IA</a>
+      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème</a>
+      <a href="accueil.html#faq" data-i18n="nav.faq">FAQ</a>
+      <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
+      </div>
+      <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
+        <svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle cx="9" cy="3.5" r="1.6" fill="currentColor"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="9" cy="14.5" r="1.6" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main id="content">
+
+<!-- ================= HERO ================= -->
+<header class="hero" aria-labelledby="oai-title">
+  <div class="wrap">
+    <span class="hero-badge"><i aria-hidden="true"></i><span data-i18n="hero.badge">En développement · POC</span></span>
+    <h1 class="oai-mark" id="oai-title" aria-label="OrchestrAI — AI Orchestration Platform">ORCHESTR<span class="dash">-</span><span class="ai">AI</span></h1>
+    <p class="oai-platform">AI Orchestration Platform</p>
+    <p class="oai-by">by <a href="accueil.html" aria-label="Pascal Robotics — retour à l’accueil" data-i18n-aria="hero.by.aria">Pascal Robotics</a></p>
+
+    <div class="orb" id="oai-orb-wrap">
+      <canvas id="oai-orb" aria-hidden="true"></canvas>
+      <div class="orb-state" aria-hidden="true"><i></i><span data-i18n="orb.kicker">État suggéré</span><b id="oai-orb-state">ANALYSE</b></div>
+    </div>
+    <p class="orb-caption" data-i18n="orb.caption">Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.</p>
+
+    <p class="oai-verbs" data-i18n="hero.verbs">COMPREND. ORCHESTRE. MESURE. APPREND.</p>
+    <p class="lead" data-i18n="hero.lead">Une couche d’orchestration en développement pour relier modèles d’IA, fournisseurs de calcul et infrastructures — et aider à choisir, pour chaque besoin, la combinaison la plus adaptée.</p>
+    <div class="actions">
+      <a class="btn primary" href="#principe" data-i18n="hero.cta1">Comprendre le principe ↓</a>
+      <a class="btn" href="accueil.html#contact" data-i18n="hero.cta2">Parler de votre projet ↗</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 01 PROBLEM ================= -->
+<section class="section" id="constat" aria-labelledby="pb-title">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="pb.eyebrow">01 / Le constat</p>
+        <h2 id="pb-title" data-i18n-html="pb.title">Un écosystème IA foisonnant.<br><span class="soft">Et fragmenté.</span></h2>
+        <p class="body" data-i18n="pb.body">Aujourd’hui, un créateur, une entreprise ou un industriel peut jongler avec plusieurs modèles d’IA, plusieurs plateformes et plusieurs fournisseurs de GPU. Chacun a sa qualité, ses délais, ses prix et ses limites — et tout évolue vite. Choisir devient un travail à part entière.</p>
+      </div>
+      <div class="reveal">
+        <div class="chips4">
+          <div class="chip4"><small>01</small><span data-i18n="pb.c1">Plusieurs modèles</span></div>
+          <div class="chip4"><small>02</small><span data-i18n="pb.c2">Plusieurs plateformes</span></div>
+          <div class="chip4"><small>03</small><span data-i18n="pb.c3">Plusieurs fournisseurs GPU</span></div>
+          <div class="chip4"><small>04</small><span data-i18n="pb.c4">Qualité, délais et prix variables</span></div>
+        </div>
+        <p class="pb-aim" data-i18n-html="pb.aim">OrchestrAI vise à devenir la couche qui aide à <strong>comprendre</strong>, <strong>comparer</strong>, <strong>mesurer</strong> et <strong>orchestrer</strong> cet écosystème.</p>
+      </div>
+    </div>
+    <p class="bigline reveal" data-i18n-html="pb.big">Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class="accent">Pour le bon besoin.</span></p>
+  </div>
+</section>
+
+<!-- ================= 02 PRINCIPLE ================= -->
+<section class="section" id="principe" aria-labelledby="pr-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="pr.eyebrow">02 / Le principe</p>
+      <h2 id="pr-title" data-i18n-html="pr.title">Une chaîne simple,<br><span class="soft">de l’intention à la recommandation.</span></h2>
+      <p class="lead" data-i18n="pr.intro">Le principe d’OrchestrAI tient en une chaîne. Chaque étape produit des informations utiles à la suivante — et, à terme, aux projets suivants.</p>
+    </div>
+    <ol class="chain reveal">
+      <li><span class="n">01</span><span class="t" data-i18n="pr.s1.t">Intention</span><span class="d" data-i18n="pr.s1.d">Ce que vous voulez obtenir, avec vos références et vos contraintes.</span></li>
+      <li><span class="n">02</span><span class="t" data-i18n="pr.s2.t">Comprendre</span><span class="d" data-i18n="pr.s2.d">Clarifier le besoin et le traduire pour chaque modèle.</span></li>
+      <li><span class="n">03</span><span class="t" data-i18n="pr.s3.t">Orchestrer</span><span class="d" data-i18n="pr.s3.d">Choisir modèles, fournisseurs et infrastructure.</span></li>
+      <li><span class="n">04</span><span class="t" data-i18n="pr.s4.t">Générer / Exécuter</span><span class="d" data-i18n="pr.s4.d">Lancer les traitements là où c’est pertinent.</span></li>
+      <li><span class="n">05</span><span class="t" data-i18n="pr.s5.t">Mesurer</span><span class="d" data-i18n="pr.s5.d">Temps, coût, disponibilité, échecs.</span></li>
+      <li><span class="n">06</span><span class="t" data-i18n="pr.s6.t">Évaluer</span><span class="d" data-i18n="pr.s6.d">Qualité et fidélité à l’intention : revue humaine, puis analyse IA à terme.</span></li>
+      <li class="is-vision"><span class="n">07</span><span class="t" data-i18n="pr.s7.t">Apprendre</span><span class="d" data-i18n="pr.s7.d">Capitaliser sur chaque résultat.</span></li>
+      <li class="is-vision"><span class="n">08</span><span class="t" data-i18n="pr.s8.t">Recommander</span><span class="d" data-i18n="pr.s8.d">Proposer la combinaison la plus adaptée au prochain besoin.</span></li>
+    </ol>
+    <p class="honest reveal" data-i18n="pr.honest">Aujourd’hui, une partie de cette chaîne est réalisée manuellement ou de façon expérimentale ; les étapes « Apprendre » et « Recommander » relèvent de la vision à terme. Le statut de chaque brique est détaillé plus bas.</p>
+    <div class="criteria reveal">
+      <h3 data-i18n="pr.crit.title">Critères d’arbitrage</h3>
+      <ul class="crit">
+        <li data-i18n="pr.k1">Qualité</li><li data-i18n="pr.k2">Coût</li><li data-i18n="pr.k3">Temps / latence</li><li data-i18n="pr.k4">Disponibilité</li>
+        <li data-i18n="pr.k5">Confidentialité</li><li data-i18n="pr.k6">Souveraineté</li><li data-i18n="pr.k7">Capacités matérielles</li>
+      </ul>
+      <p class="note" data-i18n="pr.crit.note">Le poids de chaque critère dépend du projet : un studio créatif, un industriel ou un laboratoire n’arbitrent pas de la même façon.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 ARCHITECTURE ================= -->
+<section class="section" id="architecture" aria-labelledby="ar-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="ar.eyebrow">03 / Architecture</p>
+      <h2 id="ar-title" data-i18n-html="ar.title">Une boucle qui mesure,<br><span class="soft">puis apprend.</span></h2>
+      <p class="lead" data-i18n="ar.intro">Vue simplifiée de l’architecture visée. Chaque brique porte son statut réel : actif, expérimental ou futur.</p>
+    </div>
+    <div class="arch reveal" role="group" aria-label="Schéma de l’architecture OrchestrAI : une boucle en six étapes autour d’un agent central futur" data-i18n-aria="ar.aria">
+      <article class="node n1"><div class="node-top"><span class="num">01</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n1.t">Intentions &amp; références</h3><p data-i18n="ar.n1.d">Brief, prompt, images de référence, contraintes.</p></article>
+      <div class="arr a12" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <article class="node n2"><div class="node-top"><span class="num">02</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><h3 data-i18n="ar.n2.t">Prompt Intelligence</h3><p data-i18n="ar.n2.d">Structurer et adapter le prompt à chaque modèle.</p></article>
+      <div class="arr a23" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <article class="node n3"><div class="node-top"><span class="num">03</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n3.t">Modèles &amp; providers</h3><p data-i18n="ar.n3.d">Plusieurs modèles, via plusieurs fournisseurs.</p></article>
+      <div class="arr a34" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <article class="node n4"><div class="node-top"><span class="num">04</span><span class="st st-active" data-i18n="st.active">Actif</span></div><h3 data-i18n="ar.n4.t">Génération / exécution</h3><p data-i18n="ar.n4.d">Jobs lancés côte à côte pour comparaison.</p></article>
+      <div class="arr a45" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <article class="node n5"><div class="node-top"><span class="num">05</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><h3 data-i18n="ar.n5.t">Évaluation &amp; analyse</h3><p data-i18n="ar.n5.d">Revue humaine aujourd’hui ; analyse IA à terme.</p></article>
+      <div class="arr a56" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <article class="node n6 is-future"><div class="node-top"><span class="num">06</span><span class="st st-future" data-i18n="st.future">Futur</span></div><h3 data-i18n="ar.n6.t">Knowledge Base</h3><p data-i18n="ar.n6.d">Mémoire des résultats, pour mieux recommander.</p></article>
+      <p class="loop"><span data-i18n="ar.loop">↺ La boucle se referme : chaque projet enrichit le suivant.</span> <span class="st st-future" data-i18n="st.future">Futur</span></p>
+      <div class="arr a61" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <div class="core">
+        <span class="st st-future" data-i18n="st.future">Futur</span>
+        <h3 data-i18n="ar.core.t">OAI Intelligence Agent</h3>
+        <p class="verbs" data-i18n="ar.core.v">COMPREND · ANALYSE · APPREND · RECOMMANDE</p>
+        <div class="de"><b data-i18n="ar.de.t">Decision Engine</b><span data-i18n="ar.de.d">Arbitrage automatique selon les critères du projet.</span><span class="st st-future" data-i18n="st.future">Futur</span></div>
+      </div>
+    </div>
+    <p class="honest reveal" data-i18n="ar.note">Aujourd’hui, la boucle est pilotée par l’humain. L’agent central et le Decision Engine sont des briques futures, non opérationnelles à ce jour.</p>
+  </div>
+</section>
+
+<!-- ================= 04 ORCHESTRATE, NOT REPLACE ================= -->
+<section class="section" id="orchestrer" aria-labelledby="or-title">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="or.eyebrow">04 / Positionnement</p>
+        <h2 id="or-title" data-i18n-html="or.title">Orchestrer,<br><span class="soft">pas remplacer.</span></h2>
+      </div>
+      <div class="reveal">
+        <p class="quote" data-i18n="or.quote">OrchestrAI ne cherche pas à remplacer les outils spécialisés. Il vise à les orchestrer.</p>
+        <p class="body" data-i18n="or.body">Plateformes de création, API d’inférence, GPU à la demande, workflows open source, modèles vidéo : chacun excelle dans son domaine. Ces outils peuvent devenir des moteurs, des modèles, des fournisseurs ou des services utilisés par OrchestrAI.</p>
+      </div>
+    </div>
+    <div class="eco reveal">
+      <div class="eco-g"><h3 data-i18n-html="or.g1">Plateformes de création</h3><ul><li>Higgsfield</li><li>Runway</li></ul></div>
+      <div class="eco-g"><h3 data-i18n-html="or.g2">Modèles vidéo</h3><ul><li>Seedance</li><li>WAN</li><li>LTX</li></ul></div>
+      <div class="eco-g"><h3 data-i18n-html="or.g3">API &amp; inférence</h3><ul><li>fal.ai</li></ul></div>
+      <div class="eco-g"><h3 data-i18n-html="or.g4">Calcul GPU</h3><ul><li>RunPod</li></ul></div>
+      <div class="eco-g"><h3 data-i18n-html="or.g5">Workflows</h3><ul><li>ComfyUI</li></ul></div>
+    </div>
+    <p class="note reveal" data-i18n="or.note">Noms cités à titre d’exemples de l’écosystème. Aucun partenariat n’est sous-entendu ; les marques citées appartiennent à leurs détenteurs respectifs.</p>
+  </div>
+</section>
+
+<!-- ================= 05 FIRST TESTBED: AI VIDEO ================= -->
+<section class="section" id="banc-video" aria-labelledby="tb-title">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="tb.eyebrow">05 / Premier banc d’essai</p>
+        <h2 id="tb-title" data-i18n-html="tb.title">Premier terrain d’expérimentation :<br><span class="soft">la vidéo IA.</span></h2>
+        <p class="body" data-i18n="tb.body">La génération vidéo est aujourd’hui notre premier banc d’essai. Les modèles s’y multiplient et les écarts de qualité, de délai et de coût y sont visibles : un bon terrain pour éprouver la logique d’orchestration.</p>
+        <p class="note" data-i18n="tb.note">Pas de chiffres ici : les mesures servent d’abord à comparer, pas à promettre des économies.</p>
+      </div>
+      <div class="panel reveal">
+        <h3 data-i18n="tb.list.title">Ce que nous comparons</h3>
+        <ul class="checks">
+          <li data-i18n="tb.l1">La même intention</li><li data-i18n="tb.l2">Le même prompt, lorsque c’est pertinent</li><li data-i18n="tb.l3">Le temps de génération</li><li data-i18n="tb.l4">Le coût</li>
+          <li data-i18n="tb.l5">La qualité perçue</li><li data-i18n="tb.l6">La fidélité au prompt</li><li data-i18n="tb.l7">La revue humaine</li><li class="is-future" data-i18n="tb.l8">À terme, l’analyse par IA</li>
+        </ul>
+        <div class="status-rows">
+          <div><span class="st st-active" data-i18n="st.active">Actif</span><span data-i18n="tb.s1">Génération sur plusieurs modèles et revue humaine</span></div>
+          <div><span class="st st-exp" data-i18n="st.exp">Expérimental</span><span data-i18n="tb.s2">Banc de comparaison structuré multi-fournisseurs</span></div>
+          <div><span class="st st-future" data-i18n="st.future">Futur</span><span data-i18n="tb.s3">Analyse automatisée par IA</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 WHY PASCAL ROBOTICS ================= -->
+<section class="section" id="pascal-robotics" aria-labelledby="pr2-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="pr2.eyebrow">06 / Pourquoi Pascal Robotics</p>
+      <h2 id="pr2-title" data-i18n-html="pr2.title">La vidéo d’abord.<br><span class="soft">L’industrie ensuite.</span></h2>
+      <p class="lead" data-i18n="pr2.body">Pascal Robotics relie le monde réel, la simulation et l’intelligence artificielle. La vidéo est le premier terrain expérimental d’OrchestrAI ; l’architecture vise à s’étendre au Digital Twin, à la simulation, à l’IA locale, à la Physical AI, à la robotique, aux infrastructures GPU et aux cas d’usage industriels.</p>
+    </div>
+    <div class="duo reveal">
+      <div class="duo-card"><div class="k"><span data-i18n="pr2.a.k">Dans la vidéo</span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div><p data-i18n="pr2.a.d">OrchestrAI peut arbitrer entre modèles et infrastructures de génération.</p></div>
+      <div class="duo-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></svg></div>
+      <div class="duo-card is-future"><div class="k"><span data-i18n="pr2.b.k">Demain dans l’industrie</span><span class="st st-future" data-i18n="st.future">Futur</span></div><p data-i18n="pr2.b.d">La même logique d’orchestration pourra s’appliquer à des modèles, agents, simulations, ressources GPU et systèmes physiques.</p></div>
+    </div>
+    <ul class="domains reveal">
+      <li data-i18n="pr2.d1">Digital Twin</li><li data-i18n="pr2.d2">Simulation · Isaac Sim · Isaac Lab</li><li data-i18n="pr2.d3">IA locale · Edge AI</li><li data-i18n="pr2.d4">Physical AI</li>
+      <li data-i18n="pr2.d5">Robotique</li><li data-i18n="pr2.d6">Infrastructures GPU</li><li data-i18n="pr2.d7">Cas d’usage industriels</li>
+    </ul>
+    <p class="note reveal" data-i18n="pr2.note">Ces extensions ne sont pas déployées : elles décrivent la direction de l’architecture.</p>
+    <div class="links-row reveal">
+      <a class="tlink" href="accueil.html" data-i18n="pr2.link1">Découvrir Pascal Robotics →</a>
+      <a class="tlink" href="jumeaux-numeriques.html" data-i18n="pr2.link2">Le Digital Twin selon Pascal Robotics →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 EXECUTION DESTINATIONS ================= -->
+<section class="section" id="destinations" aria-labelledby="de-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="de.eyebrow">07 / Où exécuter</p>
+      <h2 id="de-title" data-i18n-html="de.title">Cloud, local ou on-premise.<br><span class="soft">L’exécution au bon endroit.</span></h2>
+      <p class="lead" data-i18n="de.intro">Une architecture provider-agnostic : aucun fournisseur n’est imposé. Le lieu d’exécution devient un critère d’arbitrage comme les autres.</p>
+    </div>
+    <div class="dest reveal">
+      <article class="dest-card">
+        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/></svg></span><span class="st st-active" data-i18n="st.active">Actif</span></div>
+        <h3 data-i18n="de.c1.t">Cloud</h3>
+        <p data-i18n="de.c1.d">Services externes, API, fournisseurs de calcul à la demande.</p>
+        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c1.f">Accès rapide à de nombreux modèles, capacité élastique.</span></p>
+      </article>
+      <article class="dest-card">
+        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.8"/><path d="M2.5 19h19"/></svg></span><span class="st st-exp" data-i18n="st.exp">Expérimental</span></div>
+        <h3 data-i18n="de.c2.t">Local</h3>
+        <p data-i18n="de.c2.d">Mac, PC équipé d’un GPU, modèles exécutés localement.</p>
+        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c2.f">Itération, confidentialité, maîtrise des coûts.</span></p>
+      </article>
+      <article class="dest-card is-future">
+        <div class="dest-top"><span class="dest-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg></span><span class="st st-future" data-i18n="st.future">Futur</span></div>
+        <h3 data-i18n="de.c3.t">On-premise</h3>
+        <p data-i18n="de.c3.d">Serveurs GPU privés, infrastructure du client, infrastructure souveraine.</p>
+        <p class="for"><b data-i18n="de.for">Pour :</b> <span data-i18n="de.c3.f">Données sensibles, souveraineté, charges industrielles.</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 08 STATUS / ROADMAP ================= -->
+<section class="section" id="statut" aria-labelledby="st2-title">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n-html="st2.eyebrow">08 / Statut &amp; feuille de route</p>
+      <h2 id="st2-title" data-i18n-html="st2.title">Ce qui existe. Ce qui s’expérimente.<br><span class="soft">Ce qui viendra.</span></h2>
+    </div>
+    <div class="legend reveal">
+      <div><span class="st st-active" data-i18n="st.active">Actif</span><span data-i18n="st2.leg.a">Utilisé aujourd’hui dans nos POC, de façon encore manuelle ou semi-manuelle.</span></div>
+      <div><span class="st st-exp" data-i18n="st.exp">Expérimental</span><span data-i18n="st2.leg.e">En test sur des cas limités ; peut évoluer ou être abandonné.</span></div>
+      <div><span class="st st-future" data-i18n="st.future">Futur</span><span data-i18n="st2.leg.f">Vision d’architecture, non développée à ce jour.</span></div>
+    </div>
+    <div class="road reveal">
+      <div class="road-col"><h3><span class="st st-active" data-i18n="st.active">Actif</span></h3><ul>
+        <li data-i18n="st2.a1">Lancement de générations sur plusieurs modèles via des fournisseurs externes, pour comparaison</li><li data-i18n="st2.a2">Comparaison manuelle des résultats (revue humaine)</li><li data-i18n="st2.a3">Premier terrain d’essai : la génération vidéo IA</li></ul></div>
+      <div class="road-col"><h3><span class="st st-exp" data-i18n="st.exp">Expérimental</span></h3><ul>
+        <li data-i18n="st2.e1">Banc de comparaison multi-fournisseurs : même intention, temps, coût, qualité</li><li data-i18n="st2.e2">Prompt Intelligence : adaptation du prompt selon le modèle</li><li data-i18n="st2.e3">Exécution locale (Mac, PC GPU) sur des cas ciblés</li></ul></div>
+      <div class="road-col is-future"><h3><span class="st st-future" data-i18n="st.future">Futur</span></h3><ul>
+        <li data-i18n="st2.f1">OAI Intelligence Agent (agent central)</li><li data-i18n="st2.f2">Decision Engine : arbitrage automatique selon les critères du projet</li><li data-i18n="st2.f3">Knowledge Base : apprentissage à partir des résultats</li>
+        <li data-i18n="st2.f4">Évaluation automatisée par IA</li><li data-i18n="st2.f5">Routage local / on-premise à l’échelle</li><li data-i18n="st2.f6">Extensions industrielles : Digital Twin, simulation, Physical AI, robotique, ressources GPU</li></ul></div>
+    </div>
+    <p class="note reveal" data-i18n="st2.note">Feuille de route indicative, sans calendrier ni engagement contractuel.</p>
+  </div>
+</section>
+
+<!-- ================= LAB + FINAL CTA ================= -->
+<section class="section" id="laboratoire" aria-label="Laboratoire" data-i18n-aria="lab.kicker">
+  <div class="wrap">
+    <a class="lab reveal" href="pipeline-ia.html">
+      <span class="lab-l">
+        <span class="lab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+        <span><small data-i18n="lab.kicker">Laboratoire</small><strong data-i18n="lab.title">Un laboratoire d’OrchestrAI : le pipeline vidéo IA (accès protégé)</strong><span class="d" data-i18n="lab.body">Document de travail détaillant un premier POC de pipeline vidéo IA. Accès protégé par mot de passe.</span></span>
+      </span>
+      <span class="go" data-i18n="lab.cta">Ouvrir le laboratoire →</span>
+    </a>
+  </div>
+</section>
+
+<section class="section final" id="contact" aria-labelledby="cta-title">
+  <div class="wrap reveal">
+    <h2 id="cta-title" data-i18n-html="cta.title">Un cas d’usage à orchestrer&nbsp;?</h2>
+    <p class="lead" data-i18n="cta.body">Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte et de vos contraintes. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.</p>
+    <div class="actions">
+      <a class="btn primary" href="accueil.html#contact" data-i18n="cta.b1">Parler de votre projet ↗</a>
+      <a class="btn" href="accueil.html" data-i18n="cta.b2">Découvrir Pascal Robotics →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="signature">
+  <div class="wrap">
+    <div class="signature-centered">
+      <div class="signature-logo-plain">
+        <img src="logo%20signature.png" alt="Signature Pascal Robotics" data-i18n-alt="footer.sig.alt" width="868" height="166" loading="lazy" decoding="async">
+      </div>
+      <div class="signature-copy">
+        <span class="product" data-i18n="footer.product">OrchestrAI · AI Orchestration Platform — en développement</span>
+        <strong>Pascal Robotics</strong>
+        <span data-i18n-html="footer.tagline">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration</span>
+        <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
+      </div>
+      <div class="signature-contact">
+        <a class="sig-link" href="mailto:pgautier@pascal-robotics.fr">pgautier@pascal-robotics.fr</a>
+        <a class="sig-link" href="tel:+33659590369">+33 6 59 59 03 69</a>
+        <a class="footer-linkedin" href="https://www.linkedin.com/in/pascal-gautier2026" target="_blank" rel="noopener noreferrer" data-i18n="footer.linkedin">LinkedIn</a>
+        <div class="back-home"><a href="accueil.html#top" data-i18n="footer.back">← Retour à l’accueil Pascal Robotics</a></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== i18n — same mechanism as the rest of the site (data-i18n / data-i18n-html / applyLang) ===== */
+var I18N = {
+ "fr": {
+  "meta.title": "OrchestrAI — AI Orchestration Platform | Pascal Robotics",
+  "meta.description": "OrchestrAI est une plateforme d’orchestration IA en développement par Pascal Robotics, conçue pour comparer et coordonner modèles, providers et infrastructures selon le coût, le temps, la qualité et les contraintes du projet.",
+  "skip": "Aller au contenu",
+  "nav.aria": "Navigation principale",
+  "lang.aria": "Langue",
+  "nav.menu": "Menu",
+  "logo.aria": "Pascal Robotics — accueil",
+  "logo.alt": "Pascal Robotics",
+  "nav.why": "Pourquoi",
+  "nav.orchestrai": "OrchestrAI",
+  "nav.applications": "Applications",
+  "nav.method": "Méthode",
+  "nav.dt": "Digital Twin",
+  "nav.pipeline": "Pipeline IA",
+  "nav.eco": "Écosystème",
+  "nav.faq": "FAQ",
+  "nav.contact": "Parler de votre cas d’usage ↗",
+  "st.active": "Actif",
+  "st.exp": "Expérimental",
+  "st.future": "Futur",
+  "hero.badge": "En développement · POC",
+  "hero.by.aria": "Pascal Robotics — retour à l’accueil",
+  "hero.verbs": "COMPREND. ORCHESTRE. MESURE. APPREND.",
+  "hero.lead": "Une couche d’orchestration en développement pour relier modèles d’IA, fournisseurs de calcul et infrastructures — et aider à choisir, pour chaque besoin, la combinaison la plus adaptée.",
+  "hero.cta1": "Comprendre le principe ↓",
+  "hero.cta2": "Parler de votre projet ↗",
+  "orb.states": "ANALYSE|RECHERCHE|ORCHESTRATION|ÉVALUATION|APPRENTISSAGE",
+  "orb.kicker": "État suggéré",
+  "orb.caption": "Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.",
+  "pb.eyebrow": "01 / Le constat",
+  "pb.title": "Un écosystème IA foisonnant.<br><span class=\"soft\">Et fragmenté.</span>",
+  "pb.body": "Aujourd’hui, un créateur, une entreprise ou un industriel peut jongler avec plusieurs modèles d’IA, plusieurs plateformes et plusieurs fournisseurs de GPU. Chacun a sa qualité, ses délais, ses prix et ses limites — et tout évolue vite. Choisir devient un travail à part entière.",
+  "pb.c1": "Plusieurs modèles",
+  "pb.c2": "Plusieurs plateformes",
+  "pb.c3": "Plusieurs fournisseurs GPU",
+  "pb.c4": "Qualité, délais et prix variables",
+  "pb.aim": "OrchestrAI vise à devenir la couche qui aide à <strong>comprendre</strong>, <strong>comparer</strong>, <strong>mesurer</strong> et <strong>orchestrer</strong> cet écosystème.",
+  "pb.big": "Le bon modèle. Le bon fournisseur. La bonne infrastructure. <span class=\"accent\">Pour le bon besoin.</span>",
+  "pr.eyebrow": "02 / Le principe",
+  "pr.title": "Une chaîne simple,<br><span class=\"soft\">de l’intention à la recommandation.</span>",
+  "pr.intro": "Le principe d’OrchestrAI tient en une chaîne. Chaque étape produit des informations utiles à la suivante — et, à terme, aux projets suivants.",
+  "pr.s1.t": "Intention",
+  "pr.s1.d": "Ce que vous voulez obtenir, avec vos références et vos contraintes.",
+  "pr.s2.t": "Comprendre",
+  "pr.s2.d": "Clarifier le besoin et le traduire pour chaque modèle.",
+  "pr.s3.t": "Orchestrer",
+  "pr.s3.d": "Choisir modèles, fournisseurs et infrastructure.",
+  "pr.s4.t": "Générer / Exécuter",
+  "pr.s4.d": "Lancer les traitements là où c’est pertinent.",
+  "pr.s5.t": "Mesurer",
+  "pr.s5.d": "Temps, coût, disponibilité, échecs.",
+  "pr.s6.t": "Évaluer",
+  "pr.s6.d": "Qualité et fidélité à l’intention : revue humaine, puis analyse IA à terme.",
+  "pr.s7.t": "Apprendre",
+  "pr.s7.d": "Capitaliser sur chaque résultat.",
+  "pr.s8.t": "Recommander",
+  "pr.s8.d": "Proposer la combinaison la plus adaptée au prochain besoin.",
+  "pr.honest": "Aujourd’hui, une partie de cette chaîne est réalisée manuellement ou de façon expérimentale ; les étapes « Apprendre » et « Recommander » relèvent de la vision à terme. Le statut de chaque brique est détaillé plus bas.",
+  "pr.crit.title": "Critères d’arbitrage",
+  "pr.k1": "Qualité",
+  "pr.k2": "Coût",
+  "pr.k3": "Temps / latence",
+  "pr.k4": "Disponibilité",
+  "pr.k5": "Confidentialité",
+  "pr.k6": "Souveraineté",
+  "pr.k7": "Capacités matérielles",
+  "pr.crit.note": "Le poids de chaque critère dépend du projet : un studio créatif, un industriel ou un laboratoire n’arbitrent pas de la même façon.",
+  "ar.eyebrow": "03 / Architecture",
+  "ar.title": "Une boucle qui mesure,<br><span class=\"soft\">puis apprend.</span>",
+  "ar.intro": "Vue simplifiée de l’architecture visée. Chaque brique porte son statut réel : actif, expérimental ou futur.",
+  "ar.aria": "Schéma de l’architecture OrchestrAI : une boucle en six étapes autour d’un agent central futur",
+  "ar.n1.t": "Intentions & références",
+  "ar.n1.d": "Brief, prompt, images de référence, contraintes.",
+  "ar.n2.t": "Prompt Intelligence",
+  "ar.n2.d": "Structurer et adapter le prompt à chaque modèle.",
+  "ar.n3.t": "Modèles & providers",
+  "ar.n3.d": "Plusieurs modèles, via plusieurs fournisseurs.",
+  "ar.n4.t": "Génération / exécution",
+  "ar.n4.d": "Jobs lancés côte à côte pour comparaison.",
+  "ar.n5.t": "Évaluation & analyse",
+  "ar.n5.d": "Revue humaine aujourd’hui ; analyse IA à terme.",
+  "ar.n6.t": "Knowledge Base",
+  "ar.n6.d": "Mémoire des résultats, pour mieux recommander.",
+  "ar.loop": "↺ La boucle se referme : chaque projet enrichit le suivant.",
+  "ar.core.t": "OAI Intelligence Agent",
+  "ar.core.v": "COMPREND · ANALYSE · APPREND · RECOMMANDE",
+  "ar.de.t": "Decision Engine",
+  "ar.de.d": "Arbitrage automatique selon les critères du projet.",
+  "ar.note": "Aujourd’hui, la boucle est pilotée par l’humain. L’agent central et le Decision Engine sont des briques futures, non opérationnelles à ce jour.",
+  "or.eyebrow": "04 / Positionnement",
+  "or.title": "Orchestrer,<br><span class=\"soft\">pas remplacer.</span>",
+  "or.quote": "OrchestrAI ne cherche pas à remplacer les outils spécialisés. Il vise à les orchestrer.",
+  "or.body": "Plateformes de création, API d’inférence, GPU à la demande, workflows open source, modèles vidéo : chacun excelle dans son domaine. Ces outils peuvent devenir des moteurs, des modèles, des fournisseurs ou des services utilisés par OrchestrAI.",
+  "or.g1": "Plateformes de création",
+  "or.g2": "Modèles vidéo",
+  "or.g3": "API &amp; inférence",
+  "or.g4": "Calcul GPU",
+  "or.g5": "Workflows",
+  "or.note": "Noms cités à titre d’exemples de l’écosystème. Aucun partenariat n’est sous-entendu ; les marques citées appartiennent à leurs détenteurs respectifs.",
+  "tb.eyebrow": "05 / Premier banc d’essai",
+  "tb.title": "Premier terrain d’expérimentation :<br><span class=\"soft\">la vidéo IA.</span>",
+  "tb.body": "La génération vidéo est aujourd’hui notre premier banc d’essai. Les modèles s’y multiplient et les écarts de qualité, de délai et de coût y sont visibles : un bon terrain pour éprouver la logique d’orchestration.",
+  "tb.list.title": "Ce que nous comparons",
+  "tb.l1": "La même intention",
+  "tb.l2": "Le même prompt, lorsque c’est pertinent",
+  "tb.l3": "Le temps de génération",
+  "tb.l4": "Le coût",
+  "tb.l5": "La qualité perçue",
+  "tb.l6": "La fidélité au prompt",
+  "tb.l7": "La revue humaine",
+  "tb.l8": "À terme, l’analyse par IA",
+  "tb.status.title": "Statut",
+  "tb.s1": "Génération sur plusieurs modèles et revue humaine",
+  "tb.s2": "Banc de comparaison structuré multi-fournisseurs",
+  "tb.s3": "Analyse automatisée par IA",
+  "tb.note": "Pas de chiffres ici : les mesures servent d’abord à comparer, pas à promettre des économies.",
+  "pr2.eyebrow": "06 / Pourquoi Pascal Robotics",
+  "pr2.title": "La vidéo d’abord.<br><span class=\"soft\">L’industrie ensuite.</span>",
+  "pr2.body": "Pascal Robotics relie le monde réel, la simulation et l’intelligence artificielle. La vidéo est le premier terrain expérimental d’OrchestrAI ; l’architecture vise à s’étendre au Digital Twin, à la simulation, à l’IA locale, à la Physical AI, à la robotique, aux infrastructures GPU et aux cas d’usage industriels.",
+  "pr2.a.k": "Dans la vidéo",
+  "pr2.a.d": "OrchestrAI peut arbitrer entre modèles et infrastructures de génération.",
+  "pr2.b.k": "Demain dans l’industrie",
+  "pr2.b.d": "La même logique d’orchestration pourra s’appliquer à des modèles, agents, simulations, ressources GPU et systèmes physiques.",
+  "pr2.d1": "Digital Twin",
+  "pr2.d2": "Simulation · Isaac Sim · Isaac Lab",
+  "pr2.d3": "IA locale · Edge AI",
+  "pr2.d4": "Physical AI",
+  "pr2.d5": "Robotique",
+  "pr2.d6": "Infrastructures GPU",
+  "pr2.d7": "Cas d’usage industriels",
+  "pr2.note": "Ces extensions ne sont pas déployées : elles décrivent la direction de l’architecture.",
+  "pr2.link1": "Découvrir Pascal Robotics →",
+  "pr2.link2": "Le Digital Twin selon Pascal Robotics →",
+  "de.eyebrow": "07 / Où exécuter",
+  "de.title": "Cloud, local ou on-premise.<br><span class=\"soft\">L’exécution au bon endroit.</span>",
+  "de.intro": "Une architecture provider-agnostic : aucun fournisseur n’est imposé. Le lieu d’exécution devient un critère d’arbitrage comme les autres.",
+  "de.c1.t": "Cloud",
+  "de.c1.d": "Services externes, API, fournisseurs de calcul à la demande.",
+  "de.c1.f": "Accès rapide à de nombreux modèles, capacité élastique.",
+  "de.c2.t": "Local",
+  "de.c2.d": "Mac, PC équipé d’un GPU, modèles exécutés localement.",
+  "de.c2.f": "Itération, confidentialité, maîtrise des coûts.",
+  "de.c3.t": "On-premise",
+  "de.c3.d": "Serveurs GPU privés, infrastructure du client, infrastructure souveraine.",
+  "de.c3.f": "Données sensibles, souveraineté, charges industrielles.",
+  "de.for": "Pour :",
+  "st2.eyebrow": "08 / Statut &amp; feuille de route",
+  "st2.title": "Ce qui existe. Ce qui s’expérimente.<br><span class=\"soft\">Ce qui viendra.</span>",
+  "st2.leg.a": "Utilisé aujourd’hui dans nos POC, de façon encore manuelle ou semi-manuelle.",
+  "st2.leg.e": "En test sur des cas limités ; peut évoluer ou être abandonné.",
+  "st2.leg.f": "Vision d’architecture, non développée à ce jour.",
+  "st2.a1": "Lancement de générations sur plusieurs modèles via des fournisseurs externes, pour comparaison",
+  "st2.a2": "Comparaison manuelle des résultats (revue humaine)",
+  "st2.a3": "Premier terrain d’essai : la génération vidéo IA",
+  "st2.e1": "Banc de comparaison multi-fournisseurs : même intention, temps, coût, qualité",
+  "st2.e2": "Prompt Intelligence : adaptation du prompt selon le modèle",
+  "st2.e3": "Exécution locale (Mac, PC GPU) sur des cas ciblés",
+  "st2.f1": "OAI Intelligence Agent (agent central)",
+  "st2.f2": "Decision Engine : arbitrage automatique selon les critères du projet",
+  "st2.f3": "Knowledge Base : apprentissage à partir des résultats",
+  "st2.f4": "Évaluation automatisée par IA",
+  "st2.f5": "Routage local / on-premise à l’échelle",
+  "st2.f6": "Extensions industrielles : Digital Twin, simulation, Physical AI, robotique, ressources GPU",
+  "st2.note": "Feuille de route indicative, sans calendrier ni engagement contractuel.",
+  "lab.kicker": "Laboratoire",
+  "lab.title": "Un laboratoire d’OrchestrAI : le pipeline vidéo IA (accès protégé)",
+  "lab.body": "Document de travail détaillant un premier POC de pipeline vidéo IA. Accès protégé par mot de passe.",
+  "lab.cta": "Ouvrir le laboratoire →",
+  "cta.title": "Un cas d’usage à orchestrer&nbsp;?",
+  "cta.body": "Création, industrie, laboratoire ou infrastructure GPU : parlons de votre contexte et de vos contraintes. Nous vous dirons clairement ce qu’OrchestrAI peut apporter aujourd’hui — et ce qui relève encore de la vision.",
+  "cta.b1": "Parler de votre projet ↗",
+  "cta.b2": "Découvrir Pascal Robotics →",
+  "footer.sig.alt": "Signature Pascal Robotics",
+  "footer.product": "OrchestrAI · AI Orchestration Platform — en développement",
+  "footer.tagline": "Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration",
+  "footer.line": "© 2026 · Laval, France",
+  "footer.linkedin": "LinkedIn",
+  "footer.back": "← Retour à l’accueil Pascal Robotics"
+ },
+ "en": {
+  "meta.title": "OrchestrAI — AI Orchestration Platform | Pascal Robotics",
+  "meta.description": "OrchestrAI is an AI orchestration platform in development by Pascal Robotics, designed to compare and coordinate models, providers and infrastructure based on cost, time, quality and project constraints.",
+  "skip": "Skip to content",
+  "nav.aria": "Main navigation",
+  "lang.aria": "Language",
+  "nav.menu": "Menu",
+  "logo.aria": "Pascal Robotics — home",
+  "logo.alt": "Pascal Robotics",
+  "nav.why": "Why",
+  "nav.orchestrai": "OrchestrAI",
+  "nav.applications": "Applications",
+  "nav.method": "Method",
+  "nav.dt": "Digital Twin",
+  "nav.pipeline": "AI Pipeline",
+  "nav.eco": "Ecosystem",
+  "nav.faq": "FAQ",
+  "nav.contact": "Talk about your use case ↗",
+  "st.active": "Active",
+  "st.exp": "Experimental",
+  "st.future": "Future",
+  "hero.badge": "In development · POC",
+  "hero.by.aria": "Pascal Robotics — back to home",
+  "hero.verbs": "UNDERSTANDS. ORCHESTRATES. MEASURES. LEARNS.",
+  "hero.lead": "An orchestration layer in development that connects AI models, compute providers and infrastructure — and helps choose, for each need, the best-suited combination.",
+  "hero.cta1": "Understand the principle ↓",
+  "hero.cta2": "Discuss your project ↗",
+  "orb.states": "ANALYSIS|RESEARCH|ORCHESTRATION|EVALUATION|LEARNING",
+  "orb.kicker": "Suggested state",
+  "orb.caption": "Visual representation of the concept — not an operational, real-time intelligence.",
+  "pb.eyebrow": "01 / The problem",
+  "pb.title": "A thriving AI ecosystem.<br><span class=\"soft\">And a fragmented one.</span>",
+  "pb.body": "Today, a creator, a company or an industrial player may juggle several AI models, several platforms and several GPU providers. Each has its own quality, lead times, prices and limits — and everything changes fast. Choosing becomes a job in itself.",
+  "pb.c1": "Several models",
+  "pb.c2": "Several platforms",
+  "pb.c3": "Several GPU providers",
+  "pb.c4": "Varying quality, lead times and prices",
+  "pb.aim": "OrchestrAI aims to become the layer that helps <strong>understand</strong>, <strong>compare</strong>, <strong>measure</strong> and <strong>orchestrate</strong> this ecosystem.",
+  "pb.big": "The right model. The right provider. The right infrastructure. <span class=\"accent\">For the right need.</span>",
+  "pr.eyebrow": "02 / The principle",
+  "pr.title": "A simple chain,<br><span class=\"soft\">from intention to recommendation.</span>",
+  "pr.intro": "OrchestrAI’s principle fits in a single chain. Each step produces information that is useful to the next one — and, eventually, to future projects.",
+  "pr.s1.t": "Intention",
+  "pr.s1.d": "What you want to achieve, with your references and constraints.",
+  "pr.s2.t": "Understand",
+  "pr.s2.d": "Clarify the need and translate it for each model.",
+  "pr.s3.t": "Orchestrate",
+  "pr.s3.d": "Select models, providers and infrastructure.",
+  "pr.s4.t": "Generate / Execute",
+  "pr.s4.d": "Run the jobs where it makes sense.",
+  "pr.s5.t": "Measure",
+  "pr.s5.d": "Time, cost, availability, failures.",
+  "pr.s6.t": "Evaluate",
+  "pr.s6.d": "Quality and fidelity to intent: human review, then AI analysis eventually.",
+  "pr.s7.t": "Learn",
+  "pr.s7.d": "Build on every result.",
+  "pr.s8.t": "Recommend",
+  "pr.s8.d": "Suggest the best-suited combination for the next need.",
+  "pr.honest": "Today, part of this chain is carried out manually or experimentally; the “Learn” and “Recommend” steps belong to the longer-term vision. The status of each building block is detailed below.",
+  "pr.crit.title": "Arbitration criteria",
+  "pr.k1": "Quality",
+  "pr.k2": "Cost",
+  "pr.k3": "Time / latency",
+  "pr.k4": "Availability",
+  "pr.k5": "Confidentiality",
+  "pr.k6": "Sovereignty",
+  "pr.k7": "Hardware capabilities",
+  "pr.crit.note": "The weight of each criterion depends on the project: a creative studio, an industrial player and a lab do not arbitrate the same way.",
+  "ar.eyebrow": "03 / Architecture",
+  "ar.title": "A loop that measures,<br><span class=\"soft\">then learns.</span>",
+  "ar.intro": "Simplified view of the target architecture. Each block carries its actual status: active, experimental or future.",
+  "ar.aria": "OrchestrAI architecture diagram: a six-step loop around a future central agent",
+  "ar.n1.t": "Intentions & references",
+  "ar.n1.d": "Brief, prompt, reference images, constraints.",
+  "ar.n2.t": "Prompt Intelligence",
+  "ar.n2.d": "Structure and adapt the prompt for each model.",
+  "ar.n3.t": "Models & providers",
+  "ar.n3.d": "Several models, through several providers.",
+  "ar.n4.t": "Generation / execution",
+  "ar.n4.d": "Jobs run side by side for comparison.",
+  "ar.n5.t": "Evaluation & analysis",
+  "ar.n5.d": "Human review today; AI analysis eventually.",
+  "ar.n6.t": "Knowledge Base",
+  "ar.n6.d": "A memory of results, to recommend better.",
+  "ar.loop": "↺ The loop closes: each project informs the next.",
+  "ar.core.t": "OAI Intelligence Agent",
+  "ar.core.v": "UNDERSTANDS · ANALYSES · LEARNS · RECOMMENDS",
+  "ar.de.t": "Decision Engine",
+  "ar.de.d": "Automatic arbitration based on project criteria.",
+  "ar.note": "Today, the loop is human-driven. The central agent and the Decision Engine are future building blocks, not operational to date.",
+  "or.eyebrow": "04 / Positioning",
+  "or.title": "Orchestrate,<br><span class=\"soft\">not replace.</span>",
+  "or.quote": "OrchestrAI does not seek to replace specialised tools. It aims to orchestrate them.",
+  "or.body": "Creation platforms, inference APIs, on-demand GPUs, open-source workflows, video models: each excels in its own field. These tools can become engines, models, providers or services used by OrchestrAI.",
+  "or.g1": "Creation platforms",
+  "or.g2": "Video models",
+  "or.g3": "APIs &amp; inference",
+  "or.g4": "GPU compute",
+  "or.g5": "Workflows",
+  "or.note": "Names cited as examples of the ecosystem. No partnership is implied; trademarks belong to their respective owners.",
+  "tb.eyebrow": "05 / First testbed",
+  "tb.title": "First testbed:<br><span class=\"soft\">AI video.</span>",
+  "tb.body": "Video generation is currently our first testbed. Models multiply there, and differences in quality, lead time and cost are visible: good ground to put the orchestration logic to the test.",
+  "tb.list.title": "What we compare",
+  "tb.l1": "The same intention",
+  "tb.l2": "The same prompt, when relevant",
+  "tb.l3": "Generation time",
+  "tb.l4": "Cost",
+  "tb.l5": "Perceived quality",
+  "tb.l6": "Prompt fidelity",
+  "tb.l7": "Human review",
+  "tb.l8": "Eventually, AI analysis",
+  "tb.status.title": "Status",
+  "tb.s1": "Generation on several models and human review",
+  "tb.s2": "Structured multi-provider comparison bench",
+  "tb.s3": "Automated AI analysis",
+  "tb.note": "No figures here: measurements are first used to compare, not to promise savings.",
+  "pr2.eyebrow": "06 / Why Pascal Robotics",
+  "pr2.title": "Video first.<br><span class=\"soft\">Industry next.</span>",
+  "pr2.body": "Pascal Robotics connects the real world, simulation and artificial intelligence. Video is OrchestrAI’s first experimental field; the architecture aims to extend to Digital Twin, simulation, local AI, Physical AI, robotics, GPU infrastructure and industrial use cases.",
+  "pr2.a.k": "In video",
+  "pr2.a.d": "OrchestrAI can arbitrate between generation models and infrastructures.",
+  "pr2.b.k": "Tomorrow in industry",
+  "pr2.b.d": "The same orchestration logic could apply to models, agents, simulations, GPU resources and physical systems.",
+  "pr2.d1": "Digital Twin",
+  "pr2.d2": "Simulation · Isaac Sim · Isaac Lab",
+  "pr2.d3": "Local AI · Edge AI",
+  "pr2.d4": "Physical AI",
+  "pr2.d5": "Robotics",
+  "pr2.d6": "GPU infrastructure",
+  "pr2.d7": "Industrial use cases",
+  "pr2.note": "These extensions are not deployed: they describe the direction of the architecture.",
+  "pr2.link1": "Discover Pascal Robotics →",
+  "pr2.link2": "Digital Twin at Pascal Robotics →",
+  "de.eyebrow": "07 / Where to run",
+  "de.title": "Cloud, local or on-premise.<br><span class=\"soft\">Run it in the right place.</span>",
+  "de.intro": "A provider-agnostic architecture: no provider is imposed. Where a job runs becomes an arbitration criterion like any other.",
+  "de.c1.t": "Cloud",
+  "de.c1.d": "External services, APIs, on-demand compute providers.",
+  "de.c1.f": "Fast access to many models, elastic capacity.",
+  "de.c2.t": "Local",
+  "de.c2.d": "Mac, GPU-equipped PC, locally run models.",
+  "de.c2.f": "Iteration, confidentiality, cost control.",
+  "de.c3.t": "On-premise",
+  "de.c3.d": "Private GPU servers, client infrastructure, sovereign infrastructure.",
+  "de.c3.f": "Sensitive data, sovereignty, industrial workloads.",
+  "de.for": "For:",
+  "st2.eyebrow": "08 / Status &amp; roadmap",
+  "st2.title": "What exists. What is being tested.<br><span class=\"soft\">What comes next.</span>",
+  "st2.leg.a": "Used today in our POCs, still manually or semi-manually.",
+  "st2.leg.e": "Being tested on limited cases; may change or be dropped.",
+  "st2.leg.f": "Architecture vision, not developed to date.",
+  "st2.a1": "Running generations on several models via external providers, for comparison",
+  "st2.a2": "Manual comparison of outputs (human review)",
+  "st2.a3": "First testbed: AI video generation",
+  "st2.e1": "Multi-provider comparison bench: same intention, time, cost, quality",
+  "st2.e2": "Prompt Intelligence: adapting the prompt to each model",
+  "st2.e3": "Local execution (Mac, GPU PC) on targeted cases",
+  "st2.f1": "OAI Intelligence Agent (central agent)",
+  "st2.f2": "Decision Engine: automatic arbitration based on project criteria",
+  "st2.f3": "Knowledge Base: learning from results",
+  "st2.f4": "Automated AI evaluation",
+  "st2.f5": "Local / on-premise routing at scale",
+  "st2.f6": "Industrial extensions: Digital Twin, simulation, Physical AI, robotics, GPU resources",
+  "st2.note": "Indicative roadmap, with no timeline and no contractual commitment.",
+  "lab.kicker": "Lab",
+  "lab.title": "An OrchestrAI lab: the AI video pipeline (protected access)",
+  "lab.body": "Working document detailing a first AI video pipeline POC. Password-protected access.",
+  "lab.cta": "Open the lab →",
+  "cta.title": "A use case to orchestrate?",
+  "cta.body": "Creative, industrial, lab or GPU infrastructure: let’s talk about your context and constraints. We will tell you clearly what OrchestrAI can bring today — and what is still vision.",
+  "cta.b1": "Discuss your project ↗",
+  "cta.b2": "Discover Pascal Robotics →",
+  "footer.sig.alt": "Pascal Robotics signature",
+  "footer.product": "OrchestrAI · AI Orchestration Platform — in development",
+  "footer.tagline": "Mobile &amp; humanoid robotics · Digital Twin · Physical AI · Integration",
+  "footer.line": "© 2026 · Laval, France",
+  "footer.linkedin": "LinkedIn",
+  "footer.back": "← Back to Pascal Robotics home"
+ }
+};
+var LANG_KEY = 'pr-lang';        /* key used by accueil / Digital Twin */
+var LANG_KEY_ALT = 'pr_lang';    /* key used by Écosystème / Pipeline IA — kept in sync */
+var currentLang = 'fr';
+function getStoredLang(){
+  try {
+    var s = localStorage.getItem(LANG_KEY) || localStorage.getItem(LANG_KEY_ALT);
+    if (s === 'en' || s === 'fr') return s;
+  } catch (e) {}
+  return 'fr';
+}
+function setMeta(sel, val){ var m = document.querySelector(sel); if (m) m.setAttribute('content', val); }
+function applyLang(lang){
+  if (!I18N[lang]) lang = 'fr';
+  currentLang = lang;
+  var dict = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = dict['meta.title'];
+  setMeta('meta[name="description"]', dict['meta.description']);
+  setMeta('meta[property="og:title"]', dict['meta.title']);
+  setMeta('meta[property="og:description"]', dict['meta.description']);
+  setMeta('meta[property="og:locale"]', lang === 'en' ? 'en_GB' : 'fr_FR');
+  setMeta('meta[property="og:locale:alternate"]', lang === 'en' ? 'fr_FR' : 'en_GB');
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n'); if (dict[k] != null) el.textContent = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k = el.getAttribute('data-i18n-html'); if (dict[k] != null) el.innerHTML = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
+    var k = el.getAttribute('data-i18n-aria'); if (dict[k] != null) el.setAttribute('aria-label', dict[k]);
+  });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el){
+    var k = el.getAttribute('data-i18n-alt'); if (dict[k] != null) el.setAttribute('alt', dict[k]);
+  });
+  document.querySelectorAll('[data-set-lang]').forEach(function(btn){
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+  });
+  try { localStorage.setItem(LANG_KEY, lang); localStorage.setItem(LANG_KEY_ALT, lang); } catch (e) {}
+  try { document.dispatchEvent(new CustomEvent('pr:lang', { detail: lang })); } catch (e) {}
+}
+document.querySelectorAll('[data-set-lang]').forEach(function(btn){
+  btn.addEventListener('click', function(){ applyLang(btn.getAttribute('data-set-lang')); });
+});
+applyLang(getStoredLang());
+
+/* ===== Reveal on scroll ===== */
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(el){ el.classList.add('on'); }); return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: .08, rootMargin: '0px 0px -4% 0px' });
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* ===== Architecture loop highlight: only animates while visible ===== */
+(function(){
+  var arch = document.querySelector('.arch');
+  if (!arch || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ arch.classList.toggle('is-live', e.isIntersecting); });
+  }, { threshold: .15 }).observe(arch);
+})();
+
+/* ===== Mobile ⋮ menu (same behaviour as the other pages) ===== */
+(function(){
+  var nav = document.querySelector('.nav'), btn = document.querySelector('.nav-more'), panel = document.getElementById('nav-panel');
+  if (!nav || !btn || !panel) return;
+  function isOpen(){ return btn.getAttribute('aria-expanded') === 'true'; }
+  function setOpen(open){
+    if (open === isOpen()) return;
+    nav.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open){ var first = panel.querySelector('a'); if (first) try { first.focus({preventScroll:true}); } catch (e) {} }
+  }
+  btn.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!isOpen()); });
+  panel.addEventListener('click', function(e){ if (e.target.closest('a')) setOpen(false); });
+  document.addEventListener('click', function(e){ if (!nav.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && isOpen()){ setOpen(false); try { btn.focus({preventScroll:true}); } catch (err) {} }
+  });
+  window.addEventListener('resize', function(){ if (window.matchMedia('(min-width:761px)').matches) setOpen(false); });
+})();
+
+/* ===== Hero ORB — canvas 2D, no dependency =====
+   A slowly rotating sphere of points + nearest-neighbour links, a few "provider" satellites on a tilted
+   orbit, and calm pulses travelling along links. Purely illustrative (see caption).
+   Perf: DPR capped (2 desktop / 1.5 mobile), fewer points on mobile, paused when off-screen
+   (IntersectionObserver) or tab hidden; prefers-reduced-motion -> one static frame, no label cycling. */
+(function(){
+  var canvas = document.getElementById('oai-orb');
+  var wrap = document.getElementById('oai-orb-wrap');
+  var label = document.getElementById('oai-orb-state');
+  if (!canvas || !wrap || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var small = window.matchMedia('(max-width:760px)').matches;
+  var N = small ? 150 : 270, K = 3, SAT = small ? 5 : 7;
+  var STATE_MS = 3600;
+  var pts = [], edges = [], sats = [], pulses = [];
+  var W = 0, H = 0, R = 0, cx = 0, cy = 0;
+  var rot = 0, tilt = 0.38, raf = 0, last = 0, clock = 0, onScreen = true, stateIdx = 0, stateT = 0;
+  var proj = [];
+
+  function states(){ return (I18N[currentLang] && I18N[currentLang]['orb.states'] || 'ANALYSE').split('|'); }
+
+  /* deterministic pseudo-random so the static frame is stable */
+  var seed = 7; function rnd(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+
+  function build(){
+    pts = [];
+    for (var i = 0; i < N; i++){
+      var y = 1 - 2 * (i + 0.5) / N, r = Math.sqrt(1 - y * y), th = i * 2.399963;
+      var shell = i % 5 === 0 ? 0.58 + rnd() * 0.22 : 0.94 + rnd() * 0.06;   /* ~20% inner "core" points */
+      pts.push({ x: Math.cos(th) * r * shell, y: y * shell, z: Math.sin(th) * r * shell, tw: rnd() * 6.28 });
+    }
+    var seen = {};
+    edges = [];
+    for (var a = 0; a < N; a++){
+      var best = [];
+      for (var b = 0; b < N; b++){
+        if (a === b) continue;
+        var dx = pts[a].x - pts[b].x, dy = pts[a].y - pts[b].y, dz = pts[a].z - pts[b].z, d = dx*dx + dy*dy + dz*dz;
+        if (best.length < K || d < best[best.length - 1].d){
+          best.push({ b: b, d: d }); best.sort(function(p, q){ return p.d - q.d; }); if (best.length > K) best.pop();
+        }
+      }
+      best.forEach(function(o){ var key = a < o.b ? a + '_' + o.b : o.b + '_' + a; if (!seen[key]){ seen[key] = 1; edges.push([a, o.b]); } });
+    }
+    sats = [];
+    for (var s = 0; s < SAT; s++){
+      var ang = s / SAT * Math.PI * 2 + 0.3, target = Math.floor(rnd() * N);
+      sats.push({ ang: ang, target: target });
+    }
+  }
+
+  function resize(){
+    var r = wrap.getBoundingClientRect();
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    var dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    R = Math.min(H * 0.34, W * 0.3); cx = W / 2; cy = H * 0.45;
+  }
+
+  function project(x, y, z){
+    var c = Math.cos(rot), s = Math.sin(rot);
+    var x1 = x * c + z * s, z1 = -x * s + z * c;
+    var ct = Math.cos(tilt), st = Math.sin(tilt);
+    var y1 = y * ct - z1 * st, z2 = y * st + z1 * ct;
+    var f = 3.4 / (3.4 - z2);
+    return { x: cx + x1 * R * f, y: cy + y1 * R * f, z: z2, f: f };
+  }
+  function satPos(sa){
+    var a = sa.ang + rot * 0.55, rr = 1.62;
+    var x = Math.cos(a) * rr, z = Math.sin(a) * rr, y = Math.sin(a * 2) * 0.08;
+    /* orbit tilted a bit more than the sphere */
+    var ct = Math.cos(-0.28), st = Math.sin(-0.28);
+    return project(x, y * ct - z * st * 0.35, z);
+  }
+
+  function spawn(kind){
+    if (kind === 'sat' && sats.length){ var s = Math.floor(Math.random() * sats.length); pulses.push({ sat: s, u: 0, v: 0.35 + Math.random() * 0.25, back: Math.random() < 0.5 }); }
+    else if (edges.length){ pulses.push({ e: Math.floor(Math.random() * edges.length), u: 0, v: 0.5 + Math.random() * 0.4 }); }
+  }
+
+  function draw(dt, t){
+    ctx.clearRect(0, 0, W, H);
+    var breathe = 1 + Math.sin(t * 0.6) * 0.012;
+    var R0 = R; R = R0 * breathe;
+    /* soft glow */
+    var g = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 1.9);
+    g.addColorStop(0, 'rgba(61,139,255,0.16)'); g.addColorStop(0.45, 'rgba(61,139,255,0.05)'); g.addColorStop(1, 'rgba(61,139,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    /* orbit ellipse */
+    ctx.save(); ctx.strokeStyle = 'rgba(127,178,255,0.10)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var k = 0; k <= 64; k++){ var p0 = satPos({ ang: k / 64 * Math.PI * 2 - rot * 0.55 }); if (k) ctx.lineTo(p0.x, p0.y); else ctx.moveTo(p0.x, p0.y); }
+    ctx.stroke(); ctx.restore();
+
+    for (var i = 0; i < N; i++) proj[i] = project(pts[i].x, pts[i].y, pts[i].z);
+    var st = states()[stateIdx] ? stateIdx : 0;
+    var linkBoost = (st === 4) ? 0.1 : 0;   /* "learning": links slightly brighter */
+
+    /* links, back to front */
+    ctx.lineWidth = 0.7;
+    for (var e = 0; e < edges.length; e++){
+      var A = proj[edges[e][0]], B = proj[edges[e][1]];
+      var depth = ((A.z + B.z) / 2 + 1) / 2;               /* 0 back .. 1 front */
+      var al = 0.04 + depth * (0.2 + linkBoost);
+      ctx.strokeStyle = 'rgba(120,170,255,' + al.toFixed(3) + ')';
+      ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+    }
+    /* satellites + their links */
+    for (var s = 0; s < sats.length; s++){
+      var P = satPos(sats[s]), T = proj[sats[s].target];
+      ctx.strokeStyle = 'rgba(127,178,255,0.09)'; ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(T.x, T.y); ctx.stroke(); ctx.setLineDash([]);
+      var sz = 2.2 * P.f;
+      ctx.fillStyle = 'rgba(200,222,255,' + (0.35 + (P.z + 1.6) / 3.2 * 0.45).toFixed(3) + ')';
+      ctx.fillRect(P.x - sz, P.y - sz, sz * 2, sz * 2);
+      sats[s].p = P; sats[s].tp = T;
+    }
+    /* points */
+    for (var j = 0; j < N; j++){
+      var q = proj[j], d = (q.z + 1) / 2;
+      var tw = st === 3 ? 0.12 * Math.sin(t * 2 + pts[j].tw) : 0;   /* "evaluation": faint twinkle */
+      var a2 = Math.max(0.12, 0.2 + d * 0.75 + tw);
+      var rad = 0.6 + d * 1.25;
+      ctx.fillStyle = 'rgba(214,230,255,' + a2.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(q.x, q.y, rad, 0, 6.2832); ctx.fill();
+    }
+    /* pulses */
+    for (var n = pulses.length - 1; n >= 0; n--){
+      var pl = pulses[n]; pl.u += dt * pl.v;
+      if (pl.u >= 1){ pulses.splice(n, 1); continue; }
+      var x0, y0, x1, y1;
+      if (pl.sat != null){ var sp = sats[pl.sat]; if (!sp.p) continue; var fwd = pl.back ? [sp.tp, sp.p] : [sp.p, sp.tp]; x0 = fwd[0].x; y0 = fwd[0].y; x1 = fwd[1].x; y1 = fwd[1].y; }
+      else { var EA = proj[edges[pl.e][0]], EB = proj[edges[pl.e][1]]; x0 = EA.x; y0 = EA.y; x1 = EB.x; y1 = EB.y; }
+      var px = x0 + (x1 - x0) * pl.u, py = y0 + (y1 - y0) * pl.u, fade = Math.sin(pl.u * Math.PI);
+      ctx.fillStyle = 'rgba(98,215,232,' + (0.18 * fade).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = 'rgba(210,246,255,' + (0.9 * fade).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(px, py, 1.5, 0, 6.2832); ctx.fill();
+    }
+    R = R0;
+  }
+
+  function setLabel(i, instant){
+    var list = states(); stateIdx = i % list.length;
+    if (!label) return;
+    if (instant){ label.textContent = list[stateIdx]; label.classList.remove('fade'); return; }
+    label.classList.add('fade');
+    setTimeout(function(){ label.textContent = states()[stateIdx]; label.classList.remove('fade'); }, 600);
+  }
+
+  var spawnAcc = 0;
+  function frame(now){
+    raf = 0;
+    if (!running()) return;
+    var dt = last ? Math.min((now - last) / 1000, 0.05) : 0.016; last = now; clock += dt;
+    rot += dt * 0.07;                                   /* ~4°/s: calm */
+    stateT += dt * 1000;
+    if (stateT > STATE_MS){ stateT = 0; setLabel(stateIdx + 1); }
+    /* pulse rhythm depends (subtly) on the suggested state */
+    var rate = [1.4, 1.8, 2.4, 1.2, 1.6][stateIdx] || 1.5;
+    spawnAcc += dt * rate;
+    while (spawnAcc > 1){ spawnAcc -= 1; spawn((stateIdx === 1 || stateIdx === 2) && Math.random() < 0.6 ? 'sat' : 'edge'); }
+    if (pulses.length > 14) pulses.splice(0, pulses.length - 14);
+    draw(dt, clock);
+    raf = requestAnimationFrame(frame);
+  }
+  function running(){ return onScreen && !document.hidden && !mqReduce.matches; }
+  function start(){ if (!raf && running()){ last = 0; raf = requestAnimationFrame(frame); } }
+  function stop(){ if (raf){ cancelAnimationFrame(raf); raf = 0; } }
+  function staticFrame(){
+    pulses = []; rot = 0.6; stateIdx = 2; setLabel(2, true);   /* static: "ORCHESTRATION" */
+    draw(0, 0);
+  }
+  function sync(){ if (mqReduce.matches){ stop(); staticFrame(); } else start(); }
+
+  build(); resize();
+  setLabel(0, true);
+  if (mqReduce.matches) staticFrame(); else { draw(0, 0); start(); }
+
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ onScreen = en.isIntersecting; onScreen ? start() : stop(); });
+    }).observe(wrap);
+  }
+  document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : start(); });
+  var rz = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(rz); rz = setTimeout(function(){ resize(); if (!raf) (mqReduce.matches ? staticFrame() : draw(0, clock)); }, 120);
+  }, { passive: true });
+  if (mqReduce.addEventListener) mqReduce.addEventListener('change', sync); else if (mqReduce.addListener) mqReduce.addListener(sync);
+  document.addEventListener('pr:lang', function(){ setLabel(stateIdx, true); });
+  window.__oaiOrb = { running: function(){ return !!raf; }, state: function(){ return stateIdx; } };  /* test hook */
+})();
+</script>
+</body>
+</html>
