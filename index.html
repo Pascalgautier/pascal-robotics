@@ -46,9 +46,9 @@
       muted
       playsinline
       preload="auto"
-      poster="/assets/digital-twin-pipeline-poster.jpg"
+      poster="/assets/digital-twin-intro-poster.jpg"
     >
-      <source src="/assets/digital-twin-pipeline.mp4" type="video/mp4">
+      <source src="/assets/digital-twin-intro.mp4" type="video/mp4">
     </video>
   </div>
   <script>
@@ -65,7 +65,7 @@
     v.addEventListener('ended', go);
     v.addEventListener('error', go);
     // Safety: if autoplay is blocked or video stalls, don't strand the visitor
-    var safety = setTimeout(go, 22000);
+    var safety = setTimeout(go, 19000); // clip is 12.4 s (logo outro trimmed) + load margin
     v.addEventListener('ended', function () { clearTimeout(safety); }, { once: true });
     v.play().catch(function () { /* muted autoplay should work; safety timeout remains */ });
   })();
