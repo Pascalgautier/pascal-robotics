@@ -290,6 +290,10 @@ html, body { max-width:100%; overflow-x:hidden; }
 /* overflow-x:hidden on <body> turns it into a scroll container and silently disables every
    position:sticky descendant (nav, #why fill). clip keeps the horizontal clipping without that. */
 body { overflow-x:clip; }
+/* Browsers without overflow:clip (Safari < 16, old Chrome) would keep body{overflow-x:hidden} = scroll
+   container = broken sticky. There, leave body visible: html's overflow-x:hidden (propagated to the
+   viewport) still prevents horizontal scrolling. */
+@supports not (overflow-x:clip) { body { overflow-x:visible; } }
 * { min-width:0; }
 img, svg, video, canvas { max-width:100%; height:auto; }
 a, p, span, div { overflow-wrap:break-word; }
@@ -1573,7 +1577,7 @@ h2.title-parallax{
 
 /* ===== #why — scroll-scrubbed text fill (Terminal Industries style) =====
    Base (no JS / reduced motion): big white paragraph, normal flow.
-   .is-fill (added by JS): 200svh track, inner block sticky 100svh, chars coloured by JS. */
+   .is-fill (added by JS): 250svh track, inner block sticky 100svh, chars coloured by JS. */
 .why-fill{position:relative;margin:8px 0 40px}
 .why-fill-sticky{max-width:1100px}
 .why-fill-text{
@@ -1582,7 +1586,7 @@ h2.title-parallax{
   overflow-wrap:normal;word-break:normal;
 }
 .why-fill-pills{margin-top:32px}
-.why-fill.is-fill{height:200vh;height:200svh}
+.why-fill.is-fill{height:250vh;height:250svh}
 .why-fill.is-fill .why-fill-sticky{
   position:sticky;top:0;height:100vh;height:100svh;
   display:flex;flex-direction:column;justify-content:center;
@@ -1684,8 +1688,8 @@ h2.title-parallax{
       <p data-i18n="why.intro">Intégrer, simuler et prouver avant d’investir — plutôt que de partir d’un catalogue de machines.</p>
     </div>
     <!-- Scroll-scrubbed text fill (Terminal Industries style). Without JS / with reduced motion:
-         plain white paragraph in normal flow. JS adds .is-fill on .why-fill (200svh + sticky). -->
-    <div class="why-fill" data-why-fill>
+         plain white paragraph in normal flow. JS adds .is-fill on .why-fill (250svh + sticky). -->
+    <div class="why-fill" data-why-fill data-why-fill-v="2">
       <div class="why-fill-sticky">
         <p class="why-fill-text" data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
         <div class="pill-row why-fill-pills">
@@ -2914,28 +2918,50 @@ if (copyProjectEmail) {
 </script>
 
 <script>
-/* ===== #why — scroll-scrubbed text fill (Terminal Industries style) =====
+/* ===== #why — scroll-scrubbed text fill (Terminal Industries style) — v2 =====
    - Splits the paragraph into word spans (nowrap) then char spans (.ch), aria-hidden,
      with a visually-hidden copy of the full text for screen readers.
-   - Progress p = clamp(-rect.top / (0.9*rect.height - innerHeight), 0, 1),
-     smoothed like GSAP scrub:1.5 (exponential, tau 0.5s) in a rAF loop that only runs in view.
-   - Per-char timeline: dim -> lime accent -> white, staggered 0.05 per char.
+   - Pinned mode (.is-fill: 250svh track, sticky 100svh): progress runs from the moment the block
+     is 40% into the viewport until 80% of the pinned distance, so the fill starts while the text is
+     visible and is finished before the pin releases.
+   - Fallback mode (sticky impossible because an ancestor is a scroll container): no pin, no extra
+     height; progress follows the paragraph as it crosses the viewport (90% -> 25%), so letters
+     still fill.
+   - Smoothed like GSAP scrub (exponential, tau 0.25s) in a rAF loop that only runs in view,
+     plus a passive scroll listener that restarts the loop (robust to IO quirks on iOS).
+   - Per-char timeline: dim -> lime accent (0.6) -> white (1.0), stagger 0.05/char:
+     the green edge spans ~2-3 words.
    - Re-splits when the i18n system rewrites the paragraph (MutationObserver).
    - Disabled with prefers-reduced-motion: reduce (plain white text, normal flow). */
 (function(){
   var root = document.querySelector('[data-why-fill]');
   if (!root) return;
   var textEl = root.querySelector('.why-fill-text');
-  if (!textEl || !('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
+  var stickyEl = root.querySelector('.why-fill-sticky');
+  if (!textEl || !stickyEl || !window.requestAnimationFrame) return;
 
   var mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var DIM = [255,255,255,0.2], ACC = [156,229,26,1], FIN = [255,255,255,1]; /* ACC = --green */
-  var STAGGER = 0.05, A_START = 0.3, A_DUR = 0.4, B_DELAY = 0.25, B_DUR = 0.6;
+  var STAGGER = 0.05, A_START = 0.3, A_DUR = 0.6, B_DELAY = 0.5, B_DUR = 1.0;
+  var TAU = 0.25;
   var chars = [], cache = [], total = 1;
-  var cur = 0, inView = false, rafId = 0, lastT = 0, enabled = false, splitting = false;
+  var cur = 0, rafId = 0, lastT = 0, enabled = false, splitting = false, pinned = true;
 
   function clamp01(v){ return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(t){ return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2; } /* easeInOutQuad */
+  function vh(){ return window.innerHeight || document.documentElement.clientHeight; }
+
+  /* position:sticky only pins against the nearest scrolling ancestor. If any ancestor below <html>
+     is a scroll container (overflow hidden/auto/scroll; clip is fine) or sticky is unsupported,
+     pinning cannot work -> fallback mode. */
+  function canPin(){
+    if (window.CSS && CSS.supports && !CSS.supports('position', 'sticky') && !CSS.supports('position', '-webkit-sticky')) return false;
+    for (var el = root.parentElement; el && el !== document.documentElement; el = el.parentElement){
+      var cs = getComputedStyle(el);
+      if (/(hidden|auto|scroll)/.test(cs.overflowX + ' ' + cs.overflowY)) return false;
+    }
+    return true;
+  }
 
   /* Build word/char spans from the current plain text of the paragraph. */
   function split(){
@@ -2961,7 +2987,7 @@ if (copyProjectEmail) {
     frag.appendChild(sr); frag.appendChild(vis);
     textEl.textContent = '';
     textEl.appendChild(frag);
-    total = 0.55 + 0.6 + (chars.length - 1) * STAGGER;
+    total = A_START + B_DELAY + B_DUR + Math.max(chars.length - 1, 0) * STAGGER;
     splitting = false;
     render(cur);
   }
@@ -2974,9 +3000,20 @@ if (copyProjectEmail) {
   }
 
   function progress(){
+    var h = vh();
+    if (pinned){
+      var r = root.getBoundingClientRect();
+      var startTop = 0.4 * h;                              /* block 60% below the fold -> start */
+      var endTop = -0.8 * Math.max(r.height - h, 1);       /* 80% of the pinned distance -> done */
+      return clamp01((startTop - r.top) / (startTop - endTop));
+    }
+    var t = textEl.getBoundingClientRect();
+    return clamp01((0.9 * h - t.top) / (0.65 * h));       /* text top from 90% to 25% of viewport */
+  }
+
+  function inView(){
     var r = root.getBoundingClientRect();
-    var d = 0.9 * r.height - window.innerHeight;
-    return d > 0 ? clamp01(-r.top / d) : (r.top < 0 ? 1 : 0);
+    return r.bottom > -50 && r.top < vh() + 50;
   }
 
   /* Colour every char for timeline position v (0..1). Only writes changed values. */
@@ -2999,52 +3036,61 @@ if (copyProjectEmail) {
 
   function tick(now){
     rafId = 0;
-    if (!enabled || !inView) return;
+    if (!enabled) return;
+    var p = progress();
+    if (!inView()){ if (cur !== p){ cur = p; render(cur); } return; } /* settle + stop off-screen */
     var dt = lastT ? Math.min((now - lastT) / 1000, 0.1) : 0.016;
     lastT = now;
-    var p = progress();
-    var next = cur + (p - cur) * (1 - Math.exp(-dt / 0.5)); /* ~ GSAP scrub: 1.5 feel */
-    if (Math.abs(p - next) < 0.0005) next = p;
+    var next = cur + (p - cur) * (1 - Math.exp(-dt / TAU));
+    if (Math.abs(p - next) < 0.001) next = p;
     if (next !== cur){ cur = next; render(cur); }
-    rafId = requestAnimationFrame(tick);
+    if (next !== p) rafId = requestAnimationFrame(tick);  /* keep easing */
+    else rafId = 0;                                       /* idle until next scroll */
   }
-  function start(){ if (!rafId){ lastT = 0; rafId = requestAnimationFrame(tick); } }
+  function kick(){ if (enabled && !rafId){ lastT = 0; rafId = requestAnimationFrame(tick); } }
 
-  var io = new IntersectionObserver(function(entries){
-    inView = entries[0].isIntersecting;
-    if (!enabled) return;
-    if (inView) start();
-    else { cur = progress(); render(cur); } /* settle when leaving (fast jumps / anchors) */
-  });
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(kick) : null;
 
   /* i18n: applyLang() sets textContent, wiping our spans -> re-split with the new text. */
-  var mo = new MutationObserver(function(){
+  var mo = ('MutationObserver' in window) ? new MutationObserver(function(){
     if (splitting || !enabled) return;
     if (!textEl.querySelector('.why-fill-w')) split();
-  });
+  }) : null;
 
   function enable(){
     if (enabled) return;
     enabled = true;
-    root.classList.add('is-fill');
+    pinned = canPin();
+    root.classList.toggle('is-fill', pinned);
+    root.classList.toggle('is-fill-fallback', !pinned);
     cur = progress();
     split();
-    mo.observe(textEl, { childList: true, characterData: true, subtree: true });
-    io.observe(root);
+    if (mo) mo.observe(textEl, { childList: true, characterData: true, subtree: true });
+    if (io) io.observe(root);
+    window.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', kick, { passive: true });
+    kick();
   }
   function disable(){
     if (!enabled) return;
     enabled = false;
-    io.unobserve(root); mo.disconnect();
+    if (io) io.unobserve(root);
+    if (mo) mo.disconnect();
+    window.removeEventListener('scroll', kick);
+    window.removeEventListener('resize', kick);
     if (rafId){ cancelAnimationFrame(rafId); rafId = 0; }
     unsplit();
-    root.classList.remove('is-fill');
+    root.classList.remove('is-fill', 'is-fill-fallback');
   }
   function sync(){ (mqReduce && mqReduce.matches) ? disable() : enable(); }
 
-  /* Word-level nowrap spans keep wrapping natural, so no re-split is needed on resize. */
-  var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-  ready.then(sync, sync);
+  /* Word-level nowrap spans keep wrapping natural, so no re-split is needed on resize.
+     Don't wait forever on webfonts: enable after fonts.ready or 1.5 s, whichever comes first. */
+  var once = false;
+  function go(){ if (!once){ once = true; sync(); } }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(go, go);
+  else go();
+  setTimeout(go, 1500);
   if (mqReduce){
     if (mqReduce.addEventListener) mqReduce.addEventListener('change', sync);
     else if (mqReduce.addListener) mqReduce.addListener(sync);
