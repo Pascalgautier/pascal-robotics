@@ -314,6 +314,7 @@ h2.title-parallax{
 .lang-switch .sep{color:#5a666c;font-size:10px;opacity:.55;padding:0 1px;user-select:none}
 .nav-links{display:flex;align-items:center;gap:10px}
 .nav-links a:not(.contact-pill){white-space:nowrap;flex-shrink:0}
+.nav-links a.nav-orch::before{content:"";display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#3d8bff;box-shadow:0 0 0 2px rgba(61,139,255,.16);vertical-align:middle;position:relative;top:-1px}
 .nav-more{
   display:none;appearance:none;border:0;background:transparent;color:#e8eef0;
   width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;
@@ -357,6 +358,30 @@ h2.title-parallax{
   }
 }
 
+/* Tablet / small-laptop range (761–1060px): the ⋮ threshold stays at 760px; the 8 links + CTA are only
+   tightened so nothing is cut or squeezed. The CTA shows a short "Contact ↗" label under 980px
+   (same word in FR/EN; the full label stays in the DOM / accessible name). */
+@media (min-width:761px) and (max-width:1060px){
+  .navin{gap:12px}
+  .wordmark{flex-shrink:0}
+  .nav-logo{height:26px}
+  .links{gap:6px}
+  .nav-links{gap:7px}
+  .lang-switch{padding:2px 5px;margin-right:0}
+  .lang-switch button{padding:2px 3px}
+  .contact-pill{padding:7px 10px}
+}
+@media (min-width:761px) and (max-width:980px){
+  .nav-links{gap:6px}
+  .links a:not(.contact-pill){font-size:9.5px;letter-spacing:.015em}
+  .contact-pill{font-size:0;letter-spacing:0}
+  .contact-pill::after{content:"Contact ↗";content:"Contact ↗" / "";font-size:10px;letter-spacing:.02em}
+}
+@media (min-width:761px) and (max-width:800px){
+  .nav-logo{height:22px}
+  .nav-links{gap:5px}
+  .links a:not(.contact-pill){font-size:9px;letter-spacing:.01em}
+}
 </style>
 </head>
 <body id="top">
@@ -375,11 +400,13 @@ h2.title-parallax{
       </div>
       <div class="nav-links" id="nav-panel">
       <a href="accueil.html#why" data-i18n="nav.why">Pourquoi</a>
+      <a class="nav-orch" href="orchestrai" data-i18n="nav.orchestrai">OrchestrAI</a>
       <a href="accueil.html#applications" data-i18n="nav.applications">Applications</a>
-      <a class="is-active" href="jumeaux-numeriques.html" data-i18n="nav.dt" aria-current="page">Digital Twin</a>
-      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème LAVAL</a>
-      <a class="nav-pipeline" href="pipeline-ia.html" data-i18n="nav.pipeline">Pipeline IA</a>
       <a href="accueil.html#method" data-i18n="nav.method">Méthode</a>
+      <a class="is-active" href="jumeaux-numeriques.html" data-i18n="nav.dt" aria-current="page">Digital Twin</a>
+      <a class="nav-pipeline" href="pipeline-ia.html" data-i18n="nav.pipeline">Pipeline IA</a>
+      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème</a>
+      <a href="accueil.html#faq" data-i18n="nav.faq">FAQ</a>
       <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
       </div>
       <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
@@ -570,9 +597,11 @@ const I18N = {
     "nav.why": "Pourquoi",
     "nav.applications": "Applications",
     "nav.dt": "Digital Twin",
-    "nav.eco": "Écosystème LAVAL",
+    "nav.eco": "Écosystème",
+    "nav.orchestrai": "OrchestrAI",
     "nav.pipeline": "Pipeline IA",
     "nav.method": "Méthode",
+    "nav.faq": "FAQ",
     "nav.contact": "Parler de votre cas d’usage ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Jumeaux numériques.<br><span class=\"soft\">Jusqu’au robot incarné.</span>",
@@ -646,12 +675,14 @@ const I18N = {
     "nav.aria": "Main navigation",
     "lang.aria": "Language",
     "nav.menu": "Menu",
-    "nav.why": "Why us",
+    "nav.why": "Why",
     "nav.applications": "Applications",
     "nav.dt": "Digital Twin",
-    "nav.eco": "LAVAL Ecosystem",
+    "nav.eco": "Ecosystem",
+    "nav.orchestrai": "OrchestrAI",
     "nav.pipeline": "AI Pipeline",
     "nav.method": "Method",
+    "nav.faq": "FAQ",
     "nav.contact": "Talk about your use case ↗",
     "hero.kicker": "Digital Twin · Simulation · Physical AI · Embodied robot",
     "hero.title": "Digital Twin.<br><span class=\"soft\">Through to the embodied robot.</span>",
