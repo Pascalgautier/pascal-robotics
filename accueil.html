@@ -1578,7 +1578,7 @@ h2.title-parallax{
 /* ===== #why — scroll-scrubbed text fill (Terminal Industries style) =====
    Base (no JS / reduced motion): big white paragraph, normal flow.
    .is-fill (added by JS): 250svh track, inner block sticky 100svh, chars coloured by JS. */
-.why-fill{position:relative;margin:8px 0 40px}
+.why-fill{position:relative;margin:0 0 40px}
 .why-fill-sticky{max-width:1100px}
 .why-fill-text{
   margin:0;color:#fff;font-weight:400;line-height:1.4;letter-spacing:-.01em;
@@ -1586,12 +1586,9 @@ h2.title-parallax{
   overflow-wrap:normal;word-break:normal;
 }
 .why-fill-pills{margin-top:32px}
-.why-fill.is-fill{height:250vh;height:250svh}
+.why-fill.is-fill{height:200vh;height:200svh}
 .why-fill.is-fill .why-fill-sticky{
-  position:sticky;top:0;height:100vh;height:100svh;
-  display:flex;flex-direction:column;justify-content:center;
-  padding-top:76px; /* sticky nav height */
-  box-sizing:border-box;
+  position:sticky;top:96px;top:calc(76px + 6svh); /* just under the sticky nav; text sits right below the title */
 }
 .why-fill .why-fill-w{white-space:nowrap}
 .why-fill .ch{color:rgba(255,255,255,.2)}
@@ -2996,7 +2993,9 @@ if (copyProjectEmail) {
     if (pinned){
       var r = root.getBoundingClientRect();
       var startTop = 0.4 * h;                              /* block 60% below the fold -> start */
-      var endTop = -0.8 * Math.max(r.height - h, 1);       /* 80% of the pinned distance -> done */
+      var stickTop = parseFloat(getComputedStyle(stickyEl).top) || 0;
+      var pinDist = Math.max(r.height - stickyEl.offsetHeight - stickTop, 1);
+      var endTop = stickTop - 0.8 * pinDist;               /* 80% of the pinned distance -> done */
       return clamp01((startTop - r.top) / (startTop - endTop));
     }
     var t = textEl.getBoundingClientRect();
