@@ -287,6 +287,9 @@ h2{font-size:clamp(38px,5.4vw,68px);line-height:.96;letter-spacing:-.05em;margin
 
 /* ===== Responsive hardening ===== */
 html, body { max-width:100%; overflow-x:hidden; }
+/* overflow-x:hidden on <body> turns it into a scroll container and silently disables every
+   position:sticky descendant (nav, #why fill). clip keeps the horizontal clipping without that. */
+body { overflow-x:clip; }
 * { min-width:0; }
 img, svg, video, canvas { max-width:100%; height:auto; }
 a, p, span, div { overflow-wrap:break-word; }
@@ -1568,6 +1571,36 @@ h2.title-parallax{
   }
 }
 
+/* ===== #why — scroll-scrubbed text fill (Terminal Industries style) =====
+   Base (no JS / reduced motion): big white paragraph, normal flow.
+   .is-fill (added by JS): 200svh track, inner block sticky 100svh, chars coloured by JS. */
+.why-fill{position:relative;margin:8px 0 40px}
+.why-fill-sticky{max-width:1100px}
+.why-fill-text{
+  margin:0;color:#fff;font-weight:400;line-height:1.4;letter-spacing:-.01em;
+  font-size:34px;font-size:min(2.4vw,44px);font-size:min(2.4vw,44px,4.6svh);
+  overflow-wrap:normal;word-break:normal;
+}
+.why-fill-pills{margin-top:32px}
+.why-fill.is-fill{height:200vh;height:200svh}
+.why-fill.is-fill .why-fill-sticky{
+  position:sticky;top:0;height:100vh;height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-top:76px; /* sticky nav height */
+  box-sizing:border-box;
+}
+.why-fill .why-fill-w{white-space:nowrap}
+.why-fill .ch{color:rgba(255,255,255,.2)}
+.why-fill .why-fill-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+@media (max-width:980px){
+  .why-fill-text{font-size:22px;font-size:clamp(1.2rem,5.6vw,1.75rem);font-size:clamp(1.15rem,min(5.6vw,3.1svh),1.75rem)}
+  .why-fill-pills{margin-top:22px}
+  .why-fill{margin-bottom:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  .why-fill.is-fill{height:auto}
+  .why-fill.is-fill .why-fill-sticky{position:static;height:auto;padding-top:0;display:block}
+}
 </style>
 </head>
 <body id="top">
@@ -1650,14 +1683,18 @@ h2.title-parallax{
       </div>
       <p data-i18n="why.intro">Intégrer, simuler et prouver avant d’investir — plutôt que de partir d’un catalogue de machines.</p>
     </div>
-    <div class="why-card reveal">
-      <p data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
-      <div class="pill-row">
-        <span class="pill" data-i18n="why.pill1">Robotique mobile</span>
-        <span class="pill" data-i18n="why.pill2">Humanoïdes</span>
-        <span class="pill blue" data-i18n="why.pill3">Digital Twin</span>
-        <span class="pill blue" data-i18n="why.pill4">Physical AI</span>
-        <span class="pill" data-i18n="why.pill5">Intégration industrielle</span>
+    <!-- Scroll-scrubbed text fill (Terminal Industries style). Without JS / with reduced motion:
+         plain white paragraph in normal flow. JS adds .is-fill on .why-fill (200svh + sticky). -->
+    <div class="why-fill" data-why-fill>
+      <div class="why-fill-sticky">
+        <p class="why-fill-text" data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
+        <div class="pill-row why-fill-pills">
+          <span class="pill" data-i18n="why.pill1">Robotique mobile</span>
+          <span class="pill" data-i18n="why.pill2">Humanoïdes</span>
+          <span class="pill blue" data-i18n="why.pill3">Digital Twin</span>
+          <span class="pill blue" data-i18n="why.pill4">Physical AI</span>
+          <span class="pill" data-i18n="why.pill5">Intégration industrielle</span>
+        </div>
       </div>
     </div>
     <aside class="cadre-card reveal" aria-label="Cadre d’engagement">
@@ -2876,5 +2913,143 @@ if (copyProjectEmail) {
 })();
 </script>
 
+<script>
+/* ===== #why — scroll-scrubbed text fill (Terminal Industries style) =====
+   - Splits the paragraph into word spans (nowrap) then char spans (.ch), aria-hidden,
+     with a visually-hidden copy of the full text for screen readers.
+   - Progress p = clamp(-rect.top / (0.9*rect.height - innerHeight), 0, 1),
+     smoothed like GSAP scrub:1.5 (exponential, tau 0.5s) in a rAF loop that only runs in view.
+   - Per-char timeline: dim -> lime accent -> white, staggered 0.05 per char.
+   - Re-splits when the i18n system rewrites the paragraph (MutationObserver).
+   - Disabled with prefers-reduced-motion: reduce (plain white text, normal flow). */
+(function(){
+  var root = document.querySelector('[data-why-fill]');
+  if (!root) return;
+  var textEl = root.querySelector('.why-fill-text');
+  if (!textEl || !('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
+
+  var mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var DIM = [255,255,255,0.2], ACC = [156,229,26,1], FIN = [255,255,255,1]; /* ACC = --green */
+  var STAGGER = 0.05, A_START = 0.3, A_DUR = 0.4, B_DELAY = 0.25, B_DUR = 0.6;
+  var chars = [], cache = [], total = 1;
+  var cur = 0, inView = false, rafId = 0, lastT = 0, enabled = false, splitting = false;
+
+  function clamp01(v){ return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function ease(t){ return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2; } /* easeInOutQuad */
+
+  /* Build word/char spans from the current plain text of the paragraph. */
+  function split(){
+    var text = textEl.textContent.replace(/\s+/g, ' ').trim();
+    splitting = true;
+    var frag = document.createDocumentFragment();
+    var sr = document.createElement('span');
+    sr.className = 'why-fill-sr'; sr.textContent = text;
+    var vis = document.createElement('span');
+    vis.setAttribute('aria-hidden', 'true');
+    chars = []; cache = [];
+    text.split(' ').forEach(function(word, wi, arr){
+      var w = document.createElement('span');
+      w.className = 'why-fill-w';
+      for (var i = 0; i < word.length; i++){
+        var c = document.createElement('span');
+        c.className = 'ch'; c.textContent = word[i];
+        w.appendChild(c); chars.push(c); cache.push(0);
+      }
+      vis.appendChild(w);
+      if (wi < arr.length - 1) vis.appendChild(document.createTextNode(' '));
+    });
+    frag.appendChild(sr); frag.appendChild(vis);
+    textEl.textContent = '';
+    textEl.appendChild(frag);
+    total = 0.55 + 0.6 + (chars.length - 1) * STAGGER;
+    splitting = false;
+    render(cur);
+  }
+
+  /* Restore plain text (used when reduced motion gets switched on). */
+  function unsplit(){
+    var sr = textEl.querySelector('.why-fill-sr');
+    if (sr){ splitting = true; textEl.textContent = sr.textContent; splitting = false; }
+    chars = []; cache = [];
+  }
+
+  function progress(){
+    var r = root.getBoundingClientRect();
+    var d = 0.9 * r.height - window.innerHeight;
+    return d > 0 ? clamp01(-r.top / d) : (r.top < 0 ? 1 : 0);
+  }
+
+  /* Colour every char for timeline position v (0..1). Only writes changed values. */
+  function render(v){
+    var T = v * total;
+    for (var i = 0; i < chars.length; i++){
+      var t = T - A_START - i * STAGGER;
+      var a = ease(clamp01(t / A_DUR));
+      var b = ease(clamp01((t - B_DELAY) / B_DUR));
+      var key = Math.round(a * 100) * 101 + Math.round(b * 100); /* 0 == CSS default (dim) */
+      if (key === cache[i]) continue;
+      cache[i] = key;
+      if (key === 0){ chars[i].style.color = ''; continue; }
+      var rr = DIM[0] + (ACC[0]-DIM[0])*a, gg = DIM[1] + (ACC[1]-DIM[1])*a,
+          bb = DIM[2] + (ACC[2]-DIM[2])*a, al = DIM[3] + (ACC[3]-DIM[3])*a;
+      rr += (FIN[0]-rr)*b; gg += (FIN[1]-gg)*b; bb += (FIN[2]-bb)*b; al += (FIN[3]-al)*b;
+      chars[i].style.color = 'rgba(' + (rr|0) + ',' + (gg|0) + ',' + (bb|0) + ',' + al.toFixed(3) + ')';
+    }
+  }
+
+  function tick(now){
+    rafId = 0;
+    if (!enabled || !inView) return;
+    var dt = lastT ? Math.min((now - lastT) / 1000, 0.1) : 0.016;
+    lastT = now;
+    var p = progress();
+    var next = cur + (p - cur) * (1 - Math.exp(-dt / 0.5)); /* ~ GSAP scrub: 1.5 feel */
+    if (Math.abs(p - next) < 0.0005) next = p;
+    if (next !== cur){ cur = next; render(cur); }
+    rafId = requestAnimationFrame(tick);
+  }
+  function start(){ if (!rafId){ lastT = 0; rafId = requestAnimationFrame(tick); } }
+
+  var io = new IntersectionObserver(function(entries){
+    inView = entries[0].isIntersecting;
+    if (!enabled) return;
+    if (inView) start();
+    else { cur = progress(); render(cur); } /* settle when leaving (fast jumps / anchors) */
+  });
+
+  /* i18n: applyLang() sets textContent, wiping our spans -> re-split with the new text. */
+  var mo = new MutationObserver(function(){
+    if (splitting || !enabled) return;
+    if (!textEl.querySelector('.why-fill-w')) split();
+  });
+
+  function enable(){
+    if (enabled) return;
+    enabled = true;
+    root.classList.add('is-fill');
+    cur = progress();
+    split();
+    mo.observe(textEl, { childList: true, characterData: true, subtree: true });
+    io.observe(root);
+  }
+  function disable(){
+    if (!enabled) return;
+    enabled = false;
+    io.unobserve(root); mo.disconnect();
+    if (rafId){ cancelAnimationFrame(rafId); rafId = 0; }
+    unsplit();
+    root.classList.remove('is-fill');
+  }
+  function sync(){ (mqReduce && mqReduce.matches) ? disable() : enable(); }
+
+  /* Word-level nowrap spans keep wrapping natural, so no re-split is needed on resize. */
+  var ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  ready.then(sync, sync);
+  if (mqReduce){
+    if (mqReduce.addEventListener) mqReduce.addEventListener('change', sync);
+    else if (mqReduce.addListener) mqReduce.addListener(sync);
+  }
+})();
+</script>
 </body>
 </html>
