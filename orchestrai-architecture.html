@@ -240,6 +240,12 @@ section[id]{scroll-margin-top:84px}
 .eco-g ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .eco-g li{font-size:13.5px;font-weight:700;color:#dfe8f7;padding:5px 10px;border-radius:8px;border:1px solid rgba(150,185,255,.14)}
 
+.orch{margin:44px 0 0;max-width:760px}
+.orch .body{margin:0}
+
+/* ===== VIDEO FIRST ===== */
+.vlink{margin:24px 0 0;font-size:14px}
+
 /* ===== DESTINATIONS ===== */
 .dest{margin:44px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .dest-card{border:1px solid var(--line2);border-radius:22px;padding:24px 22px;background:linear-gradient(180deg,rgba(18,36,74,.55),rgba(10,22,48,.35));display:flex;flex-direction:column;gap:12px}
@@ -352,21 +358,19 @@ section[id]{scroll-margin-top:84px}
 
 <main id="content">
 
-
-<main id="content">
-
 <!-- ================= PAGE HERO ================= -->
 <header class="ahero" aria-labelledby="a-title">
   <div class="wrap">
     <a class="tlink back" href="orchestrai" data-i18n="a.back">← Retour à OrchestrAI</a>
     <p class="a-kicker"><span class="a-word" aria-label="OrchestrAI">ORCHESTR<span class="dash">-</span><span class="ai">AI</span></span><span class="a-by">by Pascal Robotics</span></p>
     <h1 id="a-title" data-i18n-html="a.title">Architecture technique<br><span class="soft">d’OrchestrAI.</span></h1>
-    <p class="lead" data-i18n="a.intro">Cette page détaille ce que la page OrchestrAI résume : le principe complet, la boucle d’architecture visée, les lieux d’exécution, les outils de l’écosystème et la feuille de route. Chaque brique porte son statut réel.</p>
+    <p class="lead" data-i18n="a.intro">Cette page détaille ce que la page OrchestrAI résume : le principe complet, la boucle d’architecture visée, les lieux d’exécution, les outils de l’écosystème, le premier banc d’essai vidéo et la feuille de route. Chaque brique porte son statut réel.</p>
     <nav class="toc" aria-label="Sur cette page" data-i18n-aria="a.toc.aria">
       <a href="#principe" data-i18n="a.toc.1">Principe</a>
       <a href="#architecture" data-i18n="a.toc.2">Architecture</a>
       <a href="#destinations" data-i18n="a.toc.3">Exécution</a>
       <a href="#outils" data-i18n="a.toc.4">Outils</a>
+      <a href="#video" data-i18n="a.toc.6">Vidéo d’abord</a>
       <a href="#statut" data-i18n="a.toc.5">Feuille de route</a>
     </nav>
     <div class="legend">
@@ -479,6 +483,10 @@ section[id]{scroll-margin-top:84px}
       <h2 id="or-title" data-i18n-html="or.title">Des outils regroupés par rôle.<br><span class="soft">Aucun n’est indispensable.</span></h2>
       <p class="lead" data-i18n="or.body">Les outils spécialisés restent ce qu’ils sont : des moteurs, des modèles, des fournisseurs ou des services qu’OrchestrAI peut utiliser. L’architecture est provider-agnostic : chacun reste interchangeable.</p>
     </div>
+    <div class="orch reveal">
+      <p class="quote" data-i18n-html="or.q">Orchestrer,<br><span class="soft">pas remplacer.</span></p>
+      <p class="body" data-i18n="or.q.d">OrchestrAI ne cherche pas à remplacer les outils d’IA spécialisés : il vise à les coordonner. Chaque modèle, plateforme ou fournisseur de calcul garde ses forces ; OrchestrAI aide à choisir lequel utiliser, et quand.</p>
+    </div>
     <div class="eco reveal">
       <div class="eco-g"><h3 data-i18n-html="or.g1">Plateformes de création</h3><ul><li>Higgsfield</li><li>Runway</li></ul></div>
       <div class="eco-g"><h3 data-i18n-html="or.g2">Modèles vidéo</h3><ul><li>Seedance</li><li>WAN</li><li>LTX</li></ul></div>
@@ -489,11 +497,22 @@ section[id]{scroll-margin-top:84px}
   </div>
 </section>
 
-<!-- ================= 05 STATUS / ROADMAP ================= -->
+<!-- ================= 05 VIDEO FIRST, INDUSTRY NEXT (moved from /orchestrai) ================= -->
+<section class="section" id="video" aria-labelledby="vi-title">
+  <div class="wrap reveal">
+    <p class="eyebrow" data-i18n="vi.eyebrow">05 / Premier banc d’essai</p>
+    <h2 id="vi-title" data-i18n-html="vi.title">La vidéo d’abord.<br><span class="soft">L’industrie ensuite.</span></h2>
+    <p class="lead" data-i18n="vi.video">Premier terrain d’expérimentation : la vidéo IA. Notre POC lance une même intention sur plusieurs modèles et compare le temps de génération, le coût, la qualité et la fidélité au prompt. Les écarts y sont bien visibles : un bon terrain pour éprouver la logique d’orchestration.</p>
+    <p class="body" data-i18n="vi.next">La vidéo est le premier terrain d’OrchestrAI. La même logique d’orchestration a vocation à s’étendre progressivement au Digital Twin, à la simulation, à la Physical AI et à la robotique — le cœur de métier de Pascal Robotics.</p>
+    <p class="vlink"><a class="tlink" href="jumeaux-numeriques.html" data-i18n="vi.link">Le Digital Twin selon Pascal Robotics →</a></p>
+  </div>
+</section>
+
+<!-- ================= 06 STATUS / ROADMAP ================= -->
 <section class="section" id="statut" aria-labelledby="st2-title">
   <div class="wrap">
     <div class="reveal">
-      <p class="eyebrow" data-i18n-html="st2.eyebrow">05 / Statut &amp; feuille de route</p>
+      <p class="eyebrow" data-i18n-html="st2.eyebrow">06 / Statut &amp; feuille de route</p>
       <h2 id="st2-title" data-i18n-html="st2.title">Ce qui existe. Ce qui s’expérimente.<br><span class="soft">Ce qui viendra.</span></h2>
     </div>
     <div class="road reveal">
@@ -505,6 +524,7 @@ section[id]{scroll-margin-top:84px}
         <li data-i18n="st2.f1">OAI Intelligence Agent (agent central)</li><li data-i18n="st2.f2">Decision Engine automatique : arbitrage selon les critères du projet</li><li data-i18n="st2.f3">Recommandation automatique à partir de la Knowledge Base</li>
         <li data-i18n="st2.f4">Exécution on-premise et routage local / on-premise à l’échelle</li><li data-i18n="st2.f5">Extensions industrielles : Digital Twin, simulation, Physical AI, robotique</li></ul></div>
     </div>
+    <p class="note reveal" data-i18n="st2.note2">Actif : utilisé aujourd’hui dans nos POC, encore largement piloté par l’humain. Pas de chiffres ici : les mesures servent d’abord à comparer.</p>
     <p class="note reveal" data-i18n="st2.note">Feuille de route indicative, sans calendrier ni engagement contractuel.</p>
   </div>
 </section>
@@ -633,7 +653,7 @@ var I18N = {
   "de.c3.d": "Serveurs GPU privés, infrastructure du client, infrastructure souveraine.",
   "de.c3.f": "Données sensibles, souveraineté, charges industrielles.",
   "de.for": "Pour :",
-  "st2.eyebrow": "05 / Statut &amp; feuille de route",
+  "st2.eyebrow": "06 / Statut &amp; feuille de route",
   "st2.title": "Ce qui existe. Ce qui s’expérimente.<br><span class=\"soft\">Ce qui viendra.</span>",
   "st2.leg.a": "Utilisé aujourd’hui dans nos POC, de façon encore manuelle ou semi-manuelle.",
   "st2.leg.e": "En test sur des cas limités ; peut évoluer ou être abandonné.",
@@ -650,7 +670,7 @@ var I18N = {
   "meta.description": "Architecture technique d’OrchestrAI, plateforme d’orchestration IA en développement par Pascal Robotics : principe, boucle d’architecture, lieux d’exécution, outils et feuille de route indicative, avec le statut réel de chaque brique.",
   "a.back": "← Retour à OrchestrAI",
   "a.title": "Architecture technique<br><span class=\"soft\">d’OrchestrAI.</span>",
-  "a.intro": "Cette page détaille ce que la page OrchestrAI résume : le principe complet, la boucle d’architecture visée, les lieux d’exécution, les outils de l’écosystème et la feuille de route. Chaque brique porte son statut réel.",
+  "a.intro": "Cette page détaille ce que la page OrchestrAI résume : le principe complet, la boucle d’architecture visée, les lieux d’exécution, les outils de l’écosystème, le premier banc d’essai vidéo et la feuille de route. Chaque brique porte son statut réel.",
   "a.toc.aria": "Sur cette page",
   "a.toc.1": "Principe",
   "a.toc.2": "Architecture",
@@ -676,7 +696,16 @@ var I18N = {
   "st2.f2": "Decision Engine automatique : arbitrage selon les critères du projet",
   "st2.f3": "Recommandation automatique à partir de la Knowledge Base",
   "st2.f4": "Exécution on-premise et routage local / on-premise à l’échelle",
-  "st2.f5": "Extensions industrielles : Digital Twin, simulation, Physical AI, robotique"
+  "st2.f5": "Extensions industrielles : Digital Twin, simulation, Physical AI, robotique",
+  "st2.note2": "Actif : utilisé aujourd’hui dans nos POC, encore largement piloté par l’humain. Pas de chiffres ici : les mesures servent d’abord à comparer.",
+  "a.toc.6": "Vidéo d’abord",
+  "or.q": "Orchestrer,<br><span class=\"soft\">pas remplacer.</span>",
+  "or.q.d": "OrchestrAI ne cherche pas à remplacer les outils d’IA spécialisés : il vise à les coordonner. Chaque modèle, plateforme ou fournisseur de calcul garde ses forces ; OrchestrAI aide à choisir lequel utiliser, et quand.",
+  "vi.eyebrow": "05 / Premier banc d’essai",
+  "vi.title": "La vidéo d’abord.<br><span class=\"soft\">L’industrie ensuite.</span>",
+  "vi.video": "Premier terrain d’expérimentation : la vidéo IA. Notre POC lance une même intention sur plusieurs modèles et compare le temps de génération, le coût, la qualité et la fidélité au prompt. Les écarts y sont bien visibles : un bon terrain pour éprouver la logique d’orchestration.",
+  "vi.next": "La vidéo est le premier terrain d’OrchestrAI. La même logique d’orchestration a vocation à s’étendre progressivement au Digital Twin, à la simulation, à la Physical AI et à la robotique — le cœur de métier de Pascal Robotics.",
+  "vi.link": "Le Digital Twin selon Pascal Robotics →"
  },
  "en": {
   "skip": "Skip to content",
@@ -764,7 +793,7 @@ var I18N = {
   "de.c3.d": "Private GPU servers, client infrastructure, sovereign infrastructure.",
   "de.c3.f": "Sensitive data, sovereignty, industrial workloads.",
   "de.for": "For:",
-  "st2.eyebrow": "05 / Status &amp; roadmap",
+  "st2.eyebrow": "06 / Status &amp; roadmap",
   "st2.title": "What exists. What is being tested.<br><span class=\"soft\">What comes next.</span>",
   "st2.leg.a": "Used today in our POCs, still manually or semi-manually.",
   "st2.leg.e": "Being tested on limited cases; may change or be dropped.",
@@ -781,7 +810,7 @@ var I18N = {
   "meta.description": "Technical architecture of OrchestrAI, an AI orchestration platform in development by Pascal Robotics: principle, architecture loop, execution locations, tools and indicative roadmap, with the actual status of each building block.",
   "a.back": "← Back to OrchestrAI",
   "a.title": "Technical architecture<br><span class=\"soft\">of OrchestrAI.</span>",
-  "a.intro": "This page details what the OrchestrAI page summarises: the full principle, the target architecture loop, execution locations, ecosystem tools and the roadmap. Each building block carries its actual status.",
+  "a.intro": "This page details what the OrchestrAI page summarises: the full principle, the target architecture loop, execution locations, ecosystem tools, the first video testbed and the roadmap. Each building block carries its actual status.",
   "a.toc.aria": "On this page",
   "a.toc.1": "Principle",
   "a.toc.2": "Architecture",
@@ -807,7 +836,16 @@ var I18N = {
   "st2.f2": "Automatic Decision Engine: arbitration based on project criteria",
   "st2.f3": "Automatic recommendation based on the Knowledge Base",
   "st2.f4": "On-premise execution and local / on-premise routing at scale",
-  "st2.f5": "Industrial extensions: Digital Twin, simulation, Physical AI, robotics"
+  "st2.f5": "Industrial extensions: Digital Twin, simulation, Physical AI, robotics",
+  "st2.note2": "Active: used today in our POCs, still largely human-driven. No figures here: measurements are first used to compare.",
+  "a.toc.6": "Video first",
+  "or.q": "Orchestrate,<br><span class=\"soft\">not replace.</span>",
+  "or.q.d": "OrchestrAI does not seek to replace specialised AI tools: it aims to coordinate them. Each model, platform or compute provider keeps its strengths; OrchestrAI helps decide which one to use, and when.",
+  "vi.eyebrow": "05 / First testbed",
+  "vi.title": "Video first.<br><span class=\"soft\">Industry next.</span>",
+  "vi.video": "First testbed: AI video. Our POC runs the same intention on several models and compares generation time, cost, quality and prompt fidelity. The differences are clearly visible: good ground to put the orchestration logic to the test.",
+  "vi.next": "Video is OrchestrAI’s first testbed. The same orchestration logic is meant to extend progressively to Digital Twin, simulation, Physical AI and robotics — Pascal Robotics’ core business.",
+  "vi.link": "Digital Twin at Pascal Robotics →"
  }
 };
 var LANG_KEY = 'pr-lang';        /* key used by accueil / Digital Twin */
