@@ -33,7 +33,10 @@
       "nav.why": "Pourquoi",
       "nav.applications": "Applications",
       "nav.dt": "Digital Twin",
-      "nav.eco": "Écosystème LAVAL",
+      "nav.eco": "Écosystème",
+      "nav.orchestrai": "OrchestrAI",
+      "nav.method": "Méthode",
+      "nav.faq": "FAQ",
       "nav.pipeline": "Pipeline IA",
       "nav.contact": "Parler de votre cas d’usage ↗",
       "gate.kicker": "Accès restreint",
@@ -43,7 +46,12 @@
       "gate.submit": "Déverrouiller",
       "gate.note": "Contrôle côté navigateur uniquement (GitHub Pages) — ce n’est pas une sécurité serveur.",
       "gate.error": "Mot de passe incorrect. Réessayez.",
-      "gate.lock": "Verrouiller à nouveau"
+      "gate.lock": "Verrouiller à nouveau",
+      "oai.banner.aria": "Laboratoire OrchestrAI",
+      "oai.banner.kicker": "Laboratoire OrchestrAI",
+      "oai.banner.body": "Ce pipeline vidéo IA est l’un des premiers cas d’usage et terrains d’expérimentation d’OrchestrAI, pas l’intégralité du projet.",
+      "oai.banner.link": "Découvrir OrchestrAI →",
+      "oai.section.link": "Voir la page publique OrchestrAI : vision, principe et statut des fonctions →"
     },
     en: {
       "nav.aria": "Main navigation",
@@ -51,10 +59,13 @@
       "nav.menu": "Menu",
       "logo.aria": "Pascal Robotics — home",
       "logo.alt": "Pascal Robotics",
-      "nav.why": "Why us",
+      "nav.why": "Why",
       "nav.applications": "Applications",
       "nav.dt": "Digital Twin",
-      "nav.eco": "LAVAL Ecosystem",
+      "nav.eco": "Ecosystem",
+      "nav.orchestrai": "OrchestrAI",
+      "nav.method": "Method",
+      "nav.faq": "FAQ",
       "nav.pipeline": "AI Pipeline",
       "nav.contact": "Talk about your use case ↗",
       "gate.kicker": "Restricted access",
@@ -64,14 +75,19 @@
       "gate.submit": "Unlock",
       "gate.note": "Browser-side check only (GitHub Pages) — not server-side security.",
       "gate.error": "Incorrect password. Please try again.",
-      "gate.lock": "Lock again"
+      "gate.lock": "Lock again",
+      "oai.banner.aria": "OrchestrAI lab",
+      "oai.banner.kicker": "OrchestrAI lab",
+      "oai.banner.body": "This AI video pipeline is one of OrchestrAI’s first use cases and experimentation grounds, not the whole project.",
+      "oai.banner.link": "Discover OrchestrAI →",
+      "oai.section.link": "See the public OrchestrAI page: vision, principle and feature status →"
     }
   };
 
   var LANG_KEY = 'pr_lang';
   var currentLang = 'fr';
   try {
-    var stored = localStorage.getItem(LANG_KEY);
+    var stored = localStorage.getItem('pr-lang') || localStorage.getItem(LANG_KEY); /* 'pr-lang' = key used by accueil / Digital Twin / OrchestrAI */
     if (stored === 'en' || stored === 'fr') currentLang = stored;
   } catch (e) {}
 
@@ -95,7 +111,7 @@
     document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
       btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === lang ? 'true' : 'false');
     });
-    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    try { localStorage.setItem(LANG_KEY, lang); localStorage.setItem('pr-lang', lang); } catch (e) {}
     if (err && err.dataset.active === '1') {
       err.textContent = dict['gate.error'] || '';
     }
