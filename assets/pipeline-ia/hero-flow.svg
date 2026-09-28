@@ -2,7 +2,7 @@
   <defs>
     <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#55cbff" stop-opacity=".9"/>
-      <stop offset="45%" stop-color="#9ce51a" stop-opacity=".75"/>
+      <stop offset="45%" stop-color="#3d8bff" stop-opacity=".75"/>
       <stop offset="100%" stop-color="#a78bfa" stop-opacity=".85"/>
     </linearGradient>
     <linearGradient id="hg2" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -19,13 +19,13 @@
   <g filter="url(#hglow)">
     <circle cx="140" cy="145" r="9" fill="#55cbff"/>
     <circle cx="400" cy="165" r="8" fill="#8ae0ff"/>
-    <circle cx="640" cy="95" r="11" fill="#9ce51a"/>
+    <circle cx="640" cy="95" r="11" fill="#3d8bff"/>
     <circle cx="880" cy="165" r="8" fill="#a78bfa"/>
     <circle cx="1080" cy="125" r="10" fill="#c4b5fd"/>
   </g>
   <text x="140" y="230" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Francis · création</text>
   <text x="400" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Modèles</text>
-  <text x="640" y="55" text-anchor="middle" fill="#c6ff5b" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700">Orchestration PR</text>
+  <text x="640" y="55" text-anchor="middle" fill="#7fb2ff" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700">Orchestration PR</text>
   <text x="880" y="250" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">GPU loué → MCT?</text>
   <text x="1080" y="70" text-anchor="middle" fill="#9aa8b4" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Mesure</text>
 </svg>

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-label="Pascal Robotics au centre du système">
   <defs>
     <linearGradient id="og" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#55cbff"/><stop offset="100%" stop-color="#9ce51a"/>
+      <stop offset="0%" stop-color="#55cbff"/><stop offset="100%" stop-color="#3d8bff"/>
     </linearGradient>
     <filter id="oglow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>

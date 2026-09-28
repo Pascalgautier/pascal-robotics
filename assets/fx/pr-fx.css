@@ -2,8 +2,9 @@
    1) Scroll-linked letter fill on section titles (same visual language as the accueil #why fill,
       but not pinned). Letters are coloured by pr-fx.js; this file only holds the structure.
    2) Neon hover border on content blocks (cards, tiles, panels, schema nodes, FAQ items).
-   Theme is set by pr-fx.js from the script's data-fx-theme: green (logo #9ce51a) or blue (OrchestrAI). */
-html[data-fx-theme="green"]{--fx-accent:#9ce51a;--fx-glow:rgba(156,229,26,.34);--fx-ring:rgba(156,229,26,.38)}
+   Theme is set by pr-fx.js from the script's data-fx-theme. Since 2026-09-28 the whole site uses the OrchestrAI
+   blue theme; "green" is kept only as a legacy alias and resolves to the same blue values. */
+html[data-fx-theme="green"]{--fx-accent:#3d8bff;--fx-glow:rgba(61,139,255,.38);--fx-ring:rgba(61,139,255,.42)}
 html[data-fx-theme="blue"]{--fx-accent:var(--blue,#3d8bff);--fx-glow:rgba(61,139,255,.38);--fx-ring:rgba(61,139,255,.42)}
 
 /* --- 1) title fill --- */

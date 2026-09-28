@@ -73,7 +73,7 @@
     var probe = document.createElement('span');
     probe.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;color:var(--fx-accent)';
     document.body.appendChild(probe);
-    ACC = parseColor(getComputedStyle(probe).color) || (THEME === 'blue' ? [61,139,255,1] : [156,229,26,1]);
+    ACC = parseColor(getComputedStyle(probe).color) || [61,139,255,1];
     document.body.removeChild(probe);
     DIM = [ACC[0] + (255-ACC[0])*UNREAD_LIGHT, ACC[1] + (255-ACC[1])*UNREAD_LIGHT, ACC[2] + (255-ACC[2])*UNREAD_LIGHT, UNREAD_A];
   }
