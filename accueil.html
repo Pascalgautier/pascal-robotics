@@ -1532,6 +1532,7 @@ h2.title-parallax{
 .lang-switch .sep{color:#5a666c;font-size:10px;opacity:.55;padding:0 1px;user-select:none}
 .nav-links{display:flex;align-items:center;gap:10px}
 .nav-links a:not(.contact-pill){white-space:nowrap;flex-shrink:0}
+.nav-links a.nav-orch::before{content:"";display:inline-block;width:5px;height:5px;margin-right:5px;border-radius:50%;background:#3d8bff;box-shadow:0 0 0 2px rgba(61,139,255,.16);vertical-align:middle;position:relative;top:-1px}
 .nav-more{
   display:none;appearance:none;border:0;background:transparent;color:#e8eef0;
   width:40px;height:40px;padding:0;margin:0;border-radius:10px;cursor:pointer;
@@ -1581,12 +1582,24 @@ h2.title-parallax{
 .why-fill{position:relative;margin:0 0 40px}
 .why-fill-sticky{max-width:1100px}
 .why-fill-text{
-  margin:0;color:#fff;font-weight:400;line-height:1.4;letter-spacing:-.01em;
-  font-size:34px;font-size:min(2.4vw,44px);font-size:min(2.4vw,44px,4.6svh);
+  margin:0;color:#fff;font-weight:400;line-height:1.38;letter-spacing:-.01em;
+  font-size:30px;font-size:min(2.2vw,40px);font-size:min(2.2vw,40px,4svh);
   overflow-wrap:normal;word-break:normal;
+  white-space:pre-line; /* no-JS / reduced motion: keep the 3 paragraph breaks from the source text */
 }
+.why-fill .why-fill-para{display:block}
+.why-fill .why-fill-para + .why-fill-para{margin-top:.62em}
+.why-fill .why-fill-link{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em;text-decoration-color:rgba(156,229,26,.5)}
+.why-fill .why-fill-link:hover{text-decoration-color:var(--green)}
+.why-fill-more{
+  display:inline-flex;align-items:center;gap:6px;margin-top:22px;
+  color:var(--green);font-size:14px;font-weight:850;letter-spacing:.01em;
+  border-radius:6px;
+}
+.why-fill-more:hover{color:var(--green2);text-decoration:underline}
+.why-fill-more:focus-visible{outline:2px solid rgba(156,229,26,.6);outline-offset:4px}
 .why-fill-pills{margin-top:32px}
-.why-fill.is-fill{height:200vh;height:200svh}
+.why-fill.is-fill{height:240vh;height:240svh} /* longer text (3 paragraphs) -> slightly longer track, same fill feel */
 .why-fill.is-fill .why-fill-sticky{
   position:sticky;top:96px;top:calc(76px + 6svh); /* just under the sticky nav; text sits right below the title */
 }
@@ -1594,13 +1607,38 @@ h2.title-parallax{
 .why-fill .ch{color:rgba(255,255,255,.2)}
 .why-fill .why-fill-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 @media (max-width:980px){
-  .why-fill-text{font-size:22px;font-size:clamp(1.2rem,5.6vw,1.75rem);font-size:clamp(1.15rem,min(5.6vw,3.1svh),1.75rem)}
+  .why-fill-text{font-size:17px;font-size:clamp(.94rem,4.6vw,1.5rem);font-size:clamp(.9rem,min(4.6vw,2.6svh),1.5rem)}
+  .why-fill-more{margin-top:16px;font-size:13px}
   .why-fill-pills{margin-top:22px}
   .why-fill{margin-bottom:28px}
 }
 @media (prefers-reduced-motion:reduce){
   .why-fill.is-fill{height:auto}
   .why-fill.is-fill .why-fill-sticky{position:static;height:auto;padding-top:0;display:block}
+}
+/* Tablet / small-laptop range (761–1060px): the ⋮ threshold stays at 760px; the 8 links + CTA are only
+   tightened so nothing is cut or squeezed. The CTA shows a short "Contact ↗" label under 980px
+   (same word in FR/EN; the full label stays in the DOM / accessible name). */
+@media (min-width:761px) and (max-width:1060px){
+  .navin{gap:12px}
+  .wordmark{flex-shrink:0}
+  .nav-logo{height:26px}
+  .links{gap:6px}
+  .nav-links{gap:7px}
+  .lang-switch{padding:2px 5px;margin-right:0}
+  .lang-switch button{padding:2px 3px}
+  .contact-pill{padding:7px 10px}
+}
+@media (min-width:761px) and (max-width:980px){
+  .nav-links{gap:6px}
+  .links a:not(.contact-pill){font-size:9.5px;letter-spacing:.015em}
+  .contact-pill{font-size:0;letter-spacing:0}
+  .contact-pill::after{content:"Contact ↗";content:"Contact ↗" / "";font-size:10px;letter-spacing:.02em}
+}
+@media (min-width:761px) and (max-width:800px){
+  .nav-logo{height:22px}
+  .nav-links{gap:5px}
+  .links a:not(.contact-pill){font-size:9px;letter-spacing:.01em}
 }
 </style>
 </head>
@@ -1620,12 +1658,12 @@ h2.title-parallax{
       </div>
       <div class="nav-links" id="nav-panel">
       <a href="#why" data-i18n="nav.why">Pourquoi</a>
-      <a href="#paths" data-i18n="nav.paths">Engager</a>
+      <a class="nav-orch" href="orchestrai" data-i18n="nav.orchestrai">OrchestrAI</a>
       <a href="#applications" data-i18n="nav.applications">Applications</a>
       <a href="#method" data-i18n="nav.method">Méthode</a>
       <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
-      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème LAVAL</a>
       <a class="nav-pipeline" href="pipeline-ia.html" data-i18n="nav.pipeline">Pipeline IA</a>
+      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème</a>
       <a href="#faq" data-i18n="nav.faq">FAQ</a>
       <a class="contact-pill" href="#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
       </div>
@@ -1687,7 +1725,12 @@ h2.title-parallax{
          plain white paragraph in normal flow. JS adds .is-fill on .why-fill (250svh + sticky). -->
     <div class="why-fill" data-why-fill data-why-fill-v="2">
       <div class="why-fill-sticky">
-        <p class="why-fill-text" data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
+        <p class="why-fill-text" data-i18n="why.body">Pascal Robotics ne fabrique pas de robots. Nous intégrons et orchestrons des technologies d’intelligence artificielle, de Digital Twin, de Physical AI et de robotique mobile pour transformer un besoin en preuve de concept opérationnelle.
+
+Avec OrchestrAI, nous développons une couche d’orchestration capable de relier modèles d’IA, fournisseurs de calcul et infrastructures locales ou cloud, afin de comparer les solutions selon le coût, le temps, la qualité et les contraintes du projet.
+
+Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.</p>
+        <a class="why-fill-more" href="orchestrai" data-i18n="why.more">Découvrir OrchestrAI →</a>
       </div>
     </div>
     <aside class="cadre-card reveal" aria-label="Cadre d’engagement">
@@ -2187,7 +2230,8 @@ const I18N = {
     "nav.faq": "FAQ",
     "nav.contact": "Parler de votre cas d’usage ↗",
     "nav.dt": "Digital Twin",
-    "nav.eco": "Écosystème LAVAL",
+    "nav.eco": "Écosystème",
+    "nav.orchestrai": "OrchestrAI",
     "nav.pipeline": "Pipeline IA",
     "dt.banner.eyebrow": "Nouveau · Pipeline",
     "dt.banner.title": "Jumeaux numériques<br><span class=\"soft\">Digital Twin</span>",
@@ -2210,7 +2254,8 @@ const I18N = {
     "why.eyebrow": "01 / Pourquoi",
     "why.title": "Pourquoi<br>Pascal Robotics&nbsp;?",
     "why.intro": "Intégrer, simuler et prouver avant d’investir — plutôt que de partir d’un catalogue de machines.",
-    "why.body": "Pascal Robotics ne fabrique pas de robots. Nous intégrons robotique mobile, Digital Twin et Physical AI pour transformer un besoin industriel en preuve de concept opérationnelle. Notre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.",
+    "why.body": "Pascal Robotics ne fabrique pas de robots. Nous intégrons et orchestrons des technologies d’intelligence artificielle, de Digital Twin, de Physical AI et de robotique mobile pour transformer un besoin en preuve de concept opérationnelle.\n\nAvec OrchestrAI, nous développons une couche d’orchestration capable de relier modèles d’IA, fournisseurs de calcul et infrastructures locales ou cloud, afin de comparer les solutions selon le coût, le temps, la qualité et les contraintes du projet.\n\nNotre rôle est de relier le monde réel, la simulation et l’intelligence artificielle afin de tester un cas d’usage avant investissement matériel ou déploiement industriel.",
+    "why.more": "Découvrir OrchestrAI →",
     "why.pill1": "Robotique mobile",
     "why.pill2": "Humanoïdes",
     "why.pill3": "Digital Twin",
@@ -2428,7 +2473,7 @@ const I18N = {
     "nav.aria": "Main navigation",
     "lang.aria": "Language",
     "nav.menu": "Menu",
-    "nav.why": "Why us",
+    "nav.why": "Why",
     "nav.paths": "Engage",
     "nav.applications": "Applications",
     "nav.method": "Method",
@@ -2436,7 +2481,8 @@ const I18N = {
     "nav.faq": "FAQ",
     "nav.contact": "Talk about your use case ↗",
     "nav.dt": "Digital Twin",
-    "nav.eco": "LAVAL Ecosystem",
+    "nav.eco": "Ecosystem",
+    "nav.orchestrai": "OrchestrAI",
     "nav.pipeline": "AI Pipeline",
     "dt.banner.eyebrow": "New · Pipeline",
     "dt.banner.title": "Digital Twin<br><span class=\"soft\">Jumeaux numériques</span>",
@@ -2459,7 +2505,8 @@ const I18N = {
     "why.eyebrow": "01 / Why",
     "why.title": "Why<br>Pascal Robotics?",
     "why.intro": "Integrate, simulate and prove before you invest — instead of starting from a machine catalogue.",
-    "why.body": "Pascal Robotics does not manufacture robots. We integrate mobile robotics, Digital Twin and Physical AI to turn an industrial need into an operational proof of concept. Our role is to connect the real world, simulation and artificial intelligence so a use case can be tested before hardware investment or industrial deployment.",
+    "why.body": "Pascal Robotics does not manufacture robots. We integrate and orchestrate artificial intelligence, Digital Twin, Physical AI and mobile robotics technologies to turn a need into an operational proof of concept.\n\nWith OrchestrAI, we are developing an orchestration layer able to connect AI models, compute providers and local or cloud infrastructure, in order to compare solutions by cost, time, quality and project constraints.\n\nOur role is to connect the real world, simulation and artificial intelligence so that a use case can be tested before hardware investment or industrial deployment.",
+    "why.more": "Discover OrchestrAI →",
     "why.pill1": "Mobile robotics",
     "why.pill2": "Humanoids",
     "why.pill3": "Digital Twin",
@@ -2910,7 +2957,7 @@ if (copyProjectEmail) {
 /* ===== #why — scroll-scrubbed text fill (Terminal Industries style) — v2 =====
    - Splits the paragraph into word spans (nowrap) then char spans (.ch), aria-hidden,
      with a visually-hidden copy of the full text for screen readers.
-   - Pinned mode (.is-fill: 250svh track, sticky 100svh): progress runs from the moment the block
+   - Pinned mode (.is-fill: 240svh track, sticky block): progress runs from the moment the block
      is 40% into the viewport until 80% of the pinned distance, so the fill starts while the text is
      visible and is finished before the pin releases.
    - Fallback mode (sticky impossible because an ancestor is a scroll container): no pin, no extra
@@ -2953,25 +3000,45 @@ if (copyProjectEmail) {
   }
 
   /* Build word/char spans from the current plain text of the paragraph. */
+  /* Paragraphs are separated by a blank line ("\n\n") in the i18n strings / HTML default.
+     The word "OrchestrAI" becomes a mouse-only link (tabindex -1, inside the aria-hidden copy);
+     keyboard / screen-reader users get the visible ".why-fill-more" link right below. */
+  var BRAND = 'OrchestrAI', BRAND_HREF = 'orchestrai';
+  function addChars(parent, str){
+    for (var i = 0; i < str.length; i++){
+      var c = document.createElement('span');
+      c.className = 'ch'; c.textContent = str[i];
+      parent.appendChild(c); chars.push(c); cache.push(0);
+    }
+  }
   function split(){
-    var text = textEl.textContent.replace(/\s+/g, ' ').trim();
+    var paras = textEl.textContent.split(/\n\s*\n/).map(function(t){ return t.replace(/\s+/g, ' ').trim(); })
+      .filter(function(t){ return t.length; });
     splitting = true;
     var frag = document.createDocumentFragment();
     var sr = document.createElement('span');
-    sr.className = 'why-fill-sr'; sr.textContent = text;
+    sr.className = 'why-fill-sr'; sr.textContent = paras.join('\n\n');
     var vis = document.createElement('span');
     vis.setAttribute('aria-hidden', 'true');
     chars = []; cache = [];
-    text.split(' ').forEach(function(word, wi, arr){
-      var w = document.createElement('span');
-      w.className = 'why-fill-w';
-      for (var i = 0; i < word.length; i++){
-        var c = document.createElement('span');
-        c.className = 'ch'; c.textContent = word[i];
-        w.appendChild(c); chars.push(c); cache.push(0);
-      }
-      vis.appendChild(w);
-      if (wi < arr.length - 1) vis.appendChild(document.createTextNode(' '));
+    paras.forEach(function(text){
+      var para = document.createElement('span');
+      para.className = 'why-fill-para';
+      text.split(' ').forEach(function(word, wi, arr){
+        var w = document.createElement('span');
+        w.className = 'why-fill-w';
+        if (word.indexOf(BRAND) === 0){
+          var a = document.createElement('a');
+          a.className = 'why-fill-link'; a.href = BRAND_HREF; a.tabIndex = -1;
+          addChars(a, BRAND); w.appendChild(a);
+          addChars(w, word.slice(BRAND.length));
+        } else {
+          addChars(w, word);
+        }
+        para.appendChild(w);
+        if (wi < arr.length - 1) para.appendChild(document.createTextNode(' '));
+      });
+      vis.appendChild(para);
     });
     frag.appendChild(sr); frag.appendChild(vis);
     textEl.textContent = '';
