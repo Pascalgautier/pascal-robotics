@@ -1,0 +1,30 @@
+/* ===== Pascal Robotics — shared page effects (pr-fx) =====
+   1) Scroll-linked letter fill on section titles (same visual language as the accueil #why fill,
+      but not pinned). Letters are coloured by pr-fx.js; this file only holds the structure.
+   2) Neon hover border on content blocks (cards, tiles, panels, schema nodes, FAQ items).
+   Theme is set by pr-fx.js from the script's data-fx-theme: green (logo #9ce51a) or blue (OrchestrAI). */
+html[data-fx-theme="green"]{--fx-accent:#9ce51a;--fx-glow:rgba(156,229,26,.34);--fx-ring:rgba(156,229,26,.38)}
+html[data-fx-theme="blue"]{--fx-accent:var(--blue,#3d8bff);--fx-glow:rgba(61,139,255,.38);--fx-ring:rgba(61,139,255,.42)}
+
+/* --- 1) title fill --- */
+.fx-title .fx-line,.fx-title .fx-w,.fx-title .fx-c{display:inline !important}
+.fx-title .fx-line{white-space:nowrap}
+.fx-title .fx-c{/* beats page rules like `.problem span{display:block}` */}
+.fx-title .fx-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* --- 2) block hover border (class added by pr-fx.js; layout untouched: colour + box-shadow only) --- */
+@media (hover:hover){
+  .fx-hb:hover{
+    border-color:var(--fx-accent) !important;
+    box-shadow:0 0 0 1px var(--fx-ring),0 0 22px var(--fx-glow),0 14px 36px rgba(0,0,0,.24) !important;
+  }
+}
+.fx-hb:focus-visible{
+  border-color:var(--fx-accent) !important;
+  box-shadow:0 0 0 1px var(--fx-ring),0 0 22px var(--fx-glow) !important;
+}
+/* keyboard focus on a link/summary inside a block (separate rule: browsers without :has() drop only this one) */
+.fx-hb:has(:focus-visible){
+  border-color:var(--fx-accent) !important;
+  box-shadow:0 0 0 1px var(--fx-ring),0 0 22px var(--fx-glow) !important;
+}
