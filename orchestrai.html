@@ -301,6 +301,8 @@ section[id]{scroll-margin-top:84px}
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928">
 <script src="assets/fx/pr-fx.js?v=20260928" defer data-fx-theme="blue" data-fx-titles="main h2" data-fx-blocks=".oloop .lp,.domains li"></script>
+<link rel="stylesheet" href="assets/orchestrai/oai-scrolly.css?v=20260929">
+<style>.oai-scrolly{--oai-top:76px}</style>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -377,6 +379,22 @@ section[id]{scroll-margin-top:84px}
         <li class="lp-back"><span class="lp-lab" data-i18n="loop.back">Apprentissage</span><span class="sr" data-i18n="loop.back.sr">: le résultat revient vers OAI.</span></li>
       </ol>
     </div>
+  </div>
+</section>
+
+<!-- ================= SCROLLYTELLING 3D — sphère -> traversée -> noyau OAI (entre #pourquoi et #aujourdhui) ================= -->
+<section class="oai-scrolly" id="oai-scrolly" data-oai-scrolly aria-label="Séquence 3D : de la sphère à l’intérieur d’OrchestrAI">
+  <div class="oai-scrolly__sticky">
+    <canvas class="oai-scrolly__canvas" aria-hidden="true"></canvas>
+    <div class="oai-scrolly__labels" aria-hidden="true"></div>
+    <div class="oai-scrolly__caps">
+      <div class="oai-cap" data-phase="1"><p class="oai-cap__k" data-oai-i18n="cap1.k">Le paysage IA</p><div class="oai-cap__t" role="heading" aria-level="2" data-oai-i18n="cap1.t">Trop de modèles. <em>Trop de plateformes.</em></div><p class="oai-cap__p" data-oai-i18n="cap1.p">Une enveloppe complexe, vue de l’extérieur.</p></div>
+      <div class="oai-cap" data-phase="2"><p class="oai-cap__k" data-oai-i18n="cap2.k">Traversée</p><div class="oai-cap__t" role="heading" aria-level="2" data-oai-i18n="cap2.t">Entrer <em>dans l’orchestration.</em></div><p class="oai-cap__p" data-oai-i18n="cap2.p">On franchit la membrane pour regarder ce qui se passe à l’intérieur.</p></div>
+      <div class="oai-cap" data-phase="3"><p class="oai-cap__k" data-oai-i18n="cap3.k">Au centre</p><div class="oai-cap__t" role="heading" aria-level="2" data-oai-i18n="cap3.t">Un noyau, <em>tout un écosystème.</em></div><p class="oai-cap__p" data-oai-i18n="cap3.p">OAI coordonne agents, modèles, providers, tests et infrastructures. Représentation visuelle du concept — OrchestrAI est en développement.</p></div>
+    </div>
+    <p class="oai-scrolly__cue" data-oai-i18n="cue">Défiler</p>
+    <div class="oai-scrolly__bar" aria-hidden="true"><i></i></div>
+    <p class="oai-sr" data-oai-sr></p>
   </div>
 </section>
 
@@ -950,6 +968,11 @@ applyLang(getStoredLang());
     rot: function(){ return rot; }, pitch: function(){ return tilt + pitchOff + hovPitch; }, spin: function(){ return spin; },
     R: function(){ return R; }, size: function(){ return [W, H, canvas.width, canvas.height]; } };  /* test hook */
 })();
+</script>
+<script type="module">
+  /* Scrollytelling 3D OrchestrAI (three.js + GSAP ScrollTrigger, fichiers locaux). Ne touche pas à l'Orbe. */
+  import { init } from './assets/orchestrai/oai-scrollytelling.js?v=20260929';
+  window.oaiScrolly = init(document.getElementById('oai-scrolly'), { assetQuery: '?v=20260929' });
 </script>
 </body>
 </html>
