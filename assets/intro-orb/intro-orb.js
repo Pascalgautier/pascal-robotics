@@ -4,8 +4,8 @@
 
    Une grande sphère géodésique wireframe très fine (IcosahedronGeometry detail élevé, arêtes dédoublonnées via
    WireframeGeometry + points aux sommets, comme l'Orbe canvas de /orchestrai) ; la caméra plonge automatiquement
-   (sans scroll), traverse la membrane puis se retrouve à l'intérieur. La page hôte enchaîne ensuite sur la vidéo
-   d'intro (fondu) via les callbacks.
+   (sans scroll), traverse la membrane puis se retrouve à l'intérieur. La page hôte enchaîne ensuite (fondu navy) sur /orchestrai
+   via les callbacks.
 
    API : const orb = await createIntroOrb(canvas, options);   // rejette si WebGL indisponible
          orb.start();  orb.destroy();
@@ -20,8 +20,8 @@ const T = {
   intro: 0.55,       // s : fondu d'apparition (noir -> orbe) + lente dérive
   diveStart: 0.45,   // s : début de la plongée
   diveEnd: 4.75,     // s : fin de la plongée (caméra au cœur)
-  handoff: 4.25,     // s : la vidéo démarre (sous la couche orbe)
-  fade: 1.05,        // s : fondu orbe -> vidéo
+  handoff: 3.45,     // s : la caméra est dans l'orbe -> début du fondu de sortie vers le navy (drapeau posé)
+  fade: 0.8,         // s : fondu orbe -> navy #050b18, puis redirection vers /orchestrai (fondu d'entrée côté page)
 };
 T.end = T.handoff + T.fade;
 

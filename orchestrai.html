@@ -19,6 +19,33 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <script>document.documentElement.classList.add('js');</script>
+<script>
+/* Entrée en fondu depuis l'intro (index.html pose sessionStorage['pr-intro-orb']='1' juste avant la redirection) :
+   voile navy plein écran posé AVANT le premier rendu, levé (opacité 1 -> 0, ~1 s) une fois la page prête ; aucun effet
+   si le drapeau est absent (visite normale de /orchestrai). Non bloquant : pointer-events:none, retiré du DOM ensuite (filet 3 s). */
+(function(){
+  try{
+    if (sessionStorage.getItem('pr-intro-orb') !== '1') return;
+    sessionStorage.removeItem('pr-intro-orb');
+  }catch(e){ return; }
+  var d = document, de = d.documentElement, v = d.createElement('div'), gone = false, lifted = false, dur = 1000;
+  try{ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) dur = 400; }catch(e){}
+  v.id = 'pr-intro-veil'; v.setAttribute('aria-hidden', 'true');
+  v.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483647;background:#050b18;opacity:1;pointer-events:none;transition:opacity ' + dur + 'ms ease';
+  de.appendChild(v);
+  function rm(){ if (gone) return; gone = true; if (v.parentNode) v.parentNode.removeChild(v); }
+  function lift(){
+    if (lifted) return; lifted = true;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      v.style.opacity = '0';
+      v.addEventListener('transitionend', rm);
+      setTimeout(rm, dur + 300);
+    }); });
+  }
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', lift); else lift();
+  setTimeout(rm, 3000);   /* filet de sécurité : retrait forcé à 3 s */
+})();
+</script>
 <style>
 :root{
   --bg:#050b18;

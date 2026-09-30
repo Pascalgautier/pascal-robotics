@@ -6,41 +6,22 @@
   <title>Pascal Robotics</title>
   <meta name="description" content="Pascal Robotics — Digital Twin, Physical AI, robotique mobile et humanoïde.">
   <meta name="theme-color" content="#050b18">
-  <link rel="modulepreload" href="/assets/intro-orb/intro-orb.js?v=20260930">
+  <link rel="modulepreload" href="/assets/intro-orb/intro-orb.js?v=20260930b">
   <link rel="modulepreload" href="/assets/vendor/three-0.186.1/three.module.min.js">
   <link rel="canonical" href="https://pascal-robotics.fr/">
   <style>
-    html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
-    .splash{
-      position:fixed;inset:0;
-      width:100%;height:100%;
-      background:#000;
-    }
-    .splash video{
-      width:100%;height:100%;
-      object-fit:cover;
-      display:block;
-      background:#000;
-    }
-    /* Portrait / phone: show full frame, no crop */
-    @media (max-width:900px), (orientation: portrait){
-      .splash video{
-        object-fit:contain;
-        object-position:center center;
-      }
-    }
-    /* Séquence d'ouverture « gros Orbe » : couche navy + canvas WebGL au-dessus de la vidéo (fondu vers la vidéo) */
-    .orb-layer{
-      position:absolute;inset:0;z-index:2;background:#050b18;
-      opacity:1;will-change:opacity;pointer-events:none;
-    }
+    html,body{margin:0;padding:0;height:100%;background:#050b18;overflow:hidden}
+    .splash{position:fixed;inset:0;width:100%;height:100%;background:#050b18}
+    /* Séquence d'ouverture « gros Orbe » : canvas WebGL sur fond navy #050b18 ; à la fin de la plongée il s'estompe vers le navy,
+       puis redirection vers /orchestrai (qui se dévoile en fondu depuis un voile navy identique). */
+    .orb-layer{position:absolute;inset:0;z-index:2;background:#050b18;pointer-events:none}
     .orb-layer[hidden]{display:none}
-    .orb-layer canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .orb-layer canvas{position:absolute;inset:0;width:100%;height:100%;display:block;will-change:opacity}
     .orb-flash{
       position:absolute;inset:0;opacity:0;pointer-events:none;
       background:radial-gradient(ellipse at 50% 50%,rgba(127,178,255,.55) 0%,rgba(61,139,255,.18) 38%,rgba(5,11,24,0) 72%);
     }
-    /* « Passer la vidéo » : discret mais visible dès le début */
+    /* « Passer l'intro » : discret mais visible dès le début */
     .skip{
       position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:4;
       padding:9px 16px;border-radius:999px;
@@ -56,80 +37,58 @@
   </style>
 </head>
 <body>
-  <a class="skip" id="skip" href="accueil.html">Passer la vidéo</a>
+  <a class="skip" id="skip" href="/orchestrai">Passer l'intro</a>
   <div class="splash" id="splash">
-    <video
-      id="intro"
-      autoplay
-      muted
-      playsinline
-      preload="auto"
-      poster="/assets/digital-twin-intro-cut-poster.jpg"
-    >
-      <source src="/assets/digital-twin-intro-cut.mp4" type="video/mp4">
-    </video>
     <div class="orb-layer" id="orbLayer" aria-hidden="true">
       <canvas id="orbCanvas"></canvas>
       <div class="orb-flash" id="orbFlash"></div>
     </div>
   </div>
   <script>
-  /* ===== Intro : GROS ORBE 3D (plongée dans la sphère, ~4,3 s) -> fondu -> vidéo d'intro raccourcie -> accueil.html =====
-     - La vidéo (assets/digital-twin-intro-cut.mp4 = l'ancienne intro coupée à 4,0 s) est sous la couche orbe ;
-       elle démarre au moment du fondu (play() muet + playsinline : autoplay iOS/Safari conservé).
-     - prefers-reduced-motion, WebGL absent, module/three indisponible ou trop lent => vidéo directement (comportement historique).
-     - Filet de sécurité : dans tous les cas, arrivée à accueil.html. */
+  /* ===== Intro : GROS ORBE 3D (plongée dans la sphère) -> fondu navy -> /orchestrai (fondu d'entrée) =====
+     - Mécanisme : juste avant la redirection, sessionStorage['pr-intro-orb']='1' ; orchestrai.html (script inline dans le <head>)
+       pose alors un voile navy #050b18 avant le premier rendu et le lève en ~1 s. Ici, l'orbe s'estompe vers le même navy : aucune coupure.
+     - La vidéo n'est plus jouée dans ce parcours (fichiers conservés dans le dépôt).
+     - prefers-reduced-motion, WebGL absent, module/three indisponible ou trop lent (> 4 s), contexte WebGL perdu
+       => redirection directe vers /orchestrai (même voile).
+     - Filets de sécurité : dans tous les cas, arrivée à /orchestrai. */
   (function () {
-    var NEXT = 'accueil.html';
-    var v = document.getElementById('intro');
+    var NEXT = '/orchestrai';
     var layer = document.getElementById('orbLayer');
+    var canvas = document.getElementById('orbCanvas');
     var flash = document.getElementById('orbFlash');
     var skip = document.getElementById('skip');
-    if (!v) { location.replace(NEXT); return; }
-    v.muted = true;
 
     try {
       var lg = localStorage.getItem('pr-lang') || localStorage.getItem('pr_lang');
-      if (lg === 'en') { skip.textContent = 'Skip video'; document.documentElement.lang = 'en'; }
+      if (lg === 'en') { skip.textContent = 'Skip intro'; document.documentElement.lang = 'en'; }
     } catch (e) {}
 
+    function flag() { try { sessionStorage.setItem('pr-intro-orb', '1'); } catch (e) {} }
     function go() {
       if (go.done) return;
       go.done = true;
+      flag();
       location.replace(NEXT);
     }
+    skip.addEventListener('click', flag);      // le lien navigue ensuite normalement vers /orchestrai (fondu d'entrée conservé)
+
     var reduce = false;
     try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     var orbMode = !reduce;
-    if (!orbMode) layer.hidden = true;
-    var started = false, safety = 0;
+    var started = false, loadGuard = 0, safety = 0, orb = null;
 
-    function startVideo() {
-      if (started) return;
-      started = true;
-      clearTimeout(loadGuard);
-      v.muted = true;
-      var p = v.play();
-      if (p && p.catch) p.catch(function () { /* autoplay bloqué : on n'enferme pas le visiteur sur le poster */ setTimeout(go, 2500); });
-      clearTimeout(safety);
-      safety = setTimeout(go, 13500);   // clip = 8,4 s + marge de chargement (orbe : armé au démarrage de la vidéo)
-    }
-    v.addEventListener('ended', go);
-    v.addEventListener('error', go);
-
-    if (orbMode) {
-      v.autoplay = false; try { v.pause(); } catch (e) {}     // la vidéo attend la fin de la plongée
-    }
-
-    var loadGuard = 0, orb = null;
     function dropOrb() {
       if (orb) { try { orb.destroy(); } catch (e) {} orb = null; }
       layer.hidden = true;
     }
-    function fallbackToVideo() {
-      if (started) return;
-      dropOrb();
-      startVideo();
+    function fallbackToNext() { dropOrb(); go(); }
+
+    function prefetchNext() {
+      try {
+        var l = document.createElement('link'); l.rel = 'prefetch'; l.href = NEXT; l.as = 'document';
+        document.head.appendChild(l);
+      } catch (e) {}
     }
 
     window.PRIntro = {
@@ -140,40 +99,43 @@
         // pré-test WebGL (sans passer par three : pas d'erreur console si absent)
         var okGL = false;
         try { var tc = document.createElement('canvas'); okGL = !!(tc.getContext('webgl2') || tc.getContext('webgl')); } catch (e) {}
-        if (!okGL) { fallbackToVideo(); return; }
+        if (!okGL) { fallbackToNext(); return; }
         var small = Math.min(window.innerWidth, window.innerHeight) < 600 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        create(document.getElementById('orbCanvas'), {
+        create(canvas, {
           small: small,
           onFlash: function (k) { flash.style.opacity = k.toFixed(3); },
-          onHandoff: function () { startVideo(); },
+          onHandoff: function () { flag(); prefetchNext(); },
           onFade: function (k) {
             var e = k * k * (3 - 2 * k);
-            layer.style.opacity = (1 - e).toFixed(3);
+            canvas.style.opacity = (1 - e).toFixed(3);
+            flash.style.opacity = Math.min(parseFloat(flash.style.opacity) || 0, 1 - e).toFixed(3);
           },
-          onEnd: function () { dropOrb(); },
-          onFail: fallbackToVideo
+          onEnd: function () { go(); },
+          onFail: fallbackToNext
         }).then(function (o) {
           if (started || go.done) { o.destroy(); return; }
+          started = true;
           orb = o; clearTimeout(loadGuard); o.start();
-          // filet : si la plongée ne se termine pas (onglet figé...), la vidéo part quand même
-          safety = setTimeout(function () { if (!started) fallbackToVideo(); }, 9000);
-        }).catch(fallbackToVideo);
+          // filet : si la plongée ne se termine pas (onglet figé...), on part quand même
+          safety = setTimeout(go, 9000);
+        }).catch(fallbackToNext);
       },
-      fail: fallbackToVideo
+      fail: fallbackToNext
     };
 
     if (orbMode) {
-      // three + module trop lents / navigateur sans modules : vidéo directement après 4 s
-      loadGuard = setTimeout(fallbackToVideo, 4000);
-      // filet global (hors vidéo) : jamais bloqué plus de 25 s
-      setTimeout(go, 25000);
+      // three + module trop lents / navigateur sans modules : direct vers /orchestrai après 4 s
+      loadGuard = setTimeout(fallbackToNext, 4000);
+      // filet global : jamais bloqué plus de 12 s
+      setTimeout(go, 12000);
     } else {
-      startVideo();
+      layer.hidden = true;
+      go();
     }
   })();
   </script>
   <script type="module">
-    import { createIntroOrb } from '/assets/intro-orb/intro-orb.js?v=20260930';
+    import { createIntroOrb } from '/assets/intro-orb/intro-orb.js?v=20260930b';
     if (window.PRIntro && window.PRIntro.orbMode) window.PRIntro.ready(createIntroOrb);
   </script>
 </body>
