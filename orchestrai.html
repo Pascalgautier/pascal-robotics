@@ -179,9 +179,6 @@ section[id]{scroll-margin-top:84px}
 /* ===== HERO ===== */
 .hero{position:relative;text-align:center;padding:clamp(26px,4.5svh,56px) 0 clamp(48px,7svh,84px);overflow:hidden}
 .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(127,178,255,.18),transparent)}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid rgba(98,215,232,.3);background:rgba(98,215,232,.06);color:#bfeef5;font-size:11px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
-.hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 0 rgba(98,215,232,.5);animation:oai-ping 2.8s ease-out infinite}
-@keyframes oai-ping{0%{box-shadow:0 0 0 0 rgba(98,215,232,.45)}70%,100%{box-shadow:0 0 0 7px rgba(98,215,232,0)}}
 .oai-mark{margin:12px 0 0;font-size:clamp(24px,3.6vw,50px);line-height:.95;font-weight:800;letter-spacing:.035em;color:#f4f8ff}   /* reduced ~50% (was clamp(44px,8vw,104px)) */
 .oai-mark .dash{color:var(--blue);margin:0 .02em}
 .oai-mark .ai{color:var(--blue2)}
@@ -329,7 +326,6 @@ section[id]{scroll-margin-top:84px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js .reveal{opacity:1;transform:none;transition:none}
-  .hero-badge i{animation:none}
   .orb-state b{transition:none}
   .orb-hint{transition:none}
   .btn,.links a,.contact-pill,.lab-link a{transition:none}
@@ -378,7 +374,6 @@ section[id]{scroll-margin-top:84px}
 <!-- ================= SCREEN 1 — IDENTITY (hero, orb unchanged) ================= -->
 <header class="hero" aria-labelledby="oai-title">
   <div class="wrap">
-    <span class="hero-badge"><i aria-hidden="true"></i><span data-i18n="hero.badge">En développement · POC</span></span>
     <h1 class="oai-mark" id="oai-title" aria-label="OrchestrAI — AI Orchestration Platform">ORCHESTR<span class="dash">-</span><span class="ai">AI</span></h1>
     <p class="oai-platform">AI Orchestration Platform</p>
     <p class="oai-by">by <a href="accueil.html" aria-label="Pascal Robotics — retour à l’accueil" data-i18n-aria="hero.by.aria">Pascal Robotics</a></p>
@@ -540,7 +535,6 @@ var I18N = {
   "nav.eco": "Écosystème",
   "nav.faq": "FAQ",
   "nav.contact": "Parler de votre cas d’usage ↗",
-  "hero.badge": "En développement · POC",
   "hero.by.aria": "Pascal Robotics — retour à l’accueil",
   "hero.verbs": "COMPREND. ORCHESTRE. MESURE. APPREND.",
   "hero.lead": "Une plateforme en développement qui aide à choisir et orchestrer la bonne combinaison d’IA pour chaque besoin.",
@@ -608,7 +602,6 @@ var I18N = {
   "nav.eco": "Ecosystem",
   "nav.faq": "FAQ",
   "nav.contact": "Talk about your use case ↗",
-  "hero.badge": "In development · POC",
   "hero.by.aria": "Pascal Robotics — back to home",
   "hero.verbs": "UNDERSTANDS. ORCHESTRATES. MEASURES. LEARNS.",
   "hero.lead": "A platform in development that helps choose and orchestrate the right combination of AI for each need.",
