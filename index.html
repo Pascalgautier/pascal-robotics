@@ -6,6 +6,8 @@
   <title>Pascal Robotics</title>
   <meta name="description" content="Pascal Robotics — Digital Twin, Physical AI, robotique mobile et humanoïde.">
   <meta name="theme-color" content="#050b18">
+  <link rel="modulepreload" href="/assets/intro-orb/intro-orb.js?v=20260930">
+  <link rel="modulepreload" href="/assets/vendor/three-0.186.1/three.module.min.js">
   <link rel="canonical" href="https://pascal-robotics.fr/">
   <style>
     html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
@@ -27,18 +29,34 @@
         object-position:center center;
       }
     }
+    /* Séquence d'ouverture « gros Orbe » : couche navy + canvas WebGL au-dessus de la vidéo (fondu vers la vidéo) */
+    .orb-layer{
+      position:absolute;inset:0;z-index:2;background:#050b18;
+      opacity:1;will-change:opacity;pointer-events:none;
+    }
+    .orb-layer[hidden]{display:none}
+    .orb-layer canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .orb-flash{
+      position:absolute;inset:0;opacity:0;pointer-events:none;
+      background:radial-gradient(ellipse at 50% 50%,rgba(127,178,255,.55) 0%,rgba(61,139,255,.18) 38%,rgba(5,11,24,0) 72%);
+    }
+    /* « Passer la vidéo » : discret mais visible dès le début */
     .skip{
-      position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;
+      position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:4;
+      padding:9px 16px;border-radius:999px;
+      font:600 12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;
+      color:rgba(214,230,255,.86);text-decoration:none;
+      background:rgba(5,11,24,.55);border:1px solid rgba(127,178,255,.34);
+      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+      transition:background .18s ease,border-color .18s ease,color .18s ease;
     }
-    .skip:focus{
-      left:12px;top:12px;width:auto;height:auto;padding:10px 14px;
-      background:#3d8bff;color:#fff;border-radius:999px;
-      font:650 13px/1.2 system-ui,sans-serif;z-index:3;text-decoration:none;
-    }
+    .skip:hover{background:rgba(61,139,255,.28);border-color:rgba(127,178,255,.7);color:#fff}
+    .skip:focus-visible{outline:2px solid #7fb2ff;outline-offset:3px;color:#fff}
+    @media (prefers-reduced-motion:reduce){.skip{transition:none}}
   </style>
 </head>
 <body>
-  <a class="skip" href="accueil.html">Passer la vidéo</a>
+  <a class="skip" id="skip" href="accueil.html">Passer la vidéo</a>
   <div class="splash" id="splash">
     <video
       id="intro"
@@ -46,29 +64,117 @@
       muted
       playsinline
       preload="auto"
-      poster="/assets/digital-twin-intro-poster.jpg"
+      poster="/assets/digital-twin-intro-cut-poster.jpg"
     >
-      <source src="/assets/digital-twin-intro.mp4" type="video/mp4">
+      <source src="/assets/digital-twin-intro-cut.mp4" type="video/mp4">
     </video>
+    <div class="orb-layer" id="orbLayer" aria-hidden="true">
+      <canvas id="orbCanvas"></canvas>
+      <div class="orb-flash" id="orbFlash"></div>
+    </div>
   </div>
   <script>
+  /* ===== Intro : GROS ORBE 3D (plongée dans la sphère, ~4,3 s) -> fondu -> vidéo d'intro raccourcie -> accueil.html =====
+     - La vidéo (assets/digital-twin-intro-cut.mp4 = l'ancienne intro coupée à 4,0 s) est sous la couche orbe ;
+       elle démarre au moment du fondu (play() muet + playsinline : autoplay iOS/Safari conservé).
+     - prefers-reduced-motion, WebGL absent, module/three indisponible ou trop lent => vidéo directement (comportement historique).
+     - Filet de sécurité : dans tous les cas, arrivée à accueil.html. */
   (function () {
     var NEXT = 'accueil.html';
     var v = document.getElementById('intro');
+    var layer = document.getElementById('orbLayer');
+    var flash = document.getElementById('orbFlash');
+    var skip = document.getElementById('skip');
     if (!v) { location.replace(NEXT); return; }
     v.muted = true;
+
+    try {
+      var lg = localStorage.getItem('pr-lang') || localStorage.getItem('pr_lang');
+      if (lg === 'en') { skip.textContent = 'Skip video'; document.documentElement.lang = 'en'; }
+    } catch (e) {}
+
     function go() {
       if (go.done) return;
       go.done = true;
       location.replace(NEXT);
     }
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    var orbMode = !reduce;
+    if (!orbMode) layer.hidden = true;
+    var started = false, safety = 0;
+
+    function startVideo() {
+      if (started) return;
+      started = true;
+      clearTimeout(loadGuard);
+      v.muted = true;
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { /* autoplay bloqué : on n'enferme pas le visiteur sur le poster */ setTimeout(go, 2500); });
+      clearTimeout(safety);
+      safety = setTimeout(go, 13500);   // clip = 8,4 s + marge de chargement (orbe : armé au démarrage de la vidéo)
+    }
     v.addEventListener('ended', go);
     v.addEventListener('error', go);
-    // Safety: if autoplay is blocked or video stalls, don't strand the visitor
-    var safety = setTimeout(go, 19000); // clip is 12.4 s (logo outro trimmed) + load margin
-    v.addEventListener('ended', function () { clearTimeout(safety); }, { once: true });
-    v.play().catch(function () { /* muted autoplay should work; safety timeout remains */ });
+
+    if (orbMode) {
+      v.autoplay = false; try { v.pause(); } catch (e) {}     // la vidéo attend la fin de la plongée
+    }
+
+    var loadGuard = 0, orb = null;
+    function dropOrb() {
+      if (orb) { try { orb.destroy(); } catch (e) {} orb = null; }
+      layer.hidden = true;
+    }
+    function fallbackToVideo() {
+      if (started) return;
+      dropOrb();
+      startVideo();
+    }
+
+    window.PRIntro = {
+      orbMode: orbMode,
+      // appelé par le module 3D quand three est chargé et que le renderer WebGL est prêt
+      ready: function (create) {
+        if (started || go.done) return;
+        // pré-test WebGL (sans passer par three : pas d'erreur console si absent)
+        var okGL = false;
+        try { var tc = document.createElement('canvas'); okGL = !!(tc.getContext('webgl2') || tc.getContext('webgl')); } catch (e) {}
+        if (!okGL) { fallbackToVideo(); return; }
+        var small = Math.min(window.innerWidth, window.innerHeight) < 600 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        create(document.getElementById('orbCanvas'), {
+          small: small,
+          onFlash: function (k) { flash.style.opacity = k.toFixed(3); },
+          onHandoff: function () { startVideo(); },
+          onFade: function (k) {
+            var e = k * k * (3 - 2 * k);
+            layer.style.opacity = (1 - e).toFixed(3);
+          },
+          onEnd: function () { dropOrb(); },
+          onFail: fallbackToVideo
+        }).then(function (o) {
+          if (started || go.done) { o.destroy(); return; }
+          orb = o; clearTimeout(loadGuard); o.start();
+          // filet : si la plongée ne se termine pas (onglet figé...), la vidéo part quand même
+          safety = setTimeout(function () { if (!started) fallbackToVideo(); }, 9000);
+        }).catch(fallbackToVideo);
+      },
+      fail: fallbackToVideo
+    };
+
+    if (orbMode) {
+      // three + module trop lents / navigateur sans modules : vidéo directement après 4 s
+      loadGuard = setTimeout(fallbackToVideo, 4000);
+      // filet global (hors vidéo) : jamais bloqué plus de 25 s
+      setTimeout(go, 25000);
+    } else {
+      startVideo();
+    }
   })();
+  </script>
+  <script type="module">
+    import { createIntroOrb } from '/assets/intro-orb/intro-orb.js?v=20260930';
+    if (window.PRIntro && window.PRIntro.orbMode) window.PRIntro.ready(createIntroOrb);
   </script>
 </body>
 </html>
