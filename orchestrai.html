@@ -277,6 +277,7 @@ section[id]{scroll-margin-top:84px}
 /* Orb XL: height follows min(vw, remaining first-screen svh) so title + orb + verbs fit on the first screen; the canvas backing store follows the CSS size (resize() + ResizeObserver) */
 .orb{position:relative;height:clamp(240px,min(72vw,calc(100svh - 370px)),620px);max-width:980px;margin:clamp(2px,.8svh,10px) auto 0;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;border-radius:28px}
 .orb canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.orb.is-sat-hover canvas{cursor:pointer}
 .orb.is-grabbing canvas{cursor:grabbing}
 .orb:focus{outline:none}
 .orb:focus-visible{outline:1px solid rgba(127,178,255,.4);outline-offset:-1px}
@@ -402,6 +403,37 @@ section[id]{scroll-margin-top:84px}
   .actions .btn{width:100%}
   .section{padding:64px 0}
 }
+/* ===== Orb satellites — clickable (added 2026-09-30) : invisible focusable buttons over the satellites, hover label, info panel ===== */
+.oai-sat-btn{position:absolute;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;border:0;border-radius:50%;background:transparent;opacity:0;pointer-events:none;will-change:transform}
+.oai-sat-btn:focus{outline:none}
+.oai-sat-btn:focus-visible{opacity:1;outline:1px solid rgba(127,178,255,.85);outline-offset:-6px;box-shadow:0 0 0 4px rgba(61,139,255,.16)}
+.oai-sat-tip{position:absolute;left:0;top:0;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;padding:5px 10px;border-radius:8px;background:rgba(5,11,24,.92);border:1px solid rgba(127,178,255,.4);color:#e8f0ff;font-size:12.5px;line-height:1.3;letter-spacing:.02em;opacity:0;visibility:hidden;transition:opacity .15s ease}
+.oai-sat-tip.is-on{opacity:1;visibility:visible}
+.oai-sat-back{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(5,11,24,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.oai-sat-back.is-open{display:flex}
+.oai-sat-panel{position:relative;box-sizing:border-box;width:min(440px,100%);max-height:min(80vh,80svh);overflow:auto;overscroll-behavior:contain;padding:22px 22px 20px;border-radius:16px;background:#050b18;border:1px solid rgba(127,178,255,.45);box-shadow:0 18px 60px rgba(0,0,0,.55),0 0 0 1px rgba(61,139,255,.08);color:#dfe8f7;text-align:left}
+.oai-sat-panel:focus{outline:none}
+.oai-sat-eyebrow{margin:0 40px 10px 0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--blue2)}
+.oai-sat-item + .oai-sat-item{margin-top:16px;padding-top:16px;border-top:1px solid rgba(127,178,255,.18)}
+.oai-sat-item h2{margin:0 0 8px;font-size:clamp(18px,2.2vw,21px);line-height:1.25;font-weight:750;color:#f4f8ff;letter-spacing:.005em}
+.oai-sat-item p{margin:10px 0 0;font-size:15px;line-height:1.55;color:#c3d2ea}
+.oai-sat-pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#bcd6ff;border:1px solid rgba(127,178,255,.5);background:rgba(61,139,255,.14)}
+.oai-sat-pill[data-st="exp"]{border-style:dashed}
+.oai-sat-pill[data-st="future"]{background:transparent;border-style:dotted}
+.oai-sat-x{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#dfe8f7;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.oai-sat-x:hover{background:rgba(61,139,255,.16);color:#fff}
+.oai-sat-x:focus-visible{outline:2px solid var(--blue2);outline-offset:-4px}
+@media (max-width:760px){
+  .oai-sat-back{align-items:flex-end;padding:0}
+  .oai-sat-panel{width:100%;max-height:78svh;border-radius:18px 18px 0 0;border-bottom:0;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
+}
+@media (prefers-reduced-motion:no-preference){
+  .oai-sat-back.is-open{animation:oaiSatFade .18s ease}
+  .oai-sat-back.is-open .oai-sat-panel{animation:oaiSatRise .22s ease}
+  @keyframes oaiSatFade{from{opacity:0}to{opacity:1}}
+  @keyframes oaiSatRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){.oai-sat-tip{transition:none}}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js .reveal{opacity:1;transform:none;transition:none}
@@ -809,6 +841,41 @@ applyLang(getStoredLang());
   }, { threshold: .2 }).observe(loop);
 })();
 
+/* ===== TEXTES DES SATELLITES DE L'ORBE — PROVISOIRES — SEUL ENDROIT À MODIFIER =====
+   `caps`   : les capacités (id, statut 'active' | 'exp' | 'future', titre + description FR/EN).
+   `layout` : quelle(s) capacité(s) porte chaque satellite, dans l'ordre des satellites sur l'orbite.
+              Un satellite peut porter plusieurs capacités (le panneau les liste). L'Orbe a 7 satellites sur desktop et
+              5 sur mobile (≤ 760 px) : on regroupe donc les 8 capacités (on ne change pas le nombre de satellites).
+   `ui`     : libellés de l'interface (statuts, bouton fermer, aria). */
+var ORB_SATS = {
+  caps: {
+    prompt:   { st: 'active', t: { fr: 'Prompt Intelligence', en: 'Prompt Intelligence' },
+                d: { fr: 'Structure et adapte le prompt à chaque modèle avant la génération.', en: 'Structures and adapts the prompt to each model before generation.' } },
+    kb:       { st: 'active', t: { fr: 'Knowledge Base · mémoire structurée', en: 'Knowledge Base · structured memory' },
+                d: { fr: 'Mémoire structurée des essais et des résultats.', en: 'Structured memory of trials and results.' } },
+    multi:    { st: 'active', t: { fr: 'Génération multi-modèles', en: 'Multi-model generation' },
+                d: { fr: 'Génération via plusieurs fournisseurs, pour comparer les résultats.', en: 'Generation through several providers, to compare results.' } },
+    human:    { st: 'active', t: { fr: 'Évaluation humaine', en: 'Human evaluation' },
+                d: { fr: 'Évaluation des résultats par une personne : qualité, fidélité au prompt, commentaires.', en: 'Results assessed by a person: quality, fidelity to the prompt, comments.' } },
+    video:    { st: 'active', t: { fr: 'Analyse vidéo technique locale', en: 'Local technical video analysis' },
+                d: { fr: 'Mesure technique de la vidéo, exécutée en local. Elle ne cherche pas à comprendre le contenu.', en: 'Technical measurement of the video, run locally. It does not try to understand the content.' } },
+    semantic: { st: 'exp',    t: { fr: 'Analyse sémantique IA', en: 'AI semantic analysis' },
+                d: { fr: 'En cours d’exploration : analyse du contenu des résultats par IA. Fonction expérimentale, en test.', en: 'Under exploration: AI analysis of the content of the results. Experimental, in testing.' } },
+    agent:    { st: 'future', t: { fr: 'OAI Intelligence Agent', en: 'OAI Intelligence Agent' },
+                d: { fr: 'Agent central prévu, pas encore en service.', en: 'Planned central agent, not yet in service.' } },
+    decision: { st: 'future', t: { fr: 'Decision Engine automatique', en: 'Automatic Decision Engine' },
+                d: { fr: 'Arbitrage automatique selon les critères du projet : prévu, pas encore en service.', en: 'Automatic arbitration based on project criteria: planned, not yet in service.' } }
+  },
+  layout: {
+    desktop: [['prompt'], ['kb'], ['multi'], ['human', 'video'], ['semantic'], ['agent'], ['decision']],   /* 7 satellites */
+    mobile:  [['prompt', 'kb'], ['multi'], ['human', 'video'], ['semantic'], ['agent', 'decision']]        /* 5 satellites */
+  },
+  ui: {
+    fr: { active: 'Actif', exp: 'Expérimental', future: 'Futur', eyebrow: 'Capacité OrchestrAI', eyebrowN: 'Capacités OrchestrAI', close: 'Fermer', open: 'Afficher le détail' },
+    en: { active: 'Active', exp: 'Experimental', future: 'Future', eyebrow: 'OrchestrAI capability', eyebrowN: 'OrchestrAI capabilities', close: 'Close', open: 'Show details' }
+  }
+};
+
 /* ===== Hero ORB — canvas 2D, no dependency =====
    A slowly rotating sphere of points + nearest-neighbour links, a few "provider" satellites on a tilted
    orbit, and calm pulses travelling along links. Purely illustrative (see caption).
@@ -837,6 +904,7 @@ applyLang(getStoredLang());
   var pitchOff = 0, pitchVel = 0;    /* extra pitch added to `tilt`, springs back to 0 when released */
   var hovYaw = 0, hovPitch = 0, hovTx = 0, hovTy = 0;   /* subtle eased hover tilt (mouse only) */
   var manual = false, drawReq = 0;
+  var satHook = null, satHot = -1;   /* [satellites] per-frame hook (DOM overlay sync) + index of the hovered/focused satellite (grows slightly) */
   /* pitch limits: tilting further "up" would push the (perspective-enlarged) front of the orbit ring out of the canvas top */
   function clampPitch(v){ return Math.max(-0.42, Math.min(0.12, v)); }
 
@@ -934,11 +1002,12 @@ applyLang(getStoredLang());
       var P = satPos(sats[s]), T = proj[sats[s].target];
       ctx.strokeStyle = 'rgba(127,178,255,0.09)'; ctx.setLineDash([2, 4]);
       ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(T.x, T.y); ctx.stroke(); ctx.setLineDash([]);
-      var sz = 2.2 * P.f;
+      var sz = 2.2 * P.f * (s === satHot ? 1.55 : 1);   /* [satellites] hover/focus: slightly larger, otherwise unchanged */
       ctx.fillStyle = 'rgba(200,222,255,' + (0.35 + (P.z + 1.6) / 3.2 * 0.45).toFixed(3) + ')';
       ctx.fillRect(P.x - sz, P.y - sz, sz * 2, sz * 2);
       sats[s].p = P; sats[s].tp = T;
     }
+    if (satHook) satHook();   /* [satellites] projected positions (sats[i].p) are ready for this frame */
     /* points */
     for (var j = 0; j < N; j++){
       var q = proj[j], d = (q.z + 1) / 2;
@@ -1084,6 +1153,141 @@ applyLang(getStoredLang());
     pitchOff = clampPitch(pitchOff + pitch * 0.12);
     redraw();
   });
+
+  /* ===== [satellites] clickable satellites (added 2026-09-30) — rendering/animation untouched; uses sats[i].p (projected each frame) =====
+     Pointer: hover = pointer cursor + slightly larger square + small label; a click WITHOUT significant movement opens the panel
+     (a drag keeps rotating the Orb and never opens anything). Keyboard: one invisible <button> per satellite, following it. */
+  (function(){
+    var layout = SAT_LAYOUT();
+    function SAT_LAYOUT(){ return (small ? ORB_SATS.layout.mobile : ORB_SATS.layout.desktop).slice(0, sats.length); }
+    function L(){ return currentLang === 'en' ? 'en' : 'fr'; }
+    function ui(){ return ORB_SATS.ui[L()]; }
+    function names(i){ return (layout[i] || []).map(function(id){ return ORB_SATS.caps[id].t[L()]; }); }
+    var btns = [], tip = document.createElement('div');
+    tip.className = 'oai-sat-tip'; tip.setAttribute('aria-hidden', 'true'); wrap.appendChild(tip);
+    var hoverM = -1, hoverF = -1, tipFor = -2;
+    var down = { x: 0, y: 0, moved: 0, on: false, id: null };
+
+    function labelBtn(i){
+      var b = btns[i], st = (layout[i] || []).map(function(id){ return ORB_SATS.caps[id].st; });
+      var parts = names(i).map(function(n, k){ return n + ' (' + ui()[st[k]] + ')'; });
+      b.setAttribute('aria-label', parts.join(' ; ') + ' — ' + ui().open);
+    }
+    function labelAll(){ for (var i = 0; i < btns.length; i++) labelBtn(i); }
+    for (var i = 0; i < layout.length; i++) (function(i){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'oai-sat-btn';
+      b.addEventListener('click', function(){ openPanel(i, b); });
+      b.addEventListener('focus', function(){ if (b.matches && b.matches(':focus-visible')){ hoverF = i; refresh(); } });
+      b.addEventListener('blur', function(){ if (hoverF === i){ hoverF = -1; refresh(); } });
+      wrap.appendChild(b); btns.push(b);
+    })(i);
+    labelAll();
+
+    function refresh(){
+      var h = hoverM >= 0 ? hoverM : hoverF;
+      if (h !== satHot){ satHot = h; redraw(); }
+      wrap.classList.toggle('is-sat-hover', hoverM >= 0);
+      syncDom();
+    }
+    function syncDom(){
+      for (var i = 0; i < btns.length; i++){
+        var P = sats[i] && sats[i].p; if (!P) continue;
+        /* clamped to the canvas so a focused button never scrolls the page (on narrow screens the orbit can extend past the canvas edge) */
+        btns[i].style.transform = 'translate(' + Math.max(22, Math.min(W - 22, P.x)).toFixed(1) + 'px,' + Math.max(22, Math.min(H - 22, P.y)).toFixed(1) + 'px)';
+      }
+      var h = satHot, P2 = h >= 0 && sats[h] ? sats[h].p : null;
+      if (P2){
+        if (tipFor !== h || tip.dataset.l !== L()){ tip.textContent = names(h).join(' · '); tipFor = h; tip.dataset.l = L(); }
+        var w = tip.offsetWidth, x = Math.max(4, Math.min(W - w - 4, P2.x - w / 2));
+        tip.style.transform = 'translate(' + x.toFixed(1) + 'px,' + Math.max(2, P2.y - 40).toFixed(1) + 'px)';
+        tip.classList.add('is-on');
+      } else { tip.classList.remove('is-on'); tipFor = -2; }
+    }
+    satHook = function(){ if (mouse) rehover(); syncDom(); };
+
+    function hit(e){
+      var r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      var rad = e.pointerType === 'mouse' ? 16 : 24, best = -1, bd = rad * rad;
+      for (var i = 0; i < layout.length; i++){
+        var P = sats[i] && sats[i].p; if (!P) continue;
+        var d = (P.x - x) * (P.x - x) + (P.y - y) * (P.y - y);
+        if (d <= bd){ bd = d; best = i; }
+      }
+      return best;
+    }
+    var mouse = null;   /* last mouse position over the canvas: hover is re-evaluated every frame (satellites move under a still cursor) */
+    function rehover(){
+      var h = (!mouse || drag.on) ? -1 : hit(mouse);
+      if (h !== hoverM){ hoverM = h; wrap.classList.toggle('is-sat-hover', h >= 0); var t = h >= 0 ? h : hoverF; if (t !== satHot){ satHot = t; redraw(); } }
+    }
+    canvas.addEventListener('pointermove', function(e){
+      if (down.on && e.pointerId === down.id) down.moved = Math.max(down.moved, Math.hypot(e.clientX - down.x, e.clientY - down.y));
+      if (e.pointerType !== 'mouse') return;
+      mouse = { clientX: e.clientX, clientY: e.clientY, pointerType: 'mouse' }; rehover(); syncDom();
+    });
+    canvas.addEventListener('pointerleave', function(e){ if (e.pointerType === 'mouse'){ mouse = null; rehover(); syncDom(); } });
+    canvas.addEventListener('pointerdown', function(e){
+      down.x = e.clientX; down.y = e.clientY; down.moved = 0; down.on = true; down.id = e.pointerId;
+      if (e.pointerType === 'mouse'){ mouse = null; rehover(); syncDom(); }
+    });
+    canvas.addEventListener('pointercancel', function(){ down.on = false; down.moved = 99; });
+    canvas.addEventListener('click', function(e){
+      var moved = down.moved; down.on = false;
+      var touch = e.pointerType === 'touch' || e.pointerType === 'pen';
+      if (moved > (touch ? 10 : 6)) return;                           /* a drag never opens */
+      var h = hit({ clientX: e.clientX, clientY: e.clientY, pointerType: touch ? 'touch' : 'mouse' });
+      if (h >= 0) openPanel(h, btns[h]);
+    });
+    document.addEventListener('pr:lang', function(){ labelAll(); tipFor = -2; if (panel.classList.contains('is-open')) fill(openIdx); syncDom(); });
+
+    /* ----- panel (dialog) ----- */
+    var panel = document.createElement('div'), card = document.createElement('div'), xbtn = document.createElement('button');
+    panel.className = 'oai-sat-back'; panel.setAttribute('aria-hidden', 'true');
+    card.className = 'oai-sat-panel'; card.setAttribute('role', 'dialog'); card.setAttribute('aria-modal', 'true'); card.tabIndex = -1;
+    xbtn.type = 'button'; xbtn.className = 'oai-sat-x'; xbtn.textContent = '×';
+    panel.appendChild(card); document.body.appendChild(panel);
+    var openIdx = -1, opener = null, openedAt = 0;
+    function mk(tag, cls, txt){ var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
+    function fill(i){
+      var ids = layout[i] || [], u = ui();
+      card.textContent = '';
+      xbtn.setAttribute('aria-label', u.close); card.appendChild(xbtn);
+      card.appendChild(mk('p', 'oai-sat-eyebrow', ids.length > 1 ? u.eyebrowN : u.eyebrow));
+      ids.forEach(function(id, k){
+        var c = ORB_SATS.caps[id], it = mk('div', 'oai-sat-item'), h = mk('h2', '', c.t[L()]);
+        h.id = 'oai-sat-t' + k; it.appendChild(h);
+        var pill = mk('span', 'oai-sat-pill', u[c.st]); pill.setAttribute('data-st', c.st); it.appendChild(pill);
+        var d = mk('p', '', c.d[L()]); d.id = 'oai-sat-d' + k; it.appendChild(d);
+        card.appendChild(it);
+      });
+      card.setAttribute('aria-labelledby', ids.map(function(_, k){ return 'oai-sat-t' + k; }).join(' '));
+      card.setAttribute('aria-describedby', ids.map(function(_, k){ return 'oai-sat-d' + k; }).join(' '));
+    }
+    function openPanel(i, from){
+      if (!layout[i] || panel.classList.contains('is-open')) return;
+      openIdx = i; opener = from || btns[i]; openedAt = Date.now();
+      mouse = null; hoverM = -1; hoverF = -1; refresh();
+      fill(i);
+      panel.classList.add('is-open'); panel.removeAttribute('aria-hidden');
+      xbtn.focus({ preventScroll: true });
+    }
+    function closePanel(){
+      if (!panel.classList.contains('is-open')) return;
+      panel.classList.remove('is-open'); panel.setAttribute('aria-hidden', 'true');
+      var o = opener; opener = null; openIdx = -1;
+      if (o && o.focus) o.focus({ preventScroll: true });
+    }
+    xbtn.addEventListener('click', closePanel);
+    panel.addEventListener('click', function(e){ if (e.target === panel) closePanel(); });
+    document.addEventListener('keydown', function(e){
+      if (!panel.classList.contains('is-open')) return;
+      if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closePanel(); }
+      else if (e.key === 'Tab'){ e.preventDefault(); xbtn.focus({ preventScroll: true }); }   /* focus trap: the × is the only control */
+    }, true);
+    window.__oaiSats = { count: function(){ return layout.length; }, pos: function(){ return sats.map(function(s){ return s.p ? [s.p.x, s.p.y] : null; }); },
+      layout: function(){ return layout; }, hot: function(){ return satHot; }, isOpen: function(){ return panel.classList.contains('is-open'); } };   /* test hook */
+    syncDom();
+  })();
 
   window.__oaiOrb = { running: function(){ return !!raf; }, state: function(){ return stateIdx; },
     rot: function(){ return rot; }, pitch: function(){ return tilt + pitchOff + hovPitch; }, spin: function(){ return spin; },
