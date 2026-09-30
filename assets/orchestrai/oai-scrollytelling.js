@@ -18,6 +18,12 @@
    Perf / robustesse : pixelRatio <= 2, pas d'ombres, rendu suspendu hors écran (IntersectionObserver) et onglet caché,
    prefers-reduced-motion => une seule image statique (état final), resize (ResizeObserver), dispose complet,
    chargement paresseux de three/gsap à l'approche de la section, repli propre sans WebGL.
+
+   Mode « embed » (ajouté 2026-09-30, option { embed:true } — la séquence scroll ci-dessus n'est pas modifiée) :
+   réutilise la même scène (noyau OAI, halos, satellites, orbites, liaisons, étiquettes) dans un conteneur de même
+   structure DOM, SANS GSAP/ScrollTrigger ni hauteur de scroll : l'état est piloté de l'extérieur par
+   setEmbedProgress(u) (u : 0 = noyau invisible, caméra éloignée -> 1 = état final de la phase 3). Utilisé par le zoom de
+   l'Orbe du hero (orchestrai.html). Options associées : maxPixelRatio, onReady(), onUnavailable() (sans WebGL).
    ===================================================================== */
 
 /* ------------------------------------------------------------------ *
@@ -35,6 +41,10 @@ const DEFAULTS = {
   camera: { fov: 50, zStart: 16, zApproach: 13.5, zEnd: 4 },
   envelopeOpacity: { from: 0.6, to: 0.05 },
   envelopeFlare: 2.1,       // scale final de l'enveloppe (« évasement »)
+  embed: false,             // true : scène pilotée par setEmbedProgress(u), sans GSAP ni scroll (voir l'en-tête)
+  maxPixelRatio: 2,         // plafond du pixelRatio du renderer
+  onReady: null,            // embed : appelé quand la scène WebGL est construite
+  onUnavailable: null,      // embed : appelé si three/WebGL est indisponible (aucun bloc de repli n'est ajouté)
   scrub: 1,                 // lissage GSAP du scroll (secondes)
   colors: {                 // fond sombre, lignes bleu/cyan sobres, blanc pour le cœur — pas de vert
     shell: 0x4f9dff, orbit: 0x3d8bff, link: 0x62d7e8, linkDash: 0xb9d8ff,
@@ -154,6 +164,8 @@ export function init(root, options = {}) {
   let lang = readLang();
   let api = null;           // rempli quand three/gsap sont chargés
   const cleanups = [];      // fonctions de nettoyage (listeners, observers…)
+  const embed = !!cfg.embed;
+  let embedU = 0;           // progression embed (0 -> 1)
 
   /* ---------- Textes bilingues ---------- */
   const t = (key) => (cfg.i18n[lang] && cfg.i18n[lang][key]) ?? cfg.i18n.fr[key] ?? '';
@@ -177,7 +189,7 @@ export function init(root, options = {}) {
 
   /* ---------- Mode : « live » (section haute + scroll) ou statique ---------- */
   // Le hauteur de la section est fixée tout de suite (pas de saut de page au chargement différé).
-  const setLive = (on) => root.classList.toggle('is-live', on);
+  const setLive = (on) => { if (!embed) root.classList.toggle('is-live', on); };
   setLive(!reduced);
 
   const onMotionChange = () => { reduced = mqReduce.matches; rebuild(); };
@@ -217,13 +229,16 @@ export function init(root, options = {}) {
       import(three + 'three.module.min.js'),
       import(three + 'CSS2DRenderer.min.js')
     ]);
-    if (!window.gsap) await loadScript(gsapUrl + 'gsap.min.js' + cfg.assetQuery);
-    if (!window.ScrollTrigger) await loadScript(gsapUrl + 'ScrollTrigger.min.js' + cfg.assetQuery);
+    if (!embed) {
+      if (!window.gsap) await loadScript(gsapUrl + 'gsap.min.js' + cfg.assetQuery);
+      if (!window.ScrollTrigger) await loadScript(gsapUrl + 'ScrollTrigger.min.js' + cfg.assetQuery);
+    }
     return { THREE, CSS2DRenderer: css2d.CSS2DRenderer, CSS2DObject: css2d.CSS2DObject };
   }
 
   /** Sans WebGL / échec de chargement : bloc statique lisible (phase 3 en texte + puces). */
   function fallback() {
+    if (embed) { if (cfg.onUnavailable) cfg.onUnavailable(); return; }
     setLive(false);
     root.classList.add('is-nogl');
     if (!root.querySelector('.oai-scrolly__fallback')) {
@@ -253,6 +268,7 @@ export function init(root, options = {}) {
     try {
       api = createScene(libs, reduced);
       root.classList.add('is-ready');
+      if (embed && cfg.onReady) cfg.onReady();
     } catch (err) {
       console.warn('[oai-scrollytelling] WebGL indisponible :', err && err.message ? err.message : err);
       fallback();
@@ -273,7 +289,7 @@ export function init(root, options = {}) {
     const renderer = new THREE.WebGLRenderer({
       canvas: els.canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cfg.maxPixelRatio));
     renderer.shadowMap.enabled = false;
     renderer.setClearColor(0x000000, 0);
 
@@ -402,7 +418,7 @@ export function init(root, options = {}) {
     let W = 1, H = 1;
     function resize() {
       W = Math.max(1, els.sticky.clientWidth); H = Math.max(1, els.sticky.clientHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cfg.maxPixelRatio));
       renderer.setSize(W, H, false);
       labelRenderer.setSize(W, H);
       camera.aspect = W / H; camera.updateProjectionMatrix();
@@ -413,7 +429,8 @@ export function init(root, options = {}) {
       layout.A = clamp(hw * (portrait ? 0.56 : 0.58), 0.5, 2.6);
       layout.B = clamp(hh * (portrait ? 0.62 : 0.5), 0.5, 1.2);
       layout.D = portrait ? 0.4 : 0.55;
-      layout.dy = hh * (portrait ? 0.14 : 0.05);           // remonte le centre pour laisser la place à la légende
+      layout.dy = embed ? hh * 0.1                         // embed : centre à 45 % de la hauteur, comme le noyau de l'Orbe 2D
+        : hh * (portrait ? 0.14 : 0.05);                   // remonte le centre pour laisser la place à la légende
       ringMeshes.forEach((m, i) => m.scale.set(layout.A * RINGS[i].k, layout.B * RINGS[i].k, layout.D * RINGS[i].k));
       inner.position.y = layout.dy;
       renderOnce();
@@ -437,6 +454,7 @@ export function init(root, options = {}) {
       const a = S.innerAlpha;
       inner.visible = a > 0.002;
       if (!inner.visible) return;
+      if (embed) inner.position.y = layout.dy * camera.position.z / cfg.camera.zEnd;   // centre constant en pixels malgré le recul de la caméra
       inner.scale.setScalar(Math.max(0.01, S.innerScale));
       for (const f of fade) f.mat.opacity = f.base * a;
       // micro-rotation permanente (oscillation lente : les labels restent lisibles et dans le cadre)
@@ -488,11 +506,12 @@ export function init(root, options = {}) {
     function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
 
     // Pause hors écran + onglet caché
-    const io = new IntersectionObserver((entries) => {
+    // (embed : l'activité est pilotée de l'extérieur par setActive(), pas par l'IntersectionObserver)
+    const io = embed ? null : new IntersectionObserver((entries) => {
       visible = entries.some((e) => e.isIntersecting);
       visible ? start() : stop();
     }, { rootMargin: '10% 0px' });
-    io.observe(root);
+    if (io) io.observe(root);
     const onVis = () => (document.hidden ? stop() : start());
     document.addEventListener('visibilitychange', onVis);
 
@@ -508,7 +527,7 @@ export function init(root, options = {}) {
 
     /* ----- Timeline GSAP + ScrollTrigger (mode animé) ----- */
     let tl = null;
-    if (!isStatic) {
+    if (!isStatic && !embed) {
       gsap.registerPlugin(ScrollTrigger);
       const cam = cfg.camera, op = cfg.envelopeOpacity;
       const cap = els.caps;
@@ -548,6 +567,11 @@ export function init(root, options = {}) {
       tl.fromTo(cap[1], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.06 }, 0.30);
       tl.to(cap[1], { autoAlpha: 0, y: -14, duration: 0.06 }, 0.52);
       tl.fromTo(cap[2], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.08 }, 0.76);
+    } else if (embed) {
+      // embed : état piloté de l'extérieur (setEmbedProgress) ; l'animation continue (rAF) sauf reduced-motion
+      Object.assign(S, { fov: cfg.camera.fov, shellScale: cfg.envelopeFlare, progress: 0.6 });
+      tAcc = 0;
+      applyEmbed(embedU, true);
     } else {
       // reduced-motion : image unique, état final (phase 3 lisible), enveloppe très discrète, aucune animation
       Object.assign(S, {
@@ -557,16 +581,29 @@ export function init(root, options = {}) {
       tAcc = 0;
     }
 
+    /** embed : u 0 -> 1 = caméra z 5 -> 4 (zEnd), noyau/satellites qui apparaissent, enveloppe très discrète. */
+    function applyEmbed(u, silent) {
+      u = clamp(u, 0, 1);
+      const e = clamp(u / 0.45, 0, 1), k = e * e * (3 - 2 * e);
+      S.camZ = cfg.camera.zEnd + (1 - u) * 1.0;
+      S.innerAlpha = k; S.innerScale = 0.55 + 0.45 * k;
+      S.shellAlpha = cfg.envelopeOpacity.to * k; S.progress = 0.6;    // même état final que la phase 3 du scroll
+      if (!silent && (isStatic || !raf)) renderOnce();
+    }
+
     resize();      // 1er rendu + dimensionnement
     start();
 
     return {
       setLabelsText,
+      setEmbedProgress: (u) => applyEmbed(u),
+      setActive: (on) => { visible = !!on; if (visible) { start(); renderOnce(); } else stop(); },
       getState: () => ({ ...S, camZ: camera.position.z, mode: isStatic ? 'static' : 'live' }),
-      refresh: () => { if (!isStatic) ScrollTrigger.refresh(); resize(); },
+      refresh: () => { if (!isStatic && !embed) ScrollTrigger.refresh(); resize(); },
       dispose() {
         stop();
-        io.disconnect(); ro.disconnect();
+        if (io) io.disconnect();
+        ro.disconnect();
         document.removeEventListener('visibilitychange', onVis);
         els.canvas.removeEventListener('webglcontextlost', onLost);
         els.canvas.removeEventListener('webglcontextrestored', onRestored);
@@ -588,6 +625,9 @@ export function init(root, options = {}) {
 
   /* ---------- API publique ---------- */
   return {
+    setEmbedProgress(u) { embedU = u; if (api && api.setEmbedProgress) api.setEmbedProgress(u); },
+    isReady() { return !!api; },
+    setActive(on) { api && api.setActive && api.setActive(on); },
     refresh() { api && api.refresh(); },
     getState() { return api ? api.getState() : { mode: 'loading' }; },
     destroy() {

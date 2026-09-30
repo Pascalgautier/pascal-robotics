@@ -433,6 +433,20 @@ section[id]{scroll-margin-top:84px}
   @keyframes oaiSatFade{from{opacity:0}to{opacity:1}}
   @keyframes oaiSatRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 }
+/* ===== Orb zoom — « Entrer dans la sphère » (added 2026-09-30) : discreet blue button, OAI core label, 3D overlay (embed of the scrollytelling scene) ===== */
+.oai-zoom-btn{position:absolute;left:50%;bottom:6px;z-index:3;transform:translateX(-50%);box-sizing:border-box;min-height:36px;padding:7px 15px;border-radius:999px;border:1px solid rgba(127,178,255,.38);background:rgba(5,11,24,.6);color:#bcd6ff;font:600 12px/1.2 inherit;font-family:inherit;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.oai-zoom-btn:hover{background:rgba(61,139,255,.16);border-color:rgba(127,178,255,.7);color:#e8f0ff}
+.oai-zoom-btn:focus{outline:none}
+.oai-zoom-btn:focus-visible{outline:2px solid #7fb2ff;outline-offset:2px}
+.oai-zoom-core{position:absolute;left:0;top:0;z-index:1;pointer-events:none;opacity:0;visibility:hidden;white-space:nowrap;font-size:15px;font-weight:800;letter-spacing:.14em;line-height:1;color:#fff;text-shadow:0 0 12px rgba(5,11,24,.95),0 0 3px rgba(5,11,24,.9)}
+.oai-zoom-core b{color:#7fb2ff;font-weight:800}
+.oai-zoom3d{--oai-text:#eef4ff;--oai-blue:#3d8bff;--oai-blue2:#7fb2ff;--oai-cyan:#62d7e8;--oai-muted:#a2b4d0;position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;visibility:hidden;overflow:hidden;border-radius:inherit}
+.oai-zoom3d .oai-scrolly__sticky{position:absolute;inset:0;width:auto;height:auto;min-height:0;background:none;contain:none}
+.oai-zoom3d .oai-scrolly__sticky::after{display:none}
+.orb.is-zoomed .oai-sat-btn{visibility:hidden}
+.orb.is-zoomed .oai-sat-tip{display:none}
+@media (max-width:760px){.oai-zoom-btn{min-height:44px;padding:10px 18px;bottom:4px}.oai-zoom-core{font-size:13px}}
+@media (prefers-reduced-motion:reduce){.oai-zoom-btn{transition:none}}
 @media (prefers-reduced-motion:reduce){.oai-sat-tip{transition:none}}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -487,7 +501,7 @@ section[id]{scroll-margin-top:84px}
     <p class="oai-platform">AI Orchestration Platform</p>
     <p class="oai-by">by <a href="accueil.html" aria-label="Pascal Robotics — retour à l’accueil" data-i18n-aria="hero.by.aria">Pascal Robotics</a></p>
 
-    <div class="orb" id="oai-orb-wrap" tabindex="0" role="application" aria-label="Orbe OrchestrAI interactif — faites glisser pour le faire pivoter" data-i18n-aria="orb.aria">
+    <div class="orb" id="oai-orb-wrap" tabindex="0" role="application" aria-label="Orbe OrchestrAI interactif — faites glisser pour le faire pivoter ; Ctrl + molette, pincement ou touches + et − pour zoomer, Échap pour revenir" data-i18n-aria="orb.aria">
       <canvas id="oai-orb" aria-hidden="true"></canvas>
     </div>
 
@@ -651,7 +665,12 @@ var I18N = {
   "pres.title": "Présentation interactive d’OrchestrAI : principe, architecture et statuts",
   "pres.open": "Ouvrir la présentation en pleine page →",
   "orb.states": "ANALYSE|RECHERCHE|ORCHESTRATION|ÉVALUATION|APPRENTISSAGE",
-  "orb.aria": "Orbe OrchestrAI interactif — faites glisser pour le faire pivoter",
+  "orb.aria": "Orbe OrchestrAI interactif — faites glisser pour le faire pivoter ; Ctrl + molette, pincement ou touches + et − pour zoomer, Échap pour revenir",
+  "orb.zoom.enter": "Entrer dans la sphère",
+  "orb.zoom.enter.aria": "Entrer dans la sphère : zoomer jusqu’au noyau OAI",
+  "orb.zoom.exit": "Sortir",
+  "orb.zoom.exit.aria": "Sortir de la sphère : revenir à l’Orbe",
+  "orb.zoom.hint": "Ctrl + molette, pincement ou touches + / − pour zoomer ; Échap pour sortir",
   "why.eyebrow": "Pourquoi OrchestrAI",
   "why.title": "<span>Trop de modèles.</span><span>Trop de plateformes.</span><span class=\"soft\">Trop de choix.</span>",
   "why.answer": "OrchestrAI aide à choisir et orchestrer <span class=\"accent\">le bon modèle, le bon fournisseur, la bonne infrastructure</span>, selon le besoin.",
@@ -715,7 +734,12 @@ var I18N = {
   "pres.title": "Interactive OrchestrAI presentation (in French): principle, architecture and statuses",
   "pres.open": "Open the presentation full page (in French) →",
   "orb.states": "ANALYSIS|RESEARCH|ORCHESTRATION|EVALUATION|LEARNING",
-  "orb.aria": "Interactive OrchestrAI orb — drag to rotate it",
+  "orb.aria": "Interactive OrchestrAI orb — drag to rotate it; Ctrl + wheel, pinch or the + and − keys to zoom, Esc to go back",
+  "orb.zoom.enter": "Enter the sphere",
+  "orb.zoom.enter.aria": "Enter the sphere: zoom in to the OAI core",
+  "orb.zoom.exit": "Exit",
+  "orb.zoom.exit.aria": "Exit the sphere: back to the orb",
+  "orb.zoom.hint": "Ctrl + wheel, pinch or + / − keys to zoom; Esc to exit",
   "why.eyebrow": "Why OrchestrAI",
   "why.title": "<span>Too many models.</span><span>Too many platforms.</span><span class=\"soft\">Too many choices.</span>",
   "why.answer": "OrchestrAI helps choose and orchestrate <span class=\"accent\">the right model, the right provider, the right infrastructure</span>, for each need.",
@@ -904,6 +928,8 @@ var ORB_SATS = {
   var pitchOff = 0, pitchVel = 0;    /* extra pitch added to `tilt`, springs back to 0 when released */
   var hovYaw = 0, hovPitch = 0, hovTx = 0, hovTy = 0;   /* subtle eased hover tilt (mouse only) */
   var manual = false, drawReq = 0;
+  /* [zoom] additive zoom state (2026-09-30). zoomCur 0 = normal Orb (every factor below is then exactly neutral: zs=1, pa=1, zk=0, a3d=0). */
+  var zoomCur = 0, zoomTarget = 0, zs = 1, zk = 0, pa = 1, a3d = 0, zoomOpaque3D = false, sync3D = function(){}, zoomStep = function(){};
   var satHook = null, satHot = -1;   /* [satellites] per-frame hook (DOM overlay sync) + index of the hovered/focused satellite (grows slightly) */
   /* pitch limits: tilting further "up" would push the (perspective-enlarged) front of the orbit ring out of the canvas top */
   function clampPitch(v){ return Math.max(-0.42, Math.min(0.12, v)); }
@@ -955,7 +981,7 @@ var ORB_SATS = {
     var tl = tilt + pitchOff + hovPitch, ct = Math.cos(tl), st = Math.sin(tl);  /* [interaction] + drag/hover pitch */
     var y1 = y * ct - z1 * st, z2 = y * st + z1 * ct;
     var f = 3.4 / (3.4 - z2);
-    return { x: cx + x1 * R * f, y: cy + y1 * R * f, z: z2, f: f };
+    return { x: cx + x1 * R * f * zs, y: cy + y1 * R * f * zs, z: z2, f: f };   /* [zoom] zs = 1 outside zoom */
   }
   function satPos(sa){
     var a = sa.ang + rot * 0.55, rr = 1.62;
@@ -971,6 +997,7 @@ var ORB_SATS = {
   }
 
   function draw(dt, t){
+    if (zoomOpaque3D) return;   /* [zoom] the 3D view fully covers the canvas: nothing to draw */
     ctx.clearRect(0, 0, W, H);
     var breathe = 1 + Math.sin(t * 0.6) * 0.012;
     var R0 = R; R = R0 * breathe;
@@ -993,7 +1020,7 @@ var ORB_SATS = {
     for (var e = 0; e < edges.length; e++){
       var A = proj[edges[e][0]], B = proj[edges[e][1]];
       var depth = ((A.z + B.z) / 2 + 1) / 2;               /* 0 back .. 1 front */
-      var al = 0.04 + depth * (0.2 + linkBoost);
+      var al = (0.04 + depth * (0.2 + linkBoost)) * pa;
       ctx.strokeStyle = 'rgba(120,170,255,' + al.toFixed(3) + ')';
       ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
     }
@@ -1012,11 +1039,12 @@ var ORB_SATS = {
     for (var j = 0; j < N; j++){
       var q = proj[j], d = (q.z + 1) / 2;
       var tw = st === 3 ? 0.12 * Math.sin(t * 2 + pts[j].tw) : 0;   /* "evaluation": faint twinkle */
-      var a2 = Math.max(0.12, 0.2 + d * 0.75 + tw);
-      var rad = 0.6 + d * 1.25;
+      var a2 = Math.max(0.12, 0.2 + d * 0.75 + tw) * pa;
+      var rad = (0.6 + d * 1.25) * (1 + 0.5 * zk);
       ctx.fillStyle = 'rgba(214,230,255,' + a2.toFixed(3) + ')';
       ctx.beginPath(); ctx.arc(q.x, q.y, rad, 0, 6.2832); ctx.fill();
     }
+    if (zk > 0.002) drawCore(t);   /* [zoom] OAI core revealed at the centre */
     /* pulses */
     for (var n = pulses.length - 1; n >= 0; n--){
       var pl = pulses[n]; pl.u += dt * pl.v;
@@ -1031,6 +1059,26 @@ var ORB_SATS = {
       ctx.beginPath(); ctx.arc(px, py, 1.5, 0, 6.2832); ctx.fill();
     }
     R = R0;
+  }
+
+  /* [zoom] luminous OAI core at the centre of the sphere + faint links to the inner points (only drawn while zoomed) */
+  function drawCore(t){
+    var br = 1 + Math.sin(t * 1.7) * 0.06, r0 = R * 0.12 * zk * br;
+    ctx.save();
+    ctx.lineWidth = 0.7;
+    for (var i = 0; i < N; i += 5){   /* inner "core" points: i % 5 === 0 (see build) */
+      var q = proj[i]; if (!q) continue;
+      ctx.strokeStyle = 'rgba(127,178,255,' + (0.16 * zk).toFixed(3) + ')';
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(q.x, q.y); ctx.stroke();
+    }
+    ctx.globalCompositeOperation = 'lighter';
+    var g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.25 * (0.5 + 0.5 * zk) * br);
+    g2.addColorStop(0, 'rgba(127,178,255,' + (0.5 * zk).toFixed(3) + ')'); g2.addColorStop(0.35, 'rgba(61,139,255,' + (0.16 * zk).toFixed(3) + ')'); g2.addColorStop(1, 'rgba(61,139,255,0)');
+    ctx.fillStyle = g2; ctx.fillRect(cx - R * 1.4, cy - R * 1.4, R * 2.8, R * 2.8);
+    var g3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r0 * 3);
+    g3.addColorStop(0, 'rgba(255,255,255,' + zk.toFixed(3) + ')'); g3.addColorStop(0.3, 'rgba(255,255,255,' + (0.55 * zk).toFixed(3) + ')'); g3.addColorStop(0.42, 'rgba(111,168,255,' + (0.3 * zk).toFixed(3) + ')'); g3.addColorStop(1, 'rgba(111,168,255,0)');
+    ctx.fillStyle = g3; ctx.beginPath(); ctx.arc(cx, cy, r0 * 3, 0, 6.2832); ctx.fill();
+    ctx.restore();
   }
 
   function setLabel(i, instant){
@@ -1054,6 +1102,7 @@ var ORB_SATS = {
       pitchOff += pitchVel * dt; pitchOff *= Math.exp(-dt * 1.8); pitchOff = clampPitch(pitchOff);
       rot += dt * (0.07 + spin);                        /* ~4°/s: calm (+ decaying inertia) */
     }
+    zoomStep(dt);   /* [zoom] inertia toward zoomTarget */
     var he = 1 - Math.exp(-dt * 3); hovYaw += (hovTx - hovYaw) * he; hovPitch += (hovTy - hovPitch) * he;
     stateT += dt * 1000;
     if (stateT > STATE_MS){ stateT = 0; setLabel(stateIdx + 1); }
@@ -1066,8 +1115,8 @@ var ORB_SATS = {
     raf = requestAnimationFrame(frame);
   }
   function running(){ return onScreen && !document.hidden && !mqReduce.matches; }
-  function start(){ if (!raf && running()){ last = 0; raf = requestAnimationFrame(frame); } }
-  function stop(){ if (raf){ cancelAnimationFrame(raf); raf = 0; } }
+  function start(){ if (!raf && running()){ last = 0; raf = requestAnimationFrame(frame); } sync3D(); }
+  function stop(){ if (raf){ cancelAnimationFrame(raf); raf = 0; } sync3D(); }
   function staticFrame(){
     pulses = []; if (!manual) rot = 0.6; stateIdx = 2; setLabel(2, true);   /* static: "ORCHESTRATION" ([interaction] keeps a manual angle) */
     spin = 0; pitchVel = 0; hovYaw = hovPitch = hovTx = hovTy = 0; if (!manual) pitchOff = 0;
@@ -1118,7 +1167,7 @@ var ORB_SATS = {
     if (drag.on && e.pointerId === drag.id){
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y, dts = Math.max(0.001, (e.timeStamp - drag.t) / 1000);
       drag.x = e.clientX; drag.y = e.clientY; drag.t = e.timeStamp;
-      var dYaw = dx / Math.max(60, R), dPitch = -dy / Math.max(60, R) * (e.pointerType === 'touch' ? 0 : 1);  /* 1 radius of drag ≈ 1 rad */
+      var dYaw = dx / Math.max(60, R * zs), dPitch = -dy / Math.max(60, R * zs) * (e.pointerType === 'touch' ? 0 : 1);  /* 1 radius of drag ≈ 1 rad */
       rot += dYaw;
       pitchOff = clampPitch(pitchOff + dPitch);
       drag.v = drag.v * 0.6 + (dYaw / dts) * 0.4; drag.pv = drag.pv * 0.6 + (dPitch / dts) * 0.4;  /* smoothed velocity */
@@ -1206,6 +1255,7 @@ var ORB_SATS = {
     satHook = function(){ if (mouse) rehover(); syncDom(); };
 
     function hit(e){
+      if (zoomCur > 0.02) return -1;   /* [zoom] satellites are only clickable outside zoom (they move off-screen when zoomed) */
       var r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       var rad = e.pointerType === 'mouse' ? 16 : 24, best = -1, bd = rad * rad;
       for (var i = 0; i < layout.length; i++){
@@ -1287,6 +1337,162 @@ var ORB_SATS = {
     window.__oaiSats = { count: function(){ return layout.length; }, pos: function(){ return sats.map(function(s){ return s.p ? [s.p.x, s.p.y] : null; }); },
       layout: function(){ return layout; }, hot: function(){ return satHot; }, isOpen: function(){ return panel.classList.contains('is-open'); } };   /* test hook */
     syncDom();
+  })();
+
+  /* ===== [zoom] Enter the sphere (added 2026-09-30) — additive & reversible; the Orb's rendering/animation/drag are untouched at zoom 0.
+     zoomCur (0..1, eased toward zoomTarget):  0 -> 0.55  2D zoom: the membrane points spread apart (projection scale zs) and the OAI core shows (zk)
+                                              0.55 -> 0.85  cross-fade to the 3D view (the scrollytelling scene in "embed" mode, three.js loaded lazily only then)
+                                              -> 1  3D view of the OAI core + satellites.
+     Controls: Ctrl+wheel (also trackpad pinch), two-finger pinch, button, + / - keys, Esc. Plain wheel / vertical touch is never intercepted. ===== */
+  (function(){
+    var Z3 = 0.55, ZMAX2D = 0.62, STEP = 0.14, LEVELS = [0, 0.3, 0.55, 1];   /* LEVELS: reduced-motion steps (no smooth animation) */
+    var webgl = null;   /* probed lazily (first time the 3D phase could be needed): no WebGL context is created at page load */
+    function probeGL(){ try { var c = document.createElement('canvas'), g = c.getContext('webgl2') || c.getContext('webgl'); if (!g) return false; var x = g.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); return true; } catch (e) { return false; } }
+    function hasGL(){ if (webgl === null) webgl = probeGL(); return webgl; }
+    var maxZ = 1;
+    function sm(x){ x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x); }
+    function L(){ return currentLang === 'en' ? 'en' : 'fr'; }
+    function T(k){ return (I18N[L()] && I18N[L()][k]) || (I18N.fr && I18N.fr[k]) || ''; }
+
+    /* --- DOM: button, core label, 3D overlay (all created here; nothing exists if the canvas is unsupported) --- */
+    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'oai-zoom-btn';
+    var core = document.createElement('div'); core.className = 'oai-zoom-core'; core.setAttribute('aria-hidden', 'true');
+    core.appendChild(document.createTextNode('O')); var bAI = document.createElement('b'); bAI.textContent = 'AI'; core.appendChild(bAI);
+    var o3 = document.createElement('div'); o3.className = 'oai-zoom3d'; o3.setAttribute('aria-hidden', 'true');
+    var st3 = document.createElement('div'); st3.className = 'oai-scrolly__sticky';
+    var cv3 = document.createElement('canvas'); cv3.className = 'oai-scrolly__canvas';
+    var lb3 = document.createElement('div'); lb3.className = 'oai-scrolly__labels';
+    st3.appendChild(cv3); st3.appendChild(lb3); o3.appendChild(st3);
+    wrap.insertBefore(o3, canvas.nextSibling); wrap.insertBefore(core, o3.nextSibling); wrap.appendChild(btn);
+
+    var inst = null, ready = false, readyAt = 0, loading = false, lastMode = '', lastA3 = -1, lastU = -1, lastZk = -1;
+    function isReduce(){ return mqReduce.matches; }
+
+    function setBtn(){
+      var mode = zoomTarget > 0.02 ? 'exit' : 'enter';
+      if (mode + L() === lastMode) return; lastMode = mode + L();
+      btn.textContent = T('orb.zoom.' + mode); btn.setAttribute('aria-label', T('orb.zoom.' + mode + '.aria')); btn.title = T('orb.zoom.hint');
+      btn.setAttribute('data-mode', mode);
+    }
+
+    /* --- 3D phase: lazy import (same module URL as the scrollytelling -> one instance of the code and of three) --- */
+    function load3D(){
+      if (loading) return;
+      if (!hasGL()){ maxZ = ZMAX2D; return; }
+      loading = true;
+      import('./assets/orchestrai/oai-scrollytelling.js?v=20260929').then(function(m){
+        inst = m.init(o3, { embed: true, lazy: false, assetQuery: '?v=20260929', maxPixelRatio: small ? 1.5 : 2,
+          onReady: function(){ ready = true; readyAt = performance.now(); apply(); redraw(); },
+          onUnavailable: function(){ maxZ = ZMAX2D; zoomTarget = Math.min(zoomTarget, maxZ); zoomCur = Math.min(zoomCur, maxZ); ready = false; apply(); redraw(); } });
+        if (!inst) { maxZ = ZMAX2D; }
+      }).catch(function(){ maxZ = ZMAX2D; zoomTarget = Math.min(zoomTarget, maxZ); zoomCur = Math.min(zoomCur, maxZ); });
+    }
+
+    /* derived values from zoomCur (called every frame while zoomed, on demand otherwise) */
+    function apply(){
+      var z = zoomCur;
+      zs = z > 0 ? 1 + 4 * sm(z / 0.85) : 1;
+      zk = sm((z - 0.06) / 0.44);
+      pa = 1 - 0.5 * sm(z / 0.6);
+      if (z > 0.4) load3D();
+      var raw = sm((z - Z3) / 0.3), ramp = isReduce() ? 1 : Math.min(1, (performance.now() - readyAt) / 500);
+      a3d = ready ? Math.min(raw, ramp) : 0;
+      zoomOpaque3D = a3d >= 0.999;
+      if (Math.abs(a3d - lastA3) > 0.001 || lastA3 < 0){
+        lastA3 = a3d;
+        o3.style.opacity = a3d > 0 ? a3d.toFixed(3) : ''; o3.style.visibility = a3d > 0 ? 'visible' : '';
+        canvas.style.opacity = a3d > 0 ? (1 - a3d).toFixed(3) : '';
+      }
+      var u = Math.min(1, Math.max(0, (z - 0.5) / 0.5));
+      if (ready && inst && Math.abs(u - lastU) > 0.0005){ lastU = u; inst.setEmbedProgress(u); }
+      if (Math.abs(zk - lastZk) > 0.002 || a3d > 0){ lastZk = zk; core.style.opacity = (zk * (1 - a3d)).toFixed(3); core.style.visibility = zk * (1 - a3d) > 0.01 ? 'visible' : ''; }
+      core.style.transform = 'translate(' + cx.toFixed(1) + 'px,' + (cy + R * 0.12 * zk * 1.6 + 16).toFixed(1) + 'px) translateX(-50%)';
+      wrap.classList.toggle('is-zoomed', z > 0.01);
+      var bs = wrap.querySelectorAll('.oai-sat-btn'); var zz = z > 0.02;
+      for (var i = 0; i < bs.length; i++){ if (zz) bs[i].setAttribute('tabindex', '-1'); else bs[i].removeAttribute('tabindex'); }
+      setBtn(); sync3D();
+    }
+    sync3D = function(){ if (ready && inst) inst.setActive(onScreen && !document.hidden && a3d > 0.003); };
+
+    zoomStep = function(dt){
+      if (Math.abs(zoomTarget - zoomCur) > 0.0006){ zoomCur += (zoomTarget - zoomCur) * (1 - Math.exp(-dt * 5.5)); }
+      else zoomCur = zoomTarget;
+      if (zoomCur > 0 || lastA3 > 0 || lastZk > 0) apply();
+    };
+    function setTarget(v){
+      if (v > ZMAX2D && !hasGL()) maxZ = ZMAX2D;
+      v = Math.max(0, Math.min(maxZ, v));
+      if (isReduce()){ zoomTarget = zoomCur = v; apply(); redraw(); }
+      else { zoomTarget = v; setBtn(); if (!raf){ zoomCur = v; apply(); redraw(); } }   /* loop paused (off-screen): jump */
+    }
+    function stepLevel(dir){   /* reduced-motion: discrete levels */
+      var lv = LEVELS.filter(function(x){ return x <= maxZ + 1e-6 || x === maxZ; }), i = 0, best = 9;
+      if (maxZ < 1 && lv.indexOf(ZMAX2D) < 0) lv.push(maxZ);
+      lv.sort(function(a, b){ return a - b; });
+      for (var k = 0; k < lv.length; k++){ var d = Math.abs(lv[k] - zoomTarget); if (d < best){ best = d; i = k; } }
+      setTarget(lv[Math.max(0, Math.min(lv.length - 1, i + dir))]);
+    }
+    function nudge(dir){ if (isReduce()) stepLevel(dir); else setTarget(zoomTarget + dir * STEP); }
+
+    btn.addEventListener('click', function(){ setTarget(zoomTarget > 0.02 ? 0 : maxZ); });
+
+    /* Ctrl + wheel (desktop pinch on a trackpad also arrives as ctrl+wheel): zoom, page zoom/scroll untouched otherwise */
+    var wacc = 0;
+    wrap.addEventListener('wheel', function(e){
+      if (!e.ctrlKey) return;            /* plain wheel: normal page scroll, never prevented */
+      e.preventDefault();
+      var dy = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+      if (isReduce()){ wacc += dy; if (Math.abs(wacc) >= 60){ stepLevel(wacc < 0 ? 1 : -1); wacc = 0; } }
+      else setTarget(zoomTarget - dy * 0.0028);
+    }, { passive: false });
+
+    /* two-finger pinch (touch-action:pan-y on the canvas already excludes the browser's own pinch-zoom) */
+    var ptrs = {}, nP = 0, pd = 0;
+    function dist(){ var k = Object.keys(ptrs); if (k.length < 2) return 0; var a = ptrs[k[0]], b = ptrs[k[1]]; return Math.hypot(a.x - b.x, a.y - b.y); }
+    canvas.addEventListener('pointerdown', function(e){
+      if (e.pointerType === 'mouse') return;
+      ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; nP = Object.keys(ptrs).length;
+      if (nP === 2){ pd = dist(); drag.on = false; wrap.classList.remove('is-grabbing'); pinchAcc = 0; }
+    });
+    var pinchAcc = 0;
+    canvas.addEventListener('pointermove', function(e){
+      if (!ptrs[e.pointerId]) return;
+      ptrs[e.pointerId].x = e.clientX; ptrs[e.pointerId].y = e.clientY;
+      if (nP >= 2){
+        var d = dist(); drag.on = false;
+        if (pd > 10 && d > 10){
+          var dz = Math.log(d / pd) * 0.9; pd = d;
+          if (isReduce()){ pinchAcc += dz; if (Math.abs(pinchAcc) > 0.2){ stepLevel(pinchAcc > 0 ? 1 : -1); pinchAcc = 0; } }
+          else setTarget(zoomTarget + dz);
+        }
+        e.preventDefault();
+      }
+    });
+    function pend(e){ if (ptrs[e.pointerId]){ delete ptrs[e.pointerId]; nP = Object.keys(ptrs).length; pd = dist(); } }
+    canvas.addEventListener('pointerup', pend); canvas.addEventListener('pointercancel', pend);
+    /* two fingers on the Orb = pinch: cancel the native pan so the gesture isn't turned into a page scroll (a single finger still scrolls the page) */
+    canvas.addEventListener('touchmove', function(e){ if (e.touches.length >= 2 && e.cancelable) e.preventDefault(); }, { passive: false });
+    wrap.addEventListener('gesturestart', function(e){ e.preventDefault(); });   /* iOS Safari: no page pinch-zoom on the Orb */
+
+    /* keys: + / - (also = and numpad) when the Orb or its controls have focus, or while zoomed; Esc leaves the zoom */
+    function typing(t){ return t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)); }
+    document.addEventListener('keydown', function(e){
+      if (e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
+      if (__oaiSatsOpen()) return;
+      var inWrap = wrap.contains(e.target), zoomed = (zoomTarget > 0.02 || zoomCur > 0.02) && (onScreen || inWrap);
+      if (e.key === 'Escape'){ if (zoomed){ e.preventDefault(); setTarget(0); } return; }
+      if (!inWrap && !zoomed) return;
+      if (e.key === '+' || e.key === '=' || e.key === 'Add'){ e.preventDefault(); nudge(1); }
+      else if (e.key === '-' || e.key === '_' || e.key === 'Subtract'){ e.preventDefault(); nudge(-1); }
+    });
+    function __oaiSatsOpen(){ return !!(window.__oaiSats && window.__oaiSats.isOpen()); }
+
+    document.addEventListener('pr:lang', function(){ lastMode = ''; setBtn(); });
+    window.addEventListener('resize', function(){ setTimeout(function(){ if (zoomCur > 0) apply(); }, 160); }, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(function(){ if (zoomCur > 0) apply(); }).observe(wrap);
+    setBtn(); apply();
+    window.__oaiZoom = { cur: function(){ return zoomCur; }, target: function(){ return zoomTarget; }, a3d: function(){ return a3d; }, zs: function(){ return zs; },
+      ready: function(){ return ready; }, loading: function(){ return loading; }, webgl: function(){ return hasGL(); }, set: setTarget, max: function(){ return maxZ; } };   /* test hook */
   })();
 
   window.__oaiOrb = { running: function(){ return !!raf; }, state: function(){ return stateIdx; },
