@@ -8,9 +8,11 @@
    via les callbacks.
 
    API : const orb = await createIntroOrb(canvas, options);   // rejette si WebGL indisponible
-         orb.start();  orb.destroy();
-   options : { small, onHandoff(), onFade(k 0..1), onEnd(), onFail() }
-   Chronologie (ms, horloge réelle → indépendante de la fluidité) : voir T ci-dessous.
+         orb.start();  orb.release();  orb.destroy();
+   options : { small, onFirstFrame(), onHandoff(), onFade(k 0..1), onEnd(), onFail() }
+   start()   : commence le rendu (l'orbe est dessiné, en rotation calme, à sa taille de départ) MAIS la plongée attend release().
+   release() : démarre la chronologie T (plongée, fondu de sortie...) — appelée à l'ouverture des volets d'entrée (index.html).
+   Chronologie (ms, horloge réelle → indépendante de la fluidité) : voir T ci-dessous, comptée depuis release().
    ===================================================================== */
 
 const VENDOR = new URL('../vendor/three-0.186.1/', import.meta.url).href;
@@ -129,7 +131,7 @@ export async function createIntroOrb(canvas, options = {}) {
   group.rotation.x = 0.38;                 // même inclinaison que l'Orbe canvas
   scene.add(group);
 
-  let raf = 0, t0 = 0, running = false, handed = false, ended = false, failed = false;
+  let raf = 0, t0 = 0, tRel = 0, relReq = false, firstDone = false, running = false, handed = false, ended = false, failed = false;
   const W = { w: 0, h: 0 };
   function resize() {
     const w = Math.max(1, canvas.clientWidth || window.innerWidth), h = Math.max(1, canvas.clientHeight || window.innerHeight);
@@ -150,26 +152,29 @@ export async function createIntroOrb(canvas, options = {}) {
   function render(ts) {
     raf = 0;
     if (!running) return;
-    const t = (ts - t0) / 1000;
+    const tr = (ts - t0) / 1000;                       // horloge réelle depuis start() : apparition, rotation, dérive
+    if (relReq && !tRel) tRel = ts;
+    const t = tRel ? (ts - tRel) / 1000 : 0;           // chronologie de la plongée : depuis release() (0 tant que les volets sont fermés)
     resize();
 
     const baseFov = 50;
     const d0 = d0For(baseFov, camera.aspect);
     const p = easeInOutCubic(clamp((t - T.diveStart) / (T.diveEnd - T.diveStart), 0, 1));
-    const drift = 0.5 * smooth(0, T.intro + 2, t);                 // dérive lente avant la plongée
+    const drift = 0.5 * smooth(0, T.intro + 2, tr);                 // dérive lente avant la plongée
     const c = d0 - drift * 0.4 - (d0 - drift * 0.4 - C_END) * p;    // distance caméra -> centre
     camera.fov = baseFov + 34 * smooth(0.28, 0.85, p);             // champ qui s'ouvre : sensation de vitesse
     camera.updateProjectionMatrix();
-    camera.position.set(Math.sin(t * 0.7) * 0.12 * (1 - p), Math.cos(t * 0.55) * 0.08 * (1 - p), c);
-    camera.rotation.set(0, 0, 0.05 * smooth(0.2, 1, p) * Math.sin(t * 0.4 + 1));
-    group.rotation.y = t * 0.22 + 0.4;                              // rotation calme (Orbe : ~0.2 rad/s)
+    camera.position.set(Math.sin(tr * 0.7) * 0.12 * (1 - p), Math.cos(tr * 0.55) * 0.08 * (1 - p), c);
+    camera.rotation.set(0, 0, 0.05 * smooth(0.2, 1, p) * Math.sin(tr * 0.4 + 1));
+    group.rotation.y = tr * 0.22 + 0.4;                              // rotation calme (Orbe : ~0.2 rad/s)
 
     const near = Math.abs(c - R), far = c + R;
     for (const u of [uLines, uPts, uDust]) { u.uNear.value = near; u.uFar.value = far; }
-    const fadeIn = smooth(0, T.intro, t);
+    const fadeIn = smooth(0, T.intro, tr);
     uLines.uAlpha.value = uPts.uAlpha.value = uDust.uAlpha.value = fadeIn;
 
     renderer.render(scene, camera);
+    if (!firstDone) { firstDone = true; options.onFirstFrame && options.onFirstFrame(); }
 
     // flash lumineux discret à la traversée de la membrane (c ≈ R)
     if (options.onFlash) options.onFlash(Math.exp(-Math.pow((c - R) / 1.1, 2)) * 0.5 * fadeIn);
@@ -189,6 +194,7 @@ export async function createIntroOrb(canvas, options = {}) {
       running = true; resize();
       raf = requestAnimationFrame((ts) => { t0 = ts; render(ts); });
     },
+    release() { relReq = true; },
     destroy() {
       running = false;
       if (raf) cancelAnimationFrame(raf);

@@ -6,7 +6,8 @@
   <title>Pascal Robotics</title>
   <meta name="description" content="Pascal Robotics — Digital Twin, Physical AI, robotique mobile et humanoïde.">
   <meta name="theme-color" content="#050b18">
-  <link rel="modulepreload" href="/assets/intro-orb/intro-orb.js?v=20260930b">
+  <link rel="preload" as="image" type="image/webp" href="/assets/logo-pascal-robotics-full-420.webp" fetchpriority="high">
+  <link rel="modulepreload" href="/assets/intro-orb/intro-orb.js?v=20260930c">
   <link rel="modulepreload" href="/assets/vendor/three-0.186.1/three.module.min.js">
   <link rel="canonical" href="https://pascal-robotics.fr/">
   <style>
@@ -21,9 +22,46 @@
       position:absolute;inset:0;opacity:0;pointer-events:none;
       background:radial-gradient(ellipse at 50% 50%,rgba(127,178,255,.55) 0%,rgba(61,139,255,.18) 38%,rgba(5,11,24,0) 72%);
     }
-    /* « Passer l'intro » : discret mais visible dès le début */
+    /* ===== Ouverture « volets » (avant l'Orbe) : deux volets navy joints plein écran ; ligne bleue qui se trace à la jonction,
+       logo P-robot qui apparaît à cheval sur la jonction, puis les volets s'écartent sur l'Orbe WebGL déjà rendu dessous.
+       Chronologie (s, depuis le 1er rendu) : 0-0,2 joints | 0,2-0,8 ligne | 0,5-1,2 logo (fondu+scale) | 1,2-1,7 logo tenu |
+       1,7-2,1 logo s'estompe | 2,0-3,0 volets s'ouvrent (déclenché en JS, l'Orbe démarre alors sa plongée). */
+    .pr-gate{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+    .pr-gate[hidden]{display:none}
+    .pr-sh{position:absolute;left:0;right:0;background:#050b18;will-change:transform;transform:translate3d(0,0,0);
+      transition:transform 1000ms cubic-bezier(.7,0,.2,1)}
+    .pr-sh-top{top:0;height:50%;height:calc(50% + 1px)}
+    .pr-sh-bot{bottom:0;height:50%}
+    .pr-gate.pr-open .pr-sh-top{transform:translate3d(0,-100%,0)}
+    .pr-gate.pr-open .pr-sh-bot{transform:translate3d(0,100%,0)}
+    .pr-line{position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;z-index:2;background:#3d8bff;
+      box-shadow:0 0 8px 1px rgba(61,139,255,.55),0 0 18px 2px rgba(61,139,255,.22);
+      transform:scaleX(0);transform-origin:50% 50%;opacity:0;will-change:transform,opacity}
+    .pr-play .pr-line{animation:pr-line-draw 600ms cubic-bezier(.16,.84,.3,1) 200ms forwards}
+    .pr-gate.pr-open .pr-line{animation:pr-line-out 300ms ease-out forwards}
+    @keyframes pr-line-out{from{transform:scaleX(1);opacity:1}to{transform:scaleX(1);opacity:0}}
+    @keyframes pr-line-draw{from{transform:scaleX(0);opacity:1}to{transform:scaleX(1);opacity:1}}
+    /* logo : recadré (emblème P + robot, sans texte) via overflow + masque de fondu sur le navy */
+    .pr-logo{position:absolute;left:50%;top:50%;z-index:1;width:210px;opacity:0;transform:translate(-50%,-50%) scale(.96);will-change:opacity,transform}
+    .pr-logo-crop{display:block;position:relative;width:100%;aspect-ratio:310/226;overflow:hidden;
+      -webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 6%,#000 90%,transparent 100%);
+      -webkit-mask-composite:source-in;
+      mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 6%,#000 90%,transparent 100%);
+      mask-composite:intersect}
+    .pr-logo-crop img{position:absolute;left:-20%;top:0;width:135.484%;height:auto;max-width:none;display:block;-webkit-user-select:none;user-select:none}
+    .pr-play .pr-logo.pr-logo-on{animation:pr-logo 1500ms linear 0s forwards}
+    /* démarré à 0,5 s : fondu+scale 0,7 s, tenu 0,4 s, fondu de sortie 0,4 s (fini à 2,0 s = début d'ouverture des volets) */
+    @keyframes pr-logo{
+      0%{opacity:0;transform:translate(-50%,-50%) scale(.96);animation-timing-function:cubic-bezier(.2,.7,.2,1)}
+      47%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+      73%{opacity:1;transform:translate(-50%,-50%) scale(1);animation-timing-function:ease-in}
+      100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+    }
+    @media (max-width:600px){.pr-logo{width:165px}}
+    @media (prefers-reduced-motion:reduce){.pr-gate{display:none}}
+    /* « Passer l'intro » : discret mais visible dès le début (au-dessus des volets) */
     .skip{
-      position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:4;
+      position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:10;
       padding:9px 16px;border-radius:999px;
       font:600 12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;
       color:rgba(214,230,255,.86);text-decoration:none;
@@ -38,17 +76,30 @@
 </head>
 <body>
   <a class="skip" id="skip" href="/orchestrai">Passer l'intro</a>
+  <noscript><style>.pr-gate{display:none}</style></noscript>
   <div class="splash" id="splash">
     <div class="orb-layer" id="orbLayer" aria-hidden="true">
       <canvas id="orbCanvas"></canvas>
       <div class="orb-flash" id="orbFlash"></div>
     </div>
   </div>
+  <div class="pr-gate" id="prGate" aria-hidden="true">
+    <div class="pr-sh pr-sh-top"></div>
+    <div class="pr-sh pr-sh-bot"></div>
+    <div class="pr-logo" id="prLogo"><span class="pr-logo-crop"><picture>
+      <source type="image/webp" srcset="/assets/logo-pascal-robotics-full-420.webp">
+      <img id="prLogoImg" src="/assets/logo-pascal-robotics-full-210.png" alt="Pascal Robotics" width="420" height="365" decoding="async" draggable="false">
+    </picture></span></div>
+    <div class="pr-line"></div>
+  </div>
   <script>
   /* ===== Intro : GROS ORBE 3D (plongée dans la sphère) -> fondu navy -> /orchestrai (fondu d'entrée) =====
      - Mécanisme : juste avant la redirection, sessionStorage['pr-intro-orb']='1' ; orchestrai.html (script inline dans le <head>)
        pose alors deux volets navy #050b18 (haut/bas) avant le premier rendu, palier ~200 ms puis ouverture ~1 s. Ici, l'orbe s'estompe vers le même navy : aucune coupure.
      - La vidéo n'est plus jouée dans ce parcours (fichiers conservés dans le dépôt).
+     - Ouverture « volets » AVANT l'Orbe (~3 s) : l'Orbe est chargé et rendu sous les volets dès que possible ; sa chronologie
+       (plongée, fondu, redirection) ne démarre qu'à l'ouverture des volets (orb.release()). Si l'Orbe n'est pas rendu à t = 2,0 s,
+       on attend au plus 1 s (t = 3,0 s) puis on ouvre quand même. Volets retirés du DOM à la fin (filet 4,5 s).
      - prefers-reduced-motion, WebGL absent, module/three indisponible ou trop lent (> 4 s), contexte WebGL perdu
        => redirection directe vers /orchestrai (mêmes volets).
      - Filets de sécurité : dans tous les cas, arrivée à /orchestrai. */
@@ -76,6 +127,54 @@
     var reduce = false;
     try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     var orbMode = !reduce;
+
+    /* ---------- Ouverture volets ---------- */
+    var gate = document.getElementById('prGate');
+    var logo = document.getElementById('prLogo');
+    var logoImg = document.getElementById('prLogoImg');
+    var T_OPEN = 2000, T_WAIT_MAX = 3000, OPEN_MS = 1000;
+    var tStart = 0, opened = false, openTimer = 0, orbRendered = false, orbObj = null;
+    function removeGate() {
+      if (!gate) return;
+      try { gate.parentNode && gate.parentNode.removeChild(gate); } catch (e) { gate.hidden = true; }
+      gate = null;
+    }
+    function openGate() {
+      if (opened) return;
+      opened = true;
+      clearTimeout(openTimer);
+      if (orbObj) orbObj.release();               // la plongée de l'Orbe démarre avec l'ouverture des volets
+      if (gate) {
+        gate.classList.add('pr-open');
+        setTimeout(removeGate, OPEN_MS + 120);
+      }
+    }
+    function tryOpen() {                          // appelé à T_OPEN, à T_WAIT_MAX, et quand l'Orbe est rendu
+      if (opened || !tStart) return;
+      var el = performance.now() - tStart;
+      if (el >= T_OPEN && orbRendered) openGate();
+      else if (el >= T_WAIT_MAX) { if (orb) openGate(); else fallbackToNext(); }   // Orbe absent à 3,0 s : repli direct, sans dévoiler un écran vide
+    }
+    function startGate() {
+      if (!gate || reduce) { removeGate(); return; }
+      tStart = performance.now();
+      gate.classList.add('pr-play');
+      // logo : uniquement s'il est chargé (sinon la ligne et les volets seuls)
+      function showLogo() { if (logo && logoImg && logoImg.complete && logoImg.naturalWidth > 0 && !opened) logo.classList.add('pr-logo-on'); }
+      setTimeout(showLogo, 500);
+      setTimeout(tryOpen, T_OPEN);
+      setTimeout(tryOpen, T_WAIT_MAX);
+      setTimeout(removeGate, 4500);               // filet de sécurité absolu
+    }
+    if (reduce) { removeGate(); }
+    else {
+      var kick = function () { requestAnimationFrame(function () { requestAnimationFrame(startGate); }); };
+      if (logoImg && typeof logoImg.decode === 'function') {
+        // précharge/décode le logo ; on ne retarde pas l'ouverture plus de 300 ms pour cela
+        var kicked = false, once = function () { if (!kicked) { kicked = true; kick(); } };
+        logoImg.decode().then(once, once); setTimeout(once, 300);
+      } else kick();
+    }
     var started = false, loadGuard = 0, safety = 0, orb = null;
 
     function dropOrb() {
@@ -104,6 +203,7 @@
         create(canvas, {
           small: small,
           onFlash: function (k) { flash.style.opacity = k.toFixed(3); },
+          onFirstFrame: function () { orbRendered = true; tryOpen(); },
           onHandoff: function () { flag(); prefetchNext(); },
           onFade: function (k) {
             var e = k * k * (3 - 2 * k);
@@ -115,9 +215,10 @@
         }).then(function (o) {
           if (started || go.done) { o.destroy(); return; }
           started = true;
-          orb = o; clearTimeout(loadGuard); o.start();
+          orb = o; orbObj = o; clearTimeout(loadGuard); o.start();   // rend l'Orbe sous les volets ; la plongée attend release()
+          if (opened) o.release();
           // filet : si la plongée ne se termine pas (onglet figé...), on part quand même
-          safety = setTimeout(go, 9000);
+          safety = setTimeout(go, 13000);
         }).catch(fallbackToNext);
       },
       fail: fallbackToNext
@@ -127,7 +228,7 @@
       // three + module trop lents / navigateur sans modules : direct vers /orchestrai après 4 s
       loadGuard = setTimeout(fallbackToNext, 4000);
       // filet global : jamais bloqué plus de 12 s
-      setTimeout(go, 12000);
+      setTimeout(go, 16000);
     } else {
       layer.hidden = true;
       go();
@@ -135,7 +236,7 @@
   })();
   </script>
   <script type="module">
-    import { createIntroOrb } from '/assets/intro-orb/intro-orb.js?v=20260930b';
+    import { createIntroOrb } from '/assets/intro-orb/intro-orb.js?v=20260930c';
     if (window.PRIntro && window.PRIntro.orbMode) window.PRIntro.ready(createIntroOrb);
   </script>
 </body>
