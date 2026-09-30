@@ -256,6 +256,8 @@ section[id]{scroll-margin-top:84px}
 .signature-logo-plain img{width:min(250px,52vw);height:auto;display:block;opacity:.95}
 .signature-copy{color:#7085a6;font-size:12px;display:flex;flex-direction:column;gap:3px}
 .signature-copy strong{color:#e6eefb;font-size:13px}
+.signature-brand{display:block;margin:10px auto 8px}
+.signature-brand img{display:block;width:min(170px,46vw);height:auto;margin:0 auto}
 .signature-copy .product{color:var(--blue2);font-weight:700;letter-spacing:.02em}
 .footerline{margin-top:4px;color:#62779a}
 .signature-contact{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -476,7 +478,10 @@ section[id]{scroll-margin-top:84px}
       </div>
       <div class="signature-copy">
         <span class="product" data-i18n="footer.product">OrchestrAI · AI Orchestration Platform — en développement</span>
-        <strong>Pascal Robotics</strong>
+        <picture class="signature-brand">
+          <source type="image/webp" srcset="assets/logo-pascal-robotics-full-210.webp 1x, assets/logo-pascal-robotics-full-420.webp 2x">
+          <img src="assets/logo-pascal-robotics-full-210.png" alt="Pascal Robotics" data-i18n-alt="footer.logo.alt" width="210" height="183" loading="lazy" decoding="async">
+        </picture>
         <span data-i18n-html="footer.tagline">Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration</span>
         <div class="footerline" data-i18n="footer.line">© 2026 · Laval, France</div>
       </div>
@@ -554,6 +559,7 @@ var I18N = {
   "cta.b1": "Parler de votre projet →",
   "lab.link": "Laboratoire : pipeline vidéo IA (accès protégé) →",
   "footer.sig.alt": "Signature Pascal Robotics",
+  "footer.logo.alt": "Pascal Robotics",
   "footer.product": "OrchestrAI · AI Orchestration Platform — en développement",
   "footer.tagline": "Robotique mobile &amp; humanoïde · Digital Twin · Physical AI · Intégration",
   "footer.line": "© 2026 · Laval, France",
@@ -621,6 +627,7 @@ var I18N = {
   "cta.b1": "Discuss your project →",
   "lab.link": "Lab: AI video pipeline (protected access) →",
   "footer.sig.alt": "Pascal Robotics signature",
+  "footer.logo.alt": "Pascal Robotics",
   "footer.product": "OrchestrAI · AI Orchestration Platform — in development",
   "footer.tagline": "Mobile &amp; humanoid robotics · Digital Twin · Physical AI · Integration",
   "footer.line": "© 2026 · Laval, France",
