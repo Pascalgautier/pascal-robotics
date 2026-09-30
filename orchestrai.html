@@ -237,6 +237,14 @@ section[id]{scroll-margin-top:84px}
 /* ===== FINAL CTA ===== */
 .final{text-align:center}
 .final h2{margin-bottom:28px}
+/* Présentation intégrée (iframe) — n'affecte ni l'Orbe ni le reste */
+.oai-pres{padding:clamp(40px,5vw,72px) 0 clamp(24px,3vw,40px)}
+.oai-pres__wrap{width:min(1440px,calc(100% - 24px))}
+.oai-pres .eyebrow{text-align:center;margin-bottom:8px}
+.oai-pres__frame{display:block;width:100%;height:2400px;border:0;background:transparent;color-scheme:dark;overflow:hidden}
+.oai-pres__fallback{margin:14px 0 0;text-align:center;font-size:13px}
+.oai-pres__fallback a{color:#9fb2d1;border-bottom:1px solid rgba(159,178,209,.25);padding-bottom:2px}
+.oai-pres__fallback a:hover{color:#fff;border-bottom-color:#fff}
 .lab-link{margin:30px 0 0;font-size:13px}
 .lab-link a{display:inline-flex;align-items:center;gap:8px;color:#9fb2d1;border-bottom:1px solid rgba(159,178,209,.25);padding-bottom:2px;transition:color .18s ease,border-color .18s ease}
 .lab-link a:hover{color:#fff;border-bottom-color:#fff}
@@ -362,6 +370,15 @@ section[id]{scroll-margin-top:84px}
     </div>
   </div>
 </header>
+
+<!-- ================= PRÉSENTATION — juste après l'Orbe (page autonome /orchestrai-presentation en iframe, même origine) ================= -->
+<section class="section oai-pres" id="presentation" aria-labelledby="pres-title">
+  <div class="wrap oai-pres__wrap">
+    <p class="eyebrow" id="pres-title" role="heading" aria-level="2" data-i18n="pres.eyebrow">Présentation</p>
+    <iframe class="oai-pres__frame" id="oai-pres-frame" src="orchestrai-presentation#presentation" title="Présentation interactive d’OrchestrAI : principe, architecture et statuts" data-i18n-title="pres.title" loading="lazy" scrolling="no"></iframe>
+    <p class="oai-pres__fallback"><a href="orchestrai-presentation" data-i18n="pres.open">Ouvrir la présentation en pleine page →</a></p>
+  </div>
+</section>
 
 <!-- ================= SCREEN 2 — PROBLEM / ANSWER + LOOP ================= -->
 <section class="section" id="pourquoi" aria-labelledby="why-title">
@@ -501,6 +518,9 @@ var I18N = {
   "hero.cta1": "Comprendre le principe ↓",
   "hero.cta2": "Parler de votre projet ↗",
   "hero.cta3": "Voir la présentation →",
+  "pres.eyebrow": "Présentation",
+  "pres.title": "Présentation interactive d’OrchestrAI : principe, architecture et statuts",
+  "pres.open": "Ouvrir la présentation en pleine page →",
   "orb.states": "ANALYSE|RECHERCHE|ORCHESTRATION|ÉVALUATION|APPRENTISSAGE",
   "orb.kicker": "État suggéré",
   "orb.caption": "Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.",
@@ -565,6 +585,9 @@ var I18N = {
   "hero.cta1": "Understand the principle ↓",
   "hero.cta2": "Discuss your project ↗",
   "hero.cta3": "View the presentation (in French) →",
+  "pres.eyebrow": "Presentation (in French)",
+  "pres.title": "Interactive OrchestrAI presentation (in French): principle, architecture and statuses",
+  "pres.open": "Open the presentation full page (in French) →",
   "orb.states": "ANALYSIS|RESEARCH|ORCHESTRATION|EVALUATION|LEARNING",
   "orb.kicker": "Suggested state",
   "orb.caption": "Visual representation of the concept — not an operational, real-time intelligence.",
@@ -635,6 +658,9 @@ function applyLang(lang){
   });
   document.querySelectorAll('[data-i18n-aria]').forEach(function(el){
     var k = el.getAttribute('data-i18n-aria'); if (dict[k] != null) el.setAttribute('aria-label', dict[k]);
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(function(el){
+    var k = el.getAttribute('data-i18n-title'); if (dict[k] != null) el.setAttribute('title', dict[k]);
   });
   document.querySelectorAll('[data-i18n-alt]').forEach(function(el){
     var k = el.getAttribute('data-i18n-alt'); if (dict[k] != null) el.setAttribute('alt', dict[k]);
@@ -970,6 +996,20 @@ applyLang(getStoredLang());
   window.__oaiOrb = { running: function(){ return !!raf; }, state: function(){ return stateIdx; },
     rot: function(){ return rot; }, pitch: function(){ return tilt + pitchOff + hovPitch; }, spin: function(){ return spin; },
     R: function(){ return R; }, size: function(){ return [W, H, canvas.width, canvas.height]; } };  /* test hook */
+})();
+</script>
+<script>
+/* Présentation intégrée : la page autonome (même origine) envoie sa hauteur ; l'iframe s'y adapte, puis ScrollTrigger est recalculé. */
+(function(){
+  var f = document.getElementById('oai-pres-frame'); if (!f) return;
+  var t = 0, cur = 0;
+  window.addEventListener('message', function(e){
+    if (e.origin !== location.origin || e.source !== f.contentWindow) return;
+    var d = e.data; if (!d || d.type !== 'oai-presentation-height' || !(d.height > 200)) return;
+    var h = Math.min(Math.ceil(d.height), 9000); if (h === cur) return; cur = h;
+    f.style.height = h + 'px';
+    clearTimeout(t); t = setTimeout(function(){ try { window.oaiScrolly && window.oaiScrolly.refresh(); } catch (err) {} }, 250);
+  });
 })();
 </script>
 <script type="module">

@@ -351,6 +351,13 @@ body.shell-less #view-arch:not(.is-tech) .arch-doc { display: none; }
 .is-oai .val-k { color: var(--v-ink); }
 .is-oai .val-k span { color: var(--v-blue); }
 .is-oai .val-k::after { background: var(--v-blue); }
+.val-svg .v-credits { font-size: 28px; font-weight: 700; letter-spacing: .04em; text-anchor: start; fill: var(--v-ink);
+  font-variant-numeric: tabular-nums; transition: fill .6s ease; }
+.val-svg .v-credits { fill: #E9B45A; }
+.val-svg .v-credit-number { font-weight: 700; }
+.val-svg .v-credit-word { font-family: var(--sans, system-ui, sans-serif); font-size: 17px; font-weight: 400; letter-spacing: .02em; }
+.val-svg .v-credits.end { fill: #E45B5B; }
+.is-oai .val-svg .v-credits.end { fill: #4CC49A; }
 .val-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .val-svg text { font-family: var(--mono, ui-monospace, monospace); font-size: 12px; font-weight: 600; letter-spacing: .06em; fill: var(--v-ink); text-anchor: middle; }
 .val-svg .v-cap { font-size: 10px; letter-spacing: .18em; fill: var(--v-dim); text-anchor: start; }
@@ -427,6 +434,11 @@ body.shell-less #view-arch:not(.is-tech) .arch-doc { display: none; }
 .oai-back:focus-visible { outline: 2px solid var(--l-blue); outline-offset: 3px; }
 a.brand-blue .sub em { font-style: normal; }
 @media (prefers-reduced-motion: reduce) { .oai-back { transition: none; } }
+/* embedded in an <iframe> on /orchestrai: no page header / back button, no forced full-height body, transparent background */
+html.embedded body { min-height: 0; background: transparent; }
+html.embedded header, html.embedded .pres-top { display: none !important; }
+html.embedded { background: transparent; }
+html.embedded main { padding-top: 8px; }
 
 </style>
 </head>
@@ -490,14 +502,16 @@ a.brand-blue .sub em { font-style: normal; }
       <div class="val-flows" id="val-flows">
         <figure class="val-flow" id="val-without" aria-labelledby="val-without-k">
           <figcaption class="val-k" id="val-without-k">MODE STANDARD</figcaption>
-          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="Mode standard : une demande part en génération, plusieurs essais reviennent en boucle ; le temps passe et le budget est consommé à chaque essai, puis le résultat sort.">
+          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="Mode standard : une demande part en génération, plusieurs essais reviennent en boucle ; le temps passe et le budget est consommé à chaque essai, puis le résultat sort. Crédits symboliques : de six mille à zéro.">
             <text class="v-cap" x="14" y="22">BUDGET</text>
+            <text class="v-cap" x="146" y="22">CRÉDITS SYMBOLIQUES</text>
+            <text class="v-credits" id="val-credits-std" x="260" y="62" text-anchor="middle" data-keys="3000:6000,4200:5200,5400:4400,7000:3400,8600:2400,10200:1400,11800:600,13000:0">6000 crédits</text>
             <g class="v-tray">
-              <g class="tok"><circle cx="24" cy="42" r="8"/></g>
-              <g class="tok"><circle cx="46" cy="42" r="8"/></g>
-              <g class="tok" data-off="18513"><circle cx="68" cy="42" r="8"/></g>
-              <g class="tok" data-off="11434"><circle cx="90" cy="42" r="8"/></g>
-              <g class="tok" data-off="4356"><circle cx="112" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="24" cy="42" r="8"/><text x="24" y="45.5">€</text></g>
+              <g class="tok"><circle cx="46" cy="42" r="8"/><text x="46" y="45.5">€</text></g>
+              <g class="tok" data-off="18513"><circle cx="68" cy="42" r="8"/><text x="68" y="45.5">€</text></g>
+              <g class="tok" data-off="11434"><circle cx="90" cy="42" r="8"/><text x="90" y="45.5">€</text></g>
+              <g class="tok" data-off="4356"><circle cx="112" cy="42" r="8"/><text x="112" y="45.5">€</text></g>
             </g>
             <path class="v-guide" id="vw-tok1" d="M112 42 C 112 96, 308 80, 308 140"/>
             <path class="v-guide" id="vw-tok2" d="M90 42 C 90 100, 308 80, 308 140"/>
@@ -518,10 +532,10 @@ a.brand-blue .sub em { font-style: normal; }
             <line class="v-tick" x1="227" y1="266" x2="227" y2="278" data-t="9256"/>
             <line class="v-tick" x1="399" y1="266" x2="399" y2="278" data-t="16335"/>
             <g class="mv mv-dot" data-path="vw-in" data-t="1224" data-dur="1634"><circle r="3.5"/></g>
-            <g class="mv mv-tok" data-path="vw-tok1" data-t="2450" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-tok" data-path="vw-tok1" data-t="2450" data-dur="1906"><circle r="7"/><text y="3.2">€</text></g>
             <g class="mv mv-dot" data-path="vw-out" data-t="4491" data-dur="1361"><circle r="3.5"/></g>
             <g class="mv mv-dot" data-path="vw-retry" data-t="6534" data-dur="2722"><circle r="3.5"/></g>
-            <g class="mv mv-tok" data-path="vw-tok2" data-t="9529" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-tok" data-path="vw-tok2" data-t="9529" data-dur="1906"><circle r="7"/><text y="3.2">€</text></g>
             <g class="mv mv-dot" data-path="vw-out" data-t="11707" data-dur="1361"><circle r="3.5"/></g>
             <g class="mv mv-dot" data-path="vw-retry" data-t="13612" data-dur="2722"><circle r="3.5"/></g>
             <g class="mv mv-dot" data-path="vw-out" data-t="18785" data-dur="1361"><circle r="3.5"/></g>
@@ -535,14 +549,16 @@ a.brand-blue .sub em { font-style: normal; }
         </figure>
         <figure class="val-flow is-oai" id="val-with" aria-labelledby="val-with-k">
           <figcaption class="val-k" id="val-with-k">ORCHESTR<span>-AI</span></figcaption>
-          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="ORCHESTR-AI : la même demande passe par OAI qui compare, mesure et mémorise, garde une route, transmet au modèle, évalue puis sort le résultat par un chemin plus direct ; l’apprentissage par l’Agent IA est futur.">
+          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="ORCHESTR-AI : la même demande passe par OAI qui compare, mesure et mémorise, garde une route, transmet au modèle, évalue puis sort le résultat par un chemin plus direct ; l’apprentissage par l’Agent IA est futur. Crédits symboliques : de six mille à quatre mille.">
             <text class="v-cap" x="14" y="22">BUDGET</text>
+            <text class="v-cap" x="146" y="22">CRÉDITS SYMBOLIQUES</text>
+            <text class="v-credits" id="val-credits-oai" x="260" y="62" text-anchor="middle" data-keys="5200:6000,7540:5500,10140:4500,12740:3000,14702:1895,17500:1400,20000:900,22500:500">6000 crédits</text>
             <g class="v-tray">
-              <g class="tok"><circle cx="24" cy="42" r="8"/></g>
-              <g class="tok"><circle cx="46" cy="42" r="8"/></g>
-              <g class="tok"><circle cx="68" cy="42" r="8"/></g>
-              <g class="tok"><circle cx="90" cy="42" r="8"/></g>
-              <g class="tok" data-off="9529"><circle cx="112" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="24" cy="42" r="8"/><text x="24" y="45.5">€</text></g>
+              <g class="tok"><circle cx="46" cy="42" r="8"/><text x="46" y="45.5">€</text></g>
+              <g class="tok"><circle cx="68" cy="42" r="8"/><text x="68" y="45.5">€</text></g>
+              <g class="tok"><circle cx="90" cy="42" r="8"/><text x="90" y="45.5">€</text></g>
+              <g class="tok" data-off="9529"><circle cx="112" cy="42" r="8"/><text x="112" y="45.5">€</text></g>
             </g>
             <path class="v-guide" id="vo-tok1" d="M112 42 C 112 96, 308 80, 308 140"/>
             <g class="v-node" data-t="409"><rect x="14" y="150" width="76" height="34" rx="8"/><text x="52" y="171">DEMANDE</text></g>
@@ -575,7 +591,7 @@ a.brand-blue .sub em { font-style: normal; }
             <line class="v-bar-bg" x1="56" y1="272" x2="506" y2="272"/>
             <line class="v-bar" x1="56" y1="272" x2="506" y2="272" data-p0="1634" data-p1="22500"/>
             <g class="mv mv-dot" data-path="vo-in" data-t="1224" data-dur="1089"><circle r="3.5"/></g>
-            <g class="mv mv-tok" data-path="vo-tok1" data-t="7623" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-tok" data-path="vo-tok1" data-t="7623" data-dur="1906"><circle r="7"/><text y="3.2">€</text></g>
             <g class="mv mv-dot" data-path="vo-mid" data-t="8168" data-dur="954"><circle r="3.5"/></g>
             <g class="mv mv-dot" data-path="vo-go" data-t="9121" data-dur="1089"><circle r="3.5"/></g>
             <g class="mv mv-dot" data-path="vo-ev" data-t="11299" data-dur="1089"><circle r="3.5"/></g>
@@ -596,7 +612,7 @@ a.brand-blue .sub em { font-style: normal; }
         <div class="val-b" data-t="30764"><div class="bk">PRODUCTIVITÉ <span aria-hidden="true">↑</span></div><div>Produire plus efficacement</div></div>
       </div>
       <div class="val-foot">
-        <span>Illustration conceptuelle : aucune mesure issue des benchmarks, aucun chiffre réel. Jetons de budget : métaphore visuelle, ni rentabilité démontrée ni promesse commerciale. OAI cherche à mieux utiliser le budget disponible.</span>
+        <span>Illustration conceptuelle : aucune mesure issue des benchmarks, aucun chiffre réel. Crédits symboliques : métaphore visuelle, ni rentabilité démontrée ni promesse commerciale. OAI cherche à mieux utiliser le budget disponible.</span>
         <button type="button" class="val-replay" id="val-replay">REJOUER</button>
       </div>
     </div>
@@ -860,6 +876,16 @@ function initValueStory() {
   const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const q = sel => Array.from(root.querySelectorAll(sel));
   const cues = q('[data-t]'), offs = q('[data-off]'), his = q('[data-hi]'), progress = q('[data-p0]');
+  // CRÉDITS SYMBOLIQUES: keyframes 'ms:credits' interpolated smoothly (6000 → 0 standard, 6000 → 4000 ORCHESTR-AI).
+  const counters = q('.v-credits').map(el => ({ el, keys: el.dataset.keys.split(',').map(k => k.split(':').map(Number)) }));
+  const creditsAt = (keys, t) => {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      const [ta, va] = keys[i - 1], [tb, vb] = keys[i];
+      if (t <= tb) return Math.round((va + (vb - va) * (t - ta) / (tb - ta)) / 10) * 10;
+    }
+    return keys[keys.length - 1][1];
+  };
   const movers = q('.mv').map(el => ({ el, path: root.querySelector('#' + el.dataset.path), len: 0, t: +el.dataset.t, dur: +el.dataset.dur }));
   function measure() {                               // lengths are read when the story is on screen
     q('.draw').forEach(p => { try { p.style.setProperty('--len', Math.ceil(p.getTotalLength()) + 1); } catch (e) {} });
@@ -872,6 +898,10 @@ function initValueStory() {
     cues.forEach(e => e.classList.toggle('on', t >= +e.dataset.t));
     offs.forEach(e => e.classList.toggle('off', t >= +e.dataset.off));
     his.forEach(e => e.classList.toggle('hi', t >= +e.dataset.hi));
+    counters.forEach(c => {
+      c.el.innerHTML = `<tspan class="v-credit-number">${creditsAt(c.keys, t)}</tspan><tspan class="v-credit-word"> crédits</tspan>`;
+      c.el.classList.toggle('end', t >= c.keys[c.keys.length - 1][0]);
+    });
     progress.forEach(e => {
       const p0 = +e.dataset.p0, p1 = +e.dataset.p1;
       e.style.setProperty('--p', Math.max(0, Math.min(1, (t - p0) / (p1 - p0))).toFixed(4));
@@ -1166,6 +1196,29 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 route();
+
+// EMBED MODE — the page is shown inside an <iframe> on /orchestrai (same origin). No header / back button there,
+// external links open in the parent window, and the height is reported to the parent (postMessage, same origin only).
+(function () {
+  let embedded = false;
+  try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+  if (!embedded) return;
+  document.documentElement.classList.add('embedded');
+  document.querySelectorAll('a[href]:not([href^="#"])').forEach(a => { a.target = '_top'; });
+  const main = document.querySelector('main');
+  let last = 0, raf = 0;
+  function report() {
+    raf = 0;
+    const h = Math.ceil(main.getBoundingClientRect().bottom + window.scrollY) + 8;
+    if (h === last) return;
+    last = h;
+    try { window.parent.postMessage({ type: 'oai-presentation-height', height: h }, location.origin); } catch (e) {}
+  }
+  const ask = () => { if (!raf) raf = requestAnimationFrame(report); };
+  if ('ResizeObserver' in window) new ResizeObserver(ask).observe(main);
+  window.addEventListener('resize', ask); window.addEventListener('hashchange', ask); window.addEventListener('load', ask);
+  ask();
+})();
 
 </script>
 </body>
