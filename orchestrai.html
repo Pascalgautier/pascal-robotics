@@ -1345,6 +1345,10 @@ var ORB_SATS = {
                                               -> 1  3D view of the OAI core + satellites.
      Controls: Ctrl+wheel (also trackpad pinch), two-finger pinch, button, + / - keys, Esc. Plain wheel / vertical touch is never intercepted. ===== */
   (function(){
+    /* ZOOM_SLOW : facteur de lenteur de TOUTE la transition du zoom (1 = rythme d'origine, 2 = deux fois plus lent, 3 = trois fois…). Seul réglage à toucher.
+       Il divise la vitesse de l'inertie (ZOOM_TAU) et allonge le fondu croisé 2D -> 3D (ZOOM_FADE_MS) ; boutons Entrer/Sortir, paliers + / − et Échap en héritent.
+       Sans effet sur l'Orbe au repos ni sur reduced-motion (paliers, sans animation). */
+    var ZOOM_SLOW = 2, ZOOM_RATE = 5.5 / ZOOM_SLOW, ZOOM_FADE_MS = 500 * ZOOM_SLOW;
     var Z3 = 0.55, ZMAX2D = 0.62, STEP = 0.14, LEVELS = [0, 0.3, 0.55, 1];   /* LEVELS: reduced-motion steps (no smooth animation) */
     var webgl = null;   /* probed lazily (first time the 3D phase could be needed): no WebGL context is created at page load */
     function probeGL(){ try { var c = document.createElement('canvas'), g = c.getContext('webgl2') || c.getContext('webgl'); if (!g) return false; var x = g.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); return true; } catch (e) { return false; } }
@@ -1395,7 +1399,7 @@ var ORB_SATS = {
       zk = sm((z - 0.06) / 0.44);
       pa = 1 - 0.5 * sm(z / 0.6);
       if (z > 0.4) load3D();
-      var raw = sm((z - Z3) / 0.3), ramp = isReduce() ? 1 : Math.min(1, (performance.now() - readyAt) / 500);
+      var raw = sm((z - Z3) / 0.3), ramp = isReduce() ? 1 : Math.min(1, (performance.now() - readyAt) / ZOOM_FADE_MS);
       a3d = ready ? Math.min(raw, ramp) : 0;
       zoomOpaque3D = a3d >= 0.999;
       if (Math.abs(a3d - lastA3) > 0.001 || lastA3 < 0){
@@ -1415,7 +1419,7 @@ var ORB_SATS = {
     sync3D = function(){ if (ready && inst) inst.setActive(onScreen && !document.hidden && a3d > 0.003); };
 
     zoomStep = function(dt){
-      if (Math.abs(zoomTarget - zoomCur) > 0.0006){ zoomCur += (zoomTarget - zoomCur) * (1 - Math.exp(-dt * 5.5)); }
+      if (Math.abs(zoomTarget - zoomCur) > 0.0006){ zoomCur += (zoomTarget - zoomCur) * (1 - Math.exp(-dt * ZOOM_RATE)); }
       else zoomCur = zoomTarget;
       if (zoomCur > 0 || lastA3 > 0 || lastZk > 0) apply();
     };
