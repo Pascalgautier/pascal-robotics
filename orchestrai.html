@@ -280,13 +280,6 @@ section[id]{scroll-margin-top:84px}
 .orb.is-grabbing canvas{cursor:grabbing}
 .orb:focus{outline:none}
 .orb:focus-visible{outline:1px solid rgba(127,178,255,.4);outline-offset:-1px}
-.orb-hint{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:7px;margin:0;font-size:10.5px;letter-spacing:.08em;color:#566c90;white-space:nowrap;pointer-events:none;transition:opacity .4s ease}
-.orb-hint svg{width:16px;height:10px;display:block;opacity:.8}
-.orb-state{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#8ea4c7;white-space:nowrap;pointer-events:none}
-.orb-state b{color:#e4eeff;font-weight:750;letter-spacing:.28em;transition:opacity .6s ease}
-.orb-state b.fade{opacity:0}
-.orb-state i{width:5px;height:5px;border-radius:50%;background:var(--blue2)}
-.orb-caption{margin:8px auto 0;font-size:11.5px;color:#61779b;max-width:520px;line-height:1.5}
 .oai-verbs{text-wrap:balance;margin:clamp(18px,3svh,30px) 0 0;font-size:clamp(14px,1.55vw,19px);letter-spacing:.3em;font-weight:750;color:#f0f5ff;padding-left:.3em}
 .hero .lead{margin:14px auto 26px;max-width:700px;color:var(--muted);font-size:clamp(15px,1.3vw,17.5px)}
 
@@ -394,8 +387,6 @@ section[id]{scroll-margin-top:84px}
   .oai-mark{font-size:clamp(22px,6vw,30px)}   /* was clamp(30px,11vw,60px) */
   /* full-bleed orb canvas on mobile (the hero clips horizontally: overflow:hidden) */
   .orb{width:100vw;max-width:none;margin-left:calc(50% - 50vw);border-radius:0;height:clamp(260px,min(100vw,calc(100svh - 330px)),460px)}
-  .orb-state{font-size:9.5px;letter-spacing:.2em;bottom:24px}
-  .orb-hint{font-size:10px}
   /* loop: vertical stack, learning return drawn on the right side (RESULT -> OAI) */
   .oloop{--g:34px;--h:60px;grid-template-columns:1fr;row-gap:var(--g);padding:0 64px 0 0}
   .oloop .lp{min-height:0;height:var(--h);padding:0 14px}
@@ -414,8 +405,6 @@ section[id]{scroll-margin-top:84px}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .js .reveal{opacity:1;transform:none;transition:none}
-  .orb-state b{transition:none}
-  .orb-hint{transition:none}
   .btn,.links a,.contact-pill,.lab-link a{transition:none}
 }
 </style>
@@ -468,10 +457,7 @@ section[id]{scroll-margin-top:84px}
 
     <div class="orb" id="oai-orb-wrap" tabindex="0" role="application" aria-label="Orbe OrchestrAI interactif — faites glisser pour le faire pivoter" data-i18n-aria="orb.aria">
       <canvas id="oai-orb" aria-hidden="true"></canvas>
-      <div class="orb-state" aria-hidden="true"><i></i><span data-i18n="orb.kicker">État suggéré</span><b id="oai-orb-state">ANALYSE</b></div>
-      <p class="orb-hint" aria-hidden="true"><svg viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M1.5 5h13M4.5 2 1.5 5l3 3M11.5 2l3 3-3 3"/></svg><span data-i18n="orb.hint">Faites glisser pour explorer</span></p>
     </div>
-    <p class="orb-caption" data-i18n="orb.caption">Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.</p>
 
     <p class="oai-verbs" data-i18n="hero.verbs">COMPREND. ORCHESTRE. MESURE. APPREND.</p>
     <p class="lead" data-i18n="hero.lead">Une plateforme en développement qui aide à choisir et orchestrer la bonne combinaison d’IA pour chaque besoin.</p>
@@ -633,10 +619,7 @@ var I18N = {
   "pres.title": "Présentation interactive d’OrchestrAI : principe, architecture et statuts",
   "pres.open": "Ouvrir la présentation en pleine page →",
   "orb.states": "ANALYSE|RECHERCHE|ORCHESTRATION|ÉVALUATION|APPRENTISSAGE",
-  "orb.kicker": "État suggéré",
-  "orb.caption": "Représentation visuelle du concept — pas une intelligence opérationnelle en temps réel.",
   "orb.aria": "Orbe OrchestrAI interactif — faites glisser pour le faire pivoter",
-  "orb.hint": "Faites glisser pour explorer",
   "why.eyebrow": "Pourquoi OrchestrAI",
   "why.title": "<span>Trop de modèles.</span><span>Trop de plateformes.</span><span class=\"soft\">Trop de choix.</span>",
   "why.answer": "OrchestrAI aide à choisir et orchestrer <span class=\"accent\">le bon modèle, le bon fournisseur, la bonne infrastructure</span>, selon le besoin.",
@@ -700,10 +683,7 @@ var I18N = {
   "pres.title": "Interactive OrchestrAI presentation (in French): principle, architecture and statuses",
   "pres.open": "Open the presentation full page (in French) →",
   "orb.states": "ANALYSIS|RESEARCH|ORCHESTRATION|EVALUATION|LEARNING",
-  "orb.kicker": "Suggested state",
-  "orb.caption": "Visual representation of the concept — not an operational, real-time intelligence.",
   "orb.aria": "Interactive OrchestrAI orb — drag to rotate it",
-  "orb.hint": "Drag to explore",
   "why.eyebrow": "Why OrchestrAI",
   "why.title": "<span>Too many models.</span><span>Too many platforms.</span><span class=\"soft\">Too many choices.</span>",
   "why.answer": "OrchestrAI helps choose and orchestrate <span class=\"accent\">the right model, the right provider, the right infrastructure</span>, for each need.",
