@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="fr" data-theme="orchestr-blue" data-palette="vision">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050b18">
+<title>Présentation OrchestrAI — principe, architecture et statuts | Pascal Robotics</title>
+<meta name="description" content="Présentation interactive d’OrchestrAI, plateforme d’orchestration IA en développement par Pascal Robotics : le principe, la chaîne d’architecture et le statut réel de chaque brique (actif, expérimental, futur).">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://pascal-robotics.fr/orchestrai-presentation">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pascal Robotics">
+<meta property="og:url" content="https://pascal-robotics.fr/orchestrai-presentation">
+<meta property="og:title" content="Présentation OrchestrAI | Pascal Robotics">
+<meta property="og:description" content="Principe, architecture et statuts réels d’OrchestrAI, plateforme d’orchestration IA en développement.">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="https://pascal-robotics.fr/assets/orchestrai/og-orchestrai.jpg">
+<style>
+:root {
+    --bg: #0a0d11; --panel: #11151b; --panel-2: #161b22; --line: #242b35; --line-2: #2f3844;
+    --text: #d8dee6; --muted: #7d8896; --dim: #56606c;
+    --ok: #3ecf8e; --wait: #f2a93b; --block: #ef5b5b; --info: #4cc2ff;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--sans); }
+header { display: flex; align-items: center; gap: 20px; padding: 14px 24px; border-bottom: 1px solid var(--line);
+           background: linear-gradient(#0e1217, #0a0d11); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+.brand { font: 600 13px var(--mono); letter-spacing: .18em; }
+.brand b { color: var(--info); font-weight: 600; }
+.prompt { flex: 1; min-width: 240px; font-size: 13px; color: var(--muted); }
+.prompt q { color: var(--text); quotes: "« " " »"; }
+main { padding: 20px 24px 40px; max-width: 1600px; margin: 0 auto; }
+h2 { font: 600 11px var(--mono); letter-spacing: .2em; color: var(--muted); margin: 28px 0 10px; text-transform: uppercase; }
+.screen { aspect-ratio: 16 / 9; background: #000; position: relative; border-bottom: 1px solid var(--line); }
+.screen video { width: 100%; height: 100%; display: block; background: #000; }
+.k { font: 10.5px var(--mono); letter-spacing: .08em; color: var(--dim); text-transform: uppercase; }
+.v { font: 13px var(--mono); color: var(--text); overflow-wrap: anywhere; }
+.v.null { color: var(--dim); }
+.bar { height: 4px; background: #1b2129; border-radius: 2px; margin-top: 5px; width: 140px; max-width: 100%; }
+.bar i { display: block; height: 100%; border-radius: 2px; background: var(--info); }
+@media (max-width: 800px) {
+  main, header { padding-left: 16px; padding-right: 16px; }
+}
+body:not(.v-arch) .arch-only { display: none; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.panel table { border: 0; border-radius: 0; }
+html[data-theme="orchestr-blue"] {
+  /* Design tokens */
+  --bg-main: #050a14;        --bg-panel: #08101f;      --bg-card: #0b1526;     --bg-card-2: #0f1c33;
+  --bg-input: #060d1a;
+  --blue-primary: #2563eb;   --blue-electric: #3b82f6; --blue-glow: rgba(59, 130, 246, .35);
+  --cyan: #38bdf8;
+  --text-primary: #f1f5fb;   --text-secondary: #94a3bd; --text-dim: #5b6b87;
+  --border: #16233b;         --border-strong: #22385e;
+  --success: #22c983;        --warning: #f59e0b;       --danger: #f43f5e;
+  --radius: 8px;             --radius-sm: 4px;
+  /* Legacy variable names mapped onto the tokens, so every existing rule follows */
+  --bg: var(--bg-main); --panel: var(--bg-card); --panel-2: var(--bg-panel);
+  --line: var(--border); --line-2: var(--border-strong);
+  --text: var(--text-primary); --muted: var(--text-secondary); --dim: var(--text-dim);
+  --ok: var(--success); --wait: var(--warning); --block: var(--danger); --info: var(--blue-electric);
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html[data-theme="orchestr-blue"] body {
+  background: radial-gradient(1200px 500px at 70% -200px, rgba(37, 99, 235, .10), transparent 70%), var(--bg-main);
+  background-attachment: fixed;
+}
+html[data-theme="orchestr-blue"] header {
+  background: linear-gradient(180deg, #0a1426 0%, #070e1c 100%);
+  border-bottom: 1px solid var(--border-strong); padding: 12px 24px 0; row-gap: 10px; column-gap: 18px;
+  box-shadow: 0 1px 0 rgba(59, 130, 246, .08), 0 8px 24px rgba(0, 0, 0, .35);
+}
+html[data-theme="orchestr-blue"] .brand { display: none; }
+html[data-theme="orchestr-blue"] .brand-blue { display: flex; align-items: center; gap: 14px; padding-right: 18px; border-right: 1px solid var(--border-strong); }
+.brand-blue { display: none; }
+.brand-blue .mark { width: 30px; height: 30px; flex: none; }
+.brand-blue .word { font: 800 21px/1 var(--sans); letter-spacing: .12em; color: var(--text-primary); white-space: nowrap; }
+.brand-blue .word span { color: var(--blue-electric); text-shadow: 0 0 14px var(--blue-glow); }
+.brand-blue .sub { display: flex; gap: 10px; margin-top: 5px; font: 600 9.5px var(--mono); letter-spacing: .22em; color: var(--blue-electric); white-space: nowrap; }
+.brand-blue .sub em { font-style: normal; letter-spacing: .06em; color: var(--text-secondary); font-family: var(--sans); font-weight: 500; font-size: 10.5px; }
+html[data-theme="orchestr-blue"] .prompt q { color: var(--text-primary); }
+html[data-theme="orchestr-blue"] main { padding-top: 24px; }
+html[data-theme="orchestr-blue"] h2 { color: var(--text-primary); font: 700 12px var(--sans); letter-spacing: .16em; display: flex; align-items: center; gap: 10px; }
+html[data-theme="orchestr-blue"] h2::before { content: ""; width: 3px; height: 12px; border-radius: 2px; background: var(--blue-electric); box-shadow: 0 0 8px var(--blue-glow); }
+html[data-theme="orchestr-blue"] .k { color: var(--text-dim); }
+html[data-theme="orchestr-blue"] .screen { background: #02050b; }
+html[data-theme="orchestr-blue"] .bar { background: #0f1c33; }
+html[data-theme="orchestr-blue"] .bar i { background: linear-gradient(90deg, var(--blue-primary), var(--cyan)); box-shadow: 0 0 8px var(--blue-glow); }
+html[data-theme="orchestr-blue"] a:focus-visible, html[data-theme="orchestr-blue"] button:focus-visible, html[data-theme="orchestr-blue"] summary:focus-visible, html[data-theme="orchestr-blue"] video:focus-visible { outline: 2px solid var(--blue-electric); outline-offset: 2px; box-shadow: 0 0 0 4px var(--blue-glow); }
+@media (max-width: 800px) {
+  html[data-theme="orchestr-blue"] .brand-blue { border-right: 0; padding-right: 0; }
+  html[data-theme="orchestr-blue"] .brand-blue .word { font-size: 18px; }
+  html[data-theme="orchestr-blue"] header { padding-left: 16px; padding-right: 16px; position: static; }
+}
+html[data-theme="orchestr-blue"][data-palette="vision"] {
+  --bg-main: #050c1e;        --bg-sidebar: #061127;    --bg-panel: #07142e;    --bg-card: #091a3b;   --bg-card-2: #0c2148;
+  --bg-input: #050f25;
+  --blue-primary: #1a5fe8;   --blue-electric: #1e6cff; --blue-bright: #5b93ff; --blue-deep: #022e74; --blue-panel: #033588;
+  --blue-glow: rgba(30, 108, 255, .22);
+  --cyan: #38bdf8;
+  --text-primary: #f4f7ff;   --text-secondary: #a3b3d4; --text-dim: #6a7ca3;
+  --border: #13295a;         --border-strong: #1d3b7c;
+  --success: #22c983;        --warning: #f59e0b;       --danger: #f43f5e;
+}
+html[data-theme="orchestr-blue"][data-palette="vision"] body {
+  background: radial-gradient(1400px 600px at 60% -260px, rgba(3, 53, 136, .45), transparent 70%), var(--bg-main);
+  background-attachment: fixed;
+}
+html[data-theme="orchestr-blue"][data-palette="vision"] header { background: linear-gradient(180deg, #071633 0%, #051027 100%); box-shadow: 0 6px 20px rgba(0, 0, 0, .35); }
+html[data-theme="orchestr-blue"][data-palette="vision"] .bar i { background: var(--blue-electric); box-shadow: none; }
+html[data-theme="orchestr-blue"][data-palette="vision"] .brand-blue .word span { text-shadow: none; }
+html[data-theme="orchestr-blue"][data-palette="vision"] .brand-blue .sub { color: var(--text-secondary); }
+html[data-theme="orchestr-blue"][data-palette="vision"] .screen { background: #020716; }
+html[data-theme="orchestr-blue"] { --sidebar-w: 248px; }
+html[data-theme="orchestr-blue"] body { display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); grid-template-rows: auto 1fr; min-height: 100vh; }
+html[data-theme="orchestr-blue"] header { grid-column: 1 / -1; grid-row: 1; }
+html[data-theme="orchestr-blue"] main { grid-column: 2; grid-row: 2; width: 100%; min-width: 0; }
+.vision { margin: 6px 4px 8px; padding: 10px 10px 8px; border: 1px solid var(--line); border-radius: 8px; background: rgba(2, 46, 116, .18); }
+.vision .k { margin-bottom: 6px; }
+.vision ol { list-style: none; margin: 0; padding: 0; }
+.vision li { position: relative; padding: 0 0 7px 16px; font-size: 11.5px; color: var(--muted); }
+.vision li::before { content: ""; position: absolute; left: 2px; top: 5px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--line-2); background: transparent; }
+.vision li:not(:last-child)::after { content: ""; position: absolute; left: 5.5px; top: 13px; bottom: 1px; width: 1px; background: var(--line-2); }
+.vision li.now { color: var(--text); }
+.vision li.now::before { background: var(--blue-electric, var(--info)); border-color: var(--blue-electric, var(--info)); }
+@media (max-width: 1200px) {
+  html[data-theme="orchestr-blue"] { --sidebar-w: 64px; }
+}
+@media (max-width: 700px) {
+  html[data-theme="orchestr-blue"] body { grid-template-columns: minmax(0, 1fr); }
+  html[data-theme="orchestr-blue"] main { grid-column: 1; }
+}
+:root { --series-human: var(--info); --series-ai: #9085e9; }
+html[data-theme="orchestr-blue"] { --series-human: var(--blue-electric); }
+html[data-theme="orchestr-blue"], html[data-theme="orchestr-blue"] * { scrollbar-width: thin; scrollbar-color: #3a3f48 transparent; }
+html[data-theme="orchestr-blue"] ::-webkit-scrollbar { width: 8px; height: 8px; }
+html[data-theme="orchestr-blue"] ::-webkit-scrollbar-track { background: transparent; }
+html[data-theme="orchestr-blue"] ::-webkit-scrollbar-thumb { background: #3a3f48; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+html[data-theme="orchestr-blue"] ::-webkit-scrollbar-thumb:hover { background: #5a616c; background-clip: padding-box; }
+html[data-theme="orchestr-blue"] ::-webkit-scrollbar-corner { background: transparent; }
+.lede { color: var(--muted); font-size: 13px; margin: 0 0 4px; max-width: 980px; }
+.oai-modes { display: inline-flex; gap: 4px; margin-top: 10px; }
+.oai-modes button { font: 600 11px var(--mono); letter-spacing: .1em; padding: 5px 12px; border-radius: 3px; cursor: pointer;
+  background: transparent; color: var(--muted); border: 1px solid var(--line-2); }
+.oai-modes button.on { color: var(--info); border-color: var(--info); background: color-mix(in srgb, var(--info) 10%, transparent); }
+.st { font: 600 10px var(--mono); letter-spacing: .08em; padding: 2px 6px; border-radius: 3px; border: 1px solid; white-space: nowrap; }
+.st.active { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+.st.guarded { color: var(--wait); border-color: color-mix(in srgb, var(--wait) 55%, transparent); }
+.st.future { color: var(--dim); border-color: var(--line-2); border-style: dashed; }
+.oai-message { font-size: 15px; color: var(--text); border-left: 3px solid var(--info); padding: 8px 12px; margin-top: 12px; }
+.oai-message small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.oai-scope { --c-blue: #2F6BFF; --c-cyan: #5CC8E8; --c-amber: #E9B45A; --c-green: #4CC49A; --c-gray: #7C8AA5;
+  --n-bg: #0c162b; --n-bg2: #0a1224; --n-line: #22324f; --n-line-hi: #3b5480; }
+.oai-scope .st { font: 600 9.5px var(--mono); letter-spacing: .08em; padding: 2px 6px; border-radius: 3px; border: 1px solid; white-space: nowrap; }
+.oai-scope .st.active { color: var(--c-green); border-color: color-mix(in srgb, var(--c-green) 45%, transparent); }
+.oai-scope .st.guarded, .oai-scope .st.future { color: var(--c-amber); border-color: color-mix(in srgb, var(--c-amber) 45%, transparent); }
+.oai-scope .st.future { border-style: dashed; }
+.oai-scope .oai-modes button.on { color: #cfe0ff; border-color: var(--c-blue); background: color-mix(in srgb, var(--c-blue) 14%, transparent); }
+.oai-hero { text-align: center; max-width: 900px; margin: 10px auto 0; }
+.oai-h1 { font-size: clamp(21px, 2.8vw, 32px); font-weight: 700; line-height: 1.2; color: var(--text); margin: 8px 0 8px; overflow-wrap: anywhere; }
+.oai-h1 span { color: #8fb0ff; }
+.oai-hero .lede { margin: 0 auto; max-width: 720px; font-size: 14px; }
+.oai-hero .oai-modes { margin-top: 14px; }
+.oai-graph { position: relative; display: grid; margin-top: 18px; }
+.oai-arch { gap: 34px 34px; padding: 40px 6px 20px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "intent pi agent mp gen" "kb kb . ev ev"; align-items: start; }
+.oai-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
+.oai-node { position: relative; z-index: 1; text-align: left; font: inherit; color: var(--text); cursor: pointer; min-width: 0;
+  background: linear-gradient(180deg, var(--n-bg), var(--n-bg2)); border: 1px solid var(--n-line); border-radius: 12px;
+  padding: 13px 14px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+  transition: transform .2s ease-out, box-shadow .2s ease-out, border-color .2s ease-out, background .2s ease-out, opacity .2s ease-out; }
+.oai-node:hover { transform: translateY(-4px) scale(1.005); border-color: var(--n-line-hi); box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .7); }
+.oai-node:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 3px; }
+.oai-node[aria-pressed="true"] { border: 2px solid var(--c-blue); padding: 12px 13px; background: linear-gradient(180deg, #12203d, #0d1830);
+  box-shadow: 0 10px 24px -14px rgba(47, 107, 255, .55); }
+.oai-node[aria-pressed="true"]::after { content: '✓ SÉLECTIONNÉ'; position: absolute; top: -9px; right: 12px; font: 700 9px var(--mono);
+  letter-spacing: .1em; padding: 1px 6px; border-radius: 3px; background: var(--c-blue); color: #fff; }
+.oai-node .nh { display: flex; align-items: flex-start; gap: 9px; min-width: 0; }
+.oai-node .ic { width: 20px; height: 20px; color: #8fb0ff; flex: none; margin-top: 1px; }
+.oai-node .nt { font: 600 11.5px var(--mono); letter-spacing: .08em; overflow-wrap: anywhere; }
+.oai-node .ns { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; line-height: 1.4; }
+.oai-node .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.oai-node ul { margin: 0; padding-left: 15px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.oai-node li { overflow-wrap: anywhere; }
+.oai-node .sub { border-top: 1px solid var(--n-line); padding-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.oai-node .sub b { font: 600 10.5px var(--mono); letter-spacing: .06em; font-weight: 600; }
+.oai-node .mp { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; align-items: start; }
+.oai-node .mp .neq { font: 700 11px var(--mono); color: #8fb0ff; align-self: center; }
+.oai-node .mp .k { font: 600 9.5px var(--mono); letter-spacing: .1em; color: var(--muted); margin-bottom: 2px; }
+.oai-node.is-future { border-style: dashed; }
+.n-intent { grid-area: intent; }
+.n-pi { grid-area: pi; }
+.n-agent { grid-area: agent; }
+.n-mp { grid-area: mp; }
+.n-gen { grid-area: gen; }
+.n-ev { grid-area: ev; }
+.n-kb { grid-area: kb; }
+.oai-node.agent { justify-self: center; align-self: center; width: min(100%, 236px); aspect-ratio: 1; border-radius: 50%; padding: 18px;
+  align-items: center; justify-content: center; text-align: center; gap: 6px; border: 1px dashed color-mix(in srgb, var(--c-blue) 70%, transparent);
+  background: radial-gradient(circle at 50% 35%, #142850, #0b1529 70%);
+  box-shadow: 0 0 0 6px rgba(47, 107, 255, .06), 0 0 36px -10px rgba(47, 107, 255, .45); }
+.oai-node.agent[aria-pressed="true"] { border: 2px dashed var(--c-blue); padding: 17px; }
+.oai-node.agent[aria-pressed="true"]::after { right: 50%; transform: translateX(50%); top: -10px; }
+.oai-node.agent .brand { font-size: 30px; font-weight: 800; letter-spacing: .06em; line-height: 1; }
+.oai-node.agent .nt { font-size: 12px; letter-spacing: .14em; }
+.oai-node.agent .ic { width: 30px; height: 30px; margin: 0; }
+.oai-verbs4 { display: grid; grid-template-columns: repeat(2, auto); gap: 2px 12px; font: 600 9.5px var(--mono); letter-spacing: .08em; color: #aebfe0; }
+.oai-wire { fill: none; stroke-width: 1.5; opacity: .6; transition: opacity .2s ease-out, stroke-width .2s ease-out; }
+.oai-wire.w-flow { stroke: #4d7cff; }
+.oai-wire.w-today { stroke: var(--c-cyan); stroke-width: 1.2; opacity: .5; }
+.oai-wire.w-future { stroke: var(--c-gray); stroke-dasharray: 5 5; }
+.oai-wire.w-feedback { stroke: var(--c-cyan); stroke-width: 2; stroke-dasharray: 7 5; opacity: .85; }
+.oai-wire-label { font: 600 9.5px var(--mono); letter-spacing: .1em; fill: var(--muted); paint-order: stroke; stroke: #070d1a; stroke-width: 4px; transition: opacity .2s ease-out; }
+.oai-wire-label.w-feedback { fill: var(--c-cyan); }
+.oai-graph.has-sel .oai-node:not([aria-pressed="true"]):not(.rel) { opacity: .45; }
+.oai-graph.has-sel .oai-wire:not(.rel), .oai-graph.has-sel .oai-wire-label:not(.rel) { opacity: .12; }
+.oai-graph.has-sel .oai-wire.rel { opacity: 1; stroke-width: 2.4; }
+.oai-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; color: var(--muted); font: 11px var(--mono); margin-top: 6px; }
+.oai-legend i { display: inline-block; width: 22px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 6px; }
+.oai-legend .l-flow { border-color: #4d7cff; }
+.oai-legend .l-today { border-color: var(--c-cyan); }
+.oai-legend .l-future { border-color: var(--c-gray); border-top-style: dashed; }
+.oai-legend .l-feedback { border-color: var(--c-cyan); border-top-style: dashed; }
+.oai-loop { text-align: center; color: var(--muted); font: 11.5px var(--mono); letter-spacing: .04em; margin-top: 4px; overflow-wrap: anywhere; }
+.oai-detail { margin-top: 12px; padding: 12px 16px; border: 1px solid var(--n-line); border-radius: 12px; background: rgba(10, 18, 36, .75); min-width: 0; }
+.oai-detail .dh { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 600 12px var(--mono); letter-spacing: .07em; }
+.oai-detail .dg { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 20px; margin-top: 8px; }
+.oai-detail .dk { font: 600 10px var(--mono); letter-spacing: .1em; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.oai-detail p { margin: 4px 0 0; color: var(--text); font-size: 13px; overflow-wrap: anywhere; }
+.oai-detail ul { margin: 4px 0 0; padding-left: 16px; color: var(--muted); font-size: 12.5px; }
+.oai-detail li { overflow-wrap: anywhere; }
+.oai-band { display: grid; gap: 12px; margin-top: 12px; }
+.oai-band.b4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.oai-band.b5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.oai-band .cell { border: 1px solid var(--n-line); border-radius: 12px; padding: 12px 14px; background: rgba(10, 18, 36, .6); min-width: 0; }
+.oai-band .cell .k { font: 600 10.5px var(--mono); letter-spacing: .1em; color: #cfe0ff; margin-bottom: 6px; overflow-wrap: anywhere; }
+.oai-band .cell ul { margin: 0; padding-left: 15px; color: var(--muted); font-size: 12px; }
+.oai-band .benefit { text-align: center; font: 600 11px var(--mono); letter-spacing: .08em; color: var(--text); padding: 14px 10px; }
+.oai-band .benefit .ic { width: 22px; height: 22px; color: #8fb0ff; display: block; margin: 0 auto 6px; }
+.oai-message { font-size: 15px; color: var(--text); border-left: 3px solid var(--c-blue); padding: 8px 12px; margin-top: 12px; }
+.oai-message small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.oai-m-only { display: none; }
+@media (max-width: 1699px) {
+  .oai-arch { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, 1fr); gap: 34px 40px; padding-top: 16px;
+    grid-template-areas: "intent agent mp" "pi agent gen" "kb . ev"; }
+}
+@media (max-width: 1100px) {
+  .oai-band.b5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .oai-band.b4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .oai-graph { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; gap: 30px; padding: 8px 0 !important; }
+  .oai-graph .oai-node { grid-area: auto !important; order: var(--ord, 0); }
+  .oai-graph .oai-node:not(.m-first)::before { content: '↓'; position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+    color: var(--dim); font-size: 14px; line-height: 20px; }
+  .oai-wires { display: none; }
+  .oai-m-only { display: block; }
+  .oai-arch + .oai-legend { display: none; }
+  .oai-band.b4, .oai-band.b5 { grid-template-columns: minmax(0, 1fr); }
+}
+.crit { display: grid; grid-template-columns: minmax(0, 1fr) auto 34px; align-items: center; gap: 10px; padding: 3px 0; font-size: 12.5px; }
+.crit .n { text-align: right; font: 12px var(--mono); color: var(--text); }
+.crit .n.null { color: var(--dim); }
+.pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 12px 14px; }
+.pipeline span.step { font: 600 10px var(--mono); letter-spacing: .08em; padding: 6px 9px; border-radius: 4px; border: 1px solid var(--line-2); color: var(--dim); }
+.pipeline span.step.active { color: var(--info); border-color: var(--info); }
+video, img, svg { max-width: 100%; }
+@media (max-width: 700px) {
+  html[data-theme="orchestr-blue"] .brand-blue .sub { display: none; }
+  html[data-theme="orchestr-blue"] header { gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+  html[data-theme="orchestr-blue"] main { padding-left: 12px; padding-right: 12px; }
+}
+#dry-run details { margin: 10px 0 4px; }
+body:not(.v-oai) .oai-only { display: none; }
+a.brand, a.brand-blue { text-decoration: none; color: inherit; }
+a.brand:focus-visible, a.brand-blue:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 4px; border-radius: 4px; }
+.oai-landing {
+  --l-blue: #2F6BFF; --l-blue-2: #8FB0FF; --l-ink: #E8EEFA; --l-mute: #8C9AB5; --l-dim: #5B6A88; --l-line: #22324f;
+  position: relative; overflow: hidden; border: 1px solid var(--l-line); border-radius: 14px;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, #0f1f3f 0%, #0a1428 46%, #070e1d 100%);
+  min-height: calc(100vh - var(--header-h, 96px) - 56px);
+  display: flex; align-items: center; justify-content: center; padding: clamp(24px, 4vh, 48px) 16px;
+}
+.oai-hero-land { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 760px; min-width: 0; }
+.oai-land-title { margin: 0; padding-left: .14em; font: 800 clamp(24px, 7.4vw, 58px)/1 var(--sans, system-ui, sans-serif);
+  letter-spacing: .14em; color: var(--l-ink); }
+.oai-land-title span { color: var(--l-blue); }
+.oai-land-sub { margin-top: 12px; padding-left: .34em; font: 600 clamp(9px, 1.1vw, 12px) var(--mono, ui-monospace, monospace);
+  letter-spacing: .34em; color: var(--l-blue-2); }
+.oai-land-verbs { margin-top: 16px; font: 500 clamp(10px, 1.25vw, 13.5px)/1.6 var(--mono, ui-monospace, monospace);
+  letter-spacing: .26em; color: var(--l-mute); }
+.oai-orb-wrap { width: clamp(190px, min(46vh, 74vw), 470px); aspect-ratio: 1 / 1; margin: clamp(8px, 2.2vh, 26px) 0 clamp(4px, 1.2vh, 14px); }
+.oai-orb { display: block; width: 100%; height: 100%; }
+.oai-orb-status { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; min-height: 20px;
+  font: 600 10.5px var(--mono, ui-monospace, monospace); letter-spacing: .22em; color: var(--l-blue-2); }
+.oai-orb-state { transition: opacity .6s ease; }
+.oai-orb-state.fade { opacity: 0; }
+.oai-orb-demo { font-size: 8.5px; letter-spacing: .16em; color: var(--l-dim); border: 1px solid var(--l-line); border-radius: 3px; padding: 2px 5px; }
+.oai-land-line { margin: 16px 0 0; max-width: 34em; font: 400 clamp(14px, 1.5vw, 17px)/1.55 var(--sans, system-ui, sans-serif); color: #C3CEE3; }
+.oai-cta { margin-top: 22px; display: inline-flex; gap: 10px; align-items: center; padding: 10px 20px; border: 1px solid #2d4a86;
+  border-radius: 999px; background: rgba(47, 107, 255, .08); color: var(--l-ink); text-decoration: none;
+  font: 600 11px var(--mono, ui-monospace, monospace); letter-spacing: .24em; transition: background .2s ease, border-color .2s ease; }
+.oai-cta:hover { background: rgba(47, 107, 255, .18); border-color: var(--l-blue); }
+.oai-cta:focus-visible { outline: 2px solid var(--l-blue); outline-offset: 3px; }
+.oai-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 560px) {
+  .oai-landing { border-radius: 10px; padding: 22px 12px; min-height: calc(100vh - var(--header-h, 72px) - 32px); }
+  .oai-land-sub { letter-spacing: .22em; padding-left: .22em; }
+  .oai-land-verbs { letter-spacing: .12em; }
+  .oai-orb-wrap { width: clamp(170px, 70vw, 300px); }
+  .oai-land-line { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oai-orb-state, .oai-cta { transition: none; }
+}
+body.shell-less header .prompt { display: none !important; }
+html[data-theme="orchestr-blue"] body.shell-less { grid-template-columns: minmax(0, 1fr); }
+html[data-theme="orchestr-blue"] body.shell-less main { grid-column: 1; max-width: 1760px; margin: 0 auto; }
+html[data-theme="orchestr-blue"] body.shell-less header { padding-bottom: 12px; }
+html[data-theme="orchestr-blue"] body.shell-less .brand-blue { border-right: 0; padding-right: 0; }
+body:not(.shell-less) .pres-only { display: none; }
+.pres-top { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+.pres-end { display: flex; justify-content: center; margin: 28px 0 8px; }
+.pres-enter { display: inline-flex; gap: 10px; align-items: center; padding: 8px 18px; border: 1px solid #2d4a86; border-radius: 999px;
+  background: rgba(47, 107, 255, .08); color: #E8EEFA; text-decoration: none; font: 600 10.5px var(--mono, ui-monospace, monospace);
+  letter-spacing: .22em; transition: background .2s ease, border-color .2s ease; }
+.pres-enter:hover { background: rgba(47, 107, 255, .18); border-color: #2F6BFF; }
+.pres-enter:focus-visible { outline: 2px solid #2F6BFF; outline-offset: 3px; }
+.oai-node .ntech { display: none; }
+#view-arch.is-tech .oai-node .ntech { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  margin-top: 6px; text-align: left; font: 500 9.5px/1.45 var(--mono, ui-monospace, monospace); color: #8fb0ff; overflow-wrap: anywhere; }
+#view-arch.is-tech #arch-tech { margin-top: 10px; }
+body.shell-less #view-arch:not(.is-tech) .arch-doc { display: none; }
+.oai-value { --v-blue: #2F6BFF; --v-light: #8FB0FF; --v-ink: #E8EEFA; --v-mute: #8C9AB5; --v-dim: #5B6A88; --v-line: #22324f; --v-line-hi: #3b5480;
+  margin-top: 40px; scroll-margin-top: calc(var(--header-h, 72px) + 12px); padding: clamp(18px, 2.4vw, 32px); border: 1px solid var(--v-line); border-radius: 16px;
+  background: radial-gradient(ellipse 80% 70% at 50% 30%, #0e1c38 0%, #0a1428 55%, #08101f 100%); }
+.val-head { text-align: center; }
+.val-head h2 { justify-content: center; margin: 0 0 10px; }
+.val-lede { margin: 0; font: 600 clamp(10.5px, 1.2vw, 13px)/1.6 var(--mono, ui-monospace, monospace); letter-spacing: .16em; color: var(--v-ink); }
+.val-tag { display: inline-block; margin-top: 10px; font: 600 8.5px var(--mono, ui-monospace, monospace); letter-spacing: .16em; color: var(--v-dim);
+  border: 1px solid var(--v-line); border-radius: 3px; padding: 2px 6px; }
+.val-flows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); margin-top: 24px; transition: opacity .6s ease; }
+.oai-value.fading .val-flows, .oai-value.fading .val-benefits { opacity: 0; }
+.val-flow { margin: 0; min-width: 0; padding: 14px 14px 16px; border: 1px solid var(--v-line); border-radius: 14px; background: rgba(8, 14, 30, .55); }
+.val-flow.is-oai { border-color: #2d4a86; box-shadow: inset 0 1px 0 rgba(143, 176, 255, .06); }
+.val-k { font: 800 clamp(17px, 1.9vw, 26px)/1.1 var(--sans, system-ui, sans-serif); letter-spacing: .14em; color: #C3CEE3;
+  text-align: center; margin: 4px 0 8px; overflow-wrap: anywhere; }
+.val-k::after { content: ''; display: block; width: 48px; height: 1px; margin: 10px auto 0; background: var(--v-line-hi); }
+.is-oai .val-k { color: var(--v-ink); }
+.is-oai .val-k span { color: var(--v-blue); }
+.is-oai .val-k::after { background: var(--v-blue); }
+.val-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.val-svg text { font-family: var(--mono, ui-monospace, monospace); font-size: 12px; font-weight: 600; letter-spacing: .06em; fill: var(--v-ink); text-anchor: middle; }
+.val-svg .v-cap { font-size: 10px; letter-spacing: .18em; fill: var(--v-dim); text-anchor: start; }
+.val-svg .v-sub { font-size: 9.5px; font-weight: 500; fill: var(--v-mute); }
+.val-svg .v-node rect { fill: #0c162b; stroke: var(--v-line-hi); stroke-width: 1.2; }
+.val-svg .v-gen rect { stroke: var(--v-light); }
+.val-svg .v-res rect { stroke: var(--v-blue); fill: rgba(47, 107, 255, .12); }
+.val-svg .v-variant text { font-weight: 500; font-size: 9px; letter-spacing: .04em; }
+.val-svg .v-oai polygon { fill: rgba(47, 107, 255, .16); stroke: var(--v-blue); stroke-width: 1.6; }
+.val-svg .v-oai text { font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+.val-svg .v-verb { font-size: 9.5px; letter-spacing: .14em; fill: var(--v-light); }
+.val-svg .v-future { fill: var(--v-dim); }
+.val-svg .v-try path { fill: none; stroke: var(--v-mute); stroke-width: 1.2; }
+.val-svg .v-eval circle { fill: #0c162b; stroke: var(--v-light); stroke-width: 1.4; }
+.val-svg .v-line, .val-svg .v-route, .val-svg .v-retry, .val-svg .v-feedback { fill: none; stroke: #4d7cff; stroke-width: 1.5; stroke-linecap: round; }
+.val-svg .v-route { stroke: var(--v-line-hi); stroke-width: 1.2; }
+.val-svg .v-route.hi { stroke: var(--v-blue); stroke-width: 1.8; }
+.val-svg .v-retry { stroke: var(--v-mute); stroke-dasharray: 4 4; }
+.val-svg .v-feedback { stroke: #5CC8E8; stroke-width: 1.1; opacity: .55; }
+.val-svg .v-cand { fill: #0c162b; stroke: var(--v-line-hi); stroke-width: 1.2; }
+.val-svg .v-cand.hi { stroke: var(--v-blue); fill: var(--v-blue); }
+.val-svg .v-guide { fill: none; stroke: none; }
+.val-svg .tok circle, .val-svg .mv-tok circle { fill: #0c162b; stroke: var(--v-light); stroke-width: 1.2; }
+.val-svg .tok text, .val-svg .mv-tok text { font-size: 9.5px; font-weight: 700; fill: var(--v-light); letter-spacing: 0; }
+.val-svg .tok { transition: opacity .6s ease; }
+.val-svg .tok.off { opacity: .16; }
+.val-svg .mv-dot circle { fill: var(--v-ink); }
+.val-svg .mv { opacity: 0; }
+.val-svg .v-clock circle { fill: none; stroke: var(--v-line-hi); stroke-width: 1.3; }
+.val-svg .v-hand { stroke: var(--v-light); stroke-width: 1.6; stroke-linecap: round; transform-box: view-box; transform-origin: 30px 272px;
+  transform: rotate(calc(var(--p, 0) * var(--turns, 1) * 360deg)); }
+.val-svg .v-bar-bg { stroke: var(--v-line); stroke-width: 4; stroke-linecap: round; }
+.val-svg .v-bar { stroke: var(--v-light); stroke-width: 4; stroke-linecap: round; opacity: .75; transform-box: fill-box; transform-origin: left center;
+  transform: scaleX(var(--p, 0)); }
+.val-svg .v-tick { stroke: var(--v-mute); stroke-width: 1.4; }
+.oai-value [data-t] { opacity: 0; transition: opacity .5s ease, transform .5s ease; }
+.oai-value [data-t].on { opacity: 1; }
+.oai-value [data-off].off { opacity: .14; }
+.val-svg .draw { opacity: 1; stroke-dasharray: var(--len, 400); stroke-dashoffset: var(--len, 400); transition: stroke-dashoffset .7s ease, opacity .5s ease, stroke .4s ease; }
+.val-svg .draw.on { stroke-dashoffset: 0; }
+.val-svg .v-retry.draw.on { stroke-dasharray: 4 4; }
+.val-out { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; text-align: center;
+  font: 600 10.5px var(--mono, ui-monospace, monospace); letter-spacing: .14em; color: var(--v-mute); }
+.is-oai .val-out { color: var(--v-ink); }
+.val-out .strong { color: var(--v-light); }
+.val-benefits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 22px; transition: opacity .6s ease; }
+.val-b { border: 1px solid var(--v-line); border-radius: 12px; padding: 12px 14px; text-align: center; background: rgba(10, 18, 36, .6);
+  font-size: 13px; color: #C3CEE3; min-width: 0; }
+.val-b .bk { font: 700 11px var(--mono, ui-monospace, monospace); letter-spacing: .16em; color: var(--v-ink); margin-bottom: 4px; }
+.val-b .bk span { color: var(--v-light); }
+.val-foot { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-top: 18px;
+  font-size: 11.5px; color: var(--v-dim); }
+.val-replay { font: 600 10px var(--mono, ui-monospace, monospace); letter-spacing: .2em; color: var(--v-light); background: transparent;
+  border: 1px solid var(--v-line-hi); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.val-replay:hover { border-color: var(--v-blue); }
+.val-replay:focus-visible { outline: 2px solid var(--v-blue); outline-offset: 3px; }
+.oai-value.vs-reset *, .oai-value.vs-reset *::before { transition: none !important; }
+@media (max-width: 900px) {
+  .val-flows { grid-template-columns: minmax(0, 1fr); }
+  .val-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .val-benefits { grid-template-columns: minmax(0, 1fr); }
+  .val-lede { letter-spacing: .08em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oai-value *, .oai-value { transition: none !important; }
+}
+/* ---- Public page additions (new) ---- */
+.oai-scope .st.exp { color: #8fb0ff; border-color: color-mix(in srgb, var(--c-blue) 55%, transparent); background: color-mix(in srgb, var(--c-blue) 10%, transparent); }
+.oai-back { margin-top: 14px; font: 500 11px var(--mono, ui-monospace, monospace); letter-spacing: .14em; color: var(--l-mute); text-decoration: none;
+  border-bottom: 1px solid rgba(140, 154, 181, .3); padding-bottom: 2px; transition: color .18s ease, border-color .18s ease; }
+.oai-back:hover { color: var(--l-ink); border-color: var(--l-ink); }
+.oai-back:focus-visible { outline: 2px solid var(--l-blue); outline-offset: 3px; }
+a.brand-blue .sub em { font-style: normal; }
+@media (prefers-reduced-motion: reduce) { .oai-back { transition: none; } }
+
+</style>
+</head>
+<body>
+<header>
+  <a class="brand-blue" href="#oai" aria-label="ORCHESTR-AI — accueil OAI (AI orchestration platform, by Pascal Robotics)">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b93ff"/><stop offset="1" stop-color="#1e6cff"/></linearGradient></defs>
+      <path d="M16 2 28.1 9v14L16 30 3.9 23V9z" fill="none" stroke="url(#mk)" stroke-width="2"/><circle cx="16" cy="16" r="4.2" fill="url(#mk)"/>
+      <path d="M16 11.8V5.5M19.6 18.1l5.4 3.1M12.4 18.1 7 21.2" stroke="url(#mk)" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <div><div class="word">ORCHESTR<span>-AI</span></div><div class="sub">AI ORCHESTRATION PLATFORM <em>by Pascal Robotics</em></div></div>
+  </a>
+</header>
+<main>
+  <!-- OAI · LANDING : faire ressentir OAI. Simple on purpose — la chaîne complète est dans #presentation. -->
+  <section id="view-oai" class="oai-only oai-landing" data-panel-id="oai" aria-labelledby="oai-title" data-present="planned">
+    <div class="oai-hero-land">
+      <h1 id="oai-title" class="oai-land-title">ORCHESTR<span>-AI</span></h1>
+      <div class="oai-land-sub">AI ORCHESTRATION PLATFORM</div>
+      <div class="oai-land-verbs">COMPREND. ORCHESTRE. MESURE. APPREND.</div>
+      <div class="oai-orb-wrap"><canvas id="oai-orb" class="oai-orb" aria-hidden="true" data-orb-source="VISUAL_DEMO"></canvas></div>
+      <div class="oai-orb-status" aria-hidden="true"><span class="oai-orb-state" id="oai-orb-state">ORCHESTRATION...</span><span class="oai-orb-demo">VISUAL DEMO</span></div>
+      <span class="oai-sr">Animation décorative : démonstration visuelle, aucune activité réelle de l’Agent IA (FUTUR / NON ACTIF).</span>
+      <p class="oai-land-line">Une intelligence d’orchestration entre vos intentions, vos outils et vos modèles IA.</p>
+      <a class="oai-cta" id="oai-cta" href="#presentation">DÉCOUVRIR OAI <span aria-hidden="true">→</span></a>
+      <a class="oai-back" href="orchestrai">← Retour à OrchestrAI</a>
+    </div>
+  </section>
+  <section id="view-arch" class="arch-only workspace-panel oai-scope" data-panel-id="architecture">
+    <div class="pres-top pres-only"><a class="pres-enter" id="pres-enter-top" href="orchestrai">← RETOUR À ORCHESTRAI</a></div>
+    <h2>Architecture</h2>
+    <div class="oai-hero">
+      <div class="oai-h1">OAI n’écrase pas le pipeline. <span>Il l’orchestre.</span></div>
+      <p class="lede">Garde ton agent. Garde tes outils. OAI les orchestre, mesure les résultats et apprend de ce qui fonctionne.</p>
+      <div class="oai-modes" id="arch-modes" role="group" aria-label="Niveau de lecture">
+        <button type="button" data-mode="simple" class="on" aria-pressed="true">SIMPLE</button><button type="button" data-mode="technical" aria-pressed="false">TECHNICAL</button>
+      </div>
+    </div>
+    <div class="oai-graph oai-arch" id="arch-graph" data-graph="arch" role="group" aria-label="Architecture OAI — Agent IA au centre">
+      <svg class="oai-wires" aria-hidden="true"><g class="wires"></g></svg>
+    </div>
+    <div class="oai-legend" aria-label="Légende des connexions">
+      <span><i class="l-flow"></i>flux actif</span><span><i class="l-today"></i>chemin direct aujourd’hui</span>
+      <span><i class="l-future"></i>futur (Agent IA non actif)</span><span><i class="l-feedback"></i>apprentissage continu</span>
+    </div>
+    <div id="arch-tech" hidden>
+      <h2>Technical</h2>
+      <div class="oai-band b4" id="arch-tech-band"></div>
+    </div>
+    <div class="oai-loop">OAI génère → observe → mémorise → apprend → améliore la décision suivante · l’apprentissage par l’Agent IA est FUTUR</div>
+    <aside class="oai-detail" id="arch-detail" aria-live="polite"></aside>
+    <div class="oai-message">Les agents spécialisés font leur métier. OAI orchestre l’ensemble.<small>Specialist agents do the work. OAI orchestrates the system.</small></div>
+
+    <!-- POURQUOI OAI ? — first OAI vector motion story (presentation only). ILLUSTRATION DU PRINCIPE: conceptual flow,
+         no measurement, no figure. HTML + CSS + inline SVG + native JS, no dependency. -->
+    <div class="oai-value pres-only" id="oai-value" data-source="CONCEPTUAL" aria-labelledby="value-title">
+      <div class="val-head">
+        <h2 id="value-title">POURQUOI OAI ?</h2>
+        <p class="val-lede">MOINS D’ITÉRATIONS · COÛTS MAÎTRISÉS · GAIN DE TEMPS · PLUS DE PRODUCTIVITÉ</p>
+        <span class="val-tag">ILLUSTRATION DU PRINCIPE · CONCEPTUAL FLOW</span>
+      </div>
+      <div class="val-flows" id="val-flows">
+        <figure class="val-flow" id="val-without" aria-labelledby="val-without-k">
+          <figcaption class="val-k" id="val-without-k">MODE STANDARD</figcaption>
+          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="Mode standard : une demande part en génération, plusieurs essais reviennent en boucle ; le temps passe et le budget est consommé à chaque essai, puis le résultat sort.">
+            <text class="v-cap" x="14" y="22">BUDGET</text>
+            <g class="v-tray">
+              <g class="tok"><circle cx="24" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="46" cy="42" r="8"/></g>
+              <g class="tok" data-off="18513"><circle cx="68" cy="42" r="8"/></g>
+              <g class="tok" data-off="11434"><circle cx="90" cy="42" r="8"/></g>
+              <g class="tok" data-off="4356"><circle cx="112" cy="42" r="8"/></g>
+            </g>
+            <path class="v-guide" id="vw-tok1" d="M112 42 C 112 96, 308 80, 308 140"/>
+            <path class="v-guide" id="vw-tok2" d="M90 42 C 90 100, 308 80, 308 140"/>
+            <path class="v-guide" id="vw-tok3" d="M68 42 C 68 104, 308 80, 308 140"/>
+            <g class="v-node" data-t="409"><rect x="14" y="150" width="76" height="34" rx="8"/><text x="52" y="171">DEMANDE</text></g>
+            <path class="v-line draw" id="vw-in" data-t="1089" d="M90 167 H258"/>
+            <g class="v-node v-gen" data-t="1906"><rect x="258" y="140" width="100" height="54" rx="10"/><text x="308" y="164">GÉNÉRATION</text><text class="v-sub" x="308" y="180">MODÈLE</text></g>
+            <path class="v-line draw" id="vw-out" data-t="4356" d="M358 167 H382"/>
+            <g class="v-try" data-t="5990"><path d="M392 157 L402 167 L392 177 L382 167 Z"/><text class="v-sub" x="392" y="198">RÉSULTAT ?</text></g>
+            <path class="v-retry draw" id="vw-retry" data-t="6262" d="M392 157 C 392 96, 282 96, 282 140"/>
+            <text class="v-sub v-retry-k" x="337" y="100" data-t="7078">↺ RETRY</text>
+            <path class="v-line draw" id="vw-end" data-t="12500" d="M402 167 H415"/>
+            <g class="v-node v-res v-res-partial" data-t="13000" opacity=".7"><rect x="420" y="150" width="86" height="34" rx="8"/><text x="463" y="166">RÉSULTAT</text><text class="v-sub" x="463" y="179" style="font-size:6.5px;letter-spacing:.02em">70 % · INCOMPLET</text></g>
+            <g class="v-clock"><circle cx="30" cy="272" r="12"/><line class="v-hand" style="--turns:2" x1="30" y1="272" x2="30" y2="263" data-p0="1634" data-p1="13000"/></g>
+            <text class="v-cap" x="56" y="262">TEMPS</text>
+            <line class="v-bar-bg" x1="56" y1="272" x2="506" y2="272"/>
+            <line class="v-bar" x1="56" y1="272" x2="371" y2="272" data-p0="1634" data-p1="13000"/>
+            <line class="v-tick" x1="227" y1="266" x2="227" y2="278" data-t="9256"/>
+            <line class="v-tick" x1="399" y1="266" x2="399" y2="278" data-t="16335"/>
+            <g class="mv mv-dot" data-path="vw-in" data-t="1224" data-dur="1634"><circle r="3.5"/></g>
+            <g class="mv mv-tok" data-path="vw-tok1" data-t="2450" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-dot" data-path="vw-out" data-t="4491" data-dur="1361"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vw-retry" data-t="6534" data-dur="2722"><circle r="3.5"/></g>
+            <g class="mv mv-tok" data-path="vw-tok2" data-t="9529" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-dot" data-path="vw-out" data-t="11707" data-dur="1361"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vw-retry" data-t="13612" data-dur="2722"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vw-out" data-t="18785" data-dur="1361"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vw-end" data-t="20691" data-dur="1634"><circle r="3.5"/></g>
+          </svg>
+          <ul class="val-out">
+            <li data-t="23958">PLUS D’ESSAIS POSSIBLES</li>
+            <li data-t="25047">PLUS DE TEMPS POTENTIEL</li>
+            <li data-t="26136">COÛTS MOINS PRÉVISIBLES</li>
+          </ul>
+        </figure>
+        <figure class="val-flow is-oai" id="val-with" aria-labelledby="val-with-k">
+          <figcaption class="val-k" id="val-with-k">ORCHESTR<span>-AI</span></figcaption>
+          <svg class="val-svg" viewBox="0 0 520 300" role="img" aria-label="ORCHESTR-AI : la même demande passe par OAI qui compare, mesure et mémorise, garde une route, transmet au modèle, évalue puis sort le résultat par un chemin plus direct ; l’apprentissage par l’Agent IA est futur.">
+            <text class="v-cap" x="14" y="22">BUDGET</text>
+            <g class="v-tray">
+              <g class="tok"><circle cx="24" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="46" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="68" cy="42" r="8"/></g>
+              <g class="tok"><circle cx="90" cy="42" r="8"/></g>
+              <g class="tok" data-off="9529"><circle cx="112" cy="42" r="8"/></g>
+            </g>
+            <path class="v-guide" id="vo-tok1" d="M112 42 C 112 96, 308 80, 308 140"/>
+            <g class="v-node" data-t="409"><rect x="14" y="150" width="76" height="34" rx="8"/><text x="52" y="171">DEMANDE</text></g>
+            <path class="v-line draw" id="vo-in" data-t="1089" d="M90 167 H118"/>
+            <g class="v-oai" data-t="1906"><polygon points="159.1,156 140,145 120.9,156 120.9,178 140,189 159.1,178"/><text x="140" y="171">OAI</text></g>
+            <text class="v-verb" x="140" y="206" data-t="2995">COMPARE</text>
+            <text class="v-verb" x="140" y="219" data-t="4084">MESURE</text>
+            <text class="v-verb" x="140" y="232" data-t="5173">MÉMORISE</text>
+            <text class="v-verb v-future" x="140" y="245" data-t="6262">APPREND · FUTUR</text>
+            <path class="v-route draw" data-t="3539" data-off="7078" d="M162 167 C 190 167, 188 127, 214 127"/>
+            <path class="v-route draw" id="vo-mid" data-t="3539" data-hi="7078" d="M162 167 H214"/>
+            <path class="v-route draw" data-t="3539" data-off="7078" d="M162 167 C 190 167, 188 207, 214 207"/>
+            <circle class="v-cand" cx="214" cy="127" r="4" data-t="4084" data-off="7078"/>
+            <circle class="v-cand" cx="214" cy="167" r="4" data-t="4084" data-hi="7078"/>
+            <circle class="v-cand" cx="214" cy="207" r="4" data-t="4084" data-off="7078"/>
+            <path class="v-line draw" id="vo-go" data-t="8168" d="M214 167 H258"/>
+            <g class="v-node v-gen" data-t="8712"><rect x="258" y="140" width="100" height="54" rx="10"/><text x="308" y="164">GÉNÉRATION</text><text class="v-sub" x="308" y="180">MODÈLE</text></g>
+            <path class="v-line draw" id="vo-ev" data-t="11162" d="M358 167 H386"/>
+            <g class="v-eval" data-t="12524"><circle cx="392" cy="167" r="6"/><text class="v-sub" x="386" y="211">ÉVALUATION</text></g>
+            <path class="v-line draw" id="vo-end" data-t="13068" d="M398 167 H420"/>
+            <g class="v-node v-res v-variant" data-t="14702"><rect x="420" y="92" width="86" height="30" rx="8"/><text x="463" y="111">RÉSULTAT 1</text></g>
+            <g class="v-node v-res v-variant" data-t="17500"><rect x="420" y="130" width="86" height="30" rx="8"/><text x="463" y="149">VARIANTE 2</text></g>
+            <g class="v-node v-res v-variant" data-t="20000"><rect x="420" y="168" width="86" height="30" rx="8"/><text x="463" y="187">VARIANTE 3</text></g>
+            <g class="v-node v-res v-variant" data-t="22500"><rect x="420" y="206" width="86" height="30" rx="8"/><text x="463" y="225">VARIANTE 4</text></g>
+            <path class="v-feedback draw" data-t="15790" d="M410 145 C 390 70, 160 70, 140 145"/>
+
+
+            <g class="v-clock"><circle cx="30" cy="272" r="12"/><line class="v-hand" style="--turns:1" x1="30" y1="272" x2="30" y2="263" data-p0="1634" data-p1="22500"/></g>
+            <text class="v-cap" x="56" y="262">TEMPS</text>
+            <line class="v-bar-bg" x1="56" y1="272" x2="506" y2="272"/>
+            <line class="v-bar" x1="56" y1="272" x2="506" y2="272" data-p0="1634" data-p1="22500"/>
+            <g class="mv mv-dot" data-path="vo-in" data-t="1224" data-dur="1089"><circle r="3.5"/></g>
+            <g class="mv mv-tok" data-path="vo-tok1" data-t="7623" data-dur="1906"><circle r="7"/></g>
+            <g class="mv mv-dot" data-path="vo-mid" data-t="8168" data-dur="954"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vo-go" data-t="9121" data-dur="1089"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vo-ev" data-t="11299" data-dur="1089"><circle r="3.5"/></g>
+            <g class="mv mv-dot" data-path="vo-end" data-t="13203" data-dur="1224"><circle r="3.5"/></g>
+          </svg>
+          <ul class="val-out">
+            <li data-t="23958">MOINS D’ITÉRATIONS INUTILES</li>
+            <li data-t="25047">COÛTS MAÎTRISÉS</li>
+            <li data-t="26136">TEMPS OPTIMISÉ</li>
+            <li class="strong" data-t="27225">PLUS DE PRODUCTIVITÉ</li>
+          </ul>
+        </figure>
+      </div>
+      <div class="val-benefits">
+        <div class="val-b" data-t="28314"><div class="bk">TEMPS <span aria-hidden="true">↓</span></div><div>Optimiser le temps de production</div></div>
+        <div class="val-b" data-t="29131"><div class="bk">COÛTS <span aria-hidden="true">↓</span></div><div>Maîtriser le budget</div></div>
+        <div class="val-b" data-t="29948"><div class="bk">ITÉRATIONS <span aria-hidden="true">↓</span></div><div>Réduire les essais inutiles</div></div>
+        <div class="val-b" data-t="30764"><div class="bk">PRODUCTIVITÉ <span aria-hidden="true">↑</span></div><div>Produire plus efficacement</div></div>
+      </div>
+      <div class="val-foot">
+        <span>Illustration conceptuelle : aucune mesure issue des benchmarks, aucun chiffre réel. Jetons de budget : métaphore visuelle, ni rentabilité démontrée ni promesse commerciale. OAI cherche à mieux utiliser le budget disponible.</span>
+        <button type="button" class="val-replay" id="val-replay">REJOUER</button>
+      </div>
+    </div>
+
+    <div class="arch-doc">
+    <h2>Aujourd’hui / futur</h2>
+    <div class="oai-band b4" id="arch-reality"></div>
+    <h2>Infrastructure</h2>
+    <div class="oai-band b4" id="arch-infra"></div>
+    <div class="oai-loop" id="arch-browser" style="margin-top:12px"></div>
+    <div class="oai-band b5" id="arch-benefits" aria-label="Bénéfices"></div>
+    </div>
+    <div class="pres-end pres-only"><a class="pres-enter" id="pres-enter-bottom" href="accueil.html#contact">PARLER DE VOTRE PROJET <span aria-hidden="true">→</span></a></div>
+  </section>
+</main>
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Header height → offset used by the presentation anchors (same helper as the dashboard)
+function syncHeaderHeight() {
+  const h = document.querySelector('header').offsetHeight;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+window.addEventListener('resize', syncHeaderHeight);
+
+// ---------------------------------------------------------------- OAI GRAPH (ARCHITECTURE)
+// Nodes are <button>s (Tab / Enter / Space · Échap to clear), one selection per view, the selection's connectors are
+// highlighted and the rest is dimmed. Hooks for a later motion-design pass: data-order on nodes, data-edge on wires.
+const OAI_ICONS = {
+  user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/>',
+  brain: '<path d="M9 4.5a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 4.8A3 3 0 0 0 9 19.5h1V4.5z"/><path d="M15 4.5a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 4.8 3 3 0 0 1-3 2.2h-1V4.5z"/>',
+  doc: '<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/>',
+  cube: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  play: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m10 9 5 3-5 3z"/>',
+  search: '<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/>',
+  db: '<ellipse cx="12" cy="6" rx="7" ry="2.5"/><path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/>',
+  spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  film: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4"/>',
+  loop: '<path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.7M20 4v4.7h-4.7M20 12a8 8 0 0 1-13.7 5.6L4 15.3M4 20v-4.7h4.7"/>',
+  coin: '<circle cx="12" cy="12" r="8"/><path d="M14.5 9.3c-.5-.9-1.5-1.3-2.5-1.3-1.4 0-2.5.8-2.5 2s1.1 1.7 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2c-1 0-2-.5-2.5-1.3M12 6.5V8m0 8v1.5"/>',
+  star: '<path d="m12 4 2.4 5 5.4.7-4 3.8 1 5.4L12 16.3 7.2 18.9l1-5.4-4-3.8 5.4-.7z"/>',
+  hand: '<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12m0-6.5v-1a1.5 1.5 0 0 1 3 0V12m0-5.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.6-2.2L4 15.2a1.5 1.5 0 0 1 2.3-1.9L8 15"/>',
+};
+const oaiIcon = k => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${OAI_ICONS[k] || ''}</svg>`;
+const oaiChip = ([cls, label]) => `<span class="st ${cls}">${esc(label)}</span>`;
+const oaiList = xs => `<ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+
+function oaiNodeHtml(id, n) {
+  const agent = n.kind === 'agent';
+  const head = agent
+    ? `${oaiIcon(n.ic)}<span class="brand">OAI</span><span class="nt">${esc(n.t)}</span>`
+      + `<span class="oai-verbs4">${n.verbs.map(v => `<span>${esc(v)}</span>`).join('')}</span>`
+    : `<span class="nh">${oaiIcon(n.ic)}<span class="nt">${esc(n.t)}</span></span>`;
+  return `<button type="button" class="oai-node n-${id}${agent ? ' agent' : ''}${n.future ? ' is-future' : ''}${n.first ? ' m-first' : ''}"`
+    + ` data-node="${id}" data-order="${n.ord}" style="--ord:${n.ord}" aria-pressed="false"`
+    + ` aria-label="${esc(n.t)} — ${esc(n.chips.map(c => c[1]).join(', '))}">`
+    + head + (n.body ? n.body : '') + (n.tech ? `<span class="ntech">${esc(n.tech)}</span>` : '') + `<span class="chips">${n.chips.map(oaiChip).join('')}</span>`
+    + (n.mobile ? `<span class="ns oai-m-only">${esc(n.mobile)}</span>` : '') + '</button>';
+}
+
+function oaiAnchors(a, b, route) {
+  const cx = r => (r.left + r.right) / 2, cy = r => (r.top + r.bottom) / 2;
+  if (route === 'above') {
+    const y = Math.min(a.top, b.top) - 24;
+    return { d: `M${cx(a)},${a.top} C${cx(a)},${y} ${cx(b)},${y} ${cx(b)},${b.top}`, lx: (cx(a) + cx(b)) / 2, ly: y + 3 };
+  }
+  if (route === 'feedback') {  // one curve from the memory up into the agent's bottom
+    const sx = a.right - Math.min(40, (a.right - a.left) / 4), sy = a.top, ex = cx(b), ey = b.bottom;
+    return { d: `M${sx},${sy} C${sx},${sy - 46} ${ex},${ey + 60} ${ex},${ey}`, lx: (sx + ex) / 2, ly: (sy + ey) / 2 + 4 };
+  }
+  const ov = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+  const oh = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+  let s, e, dir;
+  if (ov > 14) {
+    const y = (Math.max(a.top, b.top) + Math.min(a.bottom, b.bottom)) / 2;
+    s = [a.right <= b.left ? a.right : a.left, y]; e = [a.right <= b.left ? b.left : b.right, y]; dir = 'h';
+  } else if (oh > 14) {
+    const x = (Math.max(a.left, b.left) + Math.min(a.right, b.right)) / 2;
+    s = [x, a.bottom <= b.top ? a.bottom : a.top]; e = [x, a.bottom <= b.top ? b.top : b.bottom]; dir = 'v';
+  } else {
+    const right = b.left >= a.right, down = b.top >= a.bottom;
+    s = [right ? a.right : a.left, cy(a)]; e = [cx(b), down ? b.top : b.bottom]; dir = 'd';
+  }
+  const k = 34, [sx, sy] = s, [ex, ey] = e;
+  const c1 = dir === 'v' ? [sx, sy + Math.sign(ey - sy || 1) * k] : [sx + Math.sign(ex - sx || 1) * k, sy];
+  const c2 = dir === 'h' ? [ex - Math.sign(ex - sx || 1) * k, ey] : [ex, ey - Math.sign(ey - sy || 1) * k];
+  return { d: `M${sx},${sy} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${ex},${ey}`, lx: (sx + ex) / 2, ly: (sy + ey) / 2 - 6 };
+}
+
+function oaiGraph({ root, nodes, edges = [], onSelect }) {
+  root.insertAdjacentHTML('beforeend', Object.entries(nodes).map(([id, n]) => oaiNodeHtml(id, n)).join(''));
+  const svg = root.querySelector('svg.oai-wires'), g = svg && svg.querySelector('g.wires'), gid = root.id;
+  const colors = { flow: '#4d7cff', today: 'var(--c-cyan)', future: 'var(--c-gray)', feedback: 'var(--c-cyan)' };
+  if (svg) svg.insertAdjacentHTML('afterbegin', '<defs>' + Object.entries(colors).map(([k, c]) =>
+    `<marker id="${gid}-m-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">`
+    + `<path d="M0,0 L10,5 L0,10 z" style="fill:${c}"/></marker>`).join('') + '</defs>');
+  let sel = null;
+  const related = id => {
+    const out = new Set([id]);
+    edges.forEach(e => { if (e.from === id) out.add(e.to); if (e.to === id) out.add(e.from); });
+    return out;
+  };
+  function apply() {
+    const rel = sel ? related(sel) : new Set();
+    root.classList.toggle('has-sel', !!sel);
+    root.querySelectorAll('.oai-node').forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.node === sel));
+      b.classList.toggle('rel', rel.has(b.dataset.node) && b.dataset.node !== sel);
+    });
+    root.querySelectorAll('[data-edge]').forEach(w => {
+      const [f, t] = w.dataset.edge.split('>');
+      w.classList.toggle('rel', !!sel && (f === sel || t === sel));
+    });
+  }
+  function draw() {
+    if (!svg || !root.offsetParent || getComputedStyle(svg).display === 'none') return;
+    const box = root.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+    const rect = id => {
+      const r = root.querySelector(`[data-node="${id}"]`).getBoundingClientRect();
+      return { left: r.left - box.left, right: r.right - box.left, top: r.top - box.top, bottom: r.bottom - box.top };
+    };
+    g.innerHTML = edges.filter(e => e.draw !== false && (!e.when || matchMedia(e.when).matches)).map(e => {
+      const p = oaiAnchors(rect(e.from), rect(e.to), e.route);
+      return `<path class="oai-wire w-${e.kind}" data-edge="${e.from}>${e.to}" d="${p.d}" marker-end="url(#${gid}-m-${e.kind})"/>`
+        + (e.label ? `<text class="oai-wire-label w-${e.kind}" data-edge="${e.from}>${e.to}" x="${p.lx}" y="${p.ly}" text-anchor="middle">${esc(e.label)}</text>` : '');
+    }).join('');
+    apply();
+  }
+  root.addEventListener('click', ev => {
+    const b = ev.target.closest('.oai-node');
+    if (!b) return;
+    sel = b.dataset.node;  // single selection per view; it stays after mouseout
+    apply(); onSelect(sel);
+  });
+  root.addEventListener('keydown', ev => { if (ev.key === 'Escape' && sel) { sel = null; apply(); onSelect(null); } });
+  if (window.ResizeObserver) new ResizeObserver(() => draw()).observe(root);
+  window.addEventListener('resize', draw);
+  return { draw, clear() { if (sel) { sel = null; apply(); } } };
+}
+
+function oaiDetail(n, tech) {
+  if (!n) return '<div class="dk">DÉTAIL</div><p>Cliquez sur un bloc (ou Tab puis Entrée / Espace) : rôle, statut, aujourd’hui, futur. Échap pour désélectionner.</p>';
+  const cell = ([k, v, chip]) => `<div><div class="dk">${esc(k)}${chip ? ' ' + oaiChip(chip) : ''}</div>${Array.isArray(v) ? oaiList(v) : `<p>${esc(v)}</p>`}</div>`;
+  const rows = n.panel.concat(tech && n.tech ? [['TECHNICAL', n.tech]] : []);
+  return `<div class="dh">${esc(n.t)} ${n.chips.map(oaiChip).join(' ')}</div><div class="dg">${rows.map(cell).join('')}</div>`;
+}
+
+
+// ---------------------------------------------------------------- ARCHITECTURE · OAI Agent IA au centre
+const FUT = ['future', 'FUTUR'];
+const EXP = ['exp', 'EXPÉRIMENTAL'];
+const ARCH_NODES = {
+  intent: { t: 'INTENTIONS & RÉFÉRENCES', ic: 'user', ord: 1, first: true, chips: [['active', 'ACTIF']],
+    body: oaiList(['idée / brief', 'références image / vidéo', 'contraintes', 'agent externe éventuel']),
+    panel: [['RÔLE', 'Point de départ : ce que l’on veut obtenir.'], ['STATUT', 'ACTIF — prompts et références des benchmarks.'],
+      ['FUTUR', 'L’Agent IA lira intentions et références avant génération.', FUT]],
+    tech: 'Prompt RAW (UTF-8) · benchmarks/index.json' },
+  pi: { t: 'PROMPT INTELLIGENCE', ic: 'doc', ord: 2, chips: [['active', 'ACTIF']],
+    body: oaiList(['analyse du prompt', 'dimensions couvertes', 'critères explicites', 'préparation benchmark']),
+    panel: [['RÔLE', 'Rendre le prompt lisible et évaluable.'], ['AUJOURD’HUI', ['analyse locale, déterministe', 'Control Coverage', 'critères de fidélité', 'dry-run benchmark']],
+      ['FUTUR', ['optimisation avancée par IA', 'prompt compiler autonome', 'adaptation au modèle'], FUT]],
+    tech: 'prompt_intelligence/ (analyzer.py, schema.py, fidelity_profiles.py) · benchmarks/dry_run.py' },
+  agent: { kind: 'agent', t: 'AGENT IA', ic: 'brain', ord: 3, future: true, verbs: ['COMPREND', 'ANALYSE', 'APPREND', 'RECOMMANDE'],
+    chips: [['future', 'FUTUR / NON ACTIF']],
+    panel: [['AUJOURD’HUI', 'N’existe pas encore. La position centrale est la vision produit. Aujourd’hui, Prompt Intelligence alimente directement Modèles & Providers.'],
+      ['AVANT GÉNÉRATION', ['comprend l’intention', 'consulte références et historique', 'consulte la Knowledge Base', 'améliore le prompt', 'adapte le prompt au modèle', 'recommande une route'], FUT],
+      ['APRÈS GÉNÉRATION', ['analyse le résultat', 'compare au prompt', 'exploite Human Evaluation', 'exploite coûts / temps', 'apprend du résultat', 'recommande la suite'], FUT]],
+    tech: 'analysis/multimodal_agent.py = interface seulement, aucun LLM appelé. DECISION ENGINE (FUTURE / NOT ACTIVE) : l’Agent propose, le Decision Engine transformera plus tard la recommandation en décision opérationnelle — modèle, provider, GPU, budget, retry, fallback, prompt, route.' },
+  mp: { t: 'MODÈLES & PROVIDERS', ic: 'cube', ord: 4, chips: [['guarded', 'PARTIEL / GARDÉ']],
+    body: '<span class="mp"><span><span class="k">MODELS</span>' + oaiList(['Seedance', 'WAN', 'LTX', '…']) + '</span><span class="neq" title="un modèle n’est pas un provider">≠</span>'
+      + '<span><span class="k">PROVIDERS</span>' + oaiList(['fal aujourd’hui', 'RunPod futur', 'autres futur']) + '</span></span>',
+    panel: [['RÔLE', 'MODEL ≠ PROVIDER : le modèle génère, le provider l’exécute. Ex. Seedance via fal aujourd’hui, via un autre provider demain.'],
+      ['AUJOURD’HUI', ['WAN 3 · LTX 2.3 · Seedance 2.5', 'un provider : fal', 'lancement manuel, confirmé, plafonné']],
+      ['FUTUR', ['RunPod, providers directs, GPU local', 'choix automatique de la route'], FUT]],
+    tech: 'orchestrator/{wan,ltx,seedance}.py · providers/fal_provider.py · scripts/benchmark_00N_live.py' },
+  gen: { t: 'GÉNÉRATION VIDÉO', ic: 'film', ord: 5, chips: [['guarded', 'ACTIF / GARDÉ']],
+    body: '<span class="ns">Création via le modèle choisi.</span><span class="ns">Dépenses confirmées · plafonnées · contrôlées.</span>',
+    panel: [['RÔLE', 'Produire la vidéo.'], ['AUJOURD’HUI', ['confirmation exacte', 'plafond de coût', 'aucun retry automatique', 'vidéos gardées en local']],
+      ['FUTUR', ['retry / fallback autonomes', 'routage automatique'], FUT]],
+    tech: 'runs/benchmark_00N/*.json (journaux) · media/ (MP4 locaux, hors Git) · scripts.fetch_videos' },
+  ev: { t: 'ÉVALUATION & ANALYSE', ic: 'search', ord: 6, chips: [['active', 'ACTIF']],
+    body: `<span class="sub"><b>TECHNICAL VIDEO ANALYSIS</b>${oaiChip(['active', 'ACTIF'])}</span>`
+      + `<span class="sub"><b>HUMAN EVALUATION</b>${oaiChip(['active', 'ACTIF'])}</span>`
+      + `<span class="sub"><b>SEMANTIC VIDEO ANALYSIS</b>${oaiChip(EXP)}</span>`,
+    panel: [['TECHNICAL VIDEO ANALYSIS', ['mouvement', 'cuts', 'netteté', 'luminosité', 'audio', 'métadonnées'], ['active', 'ACTIF']],
+      ['HUMAN EVALUATION', ['qualité', 'fidélité au prompt', 'jugement créatif', 'commentaires'], ['active', 'ACTIF']],
+      ['SEMANTIC VIDEO ANALYSIS', ['compréhension réelle du contenu', 'personnages, objets', 'caméra, continuité', 'artefacts', 'conformité au prompt'], EXP],
+      ['À NE PAS CONFONDRE', 'L’analyse technique mesure le signal (mouvement, netteté…). Elle ne comprend pas le contenu : c’est le rôle de l’analyse sémantique, expérimentale.']],
+    tech: 'analysis/video_analysis.py (ffprobe / ffmpeg) · evaluation/human_v2.py · semantic_analysis = EXPERIMENTAL' },
+  kb: { t: 'KNOWLEDGE BASE', ic: 'db', ord: 7, chips: [['active', 'ACTIF']], mobile: '↺ apprentissage continu vers l’Agent IA (futur)',
+    body: '<span class="ns">Mémoire des projets et des résultats.</span><span class="ns">Chaque génération enrichit la mémoire OAI.</span>',
+    panel: [['STOCKE', ['prompts, modèles, providers', 'coûts, temps, résultats', 'Human Evaluation', 'Technical Video Analysis', 'décisions / patterns']],
+      ['AUJOURD’HUI', 'Mémoire structurée ACTIVE (benchmarks), catégories séparées, aucun score fusionné.'],
+      ['FUTUR', 'Retour vers l’Agent IA : apprentissage continu.', FUT]],
+    tech: 'knowledge/ (repository.py, analysis_index.py, video_knowledge.py) · exports/ · analysis/video/' },
+};
+const ARCH_EDGES = [
+  { from: 'intent', to: 'pi', kind: 'flow' },
+  { from: 'pi', to: 'agent', kind: 'future' },
+  { from: 'agent', to: 'mp', kind: 'future' },
+  { from: 'pi', to: 'mp', kind: 'today', route: 'above', label: 'AUJOURD’HUI', when: '(min-width: 1700px)' },
+  { from: 'mp', to: 'gen', kind: 'flow' },
+  { from: 'gen', to: 'ev', kind: 'flow' },
+  { from: 'ev', to: 'kb', kind: 'flow', label: 'MÉMORISE' },
+  { from: 'kb', to: 'agent', kind: 'feedback', route: 'feedback', label: 'APPRENTISSAGE CONTINU' },
+];
+let ARCH_MODE = 'simple', ARCH_GRAPH = null, ARCH_SEL = null;
+const band = (items, cls = 'cell') => items.map(([k, xs, ic]) => `<div class="${cls}">${ic ? oaiIcon(ic) : ''}<div class="k">${esc(k)}</div>${xs ? oaiList(xs) : ''}</div>`).join('');
+function renderArchitecture() {
+  const tech = ARCH_MODE === 'technical';
+  document.querySelectorAll('#arch-modes button').forEach(b => {
+    const on = b.dataset.mode === ARCH_MODE; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on));
+  });
+  if (!ARCH_GRAPH) {
+    ARCH_GRAPH = oaiGraph({ root: document.getElementById('arch-graph'), nodes: ARCH_NODES, edges: ARCH_EDGES,
+      onSelect: id => { ARCH_SEL = id; document.getElementById('arch-detail').innerHTML = oaiDetail(ARCH_NODES[id], ARCH_MODE === 'technical'); } });
+    document.getElementById('arch-reality').innerHTML =
+      `<div class="cell" style="grid-column: span 2"><div class="k">ACTIF ${oaiChip(['active', 'ACTIF'])}</div>${oaiList(['Prompt Intelligence', 'Knowledge Base (mémoire structurée)', 'Génération multi-modèles', 'Évaluation humaine', 'Analyse vidéo technique locale'])}</div>`
+      + `<div class="cell" style="grid-column: span 2"><div class="k">FUTUR ${oaiChip(FUT)}</div>${oaiList(['OAI Agent IA', 'Decision Engine', 'Routage automatique', 'Orchestration d’agents', 'Retry / fallback autonomes'])}</div>`
+      + `<div class="cell" style="grid-column: span 2"><div class="k">EXPÉRIMENTAL ${oaiChip(EXP)}</div>${oaiList(['Semantic Video Analysis'])}</div>`;
+    document.getElementById('arch-infra').innerHTML = band([
+      ['NAVIGATEUR', ['interface web']], ['LOCAL / MAC', ['vidéos', 'analyses', 'Python', 'ffmpeg']],
+      ['CLOUD / PROVIDERS', ['fal aujourd’hui', 'RunPod futur', 'GPU futur']],
+      ['GITHUB', ['code', 'prompts', 'historique', 'documentation', 'pas les gros MP4']]]);
+    document.getElementById('arch-benefits').innerHTML = band([
+      ['MOINS D’ITÉRATIONS', null, 'loop'], ['MOINS DE COÛTS', null, 'coin'], ['MEILLEURE QUALITÉ', null, 'star'],
+      ['UNE MÉMOIRE QUI APPREND', null, 'db'], ['TU GARDES TON WORKFLOW', null, 'hand']], 'cell benefit');
+    document.getElementById('arch-tech-band').innerHTML = band([
+      ['MODULES PYTHON', ['prompt_intelligence/', 'evaluation/human_v2.py', 'analysis/video_analysis.py', 'knowledge/', 'providers/fal_provider.py']],
+      ['FICHIERS JSON', ['benchmarks/index.json', 'runs/benchmark_00N/*.json', 'analysis/video/*.json', 'exports/*.json']],
+      ['BACKEND / PROVIDER', ['backend local (Python, stdlib)', 'fal : dry-run, confirmation, plafond', 'local : ffmpeg · cloud : fal']],
+      ['DECISION ENGINE · FUTUR', ['l’Agent propose, le Decision Engine décidera', 'modèle · provider · GPU · budget', 'retry · fallback · prompt · route', 'aucun code aujourd’hui']]]);
+    document.getElementById('arch-modes').addEventListener('click', e => {
+      const b = e.target.closest('button[data-mode]');
+      if (b) { ARCH_MODE = b.dataset.mode; renderArchitecture(); }
+    });
+  }
+  document.getElementById('arch-tech').hidden = !tech;
+  document.getElementById('view-arch').classList.toggle('is-tech', tech);  // technical line in every block
+  document.getElementById('arch-detail').innerHTML = oaiDetail(ARCH_NODES[ARCH_SEL], tech);
+  document.getElementById('arch-browser').innerHTML = 'AUJOURD’HUI : Browser → backend local → providers · '
+    + 'DEMAIN (FUTUR) : Any browser → backend hébergé → agents / modèles / providers / GPU'
+    + (tech ? ' · aujourd’hui backend local ; un accès distant exigera une authentification réelle' : '');
+  requestAnimationFrame(() => ARCH_GRAPH.draw());
+}
+
+// ---------------------------------------------------------------- POURQUOI OAI ? · VALUE MOTION STORY (presentation)
+// ILLUSTRATION DU PRINCIPE: a conceptual flow, not a measurement. No figure, no price, no ROI, no duration, no count.
+// Declarative timeline in the markup: [data-t] appears at t ms, [data-off] recedes, [data-hi] is highlighted,
+// .draw lines draw themselves, [data-p0/p1] drive --p (clock hand, time bar), .mv[data-path] travels along a path.
+// FUTURE DATA (not wired): once enough real runs exist, the metaphors may be replaced by measured values from the
+// Knowledge Base (average real cost, average real time, real iterations, quality, fidelity). Nothing is wired today.
+const OAI_VALUE_STORY = {
+  source: 'CONCEPTUAL', data: null, duration: 26000, hold: 5000,
+  future_metrics: ['avg_cost_real', 'avg_time_real', 'iterations_real', 'quality', 'fidelity'],
+};
+function initValueStory() {
+  const root = document.getElementById('oai-value');
+  if (!root) return null;
+  const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const q = sel => Array.from(root.querySelectorAll(sel));
+  const cues = q('[data-t]'), offs = q('[data-off]'), his = q('[data-hi]'), progress = q('[data-p0]');
+  const movers = q('.mv').map(el => ({ el, path: root.querySelector('#' + el.dataset.path), len: 0, t: +el.dataset.t, dur: +el.dataset.dur }));
+  function measure() {                               // lengths are read when the story is on screen
+    q('.draw').forEach(p => { try { p.style.setProperty('--len', Math.ceil(p.getTotalLength()) + 1); } catch (e) {} });
+    movers.forEach(m => { try { m.len = m.path.getTotalLength(); } catch (e) { m.len = 0; } });
+  }
+  const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+  let raf = 0, timer = 0, t0 = 0, running = false, onScreen = false;
+
+  function paint(t) {
+    cues.forEach(e => e.classList.toggle('on', t >= +e.dataset.t));
+    offs.forEach(e => e.classList.toggle('off', t >= +e.dataset.off));
+    his.forEach(e => e.classList.toggle('hi', t >= +e.dataset.hi));
+    progress.forEach(e => {
+      const p0 = +e.dataset.p0, p1 = +e.dataset.p1;
+      e.style.setProperty('--p', Math.max(0, Math.min(1, (t - p0) / (p1 - p0))).toFixed(4));
+    });
+    movers.forEach(m => {
+      const u = (t - m.t) / m.dur;
+      if (u <= 0 || u >= 1 || !m.len) { m.el.style.opacity = 0; return; }
+      const pt = m.path.getPointAtLength(m.len * ease(u));
+      m.el.setAttribute('transform', `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
+      m.el.style.opacity = Math.min(1, Math.sin(Math.PI * u) * 2).toFixed(3);
+    });
+  }
+  function frame(now) {
+    if (!running) return;
+    if (!t0) t0 = now;
+    const t = now - t0;
+    paint(t);
+    if (t < OAI_VALUE_STORY.duration) { raf = requestAnimationFrame(frame); return; }
+    running = false;
+    timer = setTimeout(() => {                       // calm loop: hold the final state, fade, start again
+      root.classList.add('fading');
+      timer = setTimeout(() => { root.classList.remove('fading'); start(); }, 700);
+    }, OAI_VALUE_STORY.hold);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); clearTimeout(timer); root.classList.remove('fading'); }
+  function start() {
+    stop();
+    if (reduced) { paint(Infinity); return; }        // prefers-reduced-motion: final static comparison
+    measure(); root.classList.add('vs-reset'); paint(-1); void root.offsetWidth; root.classList.remove('vs-reset');
+    running = true; t0 = 0; raf = requestAnimationFrame(frame);
+  }
+  if (reduced) paint(Infinity);
+  document.getElementById('val-replay').addEventListener('click', start);
+  const sync = () => { if (onScreen && !document.hidden) { if (!running && !timer) start(); } else { stop(); timer = 0; } };
+  document.addEventListener('visibilitychange', sync);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { onScreen = es[es.length - 1].isIntersecting; sync(); }, { threshold: 0.2 }).observe(root);
+  } else { paint(Infinity); }
+  return { start, stop, reduced };
+}
+const OAI_VALUE = initValueStory();
+
+// ---------------------------------------------------------------- OAI LANDING + ORB
+// ORB = VISUAL / DEMO STATE (today). The orb never reflects real system activity: no network call, no log, no model call,
+// no data. FUTURE: ORB = REAL SYSTEM ACTIVITY, driven by the OAI Agent IA once it exists (source 'SYSTEM_ACTIVITY',
+// not implemented). Canvas 2D + native JS only: no framework, no dependency, no network, no WebGL.
+const OAI_ORB_SOURCE = 'VISUAL_DEMO';
+// Visual parameters per state (structure ready for the future Agent; only the demo cycle drives them today).
+const OAI_ORB_STATES = {
+  idle:       { speed: 1.00, breath: 1.0, links: 0.55, pulses: 0.10, spread: 1.00, glow: 0.55 },
+  listening:  { speed: 0.80, breath: 1.4, links: 0.50, pulses: 0.08, spread: 0.97, glow: 0.70 },
+  analysing:  { speed: 1.30, breath: 0.9, links: 0.72, pulses: 0.35, spread: 1.00, glow: 0.62 },
+  searching:  { speed: 1.60, breath: 0.8, links: 0.64, pulses: 0.55, spread: 1.04, glow: 0.58 },
+  generating: { speed: 1.45, breath: 1.2, links: 0.85, pulses: 0.70, spread: 1.03, glow: 0.78 },
+  evaluating: { speed: 1.10, breath: 0.9, links: 0.70, pulses: 0.40, spread: 0.99, glow: 0.62 },
+  learning:   { speed: 0.90, breath: 1.3, links: 0.95, pulses: 0.30, spread: 1.00, glow: 0.74 },
+};
+// Landing only: labelled VISUAL DEMO, never presented as the Agent IA working.
+const OAI_DEMO_CYCLE = [
+  ['ANALYSE...', 'analysing'], ['RECHERCHE...', 'searching'], ['ORCHESTRATION...', 'generating'],
+  ['ÉVALUATION...', 'evaluating'], ['APPRENTISSAGE...', 'learning'],
+];
+
+function createOaiOrb(canvas, opts = {}) {
+  const ctx = canvas && canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  const reduced = !!opts.reducedMotion;
+  let seed = 20260927;
+  const rand = () => { seed = (seed + 0x6D2B79F5) | 0; let x = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+  const TAU = Math.PI * 2;
+  let W = 0, H = 0, R = 0, raf = 0, running = false, last = 0, t = 0, clock = 0;
+  let active = false, onScreen = true, stateName = 'idle', target = OAI_ORB_STATES.idle;
+  const cur = { ...OAI_ORB_STATES.idle };
+  let nodes = [], links = [], chords = [], dust = [], pulses = [];
+  const ptr = { x: -1e4, y: -1e4, k: 0, tk: 0 };
+
+  function build(count) {
+    seed = 20260927; nodes = []; links = []; chords = []; dust = []; pulses = [];
+    const ga = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < count; i++) {           // Fibonacci sphere, slightly irregular (organic, not a lattice)
+      const y = 1 - (i + 0.5) / count * 2, r = Math.sqrt(1 - y * y), th = i * ga, j = 0.07;
+      const x = Math.cos(th) * r + (rand() - 0.5) * j, yy = y + (rand() - 0.5) * j, z = Math.sin(th) * r + (rand() - 0.5) * j;
+      const l = Math.hypot(x, yy, z);
+      nodes.push({ x: x / l, y: yy / l, z: z / l, ph: rand() * TAU, fr: 0.18 + rand() * 0.3, amp: 0.015 + rand() * 0.03,
+                   sz: 0.7 + rand() * 0.9, sx: 0, sy: 0, d: 0, ox: 0, oy: 0 });
+    }
+    const seen = new Set();
+    for (let i = 0; i < count; i++) {           // each point linked to its 3 nearest neighbours
+      const near = [];
+      for (let k = 0; k < count; k++) if (k !== i) {
+        const a = nodes[i], b = nodes[k]; near.push([(a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2, k]);
+      }
+      near.sort((p, q) => p[0] - q[0]);
+      for (let m = 0; m < 3; m++) {
+        const k = near[m][1], key = Math.min(i, k) * 4096 + Math.max(i, k);
+        if (!seen.has(key)) { seen.add(key); links.push({ a: i, b: k, ph: rand() * TAU, fr: 0.03 + rand() * 0.07 }); }
+      }
+    }
+    for (let c = 0; c < Math.round(count / 18); c++) {   // a few long inner chords: orchestration across the sphere
+      const a = Math.floor(rand() * count); let b = Math.floor(rand() * count);
+      if (a === b) b = (b + 7) % count;
+      chords.push({ a, b, ph: rand() * TAU, fr: 0.02 + rand() * 0.04 });
+    }
+    const nd = Math.round(count / 3.5);
+    for (let i = 0; i < nd; i++) {             // outer particles on slow tilted orbits
+      dust.push({ r: 1.12 + rand() * 0.2, th: rand() * TAU, inc: (rand() - 0.5) * 1.6, sp: (0.02 + rand() * 0.05) * (rand() < 0.5 ? -1 : 1),
+                  sz: 0.4 + rand() * 0.8, tw: rand() * TAU });
+    }
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width < 2 || rect.height < 2) return false;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = rect.width; H = rect.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    R = Math.min(W, H) * 0.32;
+    const count = W < 240 ? 84 : W < 360 ? 112 : 150;   // capped particle budget
+    if (count !== nodes.length) build(count);
+    return true;
+  }
+
+  function step(dt) {
+    const e = 1 - Math.exp(-dt * 0.8);           // slow easing between states (~3 s)
+    for (const k in cur) cur[k] += (target[k] - cur[k]) * e;
+    t += dt * cur.speed; clock += dt;
+    ptr.k += (ptr.tk - ptr.k) * (1 - Math.exp(-dt * 2.5));
+    for (const d of dust) d.th += d.sp * dt * cur.speed;
+    if (pulses.length < 6 && Math.random() < cur.pulses * 1.6 * dt) {
+      const l = links[Math.floor(Math.random() * links.length)];
+      if (l) pulses.push({ l, u: 0, sp: 0.35 + Math.random() * 0.35, rev: Math.random() < 0.5 });
+    }
+    pulses = pulses.filter(p => (p.u += p.sp * dt) < 1);
+  }
+
+  function draw() {
+    if (!W) return;
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2;
+    const Rr = R * cur.spread * (1 + Math.sin(t * 0.5) * 0.02 * cur.breath);   // slow breathing
+    const ry = t * 0.06, rx = 0.36 + Math.sin(t * 0.045) * 0.09;                 // very slow organic rotation
+    const cyr = Math.cos(ry), syr = Math.sin(ry), cxr = Math.cos(rx), sxr = Math.sin(rx), F = 4;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Rr * 1.5);
+    g.addColorStop(0, `rgba(47,107,255,${(0.22 * cur.glow).toFixed(3)})`);
+    g.addColorStop(0.5, `rgba(47,107,255,${(0.07 * cur.glow).toFixed(3)})`);
+    g.addColorStop(1, 'rgba(47,107,255,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, Rr * 1.5, 0, TAU); ctx.fill();
+    const sigma2 = (Rr * 0.5) ** 2 * 2, scale = Math.max(0.7, Math.min(1.5, R / 110));
+    for (const n of nodes) {
+      const rad = 1 + Math.sin(t * n.fr * 2 + n.ph) * n.amp;                      // small radius variations
+      const x = n.x * rad, y = n.y * rad, z = n.z * rad;
+      const x1 = x * cyr + z * syr, z1 = -x * syr + z * cyr;
+      const y2 = y * cxr - z1 * sxr, z2 = y * sxr + z1 * cxr;
+      const s = F / (F - z2);
+      let px = cx + x1 * Rr * s, py = cy + y2 * Rr * s;
+      let tx = 0, ty = 0;
+      if (ptr.k > 0.01) {                                                          // desktop: very slight reaction
+        const dx = px - ptr.x, dy = py - ptr.y, inf = Math.exp(-(dx * dx + dy * dy) / sigma2) * ptr.k;
+        const len = Math.hypot(dx, dy) || 1; tx = dx / len * 7 * inf; ty = dy / len * 7 * inf;
+      }
+      n.ox += (tx - n.ox) * 0.08; n.oy += (ty - n.oy) * 0.08;
+      n.sx = px + n.ox; n.sy = py + n.oy; n.d = (z2 + 1) / 2;
+    }
+    // links: appear / disappear slowly, batched by alpha bucket
+    const buckets = new Map();
+    const add = (key, a, b) => { let arr = buckets.get(key); if (!arr) buckets.set(key, arr = []); arr.push(a, b); };
+    for (const l of links) {
+      const v = 0.5 + 0.5 * Math.sin(clock * l.fr * TAU + l.ph);
+      const vis = Math.max(0, Math.min(1, (v - (1 - cur.links)) / 0.25));
+      if (vis <= 0.02) { l.vis = 0; continue; }
+      l.vis = vis;
+      const a = nodes[l.a], b = nodes[l.b], alpha = vis * (0.05 + 0.3 * (a.d + b.d) / 2);
+      add('l' + Math.round(alpha * 20), a, b);
+    }
+    for (const c of chords) {
+      const v = 0.5 + 0.5 * Math.sin(clock * c.fr * TAU + c.ph);
+      if (v < 0.55) continue;
+      add('c' + Math.round((v - 0.55) / 0.45 * 0.12 * 40), nodes[c.a], nodes[c.b]);
+    }
+    ctx.lineWidth = 0.7;
+    for (const [key, arr] of buckets) {
+      const cyan = key[0] === 'c', alpha = cyan ? +key.slice(1) / 40 : +key.slice(1) / 20;
+      if (alpha <= 0) continue;
+      ctx.strokeStyle = cyan ? `rgba(92,200,232,${alpha.toFixed(3)})` : `rgba(143,176,255,${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      for (let i = 0; i < arr.length; i += 2) { ctx.moveTo(arr[i].sx, arr[i].sy); ctx.lineTo(arr[i + 1].sx, arr[i + 1].sy); }
+      ctx.stroke();
+    }
+    // outer particles
+    for (const d of dust) {
+      const x = d.r * Math.cos(d.th), y0 = d.r * Math.sin(d.th) * Math.sin(d.inc), z0 = d.r * Math.sin(d.th) * Math.cos(d.inc);
+      const x1 = x * cyr + z0 * syr, z1 = -x * syr + z0 * cyr, s = F / (F - z1 * 0.4);
+      const a = (0.12 + 0.22 * (0.5 + 0.5 * Math.sin(clock * 0.7 + d.tw))) * (0.45 + 0.55 * (z1 / d.r + 1) / 2);
+      ctx.fillStyle = `rgba(143,176,255,${a.toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(cx + x1 * Rr * s, cy + y0 * Rr * s, d.sz * scale * 0.8, 0, TAU); ctx.fill();
+    }
+    // points, back to front: blue (back) → light blue → bluish white (front)
+    const order = nodes.slice().sort((p, q) => p.d - q.d);
+    for (const n of order) {
+      const col = n.d > 0.74 ? '230,238,255' : n.d > 0.42 ? '143,176,255' : '47,107,255';
+      const a = 0.22 + 0.72 * n.d, r = n.sz * (0.55 + 0.85 * n.d) * scale;
+      if (n.d > 0.82 && n.sz > 1.3) {
+        ctx.fillStyle = `rgba(143,176,255,${(0.07 * a).toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(n.sx, n.sy, r * 3.2, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle = `rgba(${col},${a.toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(n.sx, n.sy, r, 0, TAU); ctx.fill();
+    }
+    // signals travelling along visible links
+    for (const p of pulses) {
+      if (!p.l.vis) continue;
+      const a = nodes[p.rev ? p.l.b : p.l.a], b = nodes[p.rev ? p.l.a : p.l.b];
+      const x = a.sx + (b.sx - a.sx) * p.u, y = a.sy + (b.sy - a.sy) * p.u, fade = Math.sin(p.u * Math.PI);
+      ctx.fillStyle = `rgba(230,238,255,${(0.85 * fade * p.l.vis).toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(x, y, 1.4 * scale, 0, TAU); ctx.fill();
+    }
+  }
+
+  function frame(now) {
+    if (!running) return;
+    const dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+    step(dt); draw();
+    raf = requestAnimationFrame(frame);
+  }
+  const wanted = () => active && onScreen && !document.hidden && !reduced;
+  function sync() {
+    if (wanted()) { if (!running) { running = true; last = 0; raf = requestAnimationFrame(frame); } }
+    else if (running) { running = false; cancelAnimationFrame(raf); }
+  }
+  function still() { if (resize()) { t = 14; clock = 14; draw(); } }   // prefers-reduced-motion: one calm static frame
+  document.addEventListener('visibilitychange', sync);                        // pause when the tab is hidden
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { onScreen = es[es.length - 1].isIntersecting; sync(); }).observe(canvas);  // pause off-viewport
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (active) { resize(); if (!running) draw(); } }).observe(canvas);
+  if (opts.pointerHost && !reduced) {
+    opts.pointerHost.addEventListener('pointermove', ev => {
+      if (ev.pointerType !== 'mouse') return;
+      const r = canvas.getBoundingClientRect(); ptr.x = ev.clientX - r.left; ptr.y = ev.clientY - r.top;
+      ptr.tk = Math.hypot(ptr.x - W / 2, ptr.y - H / 2) < R * 1.7 ? 1 : 0;
+    });
+    opts.pointerHost.addEventListener('pointerleave', () => { ptr.tk = 0; });
+  }
+  return {
+    source: OAI_ORB_SOURCE,
+    states: Object.keys(OAI_ORB_STATES),
+    get state() { return stateName; },
+    setState(name) { stateName = OAI_ORB_STATES[name] ? name : 'idle'; target = OAI_ORB_STATES[stateName]; },
+    setActive(on) { active = on; if (on) { if (reduced) still(); else resize(); } sync(); },
+  };
+}
+
+let OAI_LANDING = null;
+function initOaiLanding() {
+  if (OAI_LANDING) return OAI_LANDING;
+  const mq = q => !!(window.matchMedia && window.matchMedia(q).matches);
+  const reduced = mq('(prefers-reduced-motion: reduce)');
+  const finePointer = mq('(hover: hover) and (pointer: fine)');
+  const orb = createOaiOrb(document.getElementById('oai-orb'),
+                           { reducedMotion: reduced, pointerHost: finePointer ? document.getElementById('view-oai') : null });
+  const label = document.getElementById('oai-orb-state');
+  let i = 0, timer = 0;
+  function tick() {                                 // VISUAL DEMO cycle — not the Agent IA (FUTUR / NON ACTIF)
+    const [text, state] = OAI_DEMO_CYCLE[i++ % OAI_DEMO_CYCLE.length];
+    if (orb) orb.setState(state);
+    label.classList.add('fade');
+    setTimeout(() => { label.textContent = text; label.classList.remove('fade'); }, 600);
+  }
+  OAI_LANDING = {
+    orb,
+    start() { if (orb) orb.setActive(true); if (!reduced && !timer) { tick(); timer = setInterval(tick, 5600); } },
+    stop() { if (orb) orb.setActive(false); clearInterval(timer); timer = 0; },
+  };
+  return OAI_LANDING;
+}
+
+const VIEWS = {
+  '#oai': { cls: 'v-oai', present: true, load: () => initOaiLanding().start() },
+  '#presentation': { cls: 'v-arch', present: true, load: () => renderArchitecture() },
+};
+let ROUTE_LAST = null;
+function route() {
+  const current = VIEWS[location.hash] ? location.hash : '#presentation';  // public default = the presentation (the /orchestrai orb is the entry point)
+  Object.values(VIEWS).forEach(v => document.body.classList.toggle(v.cls, v.cls === VIEWS[current].cls));
+  document.body.classList.toggle('shell-less', !!VIEWS[current].present);  // no application shell on landing / presentation
+  syncHeaderHeight();
+  if (current !== ROUTE_LAST) { window.scrollTo(0, 0); ROUTE_LAST = current; }  // each page starts at the top
+  if (current !== '#oai' && OAI_LANDING) OAI_LANDING.stop();  // the orb only runs on the landing
+  VIEWS[current].load();
+}
+window.addEventListener('hashchange', route);
+route();
+
+</script>
+</body>
+</html>
