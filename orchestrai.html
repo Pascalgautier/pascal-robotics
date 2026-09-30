@@ -26,18 +26,17 @@
    souris (ou du doigt) qui ouvre : la distance parcourue alimente une cible t (0→1), la progression affichée p suit t avec de l'inertie (lissage
    exponentiel) ; volets = translateY(∓p·100 %). Souris à l'arrêt : t ne bouge plus, p rejoint t puis se fige. p ≥ 0,98 -> finition, volets retirés du DOM.
    Réglages : K (distance pour ouvrir) = max(700, max(largeur, hauteur)) px ; TAU (inertie) = 0,22 s ; plafond 240 px par évènement.
-   Filets : sans mouvement (ou arrêt) 6 s en souris / 2,5 s en tactile -> ouverture douce 1 s ; toute touche -> ouverture 0,8 s ; bouton « Passer l'intro » -> 0,45 s ;
-   prefers-reduced-motion -> fondu 0,3 s sans interaction. Volets/indice aria-hidden, pointer-events:none (sauf le bouton). */
+   Filets : sans mouvement (ou arrêt) 6 s en souris / 2,5 s en tactile -> ouverture douce 1 s ; toute touche -> ouverture 0,8 s ;
+   prefers-reduced-motion -> fondu 0,3 s sans interaction. Volets aria-hidden, pointer-events:none. */
 (function(){
   try{
     if (sessionStorage.getItem('pr-intro-orb') !== '1') return;
     sessionStorage.removeItem('pr-intro-orb');
   }catch(e){ return; }
   var d = document, de = d.documentElement, win = window, gone = false;
-  var reduce = false, coarse = false, en = false;
+  var reduce = false, coarse = false;
   try{ reduce = win.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
   try{ coarse = win.matchMedia('(pointer: coarse)').matches || !win.matchMedia('(hover: hover)').matches; }catch(e){}
-  try{ var lg = localStorage.getItem('pr-lang') || localStorage.getItem('pr_lang'); en = (lg === 'en'); }catch(e){}
   var M = '2147483647';
   var st = d.createElement('style'); st.id = 'pr-intro-shutters-css';
   st.textContent =
@@ -46,23 +45,15 @@
     '.pr-shutter-top{top:0;height:calc(50vh + 1px);height:calc(50svh + 1px);height:calc(50dvh + 1px)}.pr-shutter-bot{bottom:0}' +
     '.pr-shutter::after{content:"";position:absolute;left:0;right:0;height:1px;background:#3d8bff;opacity:calc(.9*var(--lo));box-shadow:0 0 8px 1px rgba(61,139,255,.55),0 0 18px 2px rgba(61,139,255,.2)}' +
     '.pr-shutter-top::after{bottom:1px}.pr-shutter-bot::after{top:-1px}' +
-    '.pr-skip{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));pointer-events:auto;cursor:pointer;' +
-    'padding:9px 16px;border-radius:999px;font:600 12.5px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;' +
-    'color:rgba(214,230,255,.86);background:rgba(5,11,24,.55);border:1px solid rgba(127,178,255,.34);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);' +
-    'transition:background .18s ease,border-color .18s ease,color .18s ease}' +
-    '.pr-skip:hover{background:rgba(61,139,255,.28);border-color:rgba(127,178,255,.7);color:#fff}.pr-skip:focus-visible{outline:2px solid #7fb2ff;outline-offset:3px;color:#fff}' +
     'html.pr-lock,html.pr-lock body{touch-action:none}' +
-    '@media (prefers-reduced-motion:reduce){.pr-shutter{transition:opacity .3s ease}.pr-shutter::after{display:none}.pr-skip{transition:none}}';
+    '@media (prefers-reduced-motion:reduce){.pr-shutter{transition:opacity .3s ease}.pr-shutter::after{display:none}}';
   (d.head || de).appendChild(st);
-  var gate = d.createElement('div'), top = d.createElement('div'), bot = d.createElement('div'), skip = d.createElement('button');
+  var gate = d.createElement('div'), top = d.createElement('div'), bot = d.createElement('div');
   gate.className = 'pr-gate'; gate.id = 'pr-intro-gate';
   top.className = 'pr-shutter pr-shutter-top'; bot.className = 'pr-shutter pr-shutter-bot';
   top.id = 'pr-intro-shutter-top'; bot.id = 'pr-intro-shutter-bot';
   top.setAttribute('aria-hidden', 'true'); bot.setAttribute('aria-hidden', 'true');
-  skip.type = 'button'; skip.className = 'pr-skip'; skip.id = 'pr-intro-skip';
-  skip.textContent = en ? 'Skip intro' : "Passer l'intro";
   gate.appendChild(top); gate.appendChild(bot);
-  if (!reduce){ gate.appendChild(skip); }
   de.appendChild(gate);
   de.classList.add('pr-lock');
 
@@ -132,13 +123,12 @@
   var SCROLLK = {' ':1,'ArrowUp':1,'ArrowDown':1,'PageUp':1,'PageDown':1,'Home':1,'End':1};
   function onKey(e){
     if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
-    if (SCROLLK[e.key] && e.target !== skip && e.cancelable) e.preventDefault();
+    if (SCROLLK[e.key] && e.cancelable) e.preventDefault();
     auto(800);
   }
   ['pointermove','pointerdown','pointerup','pointercancel'].forEach(function(n){ win.addEventListener(n, onPtr, {capture:true, passive:true}); });
   win.addEventListener('keydown', onKey, true);
   win.addEventListener('wheel', onWheel, {capture:true, passive:false});
-  skip.addEventListener('click', function(){ auto(450); });
   paint(); arm();
   /* filet absolu : jamais plus de 5 min (visiteur immobile dans un onglet masqué, etc.) */
   setTimeout(rm, 300000);
