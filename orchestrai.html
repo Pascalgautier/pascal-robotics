@@ -1271,7 +1271,7 @@ var ORB_SATS = {
       var touch = e.pointerType === 'touch' || e.pointerType === 'pen';
       if (moved > (touch ? 10 : 6)) return;                           /* a drag never opens */
       var h = hit({ clientX: e.clientX, clientY: e.clientY, pointerType: touch ? 'touch' : 'mouse' });
-      if (h >= 0) openPanel(h, btns[h]);
+      if (h >= 0){ e.oaiSat = true; openPanel(h, btns[h]); }
     });
     document.addEventListener('pr:lang', function(){ labelAll(); tipFor = -2; if (panel.classList.contains('is-open')) fill(openIdx); syncDom(); });
 
@@ -1450,6 +1450,18 @@ var ORB_SATS = {
     /* two fingers on the Orb = pinch: cancel the native pan so the gesture isn't turned into a page scroll (a single finger still scrolls the page) */
     canvas.addEventListener('touchmove', function(e){ if (e.touches.length >= 2 && e.cancelable) e.preventDefault(); }, { passive: false });
     wrap.addEventListener('gesturestart', function(e){ e.preventDefault(); });   /* iOS Safari: no page pinch-zoom on the Orb */
+
+    /* simple click / tap on the Orb body (not on a satellite, not a drag, not a pinch): zoom in to the OAI core; click again while zoomed: back out */
+    var ck = { x: 0, y: 0, on: false, multi: false };
+    canvas.addEventListener('pointerdown', function(e){ ck.on = true; ck.x = e.clientX; ck.y = e.clientY; ck.multi = nP >= 2; });
+    canvas.addEventListener('click', function(e){
+      var moved = Math.hypot(e.clientX - ck.x, e.clientY - ck.y), touch = e.pointerType === 'touch' || e.pointerType === 'pen';
+      if (!ck.on || ck.multi || nP >= 2 || e.oaiSat || moved > (touch ? 10 : 6)) return;
+      ck.on = false;
+      var r = canvas.getBoundingClientRect(), dx = e.clientX - r.left - cx, dy = e.clientY - r.top - cy;
+      if (Math.hypot(dx, dy) > R * 1.05) return;     /* outside the sphere: nothing */
+      if (zoomTarget > 0.02) setTarget(0); else setTarget(maxZ);
+    });
 
     /* keys: + / - (also = and numpad) when the Orb has focus, or while zoomed; Esc leaves the zoom */
     function typing(t){ return t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)); }
