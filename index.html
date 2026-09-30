@@ -47,10 +47,10 @@
   <script>
   /* ===== Intro : GROS ORBE 3D (plongée dans la sphère) -> fondu navy -> /orchestrai (fondu d'entrée) =====
      - Mécanisme : juste avant la redirection, sessionStorage['pr-intro-orb']='1' ; orchestrai.html (script inline dans le <head>)
-       pose alors un voile navy #050b18 avant le premier rendu et le lève en ~1 s. Ici, l'orbe s'estompe vers le même navy : aucune coupure.
+       pose alors deux volets navy #050b18 (haut/bas) avant le premier rendu, palier ~200 ms puis ouverture ~1 s. Ici, l'orbe s'estompe vers le même navy : aucune coupure.
      - La vidéo n'est plus jouée dans ce parcours (fichiers conservés dans le dépôt).
      - prefers-reduced-motion, WebGL absent, module/three indisponible ou trop lent (> 4 s), contexte WebGL perdu
-       => redirection directe vers /orchestrai (même voile).
+       => redirection directe vers /orchestrai (mêmes volets).
      - Filets de sécurité : dans tous les cas, arrivée à /orchestrai. */
   (function () {
     var NEXT = '/orchestrai';

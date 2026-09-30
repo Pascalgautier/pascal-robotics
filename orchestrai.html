@@ -20,26 +20,52 @@
 <meta name="twitter:card" content="summary_large_image">
 <script>document.documentElement.classList.add('js');</script>
 <script>
-/* Entrée en fondu depuis l'intro (index.html pose sessionStorage['pr-intro-orb']='1' juste avant la redirection) :
-   voile navy plein écran posé AVANT le premier rendu, levé (opacité 1 -> 0, ~1 s) une fois la page prête ; aucun effet
-   si le drapeau est absent (visite normale de /orchestrai). Non bloquant : pointer-events:none, retiré du DOM ensuite (filet 3 s). */
+/* Entrée en « volets qui s'ouvrent » depuis l'intro (index.html pose sessionStorage['pr-intro-orb']='1' juste avant la redirection) :
+   deux volets navy #050b18 (haut 50 % ancré en haut, bas 50 % ancré en bas) posés AVANT le premier rendu, donc plein navy sans coupure
+   avec le fondu de l'Orbe d'index. Dès que la page est prête : palier ~200 ms, puis ouverture ~1,0 s (haut translateY 0 -> -100 %,
+   bas 0 -> +100 %, cubic-bezier(.7,0,.2,1)), CSS transform uniquement. Filet bleu #3d8bff 1 px sur la jonction, estompé à l'ouverture.
+   prefers-reduced-motion : simple fondu 0,3 s. Aucun effet si le drapeau est absent (visite directe). Non bloquant : pointer-events:none,
+   aria-hidden, retirés du DOM à la fin (filet de sécurité : 3 s max). */
 (function(){
   try{
     if (sessionStorage.getItem('pr-intro-orb') !== '1') return;
     sessionStorage.removeItem('pr-intro-orb');
   }catch(e){ return; }
-  var d = document, de = d.documentElement, v = d.createElement('div'), gone = false, lifted = false, dur = 1000;
-  try{ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) dur = 400; }catch(e){}
-  v.id = 'pr-intro-veil'; v.setAttribute('aria-hidden', 'true');
-  v.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483647;background:#050b18;opacity:1;pointer-events:none;transition:opacity ' + dur + 'ms ease';
-  de.appendChild(v);
-  function rm(){ if (gone) return; gone = true; if (v.parentNode) v.parentNode.removeChild(v); }
+  var d = document, de = d.documentElement, gone = false, lifted = false;
+  var reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  var st = d.createElement('style'); st.id = 'pr-intro-shutters-css';
+  st.textContent =
+    '.pr-shutter{position:fixed;left:0;right:0;z-index:2147483647;background:#050b18;pointer-events:none;will-change:transform;transform:translate3d(0,0,0);height:50vh;height:50svh;height:50dvh}' +
+    '.pr-shutter-top{top:0;transition:transform 1000ms cubic-bezier(.7,0,.2,1)}' +
+    '.pr-shutter-bot{bottom:0;transition:transform 1000ms cubic-bezier(.7,0,.2,1)}' +
+    '.pr-shutter-bot{z-index:2147483647}.pr-shutter-top{z-index:2147483646}' +
+    '.pr-shutter::after{content:"";position:absolute;left:0;right:0;height:1px;background:#3d8bff;opacity:.75;box-shadow:0 0 8px 1px rgba(61,139,255,.55);transition:opacity 500ms ease-out}' +
+    '.pr-shutter-top::after{bottom:0}.pr-shutter-bot::after{top:-1px}' +
+    '.pr-open .pr-shutter-top{transform:translate3d(0,-100%,0)}.pr-open .pr-shutter-bot{transform:translate3d(0,100%,0)}' +
+    '.pr-open .pr-shutter::after{opacity:0}' +
+    '@media (prefers-reduced-motion:reduce){.pr-shutter{will-change:opacity;transition:opacity 300ms ease!important}.pr-shutter::after{display:none}' +
+    '.pr-open .pr-shutter-top,.pr-open .pr-shutter-bot{transform:none;opacity:0}}';
+  (d.head || de).appendChild(st);
+  var top = d.createElement('div'), bot = d.createElement('div');
+  top.className = 'pr-shutter pr-shutter-top'; bot.className = 'pr-shutter pr-shutter-bot';
+  top.id = 'pr-intro-shutter-top'; bot.id = 'pr-intro-shutter-bot';
+  top.setAttribute('aria-hidden', 'true'); bot.setAttribute('aria-hidden', 'true');
+  de.appendChild(top); de.appendChild(bot);
+  function rm(){
+    if (gone) return; gone = true;
+    [top, bot, st].forEach(function(n){ if (n && n.parentNode) n.parentNode.removeChild(n); });
+    de.classList.remove('pr-open');
+  }
   function lift(){
     if (lifted) return; lifted = true;
     requestAnimationFrame(function(){ requestAnimationFrame(function(){
-      v.style.opacity = '0';
-      v.addEventListener('transitionend', rm);
-      setTimeout(rm, dur + 300);
+      setTimeout(function(){
+        if (gone) return;
+        de.classList.add('pr-open');
+        bot.addEventListener('transitionend', function(e){ if (e.propertyName === 'transform' || e.propertyName === 'opacity') rm(); });
+        setTimeout(rm, (reduce ? 300 : 1000) + 300);
+      }, reduce ? 0 : 200);   /* palier plein navy ~200 ms */
     }); });
   }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', lift); else lift();
