@@ -454,6 +454,107 @@ section[id]{scroll-margin-top:84px}
 <script src="assets/fx/pr-fx.js?v=20260928" defer data-fx-theme="blue" data-fx-titles="main h2" data-fx-blocks=".oloop .lp,.domains li"></script>
 <link rel="stylesheet" href="assets/orchestrai/oai-scrolly.css?v=20260929">
 <style>.oai-scrolly{--oai-top:76px}</style>
+<style id="oasc-css">
+/* Schéma animé OrchestrAI (#principe) — tout est préfixé oasc ; boucle 9,6 s ; reduced-motion = état final statique */
+.oasc-sec { --oasc-ink: #f4f8ff; --oasc-text: var(--muted); --oasc-warn: #f0b24a; }
+.oasc-sec .oasc-wrap { max-width: 1060px; }
+.oasc-sec .eyebrow { margin-bottom: 12px; }
+.oasc-sec h2 { margin-bottom: 8px; }
+.oasc { margin: 30px 0 0; padding: 0; --oasc-dim: 0.22; }
+.oasc-say { margin: 0 0 clamp(22px, 3.4vw, 40px); color: var(--oasc-ink); font-weight: 650; font-size: clamp(20px, 3vw, 30px); line-height: 1.3; letter-spacing: -.005em; text-align: center; }
+.oasc-say span { white-space: nowrap; }
+.oasc svg { display: block; width: 100%; height: auto; overflow: visible; }
+.oasc svg.oasc-v { display: none; max-width: min(100%, 440px); margin: 0 auto; }
+.oasc-h, .oasc-v { --ro: 20deg; --ri: 22deg; }
+.oasc-v { --ro: 110deg; --ri: 112deg; }
+.oasc text { fill: var(--oasc-text); font-family: inherit; font-weight: 500; font-size: 12px; }
+.oasc .oasc-m { letter-spacing: .12em; }
+.oasc .oasc-b { font-weight: 700; fill: var(--oasc-ink); font-size: 14px; }
+.oasc .oasc-t { font-size: 11.5px; letter-spacing: .12em; font-weight: 600; }
+.oasc .oasc-ink { fill: var(--oasc-ink); }
+.oasc .oasc-ok { fill: var(--pr-green); }
+.oasc .oasc-warn { fill: var(--oasc-warn); }
+.oasc .oasc-c { font-size: 14px; letter-spacing: .1em; font-weight: 600; fill: var(--oasc-ink); }
+.oasc .oasc-trk { fill: none; stroke: var(--line2); stroke-width: 2; }
+.oasc .oasc-dash { stroke-dasharray: 5 6; }
+.oasc .oasc-cn { fill: none; stroke: var(--blue2); stroke-width: 2.4; stroke-linecap: butt; }
+.oasc .oasc-arw { fill: var(--blue2); stroke: none; }
+.oasc .oasc-node { fill: rgba(10, 22, 48, .72); stroke: var(--blue2); stroke-width: 1.6; }
+.oasc .oasc-main { fill: rgba(61, 139, 255, .16); stroke: var(--blue); stroke-width: 2; }
+.oasc .oasc-gl { fill: none; stroke: var(--oasc-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.oasc .oasc-glf { fill: var(--oasc-ink); stroke: none; }
+.oasc .oasc-warnbox { fill: rgba(245, 158, 11, .08); stroke: var(--oasc-warn); stroke-width: 1.2; }
+.oasc .oasc-chip { fill: rgba(10, 22, 48, .72); stroke: var(--line2); stroke-width: 1.4; }
+.oasc .oasc-chip.is-ok { fill: rgba(156, 229, 26, .06); stroke: var(--pr-green); stroke-width: 1.8; }
+.oasc .oasc-chip.is-future { fill: none; stroke: var(--line2); stroke-dasharray: 5 4; }
+.oasc .oasc-mod { fill: rgba(61, 139, 255, .12); stroke: var(--blue2); stroke-width: 1.4; }
+.oasc .oasc-ring { fill: none; stroke-width: 2.6; transform-box: fill-box; transform-origin: center; }
+.oasc .oasc-ro { stroke: var(--blue2); transform: rotate(var(--ro)); }
+.oasc .oasc-ri { stroke: var(--blue); transform: rotate(var(--ri)); }
+.oasc .oasc-core { fill: var(--blue2); }
+.oasc .oasc-dot { fill: var(--blue2); }
+.oasc .oasc-beam { fill: none; stroke: var(--oasc-ink); stroke-width: 3; opacity: .92; }
+.oasc .oasc-pulse { fill: none; stroke: var(--oasc-ink); stroke-width: 3.2; stroke-dasharray: .05 .95; opacity: 0; }
+.oasc .oasc-gate { fill: rgba(10, 22, 48, .72); stroke: var(--oasc-ink); stroke-width: 1.8; }
+.oasc .oasc-cn, .oasc .oasc-beam { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.oasc-cap { margin: 22px auto 0; text-align: center; color: var(--oasc-text); font-size: 12.5px; line-height: 1.5; }
+.oasc-cap b { display: inline-block; color: var(--blue2); font-weight: 700; font-size: 11px; letter-spacing: .18em; margin-right: 8px; }
+
+.oasc .oasc-a, .oasc .oasc-r, .oasc .oasc-w, .oasc .oasc-pulse { animation-duration: 9.6s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+.oasc.is-off *, .oasc.is-off *::before { animation-play-state: paused !important; }
+
+.oasc .oasc-t02 { animation-name: oascot02; }
+@keyframes oascot02 { 0%, 2.08% { opacity: var(--oasc-dim); } 6.25%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t08 { animation-name: oascot08; }
+@keyframes oascot08 { 0%, 8.33% { opacity: var(--oasc-dim); } 12.5%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t15 { animation-name: oascot15; }
+@keyframes oascot15 { 0%, 15.62% { opacity: var(--oasc-dim); } 19.79%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t19 { animation-name: oascot19; }
+@keyframes oascot19 { 0%, 19.79% { opacity: var(--oasc-dim); } 23.96%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t25 { animation-name: oascot25; }
+@keyframes oascot25 { 0%, 26.04% { opacity: var(--oasc-dim); } 30.21%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t31 { animation-name: oascot31; }
+@keyframes oascot31 { 0%, 32.29% { opacity: var(--oasc-dim); } 36.46%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t37 { animation-name: oascot37; }
+@keyframes oascot37 { 0%, 38.54% { opacity: var(--oasc-dim); } 42.71%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t52 { animation-name: oascot52; }
+@keyframes oascot52 { 0%, 54.17% { opacity: var(--oasc-dim); } 58.33%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t60 { animation-name: oascot60; }
+@keyframes oascot60 { 0%, 62.5% { opacity: var(--oasc-dim); } 66.67%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t62 { animation-name: oascot62; }
+@keyframes oascot62 { 0%, 64.58% { opacity: var(--oasc-dim); } 68.75%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t66 { animation-name: oascot66; }
+@keyframes oascot66 { 0%, 68.75% { opacity: var(--oasc-dim); } 72.92%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t71 { animation-name: oascot71; }
+@keyframes oascot71 { 0%, 73.96% { opacity: var(--oasc-dim); } 78.12%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-t74 { animation-name: oascot74; }
+@keyframes oascot74 { 0%, 77.08% { opacity: var(--oasc-dim); } 81.25%, 94.79% { opacity: 1; } 100% { opacity: var(--oasc-dim); } }
+.oasc .oasc-d05_09 { animation-name: oascd05_09; }
+@keyframes oascd05_09 { 0%, 5.21% { stroke-dashoffset: 1; opacity: 1; } 9.38%, 94.79% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.oasc .oasc-d12_16 { animation-name: oascd12_16; }
+@keyframes oascd12_16 { 0%, 12.5% { stroke-dashoffset: 1; opacity: 1; } 16.67%, 94.79% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.oasc .oasc-d46_50 { animation-name: oascd46_50; }
+@keyframes oascd46_50 { 0%, 47.92% { stroke-dashoffset: 1; opacity: 1; } 52.08%, 94.79% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.oasc .oasc-d56_60 { animation-name: oascd56_60; }
+@keyframes oascd56_60 { 0%, 58.33% { stroke-dashoffset: 1; opacity: 1; } 62.5%, 94.79% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.oasc .oasc-d68_72 { animation-name: oascd68_72; }
+@keyframes oascd68_72 { 0%, 70.83% { stroke-dashoffset: 1; opacity: 1; } 75%, 94.79% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.oasc .oasc-pulse { animation-name: oascpulse; }
+@keyframes oascpulse { 0%, 77.08% { stroke-dashoffset: 0; opacity: 0; } 78.12% { stroke-dashoffset: 0; opacity: 1; } 86.46% { stroke-dashoffset: -.95; opacity: 1; } 87.5%, 100% { stroke-dashoffset: -.95; opacity: 0; } }
+.oasc .oasc-ro { animation: oascro 9.6s infinite; }
+.oasc .oasc-ri { animation: oascri 9.6s infinite; }
+@keyframes oascro { 0%, 15.62% { transform: rotate(calc(var(--ro) - 340deg)); animation-timing-function: cubic-bezier(.25,.6,.3,1); } 47.92%, 99.9% { transform: rotate(var(--ro)); } 100% { transform: rotate(calc(var(--ro) - 340deg)); } }
+@keyframes oascri { 0%, 15.62% { transform: rotate(calc(var(--ri) + 300deg)); animation-timing-function: cubic-bezier(.25,.6,.3,1); } 47.92%, 99.9% { transform: rotate(var(--ri)); } 100% { transform: rotate(calc(var(--ri) + 300deg)); } }
+@media (max-width: 900px) {
+  .oasc svg.oasc-h { display: none; }
+  .oasc svg.oasc-v { display: block; }
+  .oasc svg.oasc-v .oasc-c { font-size: 13px; }
+}
+@media (max-width: 560px) { .oasc-say span { display: block; } }
+@media (prefers-reduced-motion: reduce) {
+  .oasc *, .oasc *::before { animation: none !important; }
+}
+</style>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -554,6 +655,72 @@ section[id]{scroll-margin-top:84px}
     <p class="oai-sr" data-oai-sr></p>
   </div>
 </section>
+
+<!-- ================= SCHÉMA ANIMÉ — « Vous exprimez. OrchestrAI recommande. Vous décidez. » (entre la séquence 3D et #aujourdhui) ================= -->
+<section class="section oasc-sec" id="principe" aria-labelledby="osc-title">
+  <div class="wrap oasc-wrap">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="osc.eyebrow">Le principe</p>
+      <h2 id="osc-title" data-i18n="osc.title">Vous gardez la décision.</h2>
+    </div>
+    <div class="reveal">
+      <figure class="oasc" id="oasc" role="img" aria-labelledby="oasc-title" aria-describedby="oasc-desc">
+        <p class="oasc-say"><span class="oasc-a oasc-t02" data-i18n="osc.say1">Vous exprimez.</span> <span class="oasc-a oasc-t08" data-i18n="osc.say2">OrchestrAI recommande.</span> <span class="oasc-a oasc-t52" data-i18n="osc.say3">Vous décidez.</span></p>
+<svg class="oasc-h" viewBox="0 0 1120 480" focusable="false" aria-hidden="true">
+<title id="oasc-title" data-i18n="osc.t">Vous exprimez. OrchestrAI recommande. Vous décidez.</title><desc id="oasc-desc" data-i18n="osc.d">Illustration du principe. Une intention entre dans OrchestrAI : le Decision Engine, expérimental, en mode RECOMMEND_ONLY, recommande, n’exécute rien et ne dépense rien automatiquement. Au choix de la route, quatre critères sont visibles : coût, temps, qualité et souveraineté, cette dernière à vérifier. Vous décidez ensuite du lieu d’exécution : le cloud est seul actif ; le local et l’on-prem ou infra privée sont futurs. Le modèle (Seedance, WAN, LTX) est distinct du lieu. L’évaluation du résultat revient vers OrchestrAI par une boucle de retour.</desc>
+<path class="oasc-trk" d="M98,190 H186 M340,190 H432 M646,190 H696 M924,190 H994"/>
+<path class="oasc-trk oasc-dash" d="M1030,226 V450 H265 V236"/>
+<path class="oasc-cn oasc-w oasc-d05_09" pathLength="1" d="M98,190 H184"/>
+<path class="oasc-cn oasc-w oasc-d12_16" pathLength="1" d="M340,190 H430"/>
+<path class="oasc-beam oasc-w oasc-d46_50" pathLength="1" d="M500,190 H614"/>
+<path class="oasc-cn oasc-w oasc-d56_60" pathLength="1" d="M646,190 H692"/>
+<path class="oasc-cn oasc-w oasc-d68_72" pathLength="1" d="M924,190 H990"/>
+<g class="oasc-a oasc-t02"><text class="oasc-m oasc-b" x="62" y="112" text-anchor="middle" data-i18n="osc.intent">INTENTION</text><circle class="oasc-node" cx="62" cy="190" r="34"/><path class="oasc-glf" d="M62,178 L65,187 L74,190 L65,193 L62,202 L59,193 L50,190 L59,187 Z"/></g>
+<g class="oasc-a oasc-t08"><polygon class="oasc-arw" points="188,190 179,185 179,195"/><text class="oasc-m oasc-t" x="265" y="110" text-anchor="middle">DECISION ENGINE</text><rect class="oasc-warnbox" x="205" y="118" width="120" height="22" rx="11"/><text class="oasc-m oasc-t oasc-warn" x="265" y="133" text-anchor="middle" data-i18n="osc.exp">EXPÉRIMENTAL</text><rect class="oasc-main" x="190" y="150" width="150" height="80" rx="14"/><text class="oasc-m oasc-b" x="265" y="187" text-anchor="middle" style="font-size:14px">ORCHESTRAI</text><text class="oasc-m oasc-t" x="265" y="209" text-anchor="middle" style="font-size:11px">RECOMMEND_ONLY</text></g>
+<g class="oasc-a oasc-t15"><polygon class="oasc-arw" points="434,190 425,185 425,195"/><text class="oasc-m oasc-b" x="500" y="108" text-anchor="middle" data-i18n="osc.route">CHOIX DE LA ROUTE</text><circle class="oasc-ring oasc-ro" cx="500" cy="190" r="64" pathLength="360" stroke-dasharray="320 40"/><circle class="oasc-ring oasc-ri" cx="500" cy="190" r="44" pathLength="360" stroke-dasharray="316 44"/><circle class="oasc-core" cx="500" cy="190" r="7"/></g>
+<g class="oasc-a oasc-t19"><circle class="oasc-dot" cx="424" cy="296" r="4.5"/><text class="oasc-m oasc-c" x="440" y="300" data-i18n="osc.cost">COÛT</text></g><g class="oasc-a oasc-t25"><circle class="oasc-dot" cx="424" cy="322" r="4.5"/><text class="oasc-m oasc-c" x="440" y="326" data-i18n="osc.time">TEMPS</text></g><g class="oasc-a oasc-t31"><circle class="oasc-dot" cx="424" cy="348" r="4.5"/><text class="oasc-m oasc-c" x="440" y="352" data-i18n="osc.qual">QUALITÉ</text></g><g class="oasc-a oasc-t37"><circle class="oasc-dot" cx="424" cy="374" r="4.5"/><text class="oasc-m oasc-c" x="440" y="378" data-i18n="osc.sov">SOUVERAINETÉ</text><text class="oasc-m oasc-t oasc-warn" x="574" y="378" style="font-size:12px;letter-spacing:.06em" data-i18n="osc.verify">à vérifier</text></g>
+<g class="oasc-a oasc-t52"><polygon class="oasc-gate" points="630,174 646,190 630,206 614,190"/><text class="oasc-m oasc-b" x="630" y="154" text-anchor="middle" style="font-size:12px" data-i18n="osc.you">VOUS</text></g>
+<g class="oasc-a oasc-t60"><text class="oasc-m oasc-b" x="700" y="112" data-i18n="osc.exec">EXÉCUTION</text><text class="oasc-m oasc-t" x="700" y="148" data-i18n="osc.place">LIEU</text><rect class="oasc-chip is-future" x="700" y="225" width="224" height="50" rx="10"/><circle cx="718" cy="250" r="5" fill="none" stroke="#a3b3d4" stroke-width="1.4" stroke-dasharray="3 2.4"/><text class="oasc-m" x="736" y="247" style="font-size:12.5px;letter-spacing:.06em">LOCAL</text><text class="oasc-m oasc-t oasc-warn" x="736" y="264" data-i18n="osc.future">FUTUR</text><rect class="oasc-chip is-future" x="700" y="285" width="224" height="50" rx="10"/><circle cx="718" cy="310" r="5" fill="none" stroke="#a3b3d4" stroke-width="1.4" stroke-dasharray="3 2.4"/><text class="oasc-m" x="736" y="307" style="font-size:11.5px;letter-spacing:.06em" data-i18n="osc.onprem">ON-PREM / INFRA PRIVÉE</text><text class="oasc-m oasc-t oasc-warn" x="736" y="324" data-i18n="osc.future">FUTUR</text></g>
+<g class="oasc-a oasc-t62"><polygon class="oasc-arw" points="698,190 689,185 689,195"/><rect class="oasc-chip is-ok" x="700" y="165" width="224" height="50" rx="10"/><circle class="oasc-glf" style="fill:var(--v1-ok)" cx="718" cy="190" r="5"/><text class="oasc-m oasc-b" x="736" y="187" style="font-size:12.5px;">CLOUD</text><text class="oasc-m oasc-t oasc-ok" x="736" y="204" data-i18n="osc.active">ACTIF</text></g>
+<g class="oasc-a oasc-t66"><text class="oasc-m oasc-t" x="700" y="372" data-i18n="osc.modelplace">MODÈLE ≠ LIEU</text><rect class="oasc-mod" x="700" y="382" width="224" height="34" rx="17"/><text class="oasc-m" x="812" y="404" text-anchor="middle" style="font-size:12.5px;letter-spacing:.04em;fill:#f4f7ff;font-weight:600">Seedance · WAN · LTX</text></g>
+<g class="oasc-a oasc-t71"><polygon class="oasc-arw" points="996,190 987,185 987,195"/><text class="oasc-m oasc-b" x="1030" y="112" text-anchor="middle" data-i18n="osc.eval">ÉVALUATION</text><circle class="oasc-node" cx="1030" cy="190" r="34"/><path class="oasc-gl" d="M1021,200 V192 M1030,200 V181 M1039,200 V187"/></g>
+<g class="oasc-a oasc-t74"><path class="oasc-cn oasc-dash" d="M1030,226 V450 H265 V236" style="stroke-dasharray:5 6"/><polygon class="oasc-arw" points="265,232 260,243 270,243"/><text class="oasc-m oasc-t" x="648" y="436" text-anchor="middle" data-i18n="osc.evalback">ÉVALUATION → ORCHESTRAI</text></g>
+<path class="oasc-pulse" pathLength="1" d="M1030,226 V450 H265 V236"/>
+</svg>
+<svg class="oasc-v" viewBox="0 0 340 910" focusable="false" aria-hidden="true">
+<path class="oasc-trk" d="M44,66 V122 M44,176 V262 M44,404 V408 M44,432 V478 M44,520 V794"/>
+<path class="oasc-trk oasc-dash" d="M44,846 V878 H332 V150 H252"/>
+<path class="oasc-cn oasc-w oasc-d05_09" pathLength="1" d="M44,66 V120"/>
+<path class="oasc-cn oasc-w oasc-d12_16" pathLength="1" d="M44,176 V260"/>
+<path class="oasc-beam oasc-w oasc-d46_50" pathLength="1" d="M44,300 V408"/>
+<path class="oasc-cn oasc-w oasc-d56_60" pathLength="1" d="M44,432 V474"/>
+<path class="oasc-cn oasc-w oasc-d68_72" pathLength="1" d="M44,520 V790"/>
+<g class="oasc-a oasc-t02"><circle class="oasc-node" cx="44" cy="40" r="26"/><path class="oasc-glf" d="M44,29.8 L46.55,37.45 L54.2,40 L46.55,42.55 L44,50.2 L41.45,42.55 L33.8,40 L41.45,37.45 Z"/><text class="oasc-m oasc-b" x="88" y="45" data-i18n="osc.intent">INTENTION</text></g>
+<g class="oasc-a oasc-t08"><polygon class="oasc-arw" points="44,124 39,115 49,115"/><circle class="oasc-main" cx="44" cy="150" r="26"/><circle class="oasc-gl" cx="44" cy="150" r="10"/><circle class="oasc-glf" cx="44" cy="150" r="3.2"/><text class="oasc-m oasc-b" x="88" y="140" style="font-size:14px">ORCHESTRAI</text><text class="oasc-m oasc-t" x="88" y="160">DECISION ENGINE</text><rect class="oasc-warnbox" x="88" y="170" width="120" height="22" rx="11"/><text class="oasc-m oasc-t oasc-warn" x="148" y="185" text-anchor="middle" data-i18n="osc.exp">EXPÉRIMENTAL</text><text class="oasc-m oasc-t" x="88" y="212" style="font-size:11px">RECOMMEND_ONLY</text></g>
+<g class="oasc-a oasc-t15"><polygon class="oasc-arw" points="44,262 39,253 49,253"/><text class="oasc-m oasc-b" x="104" y="278" data-i18n="osc.route">CHOIX DE LA ROUTE</text><circle class="oasc-ring oasc-ro" cx="44" cy="300" r="36" pathLength="360" stroke-dasharray="320 40"/><circle class="oasc-ring oasc-ri" cx="44" cy="300" r="24" pathLength="360" stroke-dasharray="316 44"/><circle class="oasc-core" cx="44" cy="300" r="5"/></g>
+<g class="oasc-a oasc-t19"><circle class="oasc-dot" cx="112" cy="310" r="4.5"/><text class="oasc-m oasc-c" x="128" y="314" data-i18n="osc.cost">COÛT</text></g><g class="oasc-a oasc-t25"><circle class="oasc-dot" cx="112" cy="336" r="4.5"/><text class="oasc-m oasc-c" x="128" y="340" data-i18n="osc.time">TEMPS</text></g><g class="oasc-a oasc-t31"><circle class="oasc-dot" cx="112" cy="362" r="4.5"/><text class="oasc-m oasc-c" x="128" y="366" data-i18n="osc.qual">QUALITÉ</text></g><g class="oasc-a oasc-t37"><circle class="oasc-dot" cx="112" cy="388" r="4.5"/><text class="oasc-m oasc-c" x="128" y="392" data-i18n="osc.sov">SOUVERAINETÉ</text><text class="oasc-m oasc-t oasc-warn" x="246" y="392" style="font-size:11px;letter-spacing:.06em" data-i18n="osc.verify">à vérifier</text></g>
+<g class="oasc-a oasc-t52"><polygon class="oasc-gate" points="44,408 58,420 44,432 30,420"/><text class="oasc-m oasc-b" x="72" y="424" style="font-size:12px" data-i18n="osc.you">VOUS</text></g>
+<g class="oasc-a oasc-t60"><circle class="oasc-node" cx="44" cy="500" r="20"/><circle class="oasc-glf" cx="44" cy="493" r="2.6"/><circle class="oasc-glf" cx="44" cy="500" r="2.6"/><circle class="oasc-glf" cx="44" cy="507" r="2.6"/><text class="oasc-m oasc-b" x="88" y="496" data-i18n="osc.exec">EXÉCUTION</text><text class="oasc-m oasc-t" x="88" y="518" data-i18n="osc.place">LIEU</text><rect class="oasc-chip is-future" x="88" y="588" width="220" height="50" rx="10"/><circle cx="106" cy="613" r="5" fill="none" stroke="#a3b3d4" stroke-width="1.4" stroke-dasharray="3 2.4"/><text class="oasc-m" x="124" y="610" style="font-size:12.5px;letter-spacing:.06em">LOCAL</text><text class="oasc-m oasc-t oasc-warn" x="124" y="627" data-i18n="osc.future">FUTUR</text><rect class="oasc-chip is-future" x="88" y="648" width="220" height="50" rx="10"/><circle cx="106" cy="673" r="5" fill="none" stroke="#a3b3d4" stroke-width="1.4" stroke-dasharray="3 2.4"/><text class="oasc-m" x="124" y="670" style="font-size:11.5px;letter-spacing:.06em" data-i18n="osc.onprem">ON-PREM / INFRA PRIVÉE</text><text class="oasc-m oasc-t oasc-warn" x="124" y="687" data-i18n="osc.future">FUTUR</text></g>
+<g class="oasc-a oasc-t62"><polygon class="oasc-arw" points="44,480 39,471 49,471"/><rect class="oasc-chip is-ok" x="88" y="528" width="220" height="50" rx="10"/><circle class="oasc-glf" style="fill:var(--v1-ok)" cx="106" cy="553" r="5"/><text class="oasc-m oasc-b" x="124" y="550" style="font-size:12.5px;">CLOUD</text><text class="oasc-m oasc-t oasc-ok" x="124" y="567" data-i18n="osc.active">ACTIF</text></g>
+<g class="oasc-a oasc-t66"><text class="oasc-m oasc-t" x="88" y="728" data-i18n="osc.modelplace">MODÈLE ≠ LIEU</text><rect class="oasc-mod" x="88" y="738" width="220" height="34" rx="17"/><text class="oasc-m" x="198" y="760" text-anchor="middle" style="font-size:12.5px;letter-spacing:.04em;fill:#f4f7ff;font-weight:600">Seedance · WAN · LTX</text></g>
+<g class="oasc-a oasc-t71"><polygon class="oasc-arw" points="44,796 39,787 49,787"/><circle class="oasc-node" cx="44" cy="820" r="26"/><path class="oasc-gl" d="M35,830 V822 M44,830 V811 M53,830 V817"/><text class="oasc-m oasc-b" x="88" y="825" data-i18n="osc.eval">ÉVALUATION</text></g>
+<g class="oasc-a oasc-t74"><path class="oasc-cn oasc-dash" d="M44,846 V878 H332 V150 H252" style="stroke-dasharray:5 6"/><polygon class="oasc-arw" points="246,150 255,145 255,155"/><text class="oasc-m oasc-t" x="183" y="900" text-anchor="middle" data-i18n="osc.evalback">ÉVALUATION → ORCHESTRAI</text></g>
+<path class="oasc-pulse" pathLength="1" d="M44,846 V878 H332 V150 H252"/>
+</svg>
+        <figcaption class="oasc-cap"><b data-i18n="osc.cap.k">ILLUSTRATION DU PRINCIPE</b><span data-i18n="osc.cap.t">Il recommande, n’exécute rien, aucune dépense automatique.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+<script>
+/* Schéma #oasc — seul rôle : mettre l'animation CSS en pause quand il n'est pas à l'écran. Sans IntersectionObserver : l'animation tourne simplement. */
+(function(){
+  var f = document.getElementById('oasc');
+  if (!f || !('IntersectionObserver' in window)) return;
+  f.classList.add('is-off');
+  new IntersectionObserver(function(en){ en.forEach(function(e){ f.classList.toggle('is-off', !e.isIntersecting); }); }, { threshold: 0.15 }).observe(f);
+})();
+</script>
 
 <!-- ================= SCREEN 3 — WHAT WE TEST TODAY ================= -->
 <section class="section" id="aujourdhui" aria-labelledby="now-title">
@@ -679,6 +846,32 @@ var I18N = {
   "now.c3": "Coût",
   "now.c4": "Fidélité",
   "now.note": "Modèles comparés dans le POC, sans partenariat.",
+  "osc.eyebrow": "Le principe",
+  "osc.title": "Vous gardez la décision.",
+  "osc.t": "Vous exprimez. OrchestrAI recommande. Vous décidez.",
+  "osc.d": "Illustration du principe. Une intention entre dans OrchestrAI : le Decision Engine, expérimental, en mode RECOMMEND_ONLY, recommande, n’exécute rien et ne dépense rien automatiquement. Au choix de la route, quatre critères sont visibles : coût, temps, qualité et souveraineté, cette dernière à vérifier. Vous décidez ensuite du lieu d’exécution : le cloud est seul actif ; le local et l’on-prem ou infra privée sont futurs. Le modèle (Seedance, WAN, LTX) est distinct du lieu. L’évaluation du résultat revient vers OrchestrAI par une boucle de retour.",
+  "osc.cap.k": "ILLUSTRATION DU PRINCIPE",
+  "osc.cap.t": "Il recommande, n’exécute rien, aucune dépense automatique.",
+  "osc.say1": "Vous exprimez.",
+  "osc.say2": "OrchestrAI recommande.",
+  "osc.say3": "Vous décidez.",
+  "osc.intent": "INTENTION",
+  "osc.exp": "EXPÉRIMENTAL",
+  "osc.route": "CHOIX DE LA ROUTE",
+  "osc.cost": "COÛT",
+  "osc.time": "TEMPS",
+  "osc.qual": "QUALITÉ",
+  "osc.sov": "SOUVERAINETÉ",
+  "osc.verify": "à vérifier",
+  "osc.you": "VOUS",
+  "osc.exec": "EXÉCUTION",
+  "osc.place": "LIEU",
+  "osc.future": "FUTUR",
+  "osc.onprem": "ON-PREM / INFRA PRIVÉE",
+  "osc.active": "ACTIF",
+  "osc.modelplace": "MODÈLE ≠ LIEU",
+  "osc.eval": "ÉVALUATION",
+  "osc.evalback": "ÉVALUATION → ORCHESTRAI",
   "next.title": "Et demain.",
   "next.lead": "La vidéo est le premier banc d’essai. La même logique d’orchestration est conçue pour s’étendre au Digital Twin, à l’IA locale, à la Physical AI, à la robotique et aux infrastructures GPU.",
   "next.aria": "Domaines visés",
@@ -743,6 +936,32 @@ var I18N = {
   "now.c3": "Cost",
   "now.c4": "Fidelity",
   "now.note": "Models compared in the POC, no partnership implied.",
+  "osc.eyebrow": "The principle",
+  "osc.title": "You keep the decision.",
+  "osc.t": "You express. OrchestrAI recommends. You decide.",
+  "osc.d": "Illustration of the principle. An intent enters OrchestrAI: the Decision Engine, experimental, in RECOMMEND_ONLY mode, recommends, executes nothing and spends nothing automatically. At the route choice, four criteria are visible: cost, time, quality and sovereignty, the latter to be verified. You then decide where to run: cloud is the only active option; local and on-prem or private infrastructure are future. The model (Seedance, WAN, LTX) is distinct from the location. The evaluation of the result loops back to OrchestrAI.",
+  "osc.cap.k": "ILLUSTRATION OF THE PRINCIPLE",
+  "osc.cap.t": "It recommends, executes nothing, no automatic spending.",
+  "osc.say1": "You express.",
+  "osc.say2": "OrchestrAI recommends.",
+  "osc.say3": "You decide.",
+  "osc.intent": "INTENT",
+  "osc.exp": "EXPERIMENTAL",
+  "osc.route": "ROUTE CHOICE",
+  "osc.cost": "COST",
+  "osc.time": "TIME",
+  "osc.qual": "QUALITY",
+  "osc.sov": "SOVEREIGNTY",
+  "osc.verify": "to verify",
+  "osc.you": "YOU",
+  "osc.exec": "EXECUTION",
+  "osc.place": "LOCATION",
+  "osc.future": "FUTURE",
+  "osc.onprem": "ON-PREM / PRIVATE INFRA",
+  "osc.active": "ACTIVE",
+  "osc.modelplace": "MODEL ≠ LOCATION",
+  "osc.eval": "EVALUATION",
+  "osc.evalback": "EVALUATION → ORCHESTRAI",
   "next.title": "And tomorrow.",
   "next.lead": "Video is the first testbed. The same orchestration logic is designed to extend to Digital Twin, local AI, Physical AI, robotics and GPU infrastructure.",
   "next.aria": "Target domains",
