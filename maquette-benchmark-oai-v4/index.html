@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#08090A">
+<meta name="theme-color" content="#050b18">
 <link rel="icon" href="data:,">
 <title>Benchmarks OrchestrAI v4 — maquette (données fictives)</title>
 <meta name="description" content="Page de test temporaire v4 — figures SVG hairline + classement IA fictif. Hors menu, hors sitemap.">
 <style>
   :root {
-    --bg: #08090A;
+    --bg: #050b18;
     --navy: #060a18;
-    --panel: #0b0c0e;
+    --panel: #0a1224;
     --rule: #1c1d21;
     --rule-2: #26272c;
     --edge: #D0D6E0;
@@ -27,6 +27,7 @@
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   }
   *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--bg); }
   body {
     margin: 0;
     min-height: 100vh;
@@ -64,13 +65,13 @@
   .brand .sub { color: var(--muted); font-weight: 450; }
   .top-actions { display: flex; align-items: center; gap: 10px; }
   .pill-link { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
-  .pill-link:hover { color: var(--text); background: #111215; }
+  .pill-link:hover { color: var(--text); background: #0a1224; }
   .lang-switch { display: inline-flex; border: 1px solid var(--rule-2); border-radius: 7px; padding: 2px; }
   .lang-switch button {
     appearance: none; border: 0; background: transparent; color: var(--muted);
     font: 600 11px/1 var(--mono); letter-spacing: .08em; padding: 6px 9px; border-radius: 5px; cursor: pointer;
   }
-  .lang-switch button[aria-pressed="true"] { background: #15171c; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
+  .lang-switch button[aria-pressed="true"] { background: #0a1224; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
   .lang-switch button:hover { color: var(--text); }
   .lang-switch button:focus-visible, .tabs button:focus-visible, .pill-link:focus-visible { outline: 1px solid var(--blue); outline-offset: 2px; }
 
@@ -113,10 +114,10 @@
     appearance: none; border: 0; background: transparent; color: var(--muted);
     font: 500 12px/1 var(--sans); padding: 7px 10px; border-radius: 6px; cursor: pointer;
   }
-  .tabs button[aria-selected="true"] { background: #15171c; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
+  .tabs button[aria-selected="true"] { background: #0a1224; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
   .tabs button:hover { color: var(--text); }
 
-  .panel { border: 1px solid var(--rule); border-radius: 10px; background: linear-gradient(180deg, #0a0c12, var(--navy)); overflow: hidden; }
+  .panel { border: 1px solid var(--rule); border-radius: 10px; background: linear-gradient(180deg, #0a1224, var(--navy)); overflow: hidden; }
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   thead th {
