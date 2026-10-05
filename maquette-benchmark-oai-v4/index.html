@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#08090A">
+<link rel="icon" href="data:,">
+<title>Benchmarks OrchestrAI v4 — maquette (données fictives)</title>
+<meta name="description" content="Page de test temporaire v4 — figures SVG hairline + classement IA fictif. Hors menu, hors sitemap.">
+<style>
+  :root {
+    --bg: #08090A;
+    --navy: #060a18;
+    --panel: #0b0c0e;
+    --rule: #1c1d21;
+    --rule-2: #26272c;
+    --edge: #D0D6E0;
+    --edge-2: #3E3E44;
+    --text: #e6e8ec;
+    --muted: #8a8f98;
+    --dim: #5b5f68;
+    --blue: #3d8bff;
+    --green: #9ce51a;
+    --warn: #e9b949;
+    --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; }
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--blue); color: #fff; padding: 8px 12px; z-index: 100; }
+  .skip:focus { left: 8px; top: 8px; }
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  /* Banner */
+  .fiction-banner {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 8px 16px;
+    background: #14110a;
+    border-bottom: 1px solid rgba(233,185,73,.35);
+    color: #f3d98f;
+    font: 600 11px/1.3 var(--mono);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .fiction-banner .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
+
+  /* Top bar */
+  .topbar { border-bottom: 1px solid var(--rule); background: rgba(6,10,24,.55); }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; letter-spacing: -.01em; white-space: nowrap; }
+  .brand .mark { width: 18px; height: 18px; flex-shrink: 0; }
+  .brand .sub { color: var(--muted); font-weight: 450; }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+  .pill-link { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
+  .pill-link:hover { color: var(--text); background: #111215; }
+  .lang-switch { display: inline-flex; border: 1px solid var(--rule-2); border-radius: 7px; padding: 2px; }
+  .lang-switch button {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    font: 600 11px/1 var(--mono); letter-spacing: .08em; padding: 6px 9px; border-radius: 5px; cursor: pointer;
+  }
+  .lang-switch button[aria-pressed="true"] { background: #15171c; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
+  .lang-switch button:hover { color: var(--text); }
+  .lang-switch button:focus-visible, .tabs button:focus-visible, .pill-link:focus-visible { outline: 1px solid var(--blue); outline-offset: 2px; }
+
+  /* Mono eyebrow */
+  .eyebrow { margin: 0; font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .eyebrow b { color: var(--muted); font-weight: 500; }
+
+  /* Hero */
+  .hero { padding: 88px 0 64px; }
+  .hero h1 { margin: 18px 0 0; font-size: clamp(34px, 5.4vw, 60px); line-height: 1.04; letter-spacing: -.035em; font-weight: 600; max-width: 14ch; }
+  .hero .lead { margin: 20px 0 0; max-width: 56ch; color: var(--muted); font-size: 17px; line-height: 1.6; }
+  .hero .meta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px 18px; font: 500 12px/1.4 var(--mono); color: var(--dim); }
+  .hero .meta span::before { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--edge-2); margin-right: 8px; vertical-align: middle; }
+  .hero .meta span.live::before { background: var(--green); }
+
+  /* 3-column figure grid with vertical hairlines */
+  .figs { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .fig-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 -28px; }
+  .fig { padding: 40px 28px 48px; border-left: 1px solid var(--rule); min-width: 0; }
+  .fig:first-child { border-left: 0; }
+  .fig-art { margin: 22px 0 26px; aspect-ratio: 240 / 220; width: 100%; }
+  .fig-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .fig-svg .lift { transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+  .fig:hover .fig-svg .lift, .fig:focus-within .fig-svg .lift { transform: translateY(-3px); }
+  .fig h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .fig p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; max-width: 34ch; }
+  @media (prefers-reduced-motion: reduce) {
+    .fig-svg .lift { transition: none; }
+    .fig:hover .fig-svg .lift, .fig:focus-within .fig-svg .lift { transform: none; }
+  }
+
+  /* Bench sections */
+  .bench { padding: 72px 0 0; }
+  .bench-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px 24px; margin-bottom: 24px; }
+  .bench-head h2 { margin: 14px 0 0; font-size: clamp(24px, 3.2vw, 32px); letter-spacing: -.025em; font-weight: 600; line-height: 1.15; }
+  .bench-head .lead { grid-column: 1 / -1; margin: 0; color: var(--muted); max-width: 60ch; }
+
+  .tabs { display: inline-flex; flex-wrap: wrap; gap: 2px; border: 1px solid var(--rule-2); border-radius: 8px; padding: 2px; }
+  .tabs button {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    font: 500 12px/1 var(--sans); padding: 7px 10px; border-radius: 6px; cursor: pointer;
+  }
+  .tabs button[aria-selected="true"] { background: #15171c; color: var(--text); box-shadow: inset 0 -1px 0 var(--blue); }
+  .tabs button:hover { color: var(--text); }
+
+  .panel { border: 1px solid var(--rule); border-radius: 10px; background: linear-gradient(180deg, #0a0c12, var(--navy)); overflow: hidden; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left; font: 500 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    color: var(--dim); padding: 14px 16px; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody td { padding: 13px 16px; border-bottom: 1px solid #121318; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr { transition: background .2s; }
+  tbody tr:hover { background: rgba(255,255,255,.015); }
+  th.num, td.num { text-align: right; }
+  td.rank, th.rank { width: 44px; color: var(--dim); font-family: var(--mono); font-size: 12px; }
+  .model-name { font-weight: 550; white-space: nowrap; }
+  .model-meta { color: var(--dim); font: 400 11px/1.3 var(--mono); margin-top: 3px; }
+  .lead-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--green); margin-left: 8px; vertical-align: middle; }
+  .score { font-family: var(--mono); font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .bar { display: block; height: 1px; background: #1d1f25; margin-top: 6px; margin-left: auto; width: 64px; position: relative; }
+  .bar i { position: absolute; right: 0; top: 0; bottom: 0; background: var(--edge); opacity: .55; }
+  td.is-axis .bar i { background: var(--blue); opacity: .9; }
+  td.is-axis .score { color: #fff; }
+  .delta { font: 500 12px/1 var(--mono); font-variant-numeric: tabular-nums; }
+  .delta.up { color: #b9d98a; }
+  .delta.down { color: #c98b93; }
+  .delta.flat { color: var(--dim); }
+
+  /* BENCH 0.2 notes, 3 cols with rules */
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); margin-top: 8px; }
+  .note { padding: 26px 28px 8px; border-left: 1px solid var(--rule); min-width: 0; }
+  .note:first-child { border-left: 0; padding-left: 0; }
+  .note h3 { margin: 12px 0 0; font-size: 14.5px; font-weight: 600; }
+  .note p { margin: 6px 0 0; color: var(--muted); font-size: 13.5px; }
+
+  .disclaimer { margin-top: 0; padding: 20px 22px; border: 1px dashed rgba(233,185,73,.3); border-radius: 10px; background: #0d0c09; color: #d9cfae; font-size: 13.5px; }
+  .disclaimer strong { color: #f3d98f; font-weight: 600; margin-right: 6px; }
+
+  .page-foot { margin-top: 72px; padding: 22px 0 40px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--dim); font: 400 12px/1.4 var(--mono); }
+  .page-foot p { margin: 0; }
+
+  /* Tablet */
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .fig-grid { margin: 0 -18px; }
+    .fig { padding: 32px 18px 36px; }
+    .fig p { font-size: 13.5px; }
+    .note { padding: 22px 20px 6px; }
+  }
+  /* Mobile: stack, horizontal hairlines replace vertical ones */
+  @media (max-width: 680px) {
+    .wrap { padding: 0 18px; }
+    .hero { padding: 56px 0 44px; }
+    .hero .lead { font-size: 15.5px; }
+    .fig-grid, .notes { grid-template-columns: minmax(0, 1fr); }
+    .fig-grid { margin: 0; }
+    .fig, .fig:first-child { border-left: 0; border-top: 1px solid var(--rule); padding: 30px 0 34px; }
+    .fig:first-child { border-top: 0; }
+    .fig-art { max-width: 340px; margin-left: auto; margin-right: auto; }
+    .note, .note:first-child { border-left: 0; border-top: 1px solid var(--rule); padding: 20px 0 6px; }
+    .note:first-child { border-top: 0; }
+    .bench { padding-top: 52px; }
+    .bench-head { grid-template-columns: minmax(0, 1fr); }
+    .topbar .wrap { height: 54px; }
+    .brand .sub { display: none; }
+    .pill-link { padding: 6px 6px; }
+    thead th, tbody td { padding: 11px 8px; }
+    td.rank, th.rank { width: 26px; padding-left: 12px; }
+    .bar { width: 36px; }
+    .col-opt { display: none; }
+    .model-name { white-space: normal; }
+  }
+  @media (max-width: 400px) {
+    .fiction-banner { letter-spacing: .1em; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
+
+<div class="fiction-banner" role="status">
+  <span class="dot" aria-hidden="true"></span>
+  <span data-i18n="banner">Données fictives · maquette</span>
+</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="9,2 15.5,5.75 9,9.5 2.5,5.75" stroke="#D0D6E0" stroke-width=".8"/>
+        <polyline points="2.5,5.75 2.5,12.25 9,16 15.5,12.25 15.5,5.75" stroke="#3E3E44" stroke-width=".8"/>
+        <line x1="9" y1="9.5" x2="9" y2="16" stroke="#3E3E44" stroke-width=".8"/>
+        <circle cx="9" cy="5.75" r="1.1" fill="#3d8bff"/>
+      </svg>
+      <span>OrchestrAI</span><span class="sub" data-i18n="brand.sub">· benchmarks v4</span>
+    </div>
+    <div class="top-actions">
+      <a class="pill-link" href="/orchestrai" data-i18n="link.oai">← OrchestrAI</a>
+      <div class="lang-switch" role="group" aria-label="Langue" data-i18n-aria="lang.aria">
+        <button type="button" data-set-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <p class="eyebrow"><b>BENCH 0.0</b> · <span data-i18n="hero.eyebrow">Laboratoire de choix</span></p>
+    <h1 id="hero-title" data-i18n="hero.title">Le bon modèle, au bon endroit.</h1>
+    <p class="lead" data-i18n="hero.lead">Maquette de l’aide à la décision qu’OrchestrAI pourra proposer : comparer qualité, latence, coût relatif et souveraineté sur un panel de modèles — ici entièrement fictif.</p>
+    <div class="meta">
+      <span class="live" data-i18n="hero.m1">Panel fictif · 8 modèles</span>
+      <span data-i18n="hero.m2">Scores normalisés 0–100</span>
+      <span data-i18n="hero.m3">Tri local, aucun appel réseau</span>
+    </div>
+  </section>
+
+  <section class="figs" aria-label="Principes" data-i18n-aria="figs.aria">
+    <div class="wrap">
+      <div class="fig-grid">
+        <article class="fig" tabindex="-1">
+          <p class="eyebrow">FIG 0.1</p>
+          <div class="fig-art"><svg class="fig-svg" viewBox="-120.0 -145.5 240 220" role="img" aria-label="Pile de plaques isométriques surmontée d’un disque" data-i18n-aria="fig1.aria" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><defs><filter id="f1-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter></defs><polygon points="90.07,0.00 0.00,52.00 0.00,46.00 90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,0.00 0.00,52.00 0.00,46.00 -90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-58.00 90.07,-6.00 0.00,46.00 -90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-9.00 0.00,43.00 0.00,37.00 90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-9.00 0.00,43.00 0.00,37.00 -90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-67.00 90.07,-15.00 0.00,37.00 -90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-18.00 0.00,34.00 0.00,28.00 90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-18.00 0.00,34.00 0.00,28.00 -90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-76.00 90.07,-24.00 0.00,28.00 -90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-27.00 0.00,25.00 0.00,19.00 90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-27.00 0.00,25.00 0.00,19.00 -90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-85.00 90.07,-33.00 0.00,19.00 -90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-36.00 0.00,16.00 0.00,10.00 90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-36.00 0.00,16.00 0.00,10.00 -90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-94.00 90.07,-42.00 0.00,10.00 -90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-94.00 90.07,-42.00 90.07,0.00 0.00,52.00 -90.07,0.00 -90.07,-42.00" fill="none" stroke="#7C818C"/><line x1="0.00" y1="52.00" x2="0.00" y2="10.00" stroke="#7C818C"/><polygon points="0.00,-94.00 90.07,-42.00 0.00,10.00 -90.07,-42.00" fill="none" stroke="#7C818C"/><g filter="url(#f1-soft)" opacity=".9"><polygon points="0.00,-88.00 83.14,-40.00 0.00,8.00 -83.14,-40.00" fill="#000" stroke="none"/></g><line x1="-90.07" y1="-42.00" x2="-90.07" y2="-64.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="90.07" y1="-42.00" x2="90.07" y2="-64.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="0.00" y1="10.00" x2="0.00" y2="-12.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="0.00" y1="-94.00" x2="0.00" y2="-116.00" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><g class="lift"><polygon points="90.07,-64.00 0.00,-12.00 0.00,-19.00 90.07,-71.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="-90.07,-64.00 0.00,-12.00 0.00,-19.00 -90.07,-71.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="0.00,-123.00 90.07,-71.00 0.00,-19.00 -90.07,-71.00" fill="#0C0D0F" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-71.00" rx="36.74" ry="21.21" fill="#08090A" stroke="#3E3E44"/><path d="M-36.74 -74.00 V-71.00 A36.74 21.21 0 0 0 36.74 -71.00 V-74.00" fill="#08090A" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-74.00" rx="36.74" ry="21.21" fill="#0A0B0D" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-74.00" rx="26.94" ry="15.56" fill="none" stroke="#3E3E44"/><ellipse cx="0.00" cy="-74.00" rx="17.15" ry="9.90" fill="none" stroke="#3E3E44"/><ellipse cx="0.00" cy="-74.00" rx="7.35" ry="4.24" fill="none" stroke="#3d8bff" opacity=".85"/><ellipse cx="0.00" cy="-74.00" rx="1.71" ry="0.99" fill="#3d8bff" stroke="none"/></g></svg></div>
+          <h2 data-i18n="fig1.title">Couches mesurées</h2>
+          <p data-i18n="fig1.desc">Chaque critère est une plaque normalisée. La décision se pose au-dessus, jamais à la place.</p>
+        </article>
+        <article class="fig" tabindex="-1">
+          <p class="eyebrow">FIG 0.2</p>
+          <div class="fig-art"><svg class="fig-svg" viewBox="-122.6 -146.5 240 220" role="img" aria-label="Blocs modulaires isométriques de hauteurs variées" data-i18n-aria="fig2.aria" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><defs><pattern id="f2-dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".45" fill="#33373E"/></pattern><radialGradient id="f2-fade"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="f2-mask"><rect x="-122.6" y="-146.5" width="240" height="240" fill="url(#f2-fade)"/></mask></defs><rect x="-122.6" y="-146.5" width="240" height="240" fill="url(#f2-dots)" mask="url(#f2-mask)" stroke="none"/><polygon points="7.79,-28.50 -18.19,-13.50 -18.19,-83.50 7.79,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-44.17,-28.50 -18.19,-13.50 -18.19,-83.50 -44.17,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-113.50 7.79,-98.50 -18.19,-83.50 -44.17,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-113.50 7.79,-98.50 7.79,-28.50 -18.19,-13.50 -44.17,-28.50 -44.17,-98.50" fill="none" stroke="#D0D6E0"/><line x1="-18.19" y1="-13.50" x2="-18.19" y2="-83.50" stroke="#D0D6E0"/><polygon points="-18.19,-113.50 7.79,-98.50 -18.19,-83.50 -44.17,-98.50" fill="none" stroke="#D0D6E0"/><circle cx="-18.19" cy="-103.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-22.52" cy="-101.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-26.85" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-13.86" cy="-101.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-18.19" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-22.52" cy="-96.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-9.53" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-13.86" cy="-96.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-18.19" cy="-93.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="-23.38,-10.50 -49.36,4.50 -49.36,-41.50 -23.38,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-75.34,-10.50 -49.36,4.50 -49.36,-41.50 -75.34,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-49.36,-71.50 -23.38,-56.50 -49.36,-41.50 -75.34,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-49.36,-71.50 -23.38,-56.50 -23.38,-10.50 -49.36,4.50 -75.34,-10.50 -75.34,-56.50" fill="none" stroke="#D0D6E0"/><line x1="-49.36" y1="4.50" x2="-49.36" y2="-41.50" stroke="#D0D6E0"/><polygon points="-49.36,-71.50 -23.38,-56.50 -49.36,-41.50 -75.34,-56.50" fill="none" stroke="#D0D6E0"/><circle cx="-49.36" cy="-61.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-53.69" cy="-59.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-58.02" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-45.03" cy="-59.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-49.36" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-53.69" cy="-54.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-40.70" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-45.03" cy="-54.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-49.36" cy="-51.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="38.97,-10.50 12.99,4.50 12.99,-47.50 38.97,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-12.99,-10.50 12.99,4.50 12.99,-47.50 -12.99,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-77.50 38.97,-62.50 12.99,-47.50 -12.99,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-77.50 38.97,-62.50 38.97,-10.50 12.99,4.50 -12.99,-10.50 -12.99,-62.50" fill="none" stroke="#D0D6E0"/><line x1="12.99" y1="4.50" x2="12.99" y2="-47.50" stroke="#D0D6E0"/><polygon points="12.99,-77.50 38.97,-62.50 12.99,-47.50 -12.99,-62.50" fill="none" stroke="#D0D6E0"/><circle cx="12.99" cy="-67.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-65.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="4.33" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-65.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-60.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="21.65" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-60.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-57.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="7.79,7.50 -18.19,22.50 -18.19,0.50 7.79,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-44.17,7.50 -18.19,22.50 -18.19,0.50 -44.17,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-29.50 7.79,-14.50 -18.19,0.50 -44.17,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-29.50 7.79,-14.50 7.79,7.50 -18.19,22.50 -44.17,7.50 -44.17,-14.50" fill="none" stroke="#6A6F79"/><line x1="-18.19" y1="22.50" x2="-18.19" y2="0.50" stroke="#6A6F79"/><polygon points="-18.19,-29.50 7.79,-14.50 -18.19,0.50 -44.17,-14.50" fill="none" stroke="#6A6F79"/><line x1="-18.19" y1="0.50" x2="-18.19" y2="-11.50" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="-44.17" y1="-14.50" x2="-44.17" y2="-26.50" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><g class="lift"><polygon points="7.79,-26.50 -18.19,-11.50 -18.19,-23.50 7.79,-38.50" fill="#08090A" stroke="#D0D6E0"/><polygon points="-44.17,-26.50 -18.19,-11.50 -18.19,-23.50 -44.17,-38.50" fill="#08090A" stroke="#D0D6E0"/><polygon points="-18.19,-53.50 7.79,-38.50 -18.19,-23.50 -44.17,-38.50" fill="#0C0D0F" stroke="#D0D6E0"/><circle cx="-18.19" cy="-43.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-22.52" cy="-41.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-26.85" cy="-38.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-13.86" cy="-41.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-18.19" cy="-38.50" r=".7" fill="#3d8bff" stroke="none"/><circle cx="-22.52" cy="-36.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-9.53" cy="-38.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-13.86" cy="-36.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-18.19" cy="-33.50" r=".7" fill="#5A5F69" stroke="none"/></g><polygon points="70.15,7.50 44.17,22.50 44.17,-11.50 70.15,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="18.19,7.50 44.17,22.50 44.17,-11.50 18.19,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="44.17,-41.50 70.15,-26.50 44.17,-11.50 18.19,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="44.17,-41.50 70.15,-26.50 70.15,7.50 44.17,22.50 18.19,7.50 18.19,-26.50" fill="none" stroke="#D0D6E0"/><line x1="44.17" y1="22.50" x2="44.17" y2="-11.50" stroke="#D0D6E0"/><polygon points="44.17,-41.50 70.15,-26.50 44.17,-11.50 18.19,-26.50" fill="none" stroke="#D0D6E0"/><circle cx="44.17" cy="-31.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="39.84" cy="-29.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="35.51" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="48.50" cy="-29.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="44.17" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="39.84" cy="-24.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="52.83" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="48.50" cy="-24.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="44.17" cy="-21.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="38.97,25.50 12.99,40.50 12.99,0.50 38.97,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-12.99,25.50 12.99,40.50 12.99,0.50 -12.99,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-29.50 38.97,-14.50 12.99,0.50 -12.99,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-29.50 38.97,-14.50 38.97,25.50 12.99,40.50 -12.99,25.50 -12.99,-14.50" fill="none" stroke="#D0D6E0"/><line x1="12.99" y1="40.50" x2="12.99" y2="0.50" stroke="#D0D6E0"/><polygon points="12.99,-29.50 38.97,-14.50 12.99,0.50 -12.99,-14.50" fill="none" stroke="#D0D6E0"/><circle cx="12.99" cy="-19.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-17.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="4.33" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-17.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-12.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="21.65" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-12.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-9.50" r=".6" fill="#4A4E57" stroke="none"/></svg></div>
+          <h2 data-i18n="fig2.title">Modules interchangeables</h2>
+          <p data-i18n="fig2.desc">Des modèles aux profils distincts, assemblés selon la tâche — un bloc se remplace sans tout reconstruire.</p>
+        </article>
+        <article class="fig" tabindex="-1">
+          <p class="eyebrow">FIG 0.3</p>
+          <div class="fig-art"><svg class="fig-svg" viewBox="-121.0 -148.4 240 220" role="img" aria-label="Lames isométriques de hauteur croissante" data-i18n-aria="fig3.aria" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><line x1="-86.95" y1="4.20" x2="-2.08" y2="53.20" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><line x1="13.86" y1="-48.00" x2="-83.14" y2="8.00" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><polygon points="84.87,-3.00 82.79,-1.80 82.79,-85.80 84.87,-87.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="8.31,-44.80 82.79,-1.80 82.79,-85.80 8.31,-128.80" fill="#08090A" stroke="#D0D6E0"/><polygon points="10.39,-130.00 84.87,-87.00 82.79,-85.80 8.31,-128.80" fill="#08090A" stroke="#D0D6E0"/><line x1="10.39" y1="-130.00" x2="84.87" y2="-87.00" stroke="#3d8bff" opacity=".9"/><polygon points="76.47,0.35 74.39,1.55 74.39,-72.31 76.47,-73.51" fill="#08090A" stroke="#8A909B"/><polygon points="1.21,-40.70 74.39,1.55 74.39,-72.31 1.21,-114.56" fill="#08090A" stroke="#8A909B"/><polygon points="3.29,-115.76 76.47,-73.51 74.39,-72.31 1.21,-114.56" fill="#08090A" stroke="#8A909B"/><polygon points="68.07,3.70 65.99,4.90 65.99,-59.36 68.07,-60.56" fill="#08090A" stroke="#8A909B"/><polygon points="-5.89,-36.60 65.99,4.90 65.99,-59.36 -5.89,-100.86" fill="#08090A" stroke="#8A909B"/><polygon points="-3.81,-102.06 68.07,-60.56 65.99,-59.36 -5.89,-100.86" fill="#08090A" stroke="#8A909B"/><polygon points="59.67,7.05 57.59,8.25 57.59,-46.98 59.67,-48.18" fill="#08090A" stroke="#8A909B"/><polygon points="-12.99,-32.50 57.59,8.25 57.59,-46.98 -12.99,-87.73" fill="#08090A" stroke="#8A909B"/><polygon points="-10.91,-88.93 59.67,-48.18 57.59,-46.98 -12.99,-87.73" fill="#08090A" stroke="#8A909B"/><polygon points="51.27,10.40 49.19,11.60 49.19,-35.17 51.27,-36.37" fill="#08090A" stroke="#8A909B"/><polygon points="-20.09,-28.40 49.19,11.60 49.19,-35.17 -20.09,-75.17" fill="#08090A" stroke="#8A909B"/><polygon points="-18.01,-76.37 51.27,-36.37 49.19,-35.17 -20.09,-75.17" fill="#08090A" stroke="#8A909B"/><polygon points="42.87,13.75 40.79,14.95 40.79,-23.98 42.87,-25.18" fill="#08090A" stroke="#5C616B"/><polygon points="-27.19,-24.30 40.79,14.95 40.79,-23.98 -27.19,-63.23" fill="#08090A" stroke="#5C616B"/><polygon points="-25.11,-64.43 42.87,-25.18 40.79,-23.98 -27.19,-63.23" fill="#08090A" stroke="#5C616B"/><polygon points="34.47,17.10 32.39,18.30 32.39,-13.43 34.47,-14.63" fill="#08090A" stroke="#5C616B"/><polygon points="-34.29,-20.20 32.39,18.30 32.39,-13.43 -34.29,-51.93" fill="#08090A" stroke="#5C616B"/><polygon points="-32.22,-53.13 34.47,-14.63 32.39,-13.43 -34.29,-51.93" fill="#08090A" stroke="#5C616B"/><polygon points="26.07,20.45 23.99,21.65 23.99,-3.57 26.07,-4.77" fill="#08090A" stroke="#5C616B"/><polygon points="-41.40,-16.10 23.99,21.65 23.99,-3.57 -41.40,-41.32" fill="#08090A" stroke="#5C616B"/><polygon points="-39.32,-42.52 26.07,-4.77 23.99,-3.57 -41.40,-41.32" fill="#08090A" stroke="#5C616B"/><polygon points="17.67,23.80 15.59,25.00 15.59,5.55 17.67,4.35" fill="#08090A" stroke="#5C616B"/><polygon points="-48.50,-12.00 15.59,25.00 15.59,5.55 -48.50,-31.45" fill="#08090A" stroke="#5C616B"/><polygon points="-46.42,-32.65 17.67,4.35 15.59,5.55 -48.50,-31.45" fill="#08090A" stroke="#5C616B"/><polygon points="9.27,27.15 7.19,28.35 7.19,13.86 9.27,12.66" fill="#08090A" stroke="#5C616B"/><polygon points="-55.60,-7.90 7.19,28.35 7.19,13.86 -55.60,-22.39" fill="#08090A" stroke="#5C616B"/><polygon points="-53.52,-23.59 9.27,12.66 7.19,13.86 -55.60,-22.39" fill="#08090A" stroke="#5C616B"/><polygon points="0.87,30.50 -1.21,31.70 -1.21,21.26 0.87,20.06" fill="#08090A" stroke="#5C616B"/><polygon points="-62.70,-3.80 -1.21,31.70 -1.21,21.26 -62.70,-14.24" fill="#08090A" stroke="#5C616B"/><polygon points="-60.62,-15.44 0.87,20.06 -1.21,21.26 -62.70,-14.24" fill="#08090A" stroke="#5C616B"/><polygon points="-7.53,33.85 -9.61,35.05 -9.61,27.59 -7.53,26.39" fill="#08090A" stroke="#5C616B"/><polygon points="-69.80,0.30 -9.61,35.05 -9.61,27.59 -69.80,-7.16" fill="#08090A" stroke="#5C616B"/><polygon points="-67.72,-8.36 -7.53,26.39 -9.61,27.59 -69.80,-7.16" fill="#08090A" stroke="#5C616B"/><polygon points="-15.93,37.20 -18.01,38.40 -18.01,32.40 -15.93,31.20" fill="#08090A" stroke="#5C616B"/><polygon points="-76.90,4.40 -18.01,38.40 -18.01,32.40 -76.90,-1.60" fill="#08090A" stroke="#5C616B"/><polygon points="-74.82,-2.80 -15.93,31.20 -18.01,32.40 -76.90,-1.60" fill="#08090A" stroke="#5C616B"/></svg></div>
+          <h2 data-i18n="fig3.title">Lecture rapide</h2>
+          <p data-i18n="fig3.desc">Un classement dense, ordonné d’un coup d’œil — l’écart compte plus que le rang.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bench wrap" aria-labelledby="board-title">
+    <div class="bench-head">
+      <div>
+        <p class="eyebrow"><b>BENCH 0.1</b> · <span data-i18n="board.eyebrow">Classement</span></p>
+        <h2 id="board-title" data-i18n="board.title">Classement du panel</h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Axe de classement" data-i18n-aria="tabs.aria">
+        <button type="button" role="tab" data-axis="overall" aria-selected="true" data-i18n="axis.overall">Global</button>
+        <button type="button" role="tab" data-axis="quality" aria-selected="false" data-i18n="axis.quality">Qualité</button>
+        <button type="button" role="tab" data-axis="latency" aria-selected="false" data-i18n="axis.latency">Latence</button>
+        <button type="button" role="tab" data-axis="cost" aria-selected="false" data-i18n="axis.cost">Coût</button>
+        <button type="button" role="tab" data-axis="sovereignty" aria-selected="false" data-i18n="axis.sovereignty">Souveraineté</button>
+      </div>
+      <p class="lead" data-i18n="board.lead">Noms et scores inventés pour l’illustration. Plus haut = mieux sur chaque axe ; Δ = écart à la médiane du panel sur l’axe actif.</p>
+    </div>
+
+    <div class="panel">
+      <div class="table-scroll">
+        <table id="bench-table">
+          <thead>
+            <tr>
+              <th class="rank" scope="col">#</th>
+              <th scope="col" data-i18n="col.model">Modèle</th>
+              <th class="num" scope="col" data-col="quality" data-i18n="axis.quality">Qualité</th>
+              <th class="num col-opt" scope="col" data-col="latency" data-i18n="axis.latency">Latence</th>
+              <th class="num col-opt" scope="col" data-col="cost" data-i18n="axis.cost">Coût</th>
+              <th class="num col-opt" scope="col" data-col="sovereignty" data-i18n="axis.sovereignty">Souveraineté</th>
+              <th class="num" scope="col" data-i18n="col.score">Score</th>
+              <th class="num" scope="col">Δ</th>
+            </tr>
+          </thead>
+          <tbody id="bench-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="bench wrap" aria-labelledby="method-title">
+    <div class="bench-head">
+      <div>
+        <p class="eyebrow"><b>BENCH 0.2</b> · <span data-i18n="method.eyebrow">Méthode</span></p>
+        <h2 id="method-title" data-i18n="method.title">Comment lire le tableau</h2>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note">
+        <p class="eyebrow">0.2.1</p>
+        <h3 data-i18n="n1.title">Normalisé</h3>
+        <p data-i18n="n1.desc">Chaque axe est ramené sur 0–100 pour rendre les profils comparables.</p>
+      </div>
+      <div class="note">
+        <p class="eyebrow">0.2.2</p>
+        <h3 data-i18n="n2.title">Relatif</h3>
+        <p data-i18n="n2.desc">Le coût est un indice relatif, sans tarif ni devise : plus haut = plus économique.</p>
+      </div>
+      <div class="note">
+        <p class="eyebrow">0.2.3</p>
+        <h3 data-i18n="n3.title">Contextuel</h3>
+        <p data-i18n="n3.desc">Le meilleur modèle dépend de l’axe choisi — d’où le tri par onglet.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bench wrap" aria-labelledby="note-title">
+    <p class="eyebrow" style="margin-bottom:16px"><b>BENCH 0.3</b> · <span id="note-title" data-i18n="note.eyebrow">Avertissement</span></p>
+    <aside class="disclaimer" role="note">
+      <strong data-i18n="note.k">Données fictives.</strong>
+      <span data-i18n="note.v">Modèles, scores, écarts et classements sont inventés à des fins de maquette. Aucune mesure réelle, aucun client, aucune clé API. Page temporaire hors menu et hors sitemap.</span>
+    </aside>
+  </section>
+
+  <div class="wrap">
+    <footer class="page-foot">
+      <p data-i18n="foot.left">Pascal Robotics · OrchestrAI · maquette v4</p>
+      <p>noindex · nofollow</p>
+    </footer>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* Fictional panel — invented names, invented scores (0–100, higher is better). */
+  var MODELS = [
+    { id: 'nimbus', name: 'Nimbus-72', family: 'open-weight', quality: 90, latency: 74, cost: 80, sovereignty: 78 },
+    { id: 'vega', name: 'Vega-70', family: 'open-weight', quality: 87, latency: 71, cost: 83, sovereignty: 84 },
+    { id: 'borealis', name: 'Borealis-L', family: 'API', quality: 92, latency: 66, cost: 58, sovereignty: 52 },
+    { id: 'kestrel', name: 'Kestrel-V3', family: 'open-weight', quality: 89, latency: 69, cost: 92, sovereignty: 61 },
+    { id: 'lumen', name: 'Lumen-27', family: 'open-weight', quality: 79, latency: 89, cost: 88, sovereignty: 86 },
+    { id: 'pico', name: 'Pico-14', family: 'open-weight', quality: 74, latency: 95, cost: 94, sovereignty: 82 },
+    { id: 'cirrus', name: 'Cirrus-M', family: 'API', quality: 84, latency: 82, cost: 70, sovereignty: 90 },
+    { id: 'orion', name: 'Orion-8x22', family: 'open-weight', quality: 85, latency: 77, cost: 76, sovereignty: 80 }
+  ];
+
+  var I18N = {
+    fr: {
+      skip: 'Aller au contenu',
+      banner: 'Données fictives · maquette',
+      'brand.sub': '· benchmarks v4',
+      'link.oai': '← OrchestrAI',
+      'lang.aria': 'Langue',
+      'hero.eyebrow': 'Laboratoire de choix',
+      'hero.title': 'Le bon modèle, au bon endroit.',
+      'hero.lead': 'Maquette de l’aide à la décision qu’OrchestrAI pourra proposer : comparer qualité, latence, coût relatif et souveraineté sur un panel de modèles — ici entièrement fictif.',
+      'hero.m1': 'Panel fictif · 8 modèles',
+      'hero.m2': 'Scores normalisés 0–100',
+      'hero.m3': 'Tri local, aucun appel réseau',
+      'figs.aria': 'Principes',
+      'fig1.aria': 'Pile de plaques isométriques surmontée d’un disque',
+      'fig2.aria': 'Blocs modulaires isométriques de hauteurs variées',
+      'fig3.aria': 'Lames isométriques de hauteur croissante',
+      'fig1.title': 'Couches mesurées',
+      'fig1.desc': 'Chaque critère est une plaque normalisée. La décision se pose au-dessus, jamais à la place.',
+      'fig2.title': 'Modules interchangeables',
+      'fig2.desc': 'Des modèles aux profils distincts, assemblés selon la tâche — un bloc se remplace sans tout reconstruire.',
+      'fig3.title': 'Lecture rapide',
+      'fig3.desc': 'Un classement dense, ordonné d’un coup d’œil — l’écart compte plus que le rang.',
+      'board.eyebrow': 'Classement',
+      'board.title': 'Classement du panel',
+      'board.lead': 'Noms et scores inventés pour l’illustration. Plus haut = mieux sur chaque axe ; Δ = écart à la médiane du panel sur l’axe actif.',
+      'tabs.aria': 'Axe de classement',
+      'axis.overall': 'Global',
+      'axis.quality': 'Qualité',
+      'axis.latency': 'Latence',
+      'axis.cost': 'Coût',
+      'axis.sovereignty': 'Souveraineté',
+      'col.model': 'Modèle',
+      'col.score': 'Score',
+      'leader': 'En tête sur cet axe',
+      'method.eyebrow': 'Méthode',
+      'method.title': 'Comment lire le tableau',
+      'n1.title': 'Normalisé',
+      'n1.desc': 'Chaque axe est ramené sur 0–100 pour rendre les profils comparables.',
+      'n2.title': 'Relatif',
+      'n2.desc': 'Le coût est un indice relatif, sans tarif ni devise : plus haut = plus économique.',
+      'n3.title': 'Contextuel',
+      'n3.desc': 'Le meilleur modèle dépend de l’axe choisi — d’où le tri par onglet.',
+      'note.eyebrow': 'Avertissement',
+      'note.k': 'Données fictives.',
+      'note.v': 'Modèles, scores, écarts et classements sont inventés à des fins de maquette. Aucune mesure réelle, aucun client, aucune clé API. Page temporaire hors menu et hors sitemap.',
+      'foot.left': 'Pascal Robotics · OrchestrAI · maquette v4'
+    },
+    en: {
+      skip: 'Skip to content',
+      banner: 'Fictitious data · mock-up',
+      'brand.sub': '· benchmarks v4',
+      'link.oai': '← OrchestrAI',
+      'lang.aria': 'Language',
+      'hero.eyebrow': 'Selection lab',
+      'hero.title': 'The right model, in the right place.',
+      'hero.lead': 'A mock-up of the decision support OrchestrAI may provide: compare quality, latency, relative cost and sovereignty across a model panel — entirely fictional here.',
+      'hero.m1': 'Fictional panel · 8 models',
+      'hero.m2': 'Scores normalized 0–100',
+      'hero.m3': 'Local sort, no network calls',
+      'figs.aria': 'Principles',
+      'fig1.aria': 'Stack of isometric plates topped with a disc',
+      'fig2.aria': 'Isometric modular blocks of varying heights',
+      'fig3.aria': 'Isometric blades of rising height',
+      'fig1.title': 'Measured layers',
+      'fig1.desc': 'Each criterion is a normalized plate. The decision sits on top — never in place of them.',
+      'fig2.title': 'Swappable modules',
+      'fig2.desc': 'Models with distinct profiles, assembled per task — swap one block without rebuilding the rest.',
+      'fig3.title': 'Fast reading',
+      'fig3.desc': 'A dense ranking, ordered at a glance — the gap matters more than the rank.',
+      'board.eyebrow': 'Ranking',
+      'board.title': 'Panel ranking',
+      'board.lead': 'Names and scores invented for illustration. Higher = better on every axis; Δ = gap to the panel median on the active axis.',
+      'tabs.aria': 'Ranking axis',
+      'axis.overall': 'Overall',
+      'axis.quality': 'Quality',
+      'axis.latency': 'Latency',
+      'axis.cost': 'Cost',
+      'axis.sovereignty': 'Sovereignty',
+      'col.model': 'Model',
+      'col.score': 'Score',
+      'leader': 'Leads on this axis',
+      'method.eyebrow': 'Method',
+      'method.title': 'How to read the table',
+      'n1.title': 'Normalized',
+      'n1.desc': 'Every axis is mapped to 0–100 so profiles can be compared.',
+      'n2.title': 'Relative',
+      'n2.desc': 'Cost is a relative index, with no price or currency: higher = cheaper.',
+      'n3.title': 'Contextual',
+      'n3.desc': 'The best model depends on the chosen axis — hence the tabbed sort.',
+      'note.eyebrow': 'Disclaimer',
+      'note.k': 'Fictitious data.',
+      'note.v': 'Models, scores, gaps and rankings are invented for this mock-up. No real measurements, no clients, no API keys. Temporary page outside the menu and sitemap.',
+      'foot.left': 'Pascal Robotics · OrchestrAI · mock-up v4'
+    }
+  };
+
+  var AXES = ['quality', 'latency', 'cost', 'sovereignty'];
+  var lang = 'fr';
+  var axis = 'overall';
+
+  try {
+    var q = new URLSearchParams(location.search).get('lang');
+    var stored = localStorage.getItem('pr-lang');
+    if (q === 'en' || q === 'fr') lang = q;
+    else if (stored === 'en' || stored === 'fr') lang = stored;
+  } catch (e) {}
+
+  function t(key) {
+    var d = I18N[lang] || I18N.fr;
+    return d[key] != null ? d[key] : (I18N.fr[key] != null ? I18N.fr[key] : key);
+  }
+  function overall(m) {
+    return Math.round((m.quality + m.latency + m.cost + m.sovereignty) / 4);
+  }
+  function score(m) { return axis === 'overall' ? overall(m) : m[axis]; }
+  function median(v) {
+    var s = v.slice().sort(function (a, b) { return a - b; });
+    var mid = Math.floor(s.length / 2);
+    return s.length % 2 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2);
+  }
+  function cell(v, active, opt) {
+    return '<td class="num' + (active ? ' is-axis' : '') + (opt ? ' col-opt' : '') + '"><span class="score">' + v +
+      '</span><span class="bar" aria-hidden="true"><i style="width:' + v + '%"></i></span></td>';
+  }
+
+  /* on narrow screens only one axis column stays visible: the active one (quality for overall) */
+  function shown(k) { return axis === k || (axis === 'overall' && k === 'quality'); }
+
+  function render() {
+    document.querySelectorAll('thead th[data-col]').forEach(function (th) {
+      th.classList.toggle('col-opt', !shown(th.getAttribute('data-col')));
+    });
+    var list = MODELS.slice().sort(function (a, b) { return score(b) - score(a) || b.quality - a.quality; });
+    var med = median(MODELS.map(score));
+    document.getElementById('bench-body').innerHTML = list.map(function (m, i) {
+      var s = score(m), d = s - med;
+      var cls = d > 0 ? 'up' : (d < 0 ? 'down' : 'flat');
+      return '<tr data-model="' + m.id + '">' +
+        '<td class="rank">' + String(i + 1).padStart(2, '0') + '</td>' +
+        '<td><div class="model-name">' + m.name +
+          (i === 0 ? '<span class="lead-dot" role="img" aria-label="' + t('leader') + '" title="' + t('leader') + '"></span>' : '') +
+        '</div><div class="model-meta">' + m.family + '</div></td>' +
+        AXES.map(function (k) { return cell(m[k], axis === k, !shown(k)); }).join('') +
+        '<td class="num' + (axis === 'overall' ? ' is-axis' : '') + '"><span class="score">' + s + '</span></td>' +
+        '<td class="num"><span class="delta ' + cls + '">' + (d > 0 ? '+' : '') + d + '</span></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function applyLang(l) {
+    lang = I18N[l] ? l : 'fr';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+    });
+    document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+    });
+    document.title = lang === 'en' ? 'OrchestrAI benchmarks v4 — mock-up (fictitious data)' : 'Benchmarks OrchestrAI v4 — maquette (données fictives)';
+    try { localStorage.setItem('pr-lang', lang); } catch (e) {}
+    render();
+  }
+
+  document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+    b.addEventListener('click', function () { applyLang(b.getAttribute('data-set-lang')); });
+  });
+  document.querySelectorAll('.tabs [data-axis]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      axis = b.getAttribute('data-axis');
+      document.querySelectorAll('.tabs [data-axis]').forEach(function (x) {
+        x.setAttribute('aria-selected', x === b ? 'true' : 'false');
+      });
+      render();
+    });
+  });
+
+  applyLang(lang);
+})();
+</script>
+</body>
+</html>
