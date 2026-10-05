@@ -232,47 +232,78 @@
     .fiction-banner { letter-spacing: .1em; font-size: 10px; }
   }
 
-  /* V6 — real benchmark result */
-  .run-meta {
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0; border-bottom: 1px solid var(--rule);
+  /* V6 — real benchmark result (compact table, no violet) */
+  .run-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    font: 500 12px/1.45 var(--mono);
+    letter-spacing: .02em;
+    color: #b8d4ff;
+    background: rgba(61,139,255,.05);
   }
-  .run-meta .cell { padding: 18px 22px; border-left: 1px solid var(--rule); min-width: 0; }
-  .run-meta .cell:first-child { border-left: 0; }
-  .run-meta .k {
-    font: 500 10.5px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
+  .run-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
   }
-  .run-meta .v { margin-top: 8px; font-size: 14.5px; line-height: 1.45; }
+  .run-table th {
+    text-align: left;
+    padding: 10px 16px;
+    font: 500 10.5px/1.4 var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1px solid var(--rule);
+  }
+  .run-table td {
+    padding: 10px 16px;
+    border-top: 1px solid #121318;
+    vertical-align: middle;
+  }
+  .run-table tbody tr:first-child td { border-top: 0; }
+  .run-table .model-name { font-weight: 600; letter-spacing: -.01em; }
+  .run-table .result { font: 400 13px/1.4 var(--mono); color: var(--muted); }
 
-  .models { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .model {
-    padding: 22px 22px 20px; border-left: 1px solid var(--rule); min-width: 0;
+  /* Small status badges — FAIL red discreet; PASS green; warn amber; unknown gray */
+  .fail-badge,
+  .badge-pass,
+  .badge-warn,
+  .badge-unknown {
+    display: inline-block;
+    font: 700 10px/1 var(--mono);
+    letter-spacing: .1em;
+    border-radius: 4px;
+    padding: 3px 7px;
+    vertical-align: middle;
   }
-  .model:first-child { border-left: 0; }
-  .model .name { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.015em; }
-  .model .sub { margin: 6px 0 0; font: 400 12px/1.4 var(--mono); color: var(--dim); }
   .fail-badge {
-    display: inline-block; margin-top: 14px;
-    font: 700 12px/1 var(--mono); letter-spacing: .14em;
-    color: #ffb4bc; background: rgba(255,122,138,.08);
-    border: 1px solid rgba(255,122,138,.32); border-radius: 6px; padding: 8px 12px;
+    color: #d97070;
+    background: rgba(180,70,70,.1);
+    border: 1px solid rgba(180,70,70,.35);
+  }
+  .badge-pass {
+    color: var(--green);
+    background: rgba(156,229,26,.08);
+    border: 1px solid rgba(156,229,26,.28);
+  }
+  .badge-warn {
+    color: var(--warn);
+    background: rgba(233,185,73,.08);
+    border: 1px solid rgba(233,185,73,.28);
+  }
+  .badge-unknown {
+    color: var(--muted);
+    background: rgba(138,143,152,.08);
+    border: 1px solid rgba(138,143,152,.28);
   }
 
-  .run-result { padding: 22px 22px 8px; border-top: 1px solid var(--rule); }
-  .run-result .row {
-    display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 10px 20px;
-    padding: 12px 0; border-top: 1px solid #121318;
-  }
-  .run-result .row:first-child { border-top: 0; padding-top: 0; }
-  .run-result .k {
-    font: 500 10.5px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); padding-top: 3px;
-  }
-  .run-result .v { font-size: 14.5px; line-height: 1.5; }
   .run-conclusion {
-    margin: 8px 22px 22px; padding: 16px 18px;
-    border: 1px solid rgba(255,122,138,.28); border-radius: 8px;
-    background: rgba(255,122,138,.05);
-    font: 600 13.5px/1.45 var(--mono); letter-spacing: .04em; color: #ffd0d5;
+    margin: 0;
+    padding: 12px 16px 14px;
+    border-top: 1px solid var(--rule);
+    font: 600 11.5px/1.45 var(--mono);
+    letter-spacing: .06em;
+    color: var(--muted);
   }
 
   .proof-grid {
@@ -309,20 +340,15 @@
   }
 
   @media (max-width: 900px) {
-    .run-meta { grid-template-columns: 1fr; }
-    .run-meta .cell, .run-meta .cell:first-child { border-left: 0; border-top: 1px solid var(--rule); }
-    .run-meta .cell:first-child { border-top: 0; }
-    .models { grid-template-columns: 1fr; }
-    .model, .model:first-child { border-left: 0; border-top: 1px solid var(--rule); }
-    .model:first-child { border-top: 0; }
     .proof-grid { grid-template-columns: 1fr; }
     .proof, .proof:first-child { border-left: 0; border-top: 1px solid var(--rule); }
     .proof:first-child { border-top: 0; }
     .why-panel { grid-template-columns: 1fr; }
-    .run-result .row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .run-table th, .run-table td { padding: 10px 14px; }
   }
   @media (max-width: 680px) {
-    .run-conclusion { margin: 8px 16px 18px; font-size: 12.5px; }
+    .run-header { font-size: 11.5px; padding: 11px 14px; }
+    .run-conclusion { font-size: 11px; padding: 11px 14px 13px; }
     .closing { padding: 28px 18px; }
   }
 </style>
@@ -401,41 +427,29 @@
     </div>
 
     <div class="panel" id="benchmark">
-      <div class="run-meta">
-        <div class="cell">
-          <div class="k">Tâche</div>
-          <div class="v">Vérifier un délai contractuel</div>
-        </div>
-        <div class="cell">
-          <div class="k">Matériel</div>
-          <div class="v">MacBook Air M1 · 8 Go</div>
-        </div>
-        <div class="cell">
-          <div class="k">Exécution</div>
-          <div class="v">LOCAL</div>
-        </div>
-      </div>
-
-      <div class="models">
-        <div class="model">
-          <p class="name">Qwen 3.5 4B</p>
-          <p class="sub">Modèle local · même machine</p>
-          <span class="fail-badge">FAIL</span>
-        </div>
-        <div class="model">
-          <p class="name">Gemma 3 4B</p>
-          <p class="sub">Modèle local · même machine</p>
-          <span class="fail-badge">FAIL</span>
-        </div>
-      </div>
-
-      <div class="run-result">
-        <div class="row">
-          <div class="k">Résultat</div>
-          <div class="v">19 jours calculés vs 30 requis</div>
-        </div>
-      </div>
-      <p class="run-conclusion">LES DEUX MODÈLES SE SONT TROMPÉS SUR CE TEST.</p>
+      <div class="run-header">Vérifier un délai contractuel · LOCAL · MacBook Air M1 · 8 Go</div>
+      <table class="run-table" aria-label="Résultats du benchmark">
+        <thead>
+          <tr>
+            <th scope="col">Modèle</th>
+            <th scope="col">Verdict</th>
+            <th scope="col">Résultat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name">Qwen 3.5 4B</td>
+            <td><span class="fail-badge">FAIL</span></td>
+            <td class="result">19 j / 30 j</td>
+          </tr>
+          <tr>
+            <td class="model-name">Gemma 3 4B</td>
+            <td><span class="fail-badge">FAIL</span></td>
+            <td class="result">19 j / 30 j</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="run-conclusion">2/2 MODÈLES EN ÉCHEC · AUCUN MODÈLE QUALIFIÉ SUR CE TEST</p>
     </div>
   </section>
 
