@@ -232,39 +232,98 @@
     .fiction-banner { letter-spacing: .1em; font-size: 10px; }
   }
 
-  /* V6 — real benchmark result (compact table, no violet) */
-  .run-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--rule);
-    font: 500 12px/1.45 var(--mono);
-    letter-spacing: .02em;
-    color: #b8d4ff;
-    background: rgba(61,139,255,.05);
+  /* V6 — fiche résultat 2 zones (pas de violet) */
+  .legal-tag {
+    margin: 10px 0 0;
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
-  .run-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
+  .case-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 0;
   }
-  .run-table th {
-    text-align: left;
-    padding: 10px 16px;
+  .case-col {
+    min-width: 0;
+    padding: 22px 24px 24px;
+  }
+  .case-col + .case-col {
+    border-left: 1px solid var(--rule);
+  }
+  .case-block + .case-block { margin-top: 22px; padding-top: 20px; border-top: 1px solid #121318; }
+  .case-k {
+    margin: 0;
     font: 500 10.5px/1.4 var(--mono);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--dim);
-    border-bottom: 1px solid var(--rule);
   }
-  .run-table td {
-    padding: 10px 16px;
+  .case-k b { color: var(--muted); font-weight: 500; }
+  .case-list { margin: 12px 0 0; padding: 0; list-style: none; }
+  .case-list li {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 7px 0;
     border-top: 1px solid #121318;
-    vertical-align: middle;
+    font-size: 13.5px;
+    line-height: 1.45;
   }
-  .run-table tbody tr:first-child td { border-top: 0; }
-  .run-table .model-name { font-weight: 600; letter-spacing: -.01em; }
-  .run-table .result { font: 400 13px/1.4 var(--mono); color: var(--muted); }
+  .case-list li:first-child { border-top: 0; padding-top: 0; }
+  .case-list .lk {
+    font: 500 10.5px/1.4 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-top: 2px;
+  }
+  .case-list .lv { color: var(--text); min-width: 0; }
+  .ref-line {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .ref-line strong {
+    font: 700 11px/1 var(--mono);
+    letter-spacing: .1em;
+    color: #d97070;
+    margin-right: 8px;
+  }
+  .model-card + .model-card {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #121318;
+  }
+  .model-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .model-name { margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; }
+  .model-rows { margin: 0; padding: 0; list-style: none; }
+  .model-rows li {
+    display: grid;
+    grid-template-columns: 148px minmax(0, 1fr);
+    gap: 6px 12px;
+    padding: 6px 0;
+    border-top: 1px solid #121318;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .model-rows li:first-child { border-top: 0; padding-top: 0; }
+  .model-rows .lk {
+    font: 500 10.5px/1.4 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-top: 2px;
+  }
+  .model-rows .lv { color: var(--muted); font-family: var(--mono); font-size: 12.5px; min-width: 0; }
+  .model-rows .lv.em { color: var(--text); font-family: var(--sans); font-size: 13.5px; }
 
-  /* Small status badges — FAIL red discreet; PASS green; warn amber; unknown gray */
+  /* Badges — vert=RÉUSSI, ambre, rouge discret ÉCHEC, gris ; bleu = info (bannière) */
   .fail-badge,
   .badge-pass,
   .badge-warn,
@@ -297,13 +356,21 @@
     border: 1px solid rgba(138,143,152,.28);
   }
 
+  .paradox {
+    margin: 0;
+    padding: 16px 24px 6px;
+    border-top: 1px solid var(--rule);
+    font: 600 13px/1.45 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
   .run-conclusion {
     margin: 0;
-    padding: 12px 16px 14px;
-    border-top: 1px solid var(--rule);
-    font: 600 11.5px/1.45 var(--mono);
+    padding: 8px 24px 18px;
+    font: 500 11.5px/1.45 var(--mono);
     letter-spacing: .06em;
-    color: var(--muted);
+    color: var(--dim);
   }
 
   .proof-grid {
@@ -344,13 +411,20 @@
     .proof, .proof:first-child { border-left: 0; border-top: 1px solid var(--rule); }
     .proof:first-child { border-top: 0; }
     .why-panel { grid-template-columns: 1fr; }
-    .run-table th, .run-table td { padding: 10px 14px; }
+    .case-grid { grid-template-columns: 1fr; }
+    .case-col + .case-col { border-left: 0; border-top: 1px solid var(--rule); }
+    .case-list li, .model-rows li { grid-template-columns: 110px minmax(0, 1fr); }
   }
   @media (max-width: 680px) {
-    .run-header { font-size: 11.5px; padding: 11px 14px; }
-    .run-conclusion { font-size: 11px; padding: 11px 14px 13px; }
+    .case-col { padding: 18px 16px 20px; }
+    .case-list li, .model-rows li { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+    .paradox { padding: 14px 16px 4px; font-size: 12px; }
+    .run-conclusion { font-size: 11px; padding: 6px 16px 16px; }
     .closing { padding: 28px 18px; }
   }
+  /* Guard: no horizontal scroll */
+  html, body { overflow-x: hidden; max-width: 100%; }
+  .wrap, .panel, .case-grid, .proof-grid, .fig-grid { max-width: 100%; }
 </style>
 </head>
 <body>
@@ -358,7 +432,7 @@
 
 <div class="fiction-banner" role="status">
   <span class="dot" aria-hidden="true"></span>
-  <span>Démonstration · mesures réelles</span>
+  <span>Démonstration · test synthétique</span>
 </div>
 
 <header class="topbar">
@@ -380,12 +454,12 @@
 
 <main id="content">
   <section class="hero wrap" aria-labelledby="hero-title">
-    <p class="eyebrow"><b>BENCH 0.0</b> · LABORATOIRE DE DÉCISION</p>
+    <p class="eyebrow"><b>00</b> · LABORATOIRE DE DÉCISION</p>
     <h1 id="hero-title">Le bon modèle, au bon endroit.</h1>
     <p class="lead">Une demande. Des mesures réelles. Une décision fondée sur les preuves.</p>
     <p class="intro">OrchestrAI teste les modèles sur une tâche précise, avec des mesures réelles. Si les preuves ne suffisent pas, il refuse de recommander.</p>
     <div class="meta">
-      <span class="live">Tâche précise</span>
+      <span>Tâche précise</span>
       <span>Mesures réelles</span>
       <span>LOCAL / CLOUD / ON-PREMISE</span>
       <span>Décision traçable</span>
@@ -396,21 +470,21 @@
     <div class="wrap">
       <div class="fig-grid">
         <article class="fig" tabindex="-1">
-          <p class="eyebrow">FIG 0.1</p>
+          <p class="eyebrow">01</p>
 <div class="fig-art"><svg class="fig-svg" viewBox="-120.0 -145.5 240 220" role="img" aria-label="Pile de plaques isométriques — tester" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><defs><filter id="f1-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter></defs><polygon points="90.07,0.00 0.00,52.00 0.00,46.00 90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,0.00 0.00,52.00 0.00,46.00 -90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-58.00 90.07,-6.00 0.00,46.00 -90.07,-6.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-9.00 0.00,43.00 0.00,37.00 90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-9.00 0.00,43.00 0.00,37.00 -90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-67.00 90.07,-15.00 0.00,37.00 -90.07,-15.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-18.00 0.00,34.00 0.00,28.00 90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-18.00 0.00,34.00 0.00,28.00 -90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-76.00 90.07,-24.00 0.00,28.00 -90.07,-24.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-27.00 0.00,25.00 0.00,19.00 90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-27.00 0.00,25.00 0.00,19.00 -90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-85.00 90.07,-33.00 0.00,19.00 -90.07,-33.00" fill="#08090A" stroke="#3E3E44"/><polygon points="90.07,-36.00 0.00,16.00 0.00,10.00 90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="-90.07,-36.00 0.00,16.00 0.00,10.00 -90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-94.00 90.07,-42.00 0.00,10.00 -90.07,-42.00" fill="#08090A" stroke="#3E3E44"/><polygon points="0.00,-94.00 90.07,-42.00 90.07,0.00 0.00,52.00 -90.07,0.00 -90.07,-42.00" fill="none" stroke="#7C818C"/><line x1="0.00" y1="52.00" x2="0.00" y2="10.00" stroke="#7C818C"/><polygon points="0.00,-94.00 90.07,-42.00 0.00,10.00 -90.07,-42.00" fill="none" stroke="#7C818C"/><g filter="url(#f1-soft)" opacity=".9"><polygon points="0.00,-88.00 83.14,-40.00 0.00,8.00 -83.14,-40.00" fill="#000" stroke="none"/></g><line x1="-90.07" y1="-42.00" x2="-90.07" y2="-64.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="90.07" y1="-42.00" x2="90.07" y2="-64.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="0.00" y1="10.00" x2="0.00" y2="-12.00" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="0.00" y1="-94.00" x2="0.00" y2="-116.00" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><g class="lift"><polygon points="90.07,-64.00 0.00,-12.00 0.00,-19.00 90.07,-71.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="-90.07,-64.00 0.00,-12.00 0.00,-19.00 -90.07,-71.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="0.00,-123.00 90.07,-71.00 0.00,-19.00 -90.07,-71.00" fill="#0C0D0F" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-71.00" rx="36.74" ry="21.21" fill="#08090A" stroke="#3E3E44"/><path d="M-36.74 -74.00 V-71.00 A36.74 21.21 0 0 0 36.74 -71.00 V-74.00" fill="#08090A" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-74.00" rx="36.74" ry="21.21" fill="#0A0B0D" stroke="#D0D6E0"/><ellipse cx="0.00" cy="-74.00" rx="26.94" ry="15.56" fill="none" stroke="#3E3E44"/><ellipse cx="0.00" cy="-74.00" rx="17.15" ry="9.90" fill="none" stroke="#3E3E44"/><ellipse cx="0.00" cy="-74.00" rx="7.35" ry="4.24" fill="none" stroke="#3d8bff" opacity=".85"/><ellipse cx="0.00" cy="-74.00" rx="1.71" ry="0.99" fill="#3d8bff" stroke="none"/></g></svg></div>
-          <h2>TESTER</h2>
+          <h2>BENCHMARK</h2>
           <p>Une même tâche, exécutée dans les mêmes conditions.</p>
         </article>
         <article class="fig" tabindex="-1">
-          <p class="eyebrow">FIG 0.2</p>
+          <p class="eyebrow">02</p>
 <div class="fig-art"><svg class="fig-svg" viewBox="-122.6 -146.5 240 220" role="img" aria-label="Blocs modulaires isométriques — mesurer" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><defs><pattern id="f2-dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".45" fill="#33373E"/></pattern><radialGradient id="f2-fade"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="f2-mask"><rect x="-122.6" y="-146.5" width="240" height="240" fill="url(#f2-fade)"/></mask></defs><rect x="-122.6" y="-146.5" width="240" height="240" fill="url(#f2-dots)" mask="url(#f2-mask)" stroke="none"/><polygon points="7.79,-28.50 -18.19,-13.50 -18.19,-83.50 7.79,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-44.17,-28.50 -18.19,-13.50 -18.19,-83.50 -44.17,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-113.50 7.79,-98.50 -18.19,-83.50 -44.17,-98.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-113.50 7.79,-98.50 7.79,-28.50 -18.19,-13.50 -44.17,-28.50 -44.17,-98.50" fill="none" stroke="#D0D6E0"/><line x1="-18.19" y1="-13.50" x2="-18.19" y2="-83.50" stroke="#D0D6E0"/><polygon points="-18.19,-113.50 7.79,-98.50 -18.19,-83.50 -44.17,-98.50" fill="none" stroke="#D0D6E0"/><circle cx="-18.19" cy="-103.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-22.52" cy="-101.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-26.85" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-13.86" cy="-101.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-18.19" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-22.52" cy="-96.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-9.53" cy="-98.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-13.86" cy="-96.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-18.19" cy="-93.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="-23.38,-10.50 -49.36,4.50 -49.36,-41.50 -23.38,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-75.34,-10.50 -49.36,4.50 -49.36,-41.50 -75.34,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-49.36,-71.50 -23.38,-56.50 -49.36,-41.50 -75.34,-56.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-49.36,-71.50 -23.38,-56.50 -23.38,-10.50 -49.36,4.50 -75.34,-10.50 -75.34,-56.50" fill="none" stroke="#D0D6E0"/><line x1="-49.36" y1="4.50" x2="-49.36" y2="-41.50" stroke="#D0D6E0"/><polygon points="-49.36,-71.50 -23.38,-56.50 -49.36,-41.50 -75.34,-56.50" fill="none" stroke="#D0D6E0"/><circle cx="-49.36" cy="-61.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-53.69" cy="-59.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-58.02" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-45.03" cy="-59.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-49.36" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-53.69" cy="-54.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-40.70" cy="-56.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-45.03" cy="-54.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="-49.36" cy="-51.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="38.97,-10.50 12.99,4.50 12.99,-47.50 38.97,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-12.99,-10.50 12.99,4.50 12.99,-47.50 -12.99,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-77.50 38.97,-62.50 12.99,-47.50 -12.99,-62.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-77.50 38.97,-62.50 38.97,-10.50 12.99,4.50 -12.99,-10.50 -12.99,-62.50" fill="none" stroke="#D0D6E0"/><line x1="12.99" y1="4.50" x2="12.99" y2="-47.50" stroke="#D0D6E0"/><polygon points="12.99,-77.50 38.97,-62.50 12.99,-47.50 -12.99,-62.50" fill="none" stroke="#D0D6E0"/><circle cx="12.99" cy="-67.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-65.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="4.33" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-65.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-60.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="21.65" cy="-62.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-60.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-57.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="7.79,7.50 -18.19,22.50 -18.19,0.50 7.79,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-44.17,7.50 -18.19,22.50 -18.19,0.50 -44.17,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-29.50 7.79,-14.50 -18.19,0.50 -44.17,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-18.19,-29.50 7.79,-14.50 7.79,7.50 -18.19,22.50 -44.17,7.50 -44.17,-14.50" fill="none" stroke="#6A6F79"/><line x1="-18.19" y1="22.50" x2="-18.19" y2="0.50" stroke="#6A6F79"/><polygon points="-18.19,-29.50 7.79,-14.50 -18.19,0.50 -44.17,-14.50" fill="none" stroke="#6A6F79"/><line x1="-18.19" y1="0.50" x2="-18.19" y2="-11.50" stroke="#D0D6E0" stroke-dasharray="0.01 2.2" stroke-width="0.7" opacity=".7"/><line x1="-44.17" y1="-14.50" x2="-44.17" y2="-26.50" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><g class="lift"><polygon points="7.79,-26.50 -18.19,-11.50 -18.19,-23.50 7.79,-38.50" fill="#08090A" stroke="#D0D6E0"/><polygon points="-44.17,-26.50 -18.19,-11.50 -18.19,-23.50 -44.17,-38.50" fill="#08090A" stroke="#D0D6E0"/><polygon points="-18.19,-53.50 7.79,-38.50 -18.19,-23.50 -44.17,-38.50" fill="#0C0D0F" stroke="#D0D6E0"/><circle cx="-18.19" cy="-43.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-22.52" cy="-41.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-26.85" cy="-38.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-13.86" cy="-41.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-18.19" cy="-38.50" r=".7" fill="#3d8bff" stroke="none"/><circle cx="-22.52" cy="-36.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-9.53" cy="-38.50" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-13.86" cy="-36.00" r=".7" fill="#5A5F69" stroke="none"/><circle cx="-18.19" cy="-33.50" r=".7" fill="#5A5F69" stroke="none"/></g><polygon points="70.15,7.50 44.17,22.50 44.17,-11.50 70.15,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="18.19,7.50 44.17,22.50 44.17,-11.50 18.19,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="44.17,-41.50 70.15,-26.50 44.17,-11.50 18.19,-26.50" fill="#08090A" stroke="#3E3E44"/><polygon points="44.17,-41.50 70.15,-26.50 70.15,7.50 44.17,22.50 18.19,7.50 18.19,-26.50" fill="none" stroke="#D0D6E0"/><line x1="44.17" y1="22.50" x2="44.17" y2="-11.50" stroke="#D0D6E0"/><polygon points="44.17,-41.50 70.15,-26.50 44.17,-11.50 18.19,-26.50" fill="none" stroke="#D0D6E0"/><circle cx="44.17" cy="-31.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="39.84" cy="-29.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="35.51" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="48.50" cy="-29.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="44.17" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="39.84" cy="-24.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="52.83" cy="-26.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="48.50" cy="-24.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="44.17" cy="-21.50" r=".6" fill="#4A4E57" stroke="none"/><polygon points="38.97,25.50 12.99,40.50 12.99,0.50 38.97,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="-12.99,25.50 12.99,40.50 12.99,0.50 -12.99,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-29.50 38.97,-14.50 12.99,0.50 -12.99,-14.50" fill="#08090A" stroke="#3E3E44"/><polygon points="12.99,-29.50 38.97,-14.50 38.97,25.50 12.99,40.50 -12.99,25.50 -12.99,-14.50" fill="none" stroke="#D0D6E0"/><line x1="12.99" y1="40.50" x2="12.99" y2="0.50" stroke="#D0D6E0"/><polygon points="12.99,-29.50 38.97,-14.50 12.99,0.50 -12.99,-14.50" fill="none" stroke="#D0D6E0"/><circle cx="12.99" cy="-19.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-17.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="4.33" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-17.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="8.66" cy="-12.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="21.65" cy="-14.50" r=".6" fill="#4A4E57" stroke="none"/><circle cx="17.32" cy="-12.00" r=".6" fill="#4A4E57" stroke="none"/><circle cx="12.99" cy="-9.50" r=".6" fill="#4A4E57" stroke="none"/></svg></div>
-          <h2>MESURER</h2>
+          <h2>PREUVES</h2>
           <p>Résultat, temps, coût — ce qui a été observé, rien de plus.</p>
         </article>
         <article class="fig" tabindex="-1">
-          <p class="eyebrow">FIG 0.3</p>
+          <p class="eyebrow">03</p>
 <div class="fig-art"><svg class="fig-svg" viewBox="-121.0 -148.4 240 220" role="img" aria-label="Lames isométriques — décider" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><line x1="-86.95" y1="4.20" x2="-2.08" y2="53.20" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><line x1="13.86" y1="-48.00" x2="-83.14" y2="8.00" stroke="#3E3E44" stroke-dasharray="0.01 2.2" stroke-width="0.7"/><polygon points="84.87,-3.00 82.79,-1.80 82.79,-85.80 84.87,-87.00" fill="#08090A" stroke="#D0D6E0"/><polygon points="8.31,-44.80 82.79,-1.80 82.79,-85.80 8.31,-128.80" fill="#08090A" stroke="#D0D6E0"/><polygon points="10.39,-130.00 84.87,-87.00 82.79,-85.80 8.31,-128.80" fill="#08090A" stroke="#D0D6E0"/><line x1="10.39" y1="-130.00" x2="84.87" y2="-87.00" stroke="#3d8bff" opacity=".9"/><polygon points="76.47,0.35 74.39,1.55 74.39,-72.31 76.47,-73.51" fill="#08090A" stroke="#8A909B"/><polygon points="1.21,-40.70 74.39,1.55 74.39,-72.31 1.21,-114.56" fill="#08090A" stroke="#8A909B"/><polygon points="3.29,-115.76 76.47,-73.51 74.39,-72.31 1.21,-114.56" fill="#08090A" stroke="#8A909B"/><polygon points="68.07,3.70 65.99,4.90 65.99,-59.36 68.07,-60.56" fill="#08090A" stroke="#8A909B"/><polygon points="-5.89,-36.60 65.99,4.90 65.99,-59.36 -5.89,-100.86" fill="#08090A" stroke="#8A909B"/><polygon points="-3.81,-102.06 68.07,-60.56 65.99,-59.36 -5.89,-100.86" fill="#08090A" stroke="#8A909B"/><polygon points="59.67,7.05 57.59,8.25 57.59,-46.98 59.67,-48.18" fill="#08090A" stroke="#8A909B"/><polygon points="-12.99,-32.50 57.59,8.25 57.59,-46.98 -12.99,-87.73" fill="#08090A" stroke="#8A909B"/><polygon points="-10.91,-88.93 59.67,-48.18 57.59,-46.98 -12.99,-87.73" fill="#08090A" stroke="#8A909B"/><polygon points="51.27,10.40 49.19,11.60 49.19,-35.17 51.27,-36.37" fill="#08090A" stroke="#8A909B"/><polygon points="-20.09,-28.40 49.19,11.60 49.19,-35.17 -20.09,-75.17" fill="#08090A" stroke="#8A909B"/><polygon points="-18.01,-76.37 51.27,-36.37 49.19,-35.17 -20.09,-75.17" fill="#08090A" stroke="#8A909B"/><polygon points="42.87,13.75 40.79,14.95 40.79,-23.98 42.87,-25.18" fill="#08090A" stroke="#5C616B"/><polygon points="-27.19,-24.30 40.79,14.95 40.79,-23.98 -27.19,-63.23" fill="#08090A" stroke="#5C616B"/><polygon points="-25.11,-64.43 42.87,-25.18 40.79,-23.98 -27.19,-63.23" fill="#08090A" stroke="#5C616B"/><polygon points="34.47,17.10 32.39,18.30 32.39,-13.43 34.47,-14.63" fill="#08090A" stroke="#5C616B"/><polygon points="-34.29,-20.20 32.39,18.30 32.39,-13.43 -34.29,-51.93" fill="#08090A" stroke="#5C616B"/><polygon points="-32.22,-53.13 34.47,-14.63 32.39,-13.43 -34.29,-51.93" fill="#08090A" stroke="#5C616B"/><polygon points="26.07,20.45 23.99,21.65 23.99,-3.57 26.07,-4.77" fill="#08090A" stroke="#5C616B"/><polygon points="-41.40,-16.10 23.99,21.65 23.99,-3.57 -41.40,-41.32" fill="#08090A" stroke="#5C616B"/><polygon points="-39.32,-42.52 26.07,-4.77 23.99,-3.57 -41.40,-41.32" fill="#08090A" stroke="#5C616B"/><polygon points="17.67,23.80 15.59,25.00 15.59,5.55 17.67,4.35" fill="#08090A" stroke="#5C616B"/><polygon points="-48.50,-12.00 15.59,25.00 15.59,5.55 -48.50,-31.45" fill="#08090A" stroke="#5C616B"/><polygon points="-46.42,-32.65 17.67,4.35 15.59,5.55 -48.50,-31.45" fill="#08090A" stroke="#5C616B"/><polygon points="9.27,27.15 7.19,28.35 7.19,13.86 9.27,12.66" fill="#08090A" stroke="#5C616B"/><polygon points="-55.60,-7.90 7.19,28.35 7.19,13.86 -55.60,-22.39" fill="#08090A" stroke="#5C616B"/><polygon points="-53.52,-23.59 9.27,12.66 7.19,13.86 -55.60,-22.39" fill="#08090A" stroke="#5C616B"/><polygon points="0.87,30.50 -1.21,31.70 -1.21,21.26 0.87,20.06" fill="#08090A" stroke="#5C616B"/><polygon points="-62.70,-3.80 -1.21,31.70 -1.21,21.26 -62.70,-14.24" fill="#08090A" stroke="#5C616B"/><polygon points="-60.62,-15.44 0.87,20.06 -1.21,21.26 -62.70,-14.24" fill="#08090A" stroke="#5C616B"/><polygon points="-7.53,33.85 -9.61,35.05 -9.61,27.59 -7.53,26.39" fill="#08090A" stroke="#5C616B"/><polygon points="-69.80,0.30 -9.61,35.05 -9.61,27.59 -69.80,-7.16" fill="#08090A" stroke="#5C616B"/><polygon points="-67.72,-8.36 -7.53,26.39 -9.61,27.59 -69.80,-7.16" fill="#08090A" stroke="#5C616B"/><polygon points="-15.93,37.20 -18.01,38.40 -18.01,32.40 -15.93,31.20" fill="#08090A" stroke="#5C616B"/><polygon points="-76.90,4.40 -18.01,38.40 -18.01,32.40 -76.90,-1.60" fill="#08090A" stroke="#5C616B"/><polygon points="-74.82,-2.80 -15.93,31.20 -18.01,32.40 -76.90,-1.60" fill="#08090A" stroke="#5C616B"/></svg></div>
-          <h2>DÉCIDER</h2>
+          <h2>DÉCISION</h2>
           <p>OrchestrAI utilise les mesures pour recommander, ou refuse.</p>
         </article>
       </div>
@@ -420,61 +494,83 @@
   <section class="bench wrap" aria-labelledby="bench1-title">
     <div class="bench-head">
       <div>
-        <p class="eyebrow"><b>BENCH 0.1</b> · Essai</p>
-        <h2 id="bench1-title">Un benchmark réel</h2>
+        <p class="eyebrow"><b>04</b> · Essai</p>
+        <h2 id="bench1-title">Un résultat observé</h2>
+        <p class="legal-tag">LEGAL #004 · TEST SYNTHÉTIQUE</p>
       </div>
-      <p class="lead">Même tâche. Même machine. Deux modèles locaux.</p>
+      <p class="lead">Même tâche. Deux modèles locaux.</p>
     </div>
 
     <div class="panel" id="benchmark">
-      <div class="run-header">Vérifier un délai contractuel · LOCAL · MacBook Air M1 · 8 Go</div>
-      <table class="run-table" aria-label="Résultats du benchmark">
-        <thead>
-          <tr>
-            <th scope="col">Modèle</th>
-            <th scope="col">Verdict</th>
-            <th scope="col">Résultat</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="model-name">Qwen 3.5 4B</td>
-            <td><span class="fail-badge">FAIL</span></td>
-            <td class="result">19 j / 30 j</td>
-          </tr>
-          <tr>
-            <td class="model-name">Gemma 3 4B</td>
-            <td><span class="fail-badge">FAIL</span></td>
-            <td class="result">19 j / 30 j</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="run-conclusion">2/2 MODÈLES EN ÉCHEC · AUCUN MODÈLE QUALIFIÉ SUR CE TEST</p>
+      <div class="case-grid">
+        <div class="case-col">
+          <div class="case-block">
+            <p class="case-k"><b>CAS TESTÉ</b> · RÉSUMÉ</p>
+            <ul class="case-list">
+              <li><span class="lk">Mise en demeure</span><span class="lv">1 sept. 2027</span></li>
+              <li><span class="lk">Résiliation</span><span class="lv">20 sept. 2027</span></li>
+              <li><span class="lk">Délai</span><span class="lv">30 jours</span></li>
+            </ul>
+          </div>
+          <div class="case-block">
+            <p class="case-k"><b>RÉFÉRENCE</b></p>
+            <p class="ref-line"><strong>NON</strong> 19 jours seulement — délai de 30 jours non respecté.</p>
+          </div>
+        </div>
+        <div class="case-col">
+          <div class="model-card">
+            <div class="model-head">
+              <h3 class="model-name">Qwen 3.5 4B</h3>
+              <span class="fail-badge">ÉCHEC</span>
+            </div>
+            <ul class="model-rows">
+              <li><span class="lk">Conclusion</span><span class="lv em">NON</span></li>
+              <li><span class="lk">Raisonnement observé</span><span class="lv">≈ 30 j</span></li>
+              <li><span class="lk">Verdict</span><span class="lv">ÉCHEC</span></li>
+              <li><span class="lk">Temps</span><span class="lv">23,12 s</span></li>
+            </ul>
+          </div>
+          <div class="model-card">
+            <div class="model-head">
+              <h3 class="model-name">Gemma 3 4B</h3>
+              <span class="fail-badge">ÉCHEC</span>
+            </div>
+            <ul class="model-rows">
+              <li><span class="lk">Conclusion</span><span class="lv em">NON</span></li>
+              <li><span class="lk">Raisonnement observé</span><span class="lv">affirme 30 j</span></li>
+              <li><span class="lk">Verdict</span><span class="lv">ÉCHEC</span></li>
+              <li><span class="lk">Temps</span><span class="lv">15,22 s</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="paradox">BONNE CONCLUSION. MAUVAIS RAISONNEMENT.</p>
+      <p class="run-conclusion">2 modèles sur 2 en échec · aucun modèle qualifié sur ce test</p>
     </div>
   </section>
 
   <section class="bench wrap" aria-labelledby="bench2-title">
     <div class="bench-head">
       <div>
-        <p class="eyebrow"><b>BENCH 0.2</b> · Preuve</p>
+        <p class="eyebrow"><b>05</b> · Preuve</p>
         <h2 id="bench2-title">Un test devient une preuve.</h2>
       </div>
     </div>
     <div class="proof-grid">
       <div class="proof">
-        <p class="eyebrow">0.2.1</p>
+        <p class="eyebrow">OBSERVÉ</p>
         <h3>Observé</h3>
-        <p>Deux exécutions LOCAL sur la même tâche, même machine.</p>
+        <p>Deux modèles. Un essai chacun. Exécution locale.</p>
       </div>
       <div class="proof">
-        <p class="eyebrow">0.2.2</p>
+        <p class="eyebrow">MESURÉ</p>
         <h3>Mesuré</h3>
-        <p>Les deux modèles échouent : 19 jours au lieu de 30.</p>
+        <p>Qwen 23,12 s · Gemma 15,22 s</p>
       </div>
       <div class="proof">
-        <p class="eyebrow">0.2.3</p>
+        <p class="eyebrow">LIMITE</p>
         <h3>Limite</h3>
-        <p>Ce résultat vaut pour ce test. Pas de classement global.</p>
+        <p>Ce résultat vaut pour ce test. Pas de classement global. Test synthétique.</p>
       </div>
     </div>
     <p class="proof-note">Un résultat inconnu reste inconnu. OrchestrAI ne comble pas les trous.</p>
@@ -483,7 +579,7 @@
   <section class="bench wrap" aria-labelledby="bench3-title">
     <div class="bench-head">
       <div>
-        <p class="eyebrow"><b>BENCH 0.3</b> · Décision</p>
+        <p class="eyebrow"><b>06</b> · Décision</p>
         <h2 id="bench3-title">Et maintenant, OrchestrAI décide.</h2>
       </div>
       <p class="lead">Les mesures existent. Elles ne suffisent pas encore à recommander.</p>
@@ -548,7 +644,7 @@
   <section class="bench wrap" aria-labelledby="bench4-title">
     <div class="bench-head">
       <div>
-        <p class="eyebrow"><b>BENCH 0.4</b> · Position</p>
+        <p class="eyebrow"><b>07</b> · Position</p>
         <h2 id="bench4-title">Pas un classement. Une décision.</h2>
       </div>
     </div>
