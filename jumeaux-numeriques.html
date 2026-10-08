@@ -384,6 +384,12 @@ h2.title-parallax{
   .nav-links{gap:5px}
   .links a:not(.contact-pill){font-size:9px;letter-spacing:.01em}
 }
+
+/* Menu : pages protégées par mot de passe (cadenas discret) */
+.nav-links a.nav-locked{display:inline-flex;align-items:center;gap:4px}
+.nav-links a.nav-locked .nav-lock{flex:0 0 auto;width:9px;height:9px;opacity:.55;position:relative;top:-.5px}
+.nav-links a.nav-locked:hover .nav-lock,.nav-links a.nav-locked.is-active .nav-lock{opacity:.9}
+@media (max-width:760px){.nav-links a.nav-locked{display:flex;gap:7px}.nav-links a.nav-locked .nav-lock{width:11px;height:11px}}
 </style>
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928b">
@@ -406,6 +412,8 @@ h2.title-parallax{
       <div class="nav-links" id="nav-panel">
       <a class="nav-orch" href="orchestrai" data-i18n="nav.orchestrai">OrchestrAI</a>
       <a class="is-active" href="jumeaux-numeriques.html" data-i18n="nav.dt" aria-current="page">Digital Twin</a>
+      <a class="nav-locked" href="pipeline-ia.html"><span data-i18n="nav.pipeline">Pipeline IA</span><svg class="nav-lock" viewBox="0 0 16 16" width="9" height="9" role="img" aria-label="Accès protégé" data-i18n-aria="nav.locked" focusable="false"><title data-i18n="nav.locked">Accès protégé</title><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="currentColor"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
+      <a class="nav-locked" href="ecosysteme-laval.html"><span data-i18n="nav.eco">Écosystème</span><svg class="nav-lock" viewBox="0 0 16 16" width="9" height="9" role="img" aria-label="Accès protégé" data-i18n-aria="nav.locked" focusable="false"><title data-i18n="nav.locked">Accès protégé</title><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="currentColor"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
       <a href="accueil.html#paths" data-i18n="nav.paths">Par où commencer</a>
       <a href="accueil.html#founder" data-i18n="nav.founder">Fondateur</a>
       <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Contact</a>
@@ -597,6 +605,9 @@ const I18N = {
     "nav.menu": "Menu",
     "nav.dt": "Digital Twin",
     "nav.orchestrai": "OrchestrAI",
+    "nav.pipeline": "Pipeline IA",
+    "nav.eco": "Écosystème",
+    "nav.locked": "Accès protégé",
     "nav.paths": "Par où commencer",
     "nav.founder": "Fondateur",
     "nav.contact": "Contact",
@@ -674,6 +685,9 @@ const I18N = {
     "nav.menu": "Menu",
     "nav.dt": "Digital Twin",
     "nav.orchestrai": "OrchestrAI",
+    "nav.pipeline": "AI Pipeline",
+    "nav.eco": "Ecosystem",
+    "nav.locked": "Protected access",
     "nav.paths": "Where to start",
     "nav.founder": "Founder",
     "nav.contact": "Contact",

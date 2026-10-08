@@ -720,3 +720,9 @@ img,svg{display:block;max-width:100%;height:auto}
   .nav-links{gap:5px}
   .links a:not(.contact-pill){font-size:9px;letter-spacing:.01em}
 }
+
+/* Menu : pages protégées par mot de passe (cadenas discret) */
+.nav-links a.nav-locked{display:inline-flex;align-items:center;gap:4px}
+.nav-links a.nav-locked .nav-lock{flex:0 0 auto;width:9px;height:9px;opacity:.55;position:relative;top:-.5px}
+.nav-links a.nav-locked:hover .nav-lock,.nav-links a.nav-locked.is-active .nav-lock{opacity:.9}
+@media (max-width:760px){.nav-links a.nav-locked{display:flex;gap:7px}.nav-links a.nav-locked .nav-lock{width:11px;height:11px}}
