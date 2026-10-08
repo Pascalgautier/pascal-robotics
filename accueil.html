@@ -589,10 +589,10 @@ a, p, span, div { overflow-wrap:break-word; }
 /* Designer polish — breathing, hovers, cadre, midcta */
 #applications{padding-bottom:80px}
 #usecases{padding-top:76px}
-.use-card,.why-card,.path-card{
+.why-card,.path-card{
   transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.use-card:hover,.why-card:hover{
+.why-card:hover{
   transform:translateY(-2px);
   border-color:rgba(255,255,255,.16);
   box-shadow:0 14px 36px rgba(0,0,0,.22);
@@ -615,8 +615,8 @@ a, p, span, div { overflow-wrap:break-word; }
 }
 
 @media (prefers-reduced-motion:reduce){
-  .use-card,.why-card,.path-card{transition:none}
-  .use-card:hover,.why-card:hover,.path-card:hover{transform:none;box-shadow:none}
+  .why-card,.path-card{transition:none}
+  .why-card:hover,.path-card:hover{transform:none;box-shadow:none}
   .apps-loop video{animation:none;opacity:1}
   .hero-dt-content{animation:none}
   .apps-loop{transition:none}
@@ -630,15 +630,6 @@ a, p, span, div { overflow-wrap:break-word; }
   padding:34px;
 }
 .why-card p{color:var(--muted);font-size:17px;max-width:820px;margin:0}
-
-.usecases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.use-card{
-  border-radius:24px;border:1px solid rgba(255,255,255,.075);
-  background:#080f20;padding:26px 24px;min-height:280px;
-  display:flex;flex-direction:column;gap:10px;
-}
-.use-card h3{font-size:22px;line-height:1.15;letter-spacing:-.025em;margin:4px 0 0}
-.use-card p{color:var(--muted);font-size:14px;margin:0;max-width:none}
 
 /* method-flow / flow-step — see Terminal-inspired UX block below */
 .method-flow{margin-bottom:22px}
@@ -673,14 +664,9 @@ a, p, span, div { overflow-wrap:break-word; }
 .chrono-item strong{display:block;font-size:15px;margin-bottom:4px}
 .chrono-item p{margin:0;color:var(--muted);font-size:14px;max-width:820px}
 
-@media (max-width: 980px) {
-  .usecases-grid{
-    grid-template-columns:1fr;
-  }
-}
 @media (max-width: 760px) {
-  .why-card,.use-card,.stack-note{padding:22px 18px;border-radius:20px}
-  .use-card{min-height:0}
+  .why-card,.stack-note{padding:22px 18px;border-radius:20px}
+  
   .flow-step{min-height:0}
   .chrono::before{left:9px}
   .chrono-item{grid-template-columns:20px 1fr;gap:12px}
@@ -1252,13 +1238,13 @@ h2.title-parallax{
   font-size:clamp(14px,1.35vw,18px);line-height:1.4;color:#e3ebf5;
   text-shadow:0 2px 14px rgba(0,0,0,.55);
 }
-.usecases-grid--4{grid-template-columns:repeat(2,1fr)}
+
 .flow-step .flow-more{display:inline-block;margin-top:8px;color:var(--blue2);font-size:12px;font-weight:850}
 .flow-step .flow-more:hover{color:#cfe0ff;text-decoration:underline}
 .stack-note p:last-child{margin-bottom:0}
 .anchor-alias{display:block;position:relative;height:0;overflow:hidden}
 @media (max-width:760px){
-  .usecases-grid--4{grid-template-columns:1fr}
+  
   .hero-dt-content .hero-dt-lead{font-size:12px;max-width:92%;margin-top:2px}
   .hero-dt-content{padding:0 12px;box-sizing:border-box}
   .hero-dt-content .eyebrow{letter-spacing:.06em}
@@ -1266,7 +1252,7 @@ h2.title-parallax{
 </style>
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928b">
-<script src="assets/fx/pr-fx.js?v=20260928b" defer data-fx-theme="blue" data-fx-titles="main h2" data-fx-blocks=".path-card,.use-card,.flow-step,.stack-note,.wiki-ref,.ctabox"></script>
+<script src="assets/fx/pr-fx.js?v=20260928b" defer data-fx-theme="blue" data-fx-titles="main h2" data-fx-blocks=".path-card,.flow-step,.stack-note,.wiki-ref,.ctabox"></script>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -1283,14 +1269,11 @@ h2.title-parallax{
         <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
       </div>
       <div class="nav-links" id="nav-panel">
-      <a href="#why" data-i18n="nav.why">Ce que nous faisons</a>
       <a class="nav-orch" href="orchestrai" data-i18n="nav.orchestrai">OrchestrAI</a>
-      <a href="#usecases" data-i18n="nav.usecases">Cas d’usage</a>
-      <a href="#method" data-i18n="nav.method">Méthode</a>
       <a href="jumeaux-numeriques.html" data-i18n="nav.dt">Digital Twin</a>
-      <a class="nav-pipeline" href="pipeline-ia.html" data-i18n="nav.pipeline">Pipeline IA</a>
-      <a class="nav-eco" href="ecosysteme-laval.html" data-i18n="nav.eco">Écosystème</a>
-      <a class="contact-pill" href="#contact" data-i18n="nav.contact">Parler de votre cas d’usage ↗</a>
+      <a href="#paths" data-i18n="nav.paths">Par où commencer</a>
+      <a href="#founder" data-i18n="nav.founder">Fondateur</a>
+      <a class="contact-pill" href="#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
         <svg viewBox="0 0 18 18" aria-hidden="true" focusable="false"><circle cx="9" cy="3.5" r="1.6" fill="currentColor"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="9" cy="14.5" r="1.6" fill="currentColor"/></svg>
@@ -1353,7 +1336,6 @@ Avec OrchestrAI, notre couche d’orchestration, nous comparons modèles d’IA 
         <div class="eyebrow" data-i18n="uc.eyebrow">02 / Cas d’usage</div>
         <h2 id="uc-title" data-i18n-html="uc.title">Construit autour<br>du travail réel.</h2>
       </div>
-      <p data-i18n="uc.intro">Exemples de POC et d’études, pas des projets clients signés.</p>
     </div>
 
     <figure class="apps-loop reveal">
@@ -1370,25 +1352,6 @@ Avec OrchestrAI, notre couche d’orchestration, nous comparons modèles d’IA 
         <source src="/assets/digital-twin-xr-loop.mp4" type="video/mp4">
       </video>
     </figure>
-
-    <div class="usecases-grid usecases-grid--4">
-      <article class="use-card reveal">
-        <h3 data-i18n="uc.a.title">Sécurité civile &amp; intervention</h3>
-        <p data-i18n="uc.a.body">Quadrupède instrumenté pour cartographier, inspecter ou téléopérer en milieu dangereux, avec l’opérateur dans la boucle.</p>
-      </article>
-      <article class="use-card reveal">
-        <h3 data-i18n="uc.b.title">Industrie &amp; humanoïdes</h3>
-        <p data-i18n="uc.b.body">Assistance au poste, apprentissage de gestes, manipulation. Un humanoïde a du sens quand le poste est conçu pour l’humain et que la simulation a validé gestes et sécurité.</p>
-      </article>
-      <article class="use-card reveal">
-        <h3 data-i18n="uc.c.title">Digital Twin industriel</h3>
-        <p data-i18n="uc.c.body">Simuler usine, cellule ou robot pour comparer des scénarios avant le déploiement physique.</p>
-      </article>
-      <article class="use-card reveal">
-        <h3 data-i18n="uc.d.title">Démonstrateurs</h3>
-        <p data-i18n="uc.d.body">Rendre la robotique tangible par des scénarios concrets, jusqu’à la démonstration publique.</p>
-      </article>
-    </div>
   </div>
 </section>
 
@@ -1579,11 +1542,11 @@ const I18N = {
     "nav.aria": "Navigation principale",
     "lang.aria": "Langue",
     "nav.menu": "Menu",
-    "nav.contact": "Parler de votre cas d’usage ↗",
+    "nav.paths": "Par où commencer",
+    "nav.founder": "Fondateur",
+    "nav.contact": "Contact",
     "nav.dt": "Digital Twin",
-    "nav.eco": "Écosystème",
     "nav.orchestrai": "OrchestrAI",
-    "nav.pipeline": "Pipeline IA",
     "logo.aria": "Logo Pascal Robotics",
     "logo.alt": "Logo Pascal Robotics",
     "modal.close": "Fermer",
@@ -1611,16 +1574,7 @@ const I18N = {
     "why.more": "Découvrir OrchestrAI →",
     "uc.eyebrow": "02 / Cas d’usage",
     "uc.title": "Construit autour<br>du travail réel.",
-    "uc.intro": "Exemples de POC et d’études, pas des projets clients signés.",
     "apps.video.aria": "Jumeau numérique XR — boucle muette aller-retour",
-    "uc.a.title": "Sécurité civile & intervention",
-    "uc.a.body": "Quadrupède instrumenté pour cartographier, inspecter ou téléopérer en milieu dangereux, avec l’opérateur dans la boucle.",
-    "uc.b.title": "Industrie & humanoïdes",
-    "uc.b.body": "Assistance au poste, apprentissage de gestes, manipulation. Un humanoïde a du sens quand le poste est conçu pour l’humain et que la simulation a validé gestes et sécurité.",
-    "uc.c.title": "Digital Twin industriel",
-    "uc.c.body": "Simuler usine, cellule ou robot pour comparer des scénarios avant le déploiement physique.",
-    "uc.d.title": "Démonstrateurs",
-    "uc.d.body": "Rendre la robotique tangible par des scénarios concrets, jusqu’à la démonstration publique.",
     "method.eyebrow": "03 / Méthode",
     "method.title": "Du besoin<br>au robot incarné.",
     "method.flowAria": "Méthode en 5 étapes",
@@ -1671,9 +1625,6 @@ const I18N = {
     "contact.body": "Une tâche, un environnement, une question robotique ? Parlons de ce qui peut réellement être simulé, intégré et testé.",
     "contact.discuss": "Parler de votre cas d’usage ↗",
     "contact.linkedin": "LinkedIn ↗",
-    "nav.why": "Ce que nous faisons",
-    "nav.usecases": "Cas d’usage",
-    "nav.method": "Méthode"
   },
   en: {
     "meta.title": "Pascal Robotics — Mobile Robotics, Digital Twin & Physical AI",
@@ -1682,11 +1633,11 @@ const I18N = {
     "nav.aria": "Main navigation",
     "lang.aria": "Language",
     "nav.menu": "Menu",
-    "nav.contact": "Talk about your use case ↗",
+    "nav.paths": "Where to start",
+    "nav.founder": "Founder",
+    "nav.contact": "Contact",
     "nav.dt": "Digital Twin",
-    "nav.eco": "Ecosystem",
     "nav.orchestrai": "OrchestrAI",
-    "nav.pipeline": "AI Pipeline",
     "logo.aria": "Pascal Robotics logo",
     "logo.alt": "Pascal Robotics logo",
     "modal.close": "Close",
@@ -1714,16 +1665,7 @@ const I18N = {
     "why.more": "Discover OrchestrAI →",
     "uc.eyebrow": "02 / Use cases",
     "uc.title": "Built around<br>real work.",
-    "uc.intro": "Examples of POCs and studies, not signed client projects.",
     "apps.video.aria": "XR digital twin — muted forward-reverse loop",
-    "uc.a.title": "Civil protection & emergency response",
-    "uc.a.body": "Instrumented quadruped to map, inspect or teleoperate in hazardous environments, with the operator in the loop.",
-    "uc.b.title": "Industry & humanoids",
-    "uc.b.body": "Workstation assistance, gesture learning, manipulation. A humanoid makes sense when the workstation is designed for people and simulation has validated gestures and safety.",
-    "uc.c.title": "Industrial Digital Twin",
-    "uc.c.body": "Simulate a plant, cell or robot to compare scenarios before physical deployment.",
-    "uc.d.title": "Demonstrators",
-    "uc.d.body": "Make robotics tangible through concrete scenarios, up to public demonstration.",
     "method.eyebrow": "03 / Method",
     "method.title": "From need<br>to embodied robot.",
     "method.flowAria": "5-step method",
@@ -1774,9 +1716,6 @@ const I18N = {
     "contact.body": "A task, an environment, a robotics question? Let’s talk about what can really be simulated, integrated and tested.",
     "contact.discuss": "Talk about your use case ↗",
     "contact.linkedin": "LinkedIn ↗",
-    "nav.why": "What we do",
-    "nav.usecases": "Use cases",
-    "nav.method": "Method"
   }
 };
 
@@ -2214,6 +2153,22 @@ if (copyProjectEmail) {
     if (mqReduce.addEventListener) mqReduce.addEventListener('change', sync);
     else if (mqReduce.addListener) mqReduce.addListener(sync);
   }
+})();
+</script>
+<script>
+/* Arrivée depuis une autre page sur accueil.html#xxx (ex. menu « Contact ») : le bloc « Ce que nous faisons »
+   s'allonge après le chargement (effet de remplissage), ce qui décale l'ancre. On re-vise l'ancre une fois la mise
+   en page stabilisée, sauf si le visiteur a déjà fait défiler la page. */
+(function(){
+  var h = location.hash; if (!h || h.length < 2) return;
+  var moved = false;
+  ['wheel','touchstart','keydown','mousedown'].forEach(function(n){ window.addEventListener(n, function(){ moved = true; }, {once:true, passive:true}); });
+  function fix(){
+    if (moved) return;
+    var el = document.getElementById(decodeURIComponent(h.slice(1)));
+    if (el) el.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('load', function(){ setTimeout(fix, 50); setTimeout(fix, 1700); });
 })();
 </script>
 </body>
