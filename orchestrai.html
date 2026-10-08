@@ -22,12 +22,10 @@
 <script>
 /* Ouverture « paupière » de /orchestrai (index.html pose sessionStorage['pr-intro-orb']='1' puis redirige aussitôt ; le drapeau est consommé ici :
    accès direct ou rechargement = aucun volet). Deux volets navy #050b18 (haut = 50 % ancré en haut, bas = 50 % ancré en bas) sont posés AVANT le
-   premier rendu : la page est fermée, fente horizontale au centre matérialisée par un filet bleu #3d8bff 1 px + léger glow. C'est le MOUVEMENT de la
-   souris (ou du doigt) qui ouvre : la distance parcourue alimente une cible t (0→1), la progression affichée p suit t avec de l'inertie (lissage
-   exponentiel) ; volets = translateY(∓p·100 %). Souris à l'arrêt : t ne bouge plus, p rejoint t puis se fige. p ≥ 0,98 -> finition, volets retirés du DOM.
-   Réglages : K (distance pour ouvrir) = max(700, max(largeur, hauteur)) px ; TAU (inertie) = 0,22 s ; plafond 240 px par évènement.
-   Filets : sans mouvement (ou arrêt) 6 s en souris / 2,5 s en tactile -> ouverture douce 1 s ; toute touche -> ouverture 0,8 s ;
-   prefers-reduced-motion -> fondu 0,3 s sans interaction. Volets aria-hidden, pointer-events:none. */
+   premier rendu : la page est fermée, fente horizontale au centre matérialisée par un filet bleu #3d8bff 1 px + léger glow. Au premier CLIC
+   (ou tap, molette, touche) la page s'ouvre d'un coup à 100 % : volets retirés du DOM immédiatement, sans animation progressive.
+   Filet : sans clic, ouverture instantanée après 6 s en souris / 2,5 s en tactile ; prefers-reduced-motion -> fondu 0,3 s sans interaction.
+   Volets aria-hidden, pointer-events:none. */
 (function(){
   try{
     if (sessionStorage.getItem('pr-intro-orb') !== '1') return;
@@ -75,63 +73,22 @@
     return;
   }
 
-  var TAU = 0.22, CAP = 240, THRESH = 0.98, IDLE = coarse ? 2500 : 6000;
-  var t = 0, p = 0, last = 0, raf = 0, mode = 'move', a0 = 0, aT = 0, aDur = 1000, idleT = 0, hardT = 0, px = null, py = 0;
-  function K(){ return Math.max(700, win.innerWidth || 0, win.innerHeight || 0); }
-  function ease(x){ return x < .5 ? 2*x*x : 1 - Math.pow(-2*x + 2, 2) / 2; }
-  function paint(){
-    var v = (-p * 100).toFixed(3), w = (p * 100).toFixed(3);
-    top.style.transform = 'translate3d(0,' + v + '%,0)'; bot.style.transform = 'translate3d(0,' + w + '%,0)';
-    var lo = Math.max(0, 1 - p * 1.8).toFixed(3); top.style.setProperty('--lo', lo); bot.style.setProperty('--lo', lo);
-  }
-  function tick(now){
-    raf = 0; if (gone) return;
-    var dt = Math.min(0.1, Math.max(0.001, (now - (last || now - 16)) / 1000)); last = now;
-    if (mode === 'auto'){
-      var k = Math.min(1, (now - aT) / aDur); p = a0 + (1 - a0) * ease(k); if (k >= 1) p = 1;
-    } else {
-      if (t >= THRESH) t = 1;
-      p += (t - p) * (1 - Math.exp(-dt / TAU));
-      if (t === 1 && p > 0.995) p = 1;
-    }
-    paint();
-    if (p >= 1){ rm(); return; }
-    raf = requestAnimationFrame(tick);
-  }
-  function kick(){ if (!raf && !gone){ last = 0; raf = requestAnimationFrame(tick); } }
-  function auto(dur){
-    if (mode === 'auto' || gone) return;
-    mode = 'auto'; a0 = p; aT = performance.now(); aDur = dur; clearTimeout(idleT);
-    clearTimeout(hardT); hardT = setTimeout(rm, dur + 1500);   /* filet si rAF suspendu (onglet masqué) */
-    kick();
-  }
-  function arm(){ clearTimeout(idleT); if (mode === 'move') idleT = setTimeout(function(){ auto(1000); }, IDLE); }
-  function push(dist){
-    if (mode !== 'move' || dist < 1) return;
-    t = Math.min(1, t + Math.min(dist, CAP) / K()); arm(); kick();
-  }
-  function onPtr(e){
-    if (e.type === 'pointerdown'){ px = e.clientX; py = e.clientY; return; }
-    if (e.type === 'pointerup' || e.type === 'pointercancel'){ if (e.pointerType !== 'mouse') px = null; return; }
-    var dist;
-    if (px === null) dist = Math.sqrt((e.movementX || 0) * (e.movementX || 0) + (e.movementY || 0) * (e.movementY || 0));
-    else dist = Math.sqrt((e.clientX - px) * (e.clientX - px) + (e.clientY - py) * (e.clientY - py));
-    px = e.clientX; py = e.clientY;
-    push(dist);
-  }
-  function onWheel(e){ if (e.cancelable) e.preventDefault(); push(Math.abs(e.deltaY) + Math.abs(e.deltaX)); }
-  var SCROLLK = {' ':1,'ArrowUp':1,'ArrowDown':1,'PageUp':1,'PageDown':1,'Home':1,'End':1};
+  /* Ouverture INSTANTANÉE : au premier clic / tap (pointerdown), molette ou touche, les volets sont retirés d'un coup (100 %, aucune
+     transition). Le simple mouvement de la souris n'ouvre plus rien. Filet : sans clic, ouverture instantanée après 6 s (souris) / 2,5 s (tactile). */
+  var IDLE = coarse ? 2500 : 6000, idleT = 0, hardT = 0;
+  function open(){ if (gone) return; top.style.transform = 'translate3d(0,-100%,0)'; bot.style.transform = 'translate3d(0,100%,0)'; rm(); }
+  function onPtr(e){ if (e.type === 'pointerdown') open(); }
+  function onWheel(e){ if (e.cancelable) e.preventDefault(); open(); }
   function onKey(e){
     if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
-    if (SCROLLK[e.key] && e.cancelable) e.preventDefault();
-    auto(800);
+    open();
   }
-  ['pointermove','pointerdown','pointerup','pointercancel'].forEach(function(n){ win.addEventListener(n, onPtr, {capture:true, passive:true}); });
+  ['pointerdown'].forEach(function(n){ win.addEventListener(n, onPtr, {capture:true, passive:true}); });
   win.addEventListener('keydown', onKey, true);
   win.addEventListener('wheel', onWheel, {capture:true, passive:false});
-  paint(); arm();
+  idleT = setTimeout(open, IDLE);
   /* filet absolu : jamais plus de 5 min (visiteur immobile dans un onglet masqué, etc.) */
-  setTimeout(rm, 300000);
+  hardT = setTimeout(rm, 300000);
 })();
 </script>
 <style>

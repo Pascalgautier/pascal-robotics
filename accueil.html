@@ -48,7 +48,7 @@ img{display:block;max-width:100%}
 .links a:not(.contact-pill).is-active{color:var(--blue2);border-bottom-color:rgba(61,139,255,.7)}
 .contact-pill{border:1px solid rgba(61,139,255,.42);padding:8px 11px;border-radius:999px;color:#e8f0ff!important;letter-spacing:.02em;font-weight:800;font-size:10px;white-space:nowrap;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
 .contact-pill:hover,.contact-pill:focus-visible{border-color:rgba(61,139,255,.75);background:rgba(61,139,255,.08);box-shadow:0 0 0 1px rgba(61,139,255,.12);outline:none}
-#content section[id],#why,#contrast,#paths,#applications,#usecases,#method,#platform,#architecture,#experience,#about,#poc,#faq,#contact{scroll-margin-top:92px}
+#content section[id],#why,#paths,#applications,#usecases,#method,#platform,#architecture,#experience,#about,#poc,#faq,#contact{scroll-margin-top:92px}
 
 .hero{padding:18px 0 42px}
 .center-intro{max-width:920px;margin:0 auto;text-align:center}
@@ -727,61 +727,6 @@ a, p, span, div { overflow-wrap:break-word; }
   .midcta-inner{padding:16px 16px;justify-content:center;text-align:center}
   .midcta-label{font-size:18px;width:100%}
   .cadre-card{padding:18px 16px;border-radius:18px}
-}
-
-/* Before / After — Sans vs Avec Digital Twin */
-.ba-section{padding-top:8px}
-.ba-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:8px;
-}
-.ba-card{
-  border-radius:24px;
-  padding:28px 26px;
-  min-height:220px;
-}
-.ba-card .ba-label{
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  margin:0 0 10px;
-}
-.ba-card h3{
-  font-size:clamp(22px,2.6vw,30px);
-  line-height:1.08;
-  letter-spacing:-.03em;
-  margin:0 0 12px;
-  font-weight:900;
-}
-.ba-card p{
-  margin:0;
-  font-size:15px;
-  line-height:1.5;
-  color:var(--muted);
-}
-.ba-card.ba-without{
-  border:1px solid rgba(220,90,70,.28);
-  background:linear-gradient(160deg,#120c0c,#0a0909);
-  box-shadow:inset 0 0 0 1px rgba(180,60,50,.06);
-}
-.ba-card.ba-without .ba-label{color:#e08a7a}
-.ba-card.ba-without h3{color:#d8c4c0}
-.ba-card.ba-without p{color:#9a8682}
-.ba-card.ba-with{
-  border:1px solid rgba(61,139,255,.28);
-  background:
-    radial-gradient(circle at 88% 12%,rgba(61,139,255,.12),transparent 42%),
-    linear-gradient(160deg,#081020,#070d1c);
-  box-shadow:0 16px 40px rgba(0,0,0,.22), 0 0 28px rgba(61,139,255,.06);
-}
-.ba-card.ba-with .ba-label{color:var(--blue2)}
-.ba-card.ba-with h3{color:#eef4ff}
-@media (max-width:760px){
-  .ba-grid{grid-template-columns:1fr;gap:14px}
-  .ba-card{padding:22px 18px;min-height:0;border-radius:20px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -1644,7 +1589,7 @@ h2.title-parallax{
 </style>
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928b">
-<script src="assets/fx/pr-fx.js?v=20260928b" defer data-fx-theme="blue" data-fx-titles="main h2:not(#hero-secondary-title)" data-fx-blocks=".cadre-card,.ba-card,.path-card,.big-card,.use-card,.why-card,.midcta-inner,.flow-step,.stack-note,.platform-card,.arch-card,.wiki-ref,.step-row,.faq-item,.ctabox,.dt-banner-card"></script>
+<script src="assets/fx/pr-fx.js?v=20260928b" defer data-fx-theme="blue" data-fx-titles="main h2:not(#hero-secondary-title)" data-fx-blocks=".cadre-card,.path-card,.big-card,.use-card,.why-card,.midcta-inner,.flow-step,.stack-note,.platform-card,.arch-card,.wiki-ref,.step-row,.faq-item,.ctabox,.dt-banner-card"></script>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -1749,35 +1694,11 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   </div>
 </section>
 
-<section class="section ba-section" id="contrast" aria-labelledby="ba-title">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <div class="eyebrow" data-i18n="ba.eyebrow">02 / Avant · Après</div>
-        <h2 id="ba-title" data-i18n-html="ba.title">Dé-risquer<br>avant d’incarner.</h2>
-      </div>
-      <p data-i18n="ba.intro">Le Digital Twin n’est pas une démo visuelle : c’est le moyen de tester la tâche, l’environnement et le comportement avant d’engager le matériel.</p>
-    </div>
-    <div class="ba-grid">
-      <article class="ba-card ba-without reveal">
-        <div class="ba-label" data-i18n="ba.without.label">Sans Digital Twin</div>
-        <h3 data-i18n="ba.without.title">Risque, découverte tardive, paris matériel coûteux</h3>
-        <p data-i18n="ba.without.body">Les écarts apparaissent sur le terrain : contraintes d’atelier mal anticipées, itérations lentes, investissements robotiques engagés avant d’avoir validé la faisabilité.</p>
-      </article>
-      <article class="ba-card ba-with reveal">
-        <div class="ba-label" data-i18n="ba.with.label">Avec Digital Twin → robot incarné</div>
-        <h3 data-i18n="ba.with.title">Simuler, valider, puis incarner</h3>
-        <p data-i18n="ba.with.body">Modéliser la cellule, éprouver perception et politiques en simulation, mesurer la robustesse — puis déployer un robot réel avec un risque déjà réduit.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
 <section class="section" id="paths" aria-labelledby="paths-title">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="paths.eyebrow">03 / Par où commencer</div>
+        <div class="eyebrow" data-i18n="paths.eyebrow">02 / Par où commencer</div>
         <h2 id="paths-title" data-i18n-html="paths.title">Trois façons<br>d’engager.</h2>
       </div>
       <p data-i18n="paths.intro">Choisissez le niveau d’engagement qui correspond à votre maturité — étude, POC ou intégration. Chaque piste mène à une conversation concrète.</p>
@@ -1809,7 +1730,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="apps-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="apps.eyebrow">04 / Applications</div>
+        <div class="eyebrow" data-i18n="apps.eyebrow">03 / Applications</div>
         <h2 data-i18n-html="apps.title">Construit autour<br>du travail réel.</h2>
       </div>
       <p class="apps-copy" data-i18n="apps.intro">Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.</p>
@@ -1860,7 +1781,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="uc.eyebrow">05 / Cas d’usage</div>
+        <div class="eyebrow" data-i18n="uc.eyebrow">04 / Cas d’usage</div>
         <h2 data-i18n-html="uc.title">Trois pistes<br>de POC / étude.</h2>
       </div>
       <p data-i18n="uc.intro">Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.</p>
@@ -1896,7 +1817,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="method.eyebrow">06 / Méthode</div>
+        <div class="eyebrow" data-i18n="method.eyebrow">05 / Méthode</div>
         <h2 data-i18n-html="method.title">Du besoin<br>au robot incarné.</h2>
       </div>
       <p data-i18n="method.intro">Frise compacte : Besoin → Digital Twin → Simulation → Validation → Robot incarné → Itération.</p>
@@ -1928,7 +1849,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="platform.eyebrow">07 / Plateforme</div>
+        <div class="eyebrow" data-i18n="platform.eyebrow">06 / Plateforme</div>
         <h2 id="platform-title" data-i18n-html="platform.title">Modules<br>composables.</h2>
       </div>
       <p data-i18n="platform.intro">Une chaîne modulaire — Digital Twin, simulation, robot incarné et itération terrain — assemblée selon le cas d’usage, pas selon un catalogue figé.</p>
@@ -1966,7 +1887,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="arch.eyebrow">08 / Architecture</div>
+        <div class="eyebrow" data-i18n="arch.eyebrow">07 / Architecture</div>
         <h2 data-i18n-html="arch.title">Ouverte,<br>modulaire, souveraine.</h2>
       </div>
       <p data-i18n="arch.intro">Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.</p>
@@ -1990,7 +1911,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="exp.eyebrow">09 / Parcours</div>
+        <div class="eyebrow" data-i18n="exp.eyebrow">08 / Parcours</div>
         <h2 data-i18n-html="exp.title">Le chemin de<br>Pascal Gautier.</h2>
       </div>
       <p data-i18n="exp.intro">Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.</p>
@@ -2073,7 +1994,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="about.eyebrow">10 / Expertise humaine</div>
+        <div class="eyebrow" data-i18n="about.eyebrow">09 / Expertise humaine</div>
         <h2 data-i18n-html="about.title">La technologie commence<br>par les personnes.</h2>
       </div>
       <p data-i18n="about.intro">Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?</p>
@@ -2104,7 +2025,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="poc.eyebrow">11 / POC</div>
+        <div class="eyebrow" data-i18n="poc.eyebrow">10 / POC</div>
         <h2 data-i18n-html="poc.title">Vous avez un cas<br>d’usage robotique&nbsp;?</h2>
       </div>
       <p data-i18n="poc.intro">Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.</p>
@@ -2128,7 +2049,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <div class="eyebrow" data-i18n="faq.eyebrow">12 / FAQ</div>
+        <div class="eyebrow" data-i18n="faq.eyebrow">11 / FAQ</div>
         <h2 id="faq-title" data-i18n-html="faq.title">Questions<br>fréquentes.</h2>
       </div>
       <p data-i18n="faq.intro">Des réponses directes — sans promesses hors sol ni références inventées.</p>
@@ -2166,7 +2087,7 @@ Notre rôle est de relier le monde réel, la simulation et l’intelligence arti
   <div class="wrap">
     <div class="ctabox reveal">
       <div>
-        <div class="eyebrow" data-i18n="contact.eyebrow">13 / Contact</div>
+        <div class="eyebrow" data-i18n="contact.eyebrow">12 / Contact</div>
         <h2 data-i18n-html="contact.title">Explorons<br>votre cas d’usage.</h2>
         <p data-i18n="contact.body">Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.</p>
       </div>
@@ -2274,18 +2195,9 @@ const I18N = {
     "cadre.l3.body": "Étude, POC ou intégration cadrée — selon le niveau de maturité du besoin.",
     "cadre.l4.label": "Ce que nous ne vendons pas",
     "cadre.l4.body": "Des machines hors contexte : pas de catalogue robotique « prêt-à-poser ».",
-    "ba.eyebrow": "02 / Avant · Après",
-    "ba.title": "Dé-risquer<br>avant d’incarner.",
-    "ba.intro": "Le Digital Twin n’est pas une démo visuelle : c’est le moyen de tester la tâche, l’environnement et le comportement avant d’engager le matériel.",
-    "ba.without.label": "Sans Digital Twin",
-    "ba.without.title": "Risque, découverte tardive, paris matériel coûteux",
-    "ba.without.body": "Les écarts apparaissent sur le terrain : contraintes d’atelier mal anticipées, itérations lentes, investissements robotiques engagés avant d’avoir validé la faisabilité.",
-    "ba.with.label": "Avec Digital Twin → robot incarné",
-    "ba.with.title": "Simuler, valider, puis incarner",
-    "ba.with.body": "Modéliser la cellule, éprouver perception et politiques en simulation, mesurer la robustesse — puis déployer un robot réel avec un risque déjà réduit.",
     "midcta.label": "Parler de votre cas d’usage",
     "midcta.cta": "Parler de votre cas d’usage ↗",
-    "apps.eyebrow": "04 / Applications",
+    "apps.eyebrow": "03 / Applications",
     "apps.title": "Construit autour<br>du travail réel.",
     "apps.intro": "Pascal Robotics se concentre sur les cas d’usage où la mobilité, la perception, la simulation et le savoir-faire humain créent de la valeur opérationnelle. Chaque projet part de la tâche, pas d’un catalogue.",
     "apps.video.aria": "Jumeau numérique XR — boucle muette aller-retour",
@@ -2307,7 +2219,7 @@ const I18N = {
     "apps.demo.p2.body": "Construire le plus petit démonstrateur utile avant de déployer le système à plus grande échelle.",
     "apps.demo.p3.title": "Démonstrations et conférences",
     "apps.demo.p3.body": "Expliquer la technologie à travers des scénarios concrets et compréhensibles.",
-    "uc.eyebrow": "05 / Cas d’usage",
+    "uc.eyebrow": "04 / Cas d’usage",
     "uc.title": "Trois pistes<br>de POC / étude.",
     "uc.intro": "Exemples de cadres d’exploration — clairement présentés comme preuves de concept ou études, et non comme projets clients contractés.",
     "uc.badge": "POC / Étude",
@@ -2317,7 +2229,7 @@ const I18N = {
     "uc.b.body": "Apprentissage de gestes, manipulation, inspection et répétition de tâches — pour tester la faisabilité d’une assistance humanoïde sur un poste ou un flux réel.",
     "uc.c.title": "Digital Twin industriel",
     "uc.c.body": "Simuler usine, cellule ou robot avant le déploiement physique — pour réduire le risque, comparer des scénarios et préparer l’intégration sur le terrain.",
-    "paths.eyebrow": "03 / Par où commencer",
+    "paths.eyebrow": "02 / Par où commencer",
     "paths.title": "Trois façons<br>d’engager.",
     "paths.intro": "Choisissez le niveau d’engagement qui correspond à votre maturité — étude, POC ou intégration. Chaque piste mène à une conversation concrète.",
     "paths.a.eyebrow": "Étude / cadrage",
@@ -2332,7 +2244,7 @@ const I18N = {
     "paths.c.title": "Je vise une intégration industrielle",
     "paths.c.body": "Relier robotique mobile ou humanoïde, Edge AI et process existants — avec une trajectoire de déploiement cadrée.",
     "paths.c.cta": "Parler intégration ↗",
-    "method.eyebrow": "06 / Méthode",
+    "method.eyebrow": "05 / Méthode",
     "method.title": "Du besoin<br>au robot incarné.",
     "method.intro": "Frise compacte : Besoin → Digital Twin → Simulation → Validation → Robot incarné → Itération.",
     "method.s1.title": "Besoin",
@@ -2349,7 +2261,7 @@ const I18N = {
     "method.s6.body": "Retour terrain → twin → amélioration continue.",
     "method.flowAria": "Frise méthode",
     "method.stack": "Stack illustrative (non obligatoire, approche agnostique) : OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / contrôleurs, Edge AI — choisis selon le cas d’usage, pas selon un catalogue figé.",
-    "platform.eyebrow": "07 / Plateforme",
+    "platform.eyebrow": "06 / Plateforme",
     "platform.title": "Modules<br>composables.",
     "platform.intro": "Une chaîne modulaire — Digital Twin, simulation, robot incarné et itération terrain — assemblée selon le cas d’usage, pas selon un catalogue figé.",
     "platform.a.eyebrow": "Digital Twin · OpenUSD",
@@ -2365,7 +2277,7 @@ const I18N = {
     "platform.d.title": "Apprendre en boucle",
     "platform.d.body": "Retour d’atelier → mise à jour du Digital Twin → re-simulation → amélioration continue du robot incarné.",
     "platform.more": "En savoir plus →",
-    "arch.eyebrow": "08 / Architecture",
+    "arch.eyebrow": "07 / Architecture",
     "arch.title": "Ouverte,<br>modulaire, souveraine.",
     "arch.intro": "Une architecture pensée pour s’adapter aux contraintes industrielles, aux choix de stack et aux exigences de maîtrise des données — sans verrouillage inutile.",
     "arch.c1.eyebrow": "Modularité",
@@ -2374,7 +2286,7 @@ const I18N = {
     "arch.c2.eyebrow": "Souveraineté & ouverture",
     "arch.c2.title": "Maîtriser ce qui compte.",
     "arch.c2.body": "Privilégier des interfaces claires, des formats interopérables et une chaîne de décision transparente — pour garder la main sur données, modèles et déploiement.",
-    "exp.eyebrow": "09 / Parcours",
+    "exp.eyebrow": "08 / Parcours",
     "exp.title": "Le chemin de<br>Pascal Gautier.",
     "exp.intro": "Une chronologie personnelle — technologies immersives, robotique et image — qui nourrit aujourd’hui Pascal Robotics. Ce n’est pas un historique commercial de références clients.",
     "exp.i1.when": "2001 – 2008",
@@ -2404,7 +2316,7 @@ const I18N = {
     "exp.i6.when": "Aujourd’hui",
     "exp.i6.title": "Pascal Robotics",
     "exp.i6.body": "Robotique mobile, humanoïdes, Digital Twin et Physical AI — pour transformer un besoin industriel en preuve opérationnelle.",
-    "about.eyebrow": "10 / Expertise humaine",
+    "about.eyebrow": "09 / Expertise humaine",
     "about.title": "La technologie commence<br>par les personnes.",
     "about.intro": "Pascal Robotics a été fondé par Pascal Gautier, dont le parcours couvre les technologies immersives, la robotique et les systèmes d’image. Son travail a toujours porté sur la même question : comment capturer, traduire et rendre utile l’expertise humaine à travers les machines ?",
     "about.card.title": "Expertise humaine → intelligence robotique.",
@@ -2417,7 +2329,7 @@ const I18N = {
     "about.t2": "Systèmes robotiques pour le dessin, la lumière et les applications de caméras de diffusion.",
     "about.t3.label": "AUJOURD’HUI",
     "about.t3": "Robotique mobile, Digital Twin et Physical AI.",
-    "poc.eyebrow": "11 / POC",
+    "poc.eyebrow": "10 / POC",
     "poc.title": "Vous avez un cas<br>d’usage robotique&nbsp;?",
     "poc.intro": "Un chemin simple pour passer de l’idée à une preuve utile — sans précipiter l’investissement matériel.",
     "poc.s1.title": "Analyse du besoin",
@@ -2435,7 +2347,7 @@ const I18N = {
     "poc.s7.title": "Décision de déploiement",
     "poc.s7.body": "Décider en connaissance de cause : déployer, itérer ou arrêter.",
     "poc.cta": "Parler de votre cas d’usage ↗",
-    "faq.eyebrow": "12 / FAQ",
+    "faq.eyebrow": "11 / FAQ",
     "faq.title": "Questions<br>fréquentes.",
     "faq.intro": "Des réponses directes — sans promesses hors sol ni références inventées.",
     "faq.q1": "Quelle différence avec un intégrateur catalogue ?",
@@ -2450,7 +2362,7 @@ const I18N = {
     "faq.a5": "Agnostique. OpenUSD, Omniverse, Isaac Sim, Isaac Lab, VLA ou Edge AI sont des briques illustratives — choisies selon le cas, pas un catalogue figé.",
     "faq.q6": "Par où commencer ?",
     "faq.a6": "Par une conversation sur votre cas terrain. Ensuite : étude / cadrage, POC Digital Twin → robot, ou intégration — selon votre maturité. Voyez la section « Trois façons d’engager ».",
-    "contact.eyebrow": "13 / Contact",
+    "contact.eyebrow": "12 / Contact",
     "contact.title": "Explorons<br>votre cas d’usage.",
     "contact.body": "Vous avez une tâche, un environnement ou une question robotique en tête ? Contactez Pascal Robotics pour discuter de ce qui peut réalistement être simulé, intégré et testé.",
     "contact.discuss": "Parler de votre cas d’usage ↗",
@@ -2525,18 +2437,9 @@ const I18N = {
     "cadre.l3.body": "Study, POC or framed integration — matching the maturity of the need.",
     "cadre.l4.label": "What we do not sell",
     "cadre.l4.body": "Machines out of context: no off-the-shelf robot catalogue.",
-    "ba.eyebrow": "02 / Before · After",
-    "ba.title": "De-risk<br>before embodying.",
-    "ba.intro": "A Digital Twin is not a visual demo: it is how you test the task, environment and behaviour before committing hardware.",
-    "ba.without.label": "Without Digital Twin",
-    "ba.without.title": "Risk, late discovery, costly hardware bets",
-    "ba.without.body": "Gaps show up on the floor: shop-floor constraints missed, slow iterations, robotic spend committed before feasibility is proven.",
-    "ba.with.label": "With Digital Twin → embodied robot",
-    "ba.with.title": "Simulate, validate, then embody",
-    "ba.with.body": "Model the cell, stress perception and policies in simulation, measure robustness — then deploy a real robot with risk already reduced.",
     "midcta.label": "Talk about your use case",
     "midcta.cta": "Talk about your use case ↗",
-    "apps.eyebrow": "04 / Applications",
+    "apps.eyebrow": "03 / Applications",
     "apps.title": "Built around<br>real-world work.",
     "apps.intro": "Pascal Robotics focuses on use cases where mobility, perception, simulation and human know-how can create operational value. Each project starts with the task, not with a catalogue.",
     "apps.video.aria": "XR digital twin — muted forward-reverse loop",
@@ -2558,7 +2461,7 @@ const I18N = {
     "apps.demo.p2.body": "Build the smallest useful demonstrator before scaling the system.",
     "apps.demo.p3.title": "Demonstrations & talks",
     "apps.demo.p3.body": "Explain the technology through concrete, understandable scenarios.",
-    "uc.eyebrow": "05 / Use cases",
+    "uc.eyebrow": "04 / Use cases",
     "uc.title": "Three POC / study<br>tracks.",
     "uc.intro": "Exploration frames — clearly labeled as proofs of concept or studies, not as contracted client projects.",
     "uc.badge": "POC / Study",
@@ -2568,7 +2471,7 @@ const I18N = {
     "uc.b.body": "Gesture learning, manipulation, inspection and task repetition — to test whether humanoid assistance is feasible on a real workstation or flow.",
     "uc.c.title": "Industrial Digital Twin",
     "uc.c.body": "Simulate a plant, cell or robot before physical deployment — to reduce risk, compare scenarios and prepare field integration.",
-    "paths.eyebrow": "03 / Where to start",
+    "paths.eyebrow": "02 / Where to start",
     "paths.title": "Three ways<br>to engage.",
     "paths.intro": "Pick the engagement level that matches your maturity — study, POC or integration. Each path leads to a concrete conversation.",
     "paths.a.eyebrow": "Study / framing",
@@ -2583,7 +2486,7 @@ const I18N = {
     "paths.c.title": "I aim for industrial integration",
     "paths.c.body": "Connect mobile or humanoid robotics, Edge AI and existing processes — with a framed deployment path.",
     "paths.c.cta": "Talk integration ↗",
-    "method.eyebrow": "06 / Method",
+    "method.eyebrow": "05 / Method",
     "method.title": "From need<br>to embodied robot.",
     "method.intro": "Compact frieze: Need → Digital Twin → Simulation → Validation → Embodied robot → Iteration.",
     "method.s1.title": "Need",
@@ -2600,7 +2503,7 @@ const I18N = {
     "method.s6.body": "Field feedback → twin → continuous improvement.",
     "method.flowAria": "Method frieze",
     "method.stack": "Illustrative stack (not mandatory — stack-agnostic approach): OpenUSD / Omniverse, Isaac Sim, Isaac Lab, VLA, ROS / controllers, Edge AI — selected for the use case, not a fixed catalogue.",
-    "platform.eyebrow": "07 / Platform",
+    "platform.eyebrow": "06 / Platform",
     "platform.title": "Composable<br>modules.",
     "platform.intro": "A modular chain — Digital Twin, simulation, embodied robot and field iteration — assembled for the use case, not a fixed catalogue.",
     "platform.a.eyebrow": "Digital Twin · OpenUSD",
@@ -2616,7 +2519,7 @@ const I18N = {
     "platform.d.title": "Learn in the loop",
     "platform.d.body": "Shop-floor feedback → Digital Twin update → re-simulation → continuous improvement of the embodied robot.",
     "platform.more": "Learn more →",
-    "arch.eyebrow": "08 / Architecture",
+    "arch.eyebrow": "07 / Architecture",
     "arch.title": "Open,<br>modular, sovereign.",
     "arch.intro": "An architecture designed for industrial constraints, stack choices and data stewardship — without unnecessary lock-in.",
     "arch.c1.eyebrow": "Modularity",
@@ -2625,7 +2528,7 @@ const I18N = {
     "arch.c2.eyebrow": "Sovereignty & openness",
     "arch.c2.title": "Keep control of what matters.",
     "arch.c2.body": "Prefer clear interfaces, interoperable formats and a transparent decision chain — so you retain control over data, models and deployment.",
-    "exp.eyebrow": "09 / Path",
+    "exp.eyebrow": "08 / Path",
     "exp.title": "Pascal Gautier’s<br>path.",
     "exp.intro": "A personal chronology — immersive tech, robotics and imaging — that informs Pascal Robotics today. This is not a commercial client track record.",
     "exp.i1.when": "2001 – 2008",
@@ -2655,7 +2558,7 @@ const I18N = {
     "exp.i6.when": "Today",
     "exp.i6.title": "Pascal Robotics",
     "exp.i6.body": "Mobile robotics, humanoids, Digital Twin and Physical AI — turning an industrial need into operational proof.",
-    "about.eyebrow": "10 / Human expertise",
+    "about.eyebrow": "09 / Human expertise",
     "about.title": "Technology starts<br>with people.",
     "about.intro": "Pascal Robotics is founded by Pascal Gautier, with a career spanning immersive technologies, robotics and image systems. His work has repeatedly focused on the same question: how can human expertise be captured, translated and made useful through machines?",
     "about.card.title": "Human expertise → robot intelligence.",
@@ -2668,7 +2571,7 @@ const I18N = {
     "about.t2": "Robotic systems for drawing, light and broadcast camera applications.",
     "about.t3.label": "TODAY",
     "about.t3": "Mobile robotics, Digital Twin and Physical AI.",
-    "poc.eyebrow": "11 / POC",
+    "poc.eyebrow": "10 / POC",
     "poc.title": "Do you have a<br>robotics use case?",
     "poc.intro": "A simple path from idea to useful proof — without rushing hardware investment.",
     "poc.s1.title": "Need analysis",
@@ -2686,7 +2589,7 @@ const I18N = {
     "poc.s7.title": "Deployment decision",
     "poc.s7.body": "Decide with evidence: deploy, iterate or stop.",
     "poc.cta": "Talk about your use case ↗",
-    "faq.eyebrow": "12 / FAQ",
+    "faq.eyebrow": "11 / FAQ",
     "faq.title": "Frequently<br>asked questions.",
     "faq.intro": "Straight answers — no overpromises and no invented references.",
     "faq.q1": "How is this different from a catalogue integrator?",
@@ -2701,7 +2604,7 @@ const I18N = {
     "faq.a5": "Agnostic. OpenUSD, Omniverse, Isaac Sim, Isaac Lab, VLA or Edge AI are illustrative building blocks — chosen for the case, not a fixed catalogue.",
     "faq.q6": "Where should I start?",
     "faq.a6": "With a conversation about your field case. Then: study / framing, Digital Twin → robot POC, or integration — depending on your maturity. See the “Three ways to engage” section.",
-    "contact.eyebrow": "13 / Contact",
+    "contact.eyebrow": "12 / Contact",
     "contact.title": "Let’s explore<br>your use case.",
     "contact.body": "Have a task, environment or robotics question in mind? Contact Pascal Robotics to discuss what can realistically be simulated, integrated and tested.",
     "contact.discuss": "Talk about your use case ↗",
