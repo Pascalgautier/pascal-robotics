@@ -3,21 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pascal Robotics</title>
-  <meta name="description" content="Pascal Robotics — Digital Twin, Physical AI, robotique mobile et humanoïde.">
-  <meta name="theme-color" content="#050b18">
+  <title>Archetto Lab — par Pascal Robotics</title>
+  <meta name="description" content="Archetto Lab : le labo ouvert de transcription pour violon. Un projet Pascal Robotics.">
+  <meta name="theme-color" content="#1c1410">
   <link rel="canonical" href="https://pascal-robotics.fr/">
-  <style>html,body{margin:0;padding:0;height:100%;background:#050b18}</style>
-  <!-- Ouverture « paupière » : plus d'Orbe ni de logo ici. On pose le drapeau puis on part aussitôt vers /orchestrai, dont le script
-       inline du <head> affiche les volets navy fermés (fente + filet bleu) et les ouvre au mouvement de la souris/du doigt.
-       (assets/intro-orb/ et la vidéo restent dans le dépôt mais ne sont plus chargés.) -->
-  <script>
-    try { sessionStorage.setItem('pr-intro-orb', '1'); } catch (e) {}
-    location.replace('/orchestrai');
-  </script>
-  <noscript><meta http-equiv="refresh" content="0;url=/orchestrai"></noscript>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BB%3C/text%3E%3C/svg%3E">
+  <!-- Avant-page Archetto Lab. Le bouton « Entrer sur Pascal Robotics » reprend exactement l'ancien comportement de cette page
+       (drapeau pr-intro-orb + /orchestrai, ouverture « paupière » au filet bleu). -->
+  <style>
+    @font-face{font-family:"Fraunces";src:url(/assets/archetto/fraunces.woff2) format("woff2");font-weight:100 900;font-display:swap}
+    @font-face{font-family:"Inter";src:url(/assets/archetto/inter.woff2) format("woff2");font-weight:100 900;font-display:swap}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#1c1410;color:#f3ead8;font-family:Inter,system-ui,sans-serif}
+    body{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      background:radial-gradient(1200px 700px at 75% 40%,rgba(201,119,46,.22),transparent 60%),radial-gradient(800px 600px at 10% 90%,rgba(90,37,8,.35),transparent 60%),#1c1410}
+    header{display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,5vw,56px);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#cdbb9c}
+    header b{color:#f3ead8;font-weight:600}
+    main{flex:1;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;gap:clamp(20px,4vw,64px);padding:0 clamp(20px,5vw,56px) 40px;max-width:1240px;width:100%;margin:0 auto}
+    .kicker{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#e2a364;border:1px solid rgba(226,163,100,.4);border-radius:999px;padding:6px 12px}
+    h1{font-family:Fraunces,serif;font-weight:500;font-size:clamp(44px,8vw,104px);line-height:.95;margin:22px 0 18px;letter-spacing:-.02em}
+    h1 i{color:#e2a364;font-weight:400}
+    p.pitch{font-size:clamp(17px,1.6vw,21px);line-height:1.55;color:#e4d6bd;max-width:36em;margin:0 0 30px}
+    .ctas{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;font-size:16px;padding:15px 24px;border-radius:999px;transition:transform .15s,background .15s}
+    .btn:hover{transform:translateY(-2px)}
+    .btn.lab{background:#e2a364;color:#1c1410}
+    .btn.lab:hover{background:#f0b97e}
+    .btn.pr{background:#0b1a33;color:#e8f0ff;border:1px solid #3d7bff;box-shadow:0 0 0 0 rgba(61,123,255,.5)}
+    .btn.pr:hover{background:#10264a}
+    .violin{justify-self:center;height:min(70vh,560px);filter:drop-shadow(0 30px 50px rgba(0,0,0,.5));transform:rotate(12deg)}
+    ul.facts{list-style:none;padding:0;margin:34px 0 0;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:#b9a687}
+    ul.facts li::before{content:"♪ ";color:#e2a364}
+    footer{padding:18px clamp(20px,5vw,56px);font-size:13px;color:#8f7d62;border-top:1px solid rgba(243,234,216,.08);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    footer a{color:#cdbb9c}
+    @media (max-width:760px){
+      main{grid-template-columns:1fr;padding-top:10px}
+      .violin{grid-row:1;height:200px;transform:rotate(20deg)}
+      .btn{width:100%;justify-content:center}
+      header{font-size:11px}
+    }
+  </style>
 </head>
 <body>
-  <p style="position:absolute;left:-9999px"><a href="/orchestrai">Pascal Robotics — OrchestrAI</a></p>
+  <header><span><b>Archetto Lab</b></span><span>un projet Pascal Robotics</span></header>
+  <main>
+    <section>
+      <span class="kicker">Labo ouvert · transcription violon</span>
+      <h1>Archetto <i>Lab</i></h1>
+      <p class="pitch">Le labo ouvert de transcription pour violon&nbsp;: on isole le violon d'un morceau, on en tire la partition, et vous la jouez avec l'accompagnement. Algorithmes comparés en public, partitions notées et corrigées par la communauté.</p>
+      <div class="ctas">
+        <a class="btn lab" href="https://archetto-mocha.vercel.app" target="_blank" rel="noopener">Découvrir Archetto Lab ↗</a>
+        <a class="btn pr" id="enter" href="/orchestrai">Entrer sur Pascal Robotics →</a>
+      </div>
+      <ul class="facts"><li>Bibliothèque de partitions</li><li>Benchmark des algorithmes</li><li>Algorithme open source</li></ul>
+    </section>
+    <img class="violin" src="/assets/archetto/violin.svg" alt="">
+  </main>
+  <footer><span>© Pascal Robotics</span><a href="/orchestrai">pascal-robotics.fr</a></footer>
+  <script>
+    document.getElementById('enter').addEventListener('click', function (e) {
+      e.preventDefault();
+      try { sessionStorage.setItem('pr-intro-orb', '1'); } catch (x) {}
+      location.href = '/orchestrai';
+    });
+  </script>
 </body>
 </html>
