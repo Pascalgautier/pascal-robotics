@@ -1,7 +1,0 @@
-Polices embarquées (toutes sous licence SIL Open Font License 1.1, https://openfontlicense.org) :
-- Cormorant Garamond (Christian Thalmann / Catharsis Fonts)
-- EB Garamond (Georg Duffner, Octavio Pardo)
-- Inter (Rasmus Andersson)
-- Space Grotesk (Florian Karsten)
-- Fraunces (Undercase Type)
-Converties en WOFF2 à partir des fichiers Google Fonts, sans modification.
