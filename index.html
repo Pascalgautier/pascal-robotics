@@ -3,69 +3,115 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Archetto Lab — par Pascal Robotics</title>
-  <meta name="description" content="Archetto Lab : le labo ouvert de transcription pour violon. Un projet Pascal Robotics.">
-  <meta name="theme-color" content="#1c1410">
-  <link rel="canonical" href="https://pascal-robotics.fr/">
+  <title>Archetto Lab</title>
+  <meta name="description" content="Archetto Lab : le labo ouvert de transcription pour violon.">
+  <meta name="theme-color" content="#0d1a3a">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%BB%3C/text%3E%3C/svg%3E">
-  <!-- Avant-page Archetto Lab. Le bouton « Entrer sur Pascal Robotics » reprend exactement l'ancien comportement de cette page
-       (drapeau pr-intro-orb + /orchestrai, ouverture « paupière » au filet bleu). -->
+  <link rel="preload" as="image" href="/assets/archetto/salon-violon.webp" media="(min-width:761px)">
+  <link rel="preload" as="image" href="/assets/archetto/salon-violon-mobile.webp" media="(max-width:760px)">
+  <!-- Avant-page Archetto Lab. 3 variantes de dévoilement : ?v=A (carte qui pivote, défaut), ?v=B (rideau de velours), ?v=C (carte de verre).
+       Le lien discret « Entrer sur le site » reprend l'ancien comportement (drapeau pr-intro-orb + /orchestrai). -->
   <style>
     @font-face{font-family:"Fraunces";src:url(/assets/archetto/fraunces.woff2) format("woff2");font-weight:100 900;font-display:swap}
     @font-face{font-family:"Inter";src:url(/assets/archetto/inter.woff2) format("woff2");font-weight:100 900;font-display:swap}
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:#1c1410;color:#f3ead8;font-family:Inter,system-ui,sans-serif}
-    body{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
-      background:radial-gradient(1200px 700px at 75% 40%,rgba(201,119,46,.22),transparent 60%),radial-gradient(800px 600px at 10% 90%,rgba(90,37,8,.35),transparent 60%),#1c1410}
-    header{display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,5vw,56px);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#cdbb9c}
-    header b{color:#f3ead8;font-weight:600}
-    main{flex:1;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;gap:clamp(20px,4vw,64px);padding:0 clamp(20px,5vw,56px) 40px;max-width:1240px;width:100%;margin:0 auto}
-    .kicker{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#e2a364;border:1px solid rgba(226,163,100,.4);border-radius:999px;padding:6px 12px}
-    h1{font-family:Fraunces,serif;font-weight:500;font-size:clamp(44px,8vw,104px);line-height:.95;margin:22px 0 18px;letter-spacing:-.02em}
-    h1 i{color:#e2a364;font-weight:400}
-    p.pitch{font-size:clamp(17px,1.6vw,21px);line-height:1.55;color:#e4d6bd;max-width:36em;margin:0 0 30px}
-    .ctas{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-    .btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;font-size:16px;padding:15px 24px;border-radius:999px;transition:transform .15s,background .15s}
+    html,body{margin:0;height:100%;color:#f6efe0;font-family:Inter,system-ui,sans-serif;background:#0d1a3a}
+    body{min-height:100vh;min-height:100svh;overflow-x:hidden;position:relative}
+    .bg{position:fixed;inset:0;background:url(/assets/archetto/salon-violon.webp) center 60%/cover no-repeat;z-index:0}
+    @media (min-width:761px){.bg{background-position:30% 60%}}
+    .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(270deg,rgba(8,14,34,.8) 0%,rgba(8,14,34,.45) 40%,rgba(8,14,34,0) 65%),linear-gradient(0deg,rgba(8,14,34,.55),transparent 35%)}
+    .stage{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:flex-end;padding:40px clamp(20px,6vw,80px);perspective:1600px}
+    .brand{position:absolute;z-index:2;top:22px;left:clamp(20px,6vw,80px);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#e8c98f;font-weight:600}
+    .card{position:relative;width:min(560px,100%);display:grid}
+    .face{grid-area:1/1}
+    .face{border-radius:22px;padding:clamp(24px,4vw,40px)}
+    .front{align-self:end;background:rgba(10,18,44,.35);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid rgba(232,201,143,.25)}
+    .back{background:rgba(12,22,52,.9);border:1px solid rgba(232,201,143,.35);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+    .kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#e8c98f}
+    h1{font-family:Fraunces,serif;font-weight:500;font-size:clamp(46px,7.5vw,92px);line-height:.95;margin:16px 0 14px;letter-spacing:-.02em}
+    h1 i{color:#e8b86b;font-weight:400}
+    h2{font-family:Fraunces,serif;font-weight:500;font-size:clamp(26px,3vw,34px);margin:8px 0 14px}
+    p{line-height:1.6;margin:0 0 12px;color:#ece3cf}
+    .pitch{font-size:clamp(16px,1.5vw,19px);margin-bottom:24px}
+    .back p{font-size:15px}
+    .muted{font-size:13px!important;color:#bfb49c!important}
+    .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:600 15px Inter,sans-serif;padding:13px 22px;border-radius:999px;border:0;cursor:pointer;transition:transform .15s,background .15s}
     .btn:hover{transform:translateY(-2px)}
-    .btn.lab{background:#e2a364;color:#1c1410}
-    .btn.lab:hover{background:#f0b97e}
-    .btn.pr{background:#0b1a33;color:#e8f0ff;border:1px solid #3d7bff;box-shadow:0 0 0 0 rgba(61,123,255,.5)}
-    .btn.pr:hover{background:#10264a}
-    .violin{justify-self:center;height:min(70vh,560px);filter:drop-shadow(0 30px 50px rgba(0,0,0,.5));transform:rotate(12deg)}
-    ul.facts{list-style:none;padding:0;margin:34px 0 0;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:#b9a687}
-    ul.facts li::before{content:"♪ ";color:#e2a364}
-    footer{padding:18px clamp(20px,5vw,56px);font-size:13px;color:#8f7d62;border-top:1px solid rgba(243,234,216,.08);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    footer a{color:#cdbb9c}
+    .gold{background:#e8b86b;color:#1a1408}.gold:hover{background:#f3c983}
+    .ghost{background:transparent;color:#f6efe0;border:1px solid rgba(246,239,224,.5)}.ghost:hover{background:rgba(255,255,255,.08)}
+    .close{position:absolute;top:14px;right:16px;background:none;border:0;color:#e8c98f;font-size:22px;cursor:pointer}
+    .discreet{position:fixed;z-index:3;right:18px;bottom:14px;font-size:12px;color:rgba(246,239,224,.55);text-decoration:none;letter-spacing:.04em}
+    .discreet:hover{color:#f6efe0}
+    a.inline{color:#e8b86b}
+
+    /* A — carte qui pivote */
+    .vA .card{transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+    .vA .face{backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:auto}
+    .vA .back{transform:rotateY(180deg)}
+    .vA.open .card{transform:rotateY(180deg)}
+    /* B — rideau de velours qui monte */
+    .vB .card{overflow:hidden;border-radius:22px}
+    .vB .back{transform:translateY(102%);transition:transform .9s cubic-bezier(.2,.7,.2,1);
+      background:linear-gradient(180deg,rgba(18,32,82,.97),rgba(9,17,46,.97)),repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 2px,transparent 2px 14px);
+      background-blend-mode:overlay;border-top:3px solid #e8b86b}
+    .vB.open .back{transform:translateY(0)}
+    /* C — carte de verre qui se déplie */
+    .vC .back{background:rgba(255,255,255,.12);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+      border:1px solid rgba(255,255,255,.35);transform-origin:top center;transform:scaleY(0) rotateX(-70deg);opacity:0;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .5s}
+    .vC.open .back{transform:none;opacity:1}
+    .vC.open .front,.vB.open .front{align-self:end;opacity:.0;transition:opacity .4s .2s}
     @media (max-width:760px){
-      main{grid-template-columns:1fr;padding-top:10px}
-      .violin{grid-row:1;height:200px;transform:rotate(20deg)}
+      .bg{background-image:url(/assets/archetto/salon-violon-mobile.webp);background-position:center top;background-color:#0b1530;bottom:auto;height:62vh;height:62svh}
+      html,body{height:auto}body{background:#0b1530}
+      .discreet{position:absolute;bottom:18px;right:50%;transform:translateX(50%)}
+      .front .kicker{display:none}
+      .face{padding:22px}
+      .bg::after{background:linear-gradient(0deg,#0b1530 0%,rgba(11,21,48,.4) 30%,rgba(11,21,48,0) 60%)}
+      .stage{align-items:flex-end;justify-content:center;padding:70px 16px 64px}
       .btn{width:100%;justify-content:center}
-      header{font-size:11px}
     }
   </style>
 </head>
 <body>
-  <header><span><b>Archetto Lab</b></span><span>un projet Pascal Robotics</span></header>
-  <main>
-    <section>
-      <span class="kicker">Labo ouvert · transcription violon</span>
-      <h1>Archetto <i>Lab</i></h1>
-      <p class="pitch">Le labo ouvert de transcription pour violon&nbsp;: on isole le violon d'un morceau, on en tire la partition, et vous la jouez avec l'accompagnement. Algorithmes comparés en public, partitions notées et corrigées par la communauté.</p>
-      <div class="ctas">
-        <a class="btn lab" href="https://archetto-mocha.vercel.app" target="_blank" rel="noopener">Découvrir Archetto Lab ↗</a>
-        <a class="btn pr" id="enter" href="/orchestrai">Entrer sur Pascal Robotics →</a>
-      </div>
-      <ul class="facts"><li>Bibliothèque de partitions</li><li>Benchmark des algorithmes</li><li>Algorithme open source</li></ul>
-    </section>
-    <img class="violin" src="/assets/archetto/violin.svg" alt="">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="brand">Archetto Lab</div>
+  <main class="stage" id="stage">
+    <div class="card">
+      <section class="face front">
+        <div class="kicker">Labo ouvert · transcription violon</div>
+        <h1>Archetto <i>Lab</i></h1>
+        <p class="pitch">Isoler le violon d'un morceau, en tirer la partition, et la jouer avec l'accompagnement.</p>
+        <div class="btns">
+          <button class="btn gold" id="reveal">Découvrir le projet</button>
+          <a class="btn ghost" href="https://archetto-mocha.vercel.app" target="_blank" rel="noopener">Ouvrir le labo ↗</a>
+        </div>
+      </section>
+      <section class="face back" aria-hidden="true">
+        <button class="close" id="hide" aria-label="Fermer">×</button>
+        <div class="kicker">Pour les musiciens, amateurs ou pros</div>
+        <h2>Le projet</h2>
+        <p>J'utilise l'intelligence artificielle pour développer et affiner, morceau après morceau, un moteur qui transcrit la musique en notes.</p>
+        <p>Les essais se font sur des musiques elles-mêmes créées par IA, avec ElevenLabs Music.</p>
+        <p>À terme&nbsp;: un éditeur de partitions gratuit, puis un générateur d'accompagnements pour jouer avec.</p>
+        <p>Vous jouez&nbsp;? <a class="inline" href="https://archetto-mocha.vercel.app/contributeurs" target="_blank" rel="noopener">Devenez contributeur</a>&nbsp;: corrigez, notez, proposez.</p>
+        <p class="muted">Le code est ouvert sur <a class="inline" href="https://github.com/Pascalgautier/archetto-transcribe" target="_blank" rel="noopener">GitHub</a>, la plateforme où les développeurs publient leur code en libre accès, pour que chacun puisse le voir, le tester et l'améliorer.</p>
+        <div class="btns">
+          <a class="btn gold" href="https://archetto-mocha.vercel.app" target="_blank" rel="noopener">Ouvrir Archetto Lab ↗</a>
+        </div>
+      </section>
+    </div>
   </main>
-  <footer><span>© Pascal Robotics</span><a href="/orchestrai">pascal-robotics.fr</a></footer>
+  <a class="discreet" id="enter" href="/orchestrai">Entrer sur le site →</a>
   <script>
-    document.getElementById('enter').addEventListener('click', function (e) {
-      e.preventDefault();
-      try { sessionStorage.setItem('pr-intro-orb', '1'); } catch (x) {}
-      location.href = '/orchestrai';
-    });
+    var v=(new URLSearchParams(location.search).get('v')||'A').toUpperCase();
+    if('ABC'.indexOf(v)<0||v.length!==1)v='A';
+    var s=document.getElementById('stage'); s.classList.add('v'+v);
+    var back=document.querySelector('.back'), front=document.querySelector('.front');
+    function set(o){s.classList.toggle('open',o);back.setAttribute('aria-hidden',!o);front.setAttribute('aria-hidden',o);}
+    document.getElementById('reveal').onclick=function(){set(true)};
+    document.getElementById('hide').onclick=function(){set(false)};
+    document.getElementById('enter').addEventListener('click',function(e){e.preventDefault();try{sessionStorage.setItem('pr-intro-orb','1')}catch(x){};location.href='/orchestrai';});
   </script>
 </body>
 </html>
