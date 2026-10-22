@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>L.O.R.V. · Vue de situation | Pascal Robotics</title>
+<meta name="description" content="L.O.R.V., le logiciel de télémétrie en temps réel de Pascal Robotics : données publiques en direct, jumeau numérique du territoire, patrouille de robot simulée. Projet présenté au SDIS de la Mayenne.">
+<link rel="canonical" href="https://pascal-robotics.fr/lorv/">
+<meta name="theme-color" content="#0d161d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="L.O.R.V. · Vue de situation">
+<meta property="og:description" content="Le logiciel de télémétrie en temps réel de Pascal Robotics, en vidéo et en direct.">
+<meta property="og:url" content="https://pascal-robotics.fr/lorv/">
+<meta property="og:image" content="https://pascal-robotics.fr/lorv/video/poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0} img{max-width:100%} [hidden]{display:none!important}
+/* Mise en page : une colonne éditoriale sombre façon écran de poste de commandement, cadres à coins, une seule pièce interactive (la patrouille). Univers repris de la vidéo L.O.R.V. présentée au SDIS 53. */
+:root{
+  color-scheme: dark;
+  --bg:#0d161d; --bg-2:#111d26; --bg-3:#15242f;
+  --fg:#eaf2f5; --muted:#93a7b1; --faint:#5d7480;
+  --line:rgba(98,196,212,.20); --line-2:rgba(98,196,212,.38);
+  --teal:#4ec7d6; --teal-2:#2a8f9c; --orange:#ee6c3e;
+  --mesure:#3ddc97; --modele:#4cc3ff; --ref:#c9d1d9; --sim:#ffb020;
+  --forest:#173a35;
+  --display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(120% 80% at 70% 0%,rgba(13,22,29,.55),rgba(13,22,29,.94) 60%);pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:var(--teal)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* En-tête */
+.topbar{border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:14px}
+.sigle{font-family:var(--display);font-weight:600;letter-spacing:.42em;color:var(--teal);font-size:18px}
+.topbar .who{color:var(--muted);font-size:14px}
+.topbar .sp{flex:1}
+.proto{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--sim);border:1px solid rgba(255,176,32,.5);padding:4px 9px;border-radius:3px;white-space:nowrap}
+
+/* Hero */
+.hero{position:relative;overflow:hidden}
+#terrain{position:absolute;inset:auto 0 0 0;width:100%;height:78%;opacity:.5;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center;padding-block:64px 56px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.42em;color:var(--teal);font-size:clamp(20px,2.4vw,28px);display:inline-block;padding-bottom:8px;border-bottom:2px solid var(--teal);margin:0 0 22px}
+h1{font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:clamp(52px,8vw,104px);line-height:.92;letter-spacing:.005em;margin:0 0 22px;text-wrap:balance}
+.dash{display:flex;gap:14px;align-items:baseline;font-family:var(--display);font-weight:500;font-size:clamp(21px,2.3vw,27px);line-height:1.25;color:#d5e2e7;margin:0 0 18px}
+.dash::before{content:"";flex:0 0 40px;height:2px;background:var(--orange);transform:translateY(-6px)}
+.dedicace{font-family:var(--display);font-weight:500;font-size:19px;letter-spacing:.02em;color:#c3d2d9;margin:0 0 22px;padding-left:54px}
+.dedicace span{color:var(--teal);letter-spacing:.08em}
+.lead{color:#c3d2d9;max-width:34em;margin:0 0 26px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 26px;padding:0;list-style:none}
+.facts li{border-top:1px solid var(--line-2);padding-top:10px}
+.facts b{display:block;font-family:var(--display);font-weight:600;font-size:30px;line-height:1;color:var(--fg)}
+.facts span{font-size:13.5px;color:var(--muted);line-height:1.35;display:block;margin-top:6px}
+.warn{font-size:13.5px;color:var(--muted);max-width:36em}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.btn{display:inline-block;font:600 15px var(--body);letter-spacing:.02em;color:var(--fg);text-decoration:none;border:1px solid var(--line-2);background:rgba(78,199,214,.10);padding:10px 16px;border-radius:4px}
+.btn:hover{background:rgba(78,199,214,.2)}
+.btn.primaire{background:var(--teal);color:#06232a;border-color:var(--teal)}
+.btn.primaire:hover{background:#7fe0ea}
+.suite{font:600 14px var(--body);color:var(--teal);text-decoration:none;white-space:nowrap}
+.suite:hover{text-decoration:underline}
+.live{margin-top:28px;display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between;border:1px solid var(--line-2);background:rgba(17,29,38,.85);padding:20px 22px;max-width:1040px}
+.live>div{flex:1 1 420px;min-width:0}
+.live p{margin:6px 0 0;color:#c3d2d9;font-size:15.5px}
+.suite-bloc h2{margin-top:6px}
+
+/* Cadres à coins */
+.frame{position:relative;padding:14px;margin:0}
+.frame::before,.frame::after,.frame>.c1,.frame>.c2{content:"";position:absolute;width:28px;height:28px;border-color:var(--teal);border-style:solid;pointer-events:none}
+.frame::before{top:0;left:0;border-width:2px 0 0 2px}
+.frame::after{top:0;right:0;border-width:2px 2px 0 0}
+.frame>.c1{bottom:0;left:0;border-width:0 0 2px 2px}
+.frame>.c2{bottom:0;right:0;border-width:0 2px 2px 0}
+.frame img{display:block;width:100%;height:auto;max-width:100%;border:1px solid var(--line)}
+.shot{margin:0;min-width:0}
+.frame video{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:16/9;border:1px solid var(--line);background:#05080d}
+.film{max-width:1040px}
+.shot figcaption{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.45}
+
+/* Sections */
+section.block{padding-block:72px;border-top:1px solid var(--line)}
+h2{font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:clamp(36px,5vw,58px);line-height:.98;margin:0 0 14px;text-wrap:balance}
+.sub{display:flex;gap:14px;align-items:baseline;font-family:var(--display);font-weight:500;font-size:22px;color:#cbd9df;margin:0 0 26px}
+.sub::before{content:"";flex:0 0 34px;height:2px;background:var(--orange);transform:translateY(-5px)}
+.intro{max-width:44em;color:#c3d2d9;margin:0 0 34px}
+.label{font-family:var(--display);font-weight:600;letter-spacing:.2em;text-transform:uppercase;font-size:15px;color:var(--teal)}
+
+/* Chaîne de télémétrie */
+.chainwrap{position:relative}
+.chain{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;position:relative;counter-reset:etape}
+.chain::before{content:"";position:absolute;left:0;right:0;top:21px;height:1px;background:var(--line-2)}
+.chain li{position:relative;counter-increment:etape;min-width:0}
+.chain .num{position:relative;display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--teal);background:var(--bg);font-family:var(--mono);font-size:14px;color:var(--teal);margin-bottom:14px}
+.chain .num::before{content:"0" counter(etape)}
+.chain h3{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:18px;margin:0 0 6px}
+.chain p{font-size:15px;color:#bfcdd4;margin:0 0 8px}
+.chain .ex{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.45;border-left:2px solid var(--line-2);padding-left:8px}
+.pulse{position:absolute;top:18px;left:0;width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:run 6s linear infinite}
+@keyframes run{from{left:0}to{left:calc(100% - 7px)}}
+
+/* Tableau des rythmes */
+.tablebox{overflow-x:auto;margin-top:48px;border:1px solid var(--line);background:rgba(17,29,38,.72)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13.5px;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.src{color:var(--muted)}
+.tnote{font-size:14px;color:var(--muted);margin:14px 0 0;max-width:46em}
+
+/* Étiquettes */
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:2px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap;line-height:1.5}
+.b-mesure{color:var(--mesure)} .b-modele{color:var(--modele)} .b-ref{color:var(--ref)} .b-sim{color:var(--sim)}
+.tags{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.tag{border:1px solid var(--line);background:rgba(17,29,38,.78);padding:18px;min-width:0}
+.tag .badge{font-size:12.5px;margin-bottom:12px}
+.tag p{margin:0 0 10px;font-size:15.5px}
+.tag .ex{font-size:13.5px;color:var(--muted);margin:0}
+.rule{margin:26px 0 0;padding:14px 18px;border-left:3px solid var(--sim);background:rgba(255,176,32,.06);max-width:52em;font-size:15.5px}
+
+/* Galerie */
+.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}
+.gallery h3{font-family:var(--display);font-weight:600;font-size:23px;text-transform:uppercase;letter-spacing:.04em;margin:12px 0 6px}
+.gallery p{font-size:15px;color:#bfcdd4;margin:0 0 10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Patrouille interactive */
+.replay{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
+.mapbox{border:1px solid var(--line);background:#0a1319;position:relative}
+.mapbox svg{display:block;width:100%;height:auto}
+.maptag{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.panel{border:1px solid var(--line);background:rgba(10,18,24,.92);padding:16px;min-width:0}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.ctrl button,.ctrl select{font:500 14px var(--body);color:var(--fg);background:rgba(78,199,214,.12);border:1px solid var(--line-2);border-radius:4px;padding:7px 12px;cursor:pointer}
+.ctrl button:hover{background:rgba(78,199,214,.22)}
+.clock{font-family:var(--mono);font-size:13px;color:var(--fg);margin-left:auto}
+#scrub{width:100%;accent-color:var(--teal);margin:0 0 14px}
+.tel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;margin:0 0 14px}
+.tel .k{font-size:12px;color:var(--muted);line-height:1.3}
+.tel .v{font-family:var(--mono);font-size:14px;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tel .al{color:var(--orange)}
+.log{border-top:1px solid var(--line);padding-top:10px;max-height:190px;overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.5}
+.log div{padding:2px 0}
+.log .al{color:var(--orange)}
+.log time{color:var(--muted)}
+.lire{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 22px;margin:30px 0 0;padding:0}
+.lire div{min-width:0}
+.lire dt{font-family:var(--display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:15px;color:var(--teal)}
+.lire dd{margin:2px 0 0;font-size:14.5px;color:#bfcdd4}
+
+/* Trois couches */
+.layers{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:center}
+.layers svg{width:100%;height:auto;max-width:520px}
+.layer-list{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.layer-list li{border-left:1px solid var(--line-2);padding-left:18px}
+.layer-list h3{margin:0 0 4px}
+.layer-list p{margin:0 0 4px;font-size:15.5px}
+.layer-list .now{font-size:13.5px;color:var(--muted);margin:0}
+
+/* Limites et suite */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+.nots{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.nots li{padding-left:22px;position:relative;font-size:15.5px}
+.nots li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--orange)}
+.timeline{list-style:none;margin:0;padding:0;border-left:1px solid var(--line-2)}
+.timeline li{position:relative;padding:0 0 22px 22px}
+.timeline li::before{content:"";position:absolute;left:-6px;top:5px;width:11px;height:11px;border-radius:50%;border:1px solid var(--teal);background:var(--bg)}
+.timeline li.next::before{border-color:var(--orange);background:var(--orange)}
+.timeline .when{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:14px;color:var(--teal)}
+.timeline li.next .when{color:var(--orange)}
+.timeline .what{font-size:15.5px}
+.contact{margin-top:34px;padding:20px;border:1px solid var(--line-2);background:rgba(17,29,38,.85);display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.contact .mail{font-family:var(--mono);font-size:15px;user-select:all}
+.contact button{font:500 14px var(--body);color:var(--fg);background:rgba(78,199,214,.12);border:1px solid var(--line-2);border-radius:4px;padding:6px 12px;cursor:pointer}
+
+/* Pied */
+footer{border-top:1px solid var(--line);padding-block:36px 48px;font-size:13.5px;color:var(--muted)}
+footer .cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px}
+footer ul{margin:6px 0 0;padding-left:18px}
+footer .stamp{font-family:var(--display);font-weight:600;letter-spacing:.24em;color:var(--teal);font-size:15px;margin-top:22px}
+
+@media (max-width:1000px){
+  .hero .wrap{grid-template-columns:1fr;gap:34px;padding-block:40px}
+  #terrain{opacity:.3}
+  .chain{grid-template-columns:1fr 1fr}
+  .chain::before,.pulse{display:none}
+  .tags{grid-template-columns:1fr 1fr}
+  .gallery{grid-template-columns:1fr}
+  .gallery figure{max-width:720px}
+  .replay,.layers,.two,footer .cols{grid-template-columns:1fr}
+  .lire{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .topbar .who{display:none}
+  #terrain{opacity:.22}
+  .facts{grid-template-columns:1fr}
+  .chain,.tags,.lire{grid-template-columns:1fr}
+  .tel{grid-template-columns:1fr 1fr}
+  section.block{padding-block:52px}
+}
+@media (prefers-reduced-motion:reduce){ .pulse{animation:none;display:none} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <span class="sigle">L.O.R.V.</span>
+    <span class="who">Laboratoire d'Observation en Réalité Virtuelle · Pascal Robotics, Laval</span>
+    <span class="sp"></span>
+    <span class="proto">PROTOTYPE DE LABORATOIRE</span>
+    <a class="suite" href="/orchestrai" data-suite>Site Pascal Robotics →</a>
+  </div>
+</header>
+
+<main>
+<section class="hero" aria-labelledby="titre">
+  <canvas id="terrain" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">L.O.R.V.</p>
+      <h1 id="titre">Vue de situation</h1>
+      <p class="dash">Le logiciel de télémétrie en temps réel du laboratoire</p>
+      <p class="dedicace">Projet présenté au <span>SDIS de la Mayenne</span> · octobre 2026</p>
+      <div class="cta"><a class="btn primaire" href="territoire/">Ouvrir le logiciel en direct</a><a class="btn" href="#t-video">Voir la vidéo</a><a class="btn" href="/orchestrai" data-suite>Site Pascal Robotics</a></div>
+      <p class="lead">Il rassemble sur une même carte 3D ce que mesurent les capteurs du terrain, ce que voit un robot et ce que publient les services publics. Chaque information arrive avec son heure et sa source. Le poste de commandement voit la situation au lieu de l'imaginer.</p>
+      <ul class="facts">
+        <li><b>6</b><span>sources publiques interrogées en direct, sans abonnement</span></li>
+        <li><b>48 h</b><span>de vent et de rafales prévus, heure par heure</span></li>
+        <li><b>2,1 km</b><span>de patrouille simulée sur les vrais chemins du bois de l'Huisserie</span></li>
+      </ul>
+      <p class="warn">Démonstrateur de laboratoire, pas un outil opérationnel. Les données publiques sont affichées sans garantie de délai ni d'exactitude.</p>
+    </div>
+    <figure class="shot">
+        <div class="frame"><span class="c1"></span><span class="c2"></span><img src="img/huisserie-alerte.jpg" width="800" height="500" alt="Le prototype au-dessus du bois de l'Huisserie : contour du bois en turquoise, capteurs de gaz, zone de chaleur en orange, panneau de télémétrie à droite."></div>
+      <figcaption>Bois de l'Huisserie, 20 minutes après le départ : alerte chaleur, robot à l'arrêt face au foyer, capteur G3 en hausse. Fond et chemins réels ; robot, foyer et capteurs simulés.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-video">
+  <div class="wrap">
+    <h2 id="t-video">Le logiciel en vidéo</h2>
+    <p class="sub">2 min 24 · filmée dans le prototype, le 22 octobre 2026</p>
+    <figure class="shot film">
+      <div class="frame"><span class="c1"></span><span class="c2"></span><video id="film" controls preload="metadata" playsinline poster="video/poster.jpg"><source src="video/lorv-vue-de-situation-720p.mp4" type="video/mp4">Votre navigateur ne lit pas cette vidéo.</video></div>
+      <figcaption>Filmée image par image dans le prototype : les données publiques sont celles de ce soir-là (fonds IGN, météo, hauteurs d'eau, sites SEVESO, rafales prévues). Le robot, les capteurs de gaz et le foyer sont simulés.</figcaption>
+    </figure>
+    <div class="live">
+      <div>
+        <div class="label">Le logiciel en direct</div>
+        <p>Ouvrez le prototype : globe, Mayenne, couches de données publiques en direct, prévisions de vent sur 48 heures et scénario du bois de l'Huisserie. Sur ordinateur de préférence ; la carte 3D se charge en quelques secondes.</p>
+      </div>
+      <a class="btn primaire" href="territoire/">Ouvrir le logiciel</a>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-tele">
+  <div class="wrap">
+    <h2 id="t-tele">La télémétrie, en clair</h2>
+    <p class="sub">Mesurer loin, voir tout de suite</p>
+    <p class="intro">Télémétrie veut dire mesure à distance. Un capteur mesure, un réseau transmet, le logiciel range et affiche. Pour le commandement, trois choses comptent : que la chaîne soit courte, que chaque valeur soit datée, et que l'on sache toujours d'où elle vient.</p>
+    <div class="chainwrap">
+    <span class="pulse" aria-hidden="true"></span>
+    <ol class="chain">
+      <li><span class="num" aria-hidden="true"></span><h3>Mesurer</h3><p>Un capteur relève une grandeur physique : hauteur d'une rivière, vent, température vue par une caméra thermique, monoxyde de carbone.</p><p class="ex">Station Hub'Eau sur la Mayenne : hauteur d'eau, en millimètres.</p></li>
+      <li><span class="num" aria-hidden="true"></span><h3>Transmettre</h3><p>La mesure part par le réseau adapté : Internet pour les stations publiques, LoRaWAN pour des capteurs en forêt, radio ou 4G pour un robot.</p><p class="ex">LoRaWAN : longue portée, faible débit, faible consommation.</p></li>
+      <li><span class="num" aria-hidden="true"></span><h3>Dater et qualifier</h3><p>Chaque valeur garde son heure de mesure, sa source et sa nature. Sans heure, une mesure ne vaut rien en intervention.</p><p class="ex">« Dernière mesure 21:20 · Hub'Eau · MESURÉ »</p></li>
+      <li><span class="num" aria-hidden="true"></span><h3>Rassembler</h3><p>Le jumeau numérique place tout au même endroit et sur la même horloge : fonds de carte, bâtiments, capteurs, robot.</p><p class="ex">Coordonnées GPS (WGS 84), heure de Paris.</p></li>
+      <li><span class="num" aria-hidden="true"></span><h3>Afficher pour décider</h3><p>Le poste de commandement voit des alertes, des fiches et un journal horodaté plutôt qu'un tableau de chiffres.</p><p class="ex">« 17:54 · ALERTE · source de chaleur à 70 m »</p></li>
+    </ol>
+    </div>
+
+    <div class="tablebox">
+      <table>
+        <caption class="label" style="caption-side:top;text-align:left;padding:14px 14px 4px">À quel rythme arrivent les données du prototype</caption>
+        <thead><tr><th scope="col">Donnée</th><th scope="col">Source</th><th scope="col">Nature</th><th scope="col">Rythme</th></tr></thead>
+        <tbody>
+          <tr><td>Hauteur des rivières, 30 stations en Mayenne</td><td class="src">Hub'Eau, stations hydrométriques de l'État</td><td><span class="badge b-mesure">MESURÉ</span></td><td>relevés de 5 à 60 min selon la station, publiés avec un léger différé</td></tr>
+          <tr><td>Pluie observée au radar</td><td class="src">RainViewer (images radar)</td><td><span class="badge b-mesure">MESURÉ</span></td><td>une image toutes les 10 min</td></tr>
+          <tr><td>Météo des communes, vent et rafales prévus sur 48 h</td><td class="src">Open-Meteo, modèles Météo-France</td><td><span class="badge b-modele">MODÉLISÉ</span></td><td>valeurs horaires, modèles recalculés plusieurs fois par jour</td></tr>
+          <tr><td>Danger météorologique de feu</td><td class="src">EFFIS, programme Copernicus</td><td><span class="badge b-modele">MODÉLISÉ</span></td><td>une valeur par jour</td></tr>
+          <tr><td>Sites SEVESO et installations classées</td><td class="src">Géorisques</td><td><span class="badge b-ref">RÉFÉRENCE</span></td><td>fiche mise à jour par l'inspection, date affichée</td></tr>
+          <tr><td>Orthophotos, limites, bâtiments, chemins, contour des bois</td><td class="src">IGN Géoplateforme, OpenStreetMap</td><td><span class="badge b-ref">RÉFÉRENCE</span></td><td>mises à jour périodiques</td></tr>
+          <tr><td>Robot, caméra thermique, capteurs de gaz</td><td class="src">démonstrateur</td><td><span class="badge b-sim">SIMULÉ</span></td><td>une valeur par seconde de temps simulé</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">Temps réel ne veut pas dire instantané. Chaque couche affiche l'heure de sa dernière valeur, pour que l'on sache toujours de quand date ce que l'on regarde.</p>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-tags">
+  <div class="wrap">
+    <h2 id="t-tags">Quatre étiquettes</h2>
+    <p class="sub">Ne jamais confondre une mesure et une simulation</p>
+    <p class="intro">Toute information porte l'une de ces quatre étiquettes, dans la liste des couches comme dans chaque fiche.</p>
+    <div class="tags">
+      <div class="tag"><span class="badge b-mesure">MESURÉ</span><p>Un capteur réel l'a relevé.</p><p class="ex">Hauteur de la Mayenne à une station, pluie au radar.</p></div>
+      <div class="tag"><span class="badge b-modele">MODÉLISÉ</span><p>Sortie d'un modèle de calcul, dont toutes les prévisions.</p><p class="ex">Rafales prévues demain soir sur le secteur de Gorron.</p></div>
+      <div class="tag"><span class="badge b-ref">RÉFÉRENCE</span><p>Base publique officielle, mise à jour périodiquement.</p><p class="ex">Fiche SEVESO, bâtiments et chemins de l'IGN.</p></div>
+      <div class="tag"><span class="badge b-sim">SIMULÉ</span><p>Donnée fictive, fabriquée pour la démonstration.</p><p class="ex">Le robot et les capteurs de gaz de l'Huisserie.</p></div>
+    </div>
+    <p class="rule">Règle du laboratoire : une capacité simulée n'est jamais présentée comme une capacité réelle du robot ou des capteurs.</p>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-proto">
+  <div class="wrap">
+    <h2 id="t-proto">Ce que montre le prototype</h2>
+    <p class="sub">Captures du 22 octobre 2026</p>
+    <div class="gallery">
+      <figure class="shot">
+        <div class="frame"><span class="c1"></span><span class="c2"></span><img src="img/mayenne-previsions.jpg" width="800" height="500" loading="lazy" alt="La Mayenne vue d'avion : météo des communes, stations de hauteur d'eau, sites SEVESO, pluie au radar et flèches de vent, avec le curseur des prévisions."></div>
+        <figcaption>
+          <h3>La Mayenne en direct</h3>
+          <p>Météo de 8 communes, 30 stations de hauteur d'eau, sites SEVESO, pluie au radar, rafales prévues sur 48 heures. Le curseur fait défiler les prévisions heure par heure. L'exposition croise les rafales prévues et les enjeux connus : c'est un indicateur, pas une prévision de dégâts.</p>
+          <span class="chips"><span class="badge b-mesure">MESURÉ</span><span class="badge b-modele">MODÉLISÉ</span><span class="badge b-ref">RÉFÉRENCE</span></span>
+        </figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="frame"><span class="c1"></span><span class="c2"></span><img src="img/fiche-seveso.jpg" width="800" height="500" loading="lazy" alt="Vue rapprochée d'un site SEVESO à Changé avec sa fiche ouverte à droite : statut, régime, adresse, service d'inspection, activités classées."></div>
+        <figcaption>
+          <h3>La fiche d'un site</h3>
+          <p>Un clic sur un site ouvre sa fiche publique : statut, activités classées, inspections, arrêtés. Le logiciel indique aussi ce que la base publique ne contient pas, comme les études de dangers ou les plans d'urgence.</p>
+          <span class="chips"><span class="badge b-ref">RÉFÉRENCE</span></span>
+        </figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="frame"><span class="c1"></span><span class="c2"></span><img src="img/suivi-robot.jpg" width="800" height="500" loading="lazy" alt="Caméra derrière le robot virtuel sur un chemin du bois, panneau de télémétrie à droite."></div>
+        <figcaption>
+          <h3>Suivre le robot</h3>
+          <p>La caméra accompagne le robot sur le chemin. À droite, sa télémétrie seconde par seconde et le journal des événements, avec le vent du moment au-dessus du bois.</p>
+          <span class="chips"><span class="badge b-sim">SIMULÉ</span><span class="badge b-modele">MODÉLISÉ</span><span class="badge b-ref">RÉFÉRENCE</span></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-replay">
+  <div class="wrap">
+    <h2 id="t-replay">Rejouer la patrouille</h2>
+    <p class="sub">Bois de l'Huisserie · 28 minutes en temps simulé</p>
+    <p class="intro">Le scénario du prototype, ici en vue de dessus. Le contour du bois et les chemins sont réels. Le robot, le dépôt sauvage, le foyer et les quatre capteurs de gaz sont simulés. Lancez la lecture ou déplacez le curseur.</p>
+    <div class="replay">
+      <div class="mapbox">
+        <div class="maptag"><span class="badge b-ref">FOND RÉFÉRENCE</span><span class="badge b-sim">ROBOT ET CAPTEURS SIMULÉS</span></div>
+        <svg id="map" role="img" aria-label="Plan du bois de l'Huisserie avec le parcours du robot, les capteurs et le foyer simulé"></svg>
+      </div>
+      <div class="panel">
+        <div class="ctrl">
+          <button type="button" id="play">▶ Lecture</button>
+          <button type="button" id="restart">↺ Depuis le départ</button>
+          <label for="speed" class="sr" style="position:absolute;left:-9999px">Vitesse</label>
+          <select id="speed"><option value="30">× 30</option><option value="60" selected>× 60</option><option value="120">× 120</option></select>
+          <span class="clock" id="clock">00:00:00</span>
+        </div>
+        <input type="range" id="scrub" min="0" max="1693" step="1" value="0" aria-label="Temps simulé">
+        <div class="tel" id="tel"></div>
+        <div class="label" style="font-size:13px">Journal</div>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+    </div>
+    <dl class="lire">
+      <div><dt>État</dt><dd>Ce que fait le robot : patrouille, arrêt pour signaler, alerte.</dd></div>
+      <div><dt>Position, cap</dt><dd>Coordonnées GPS et direction de marche, en degrés depuis le nord.</dd></div>
+      <div><dt>Batterie, liaison</dt><dd>Autonomie restante et qualité de la radio, pour savoir quand rappeler le robot.</dd></div>
+      <div><dt>Caméra thermique</dt><dd>Température la plus haute dans le champ de vision.</dd></div>
+      <div><dt>CO capteurs</dt><dd>Monoxyde de carbone mesuré par les capteurs fixes G1 à G4, en ppm. Alerte à 30 ppm dans ce scénario.</dd></div>
+      <div><dt>Vent</dt><dd>Vitesse et provenance du vent sur le bois : il dit où partira la fumée.</dd></div>
+      <div><dt>Journal</dt><dd>Chaque événement horodaté, pour le suivi et le retour d'expérience.</dd></div>
+      <div><dt>Hypothèses</dt><dd>Vitesse de 1,4 m/s, détection à 70 m, seuil de 30 ppm : valeurs de démonstration, pas des performances du constructeur.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-couches">
+  <div class="wrap">
+    <h2 id="t-couches">Trois couches, un seul écran</h2>
+    <p class="sub">Une architecture simple</p>
+    <div class="layers">
+      <svg viewBox="0 0 520 400" role="img" aria-label="Trois plans superposés : terrain avec capteurs, robot, jumeau numérique avec une zone de chaleur">
+        <g fill="none" stroke="#4ec7d6" stroke-width="1.4">
+          <path d="M40 70 L330 70 L480 130 L190 130 Z" fill="rgba(78,199,214,.06)"/>
+          <path d="M40 200 L330 200 L480 260 L190 260 Z" fill="rgba(78,199,214,.06)"/>
+          <path d="M40 330 L330 330 L480 390 L190 390 Z" fill="rgba(78,199,214,.06)"/>
+          <path d="M115 130 V200 M405 130 V200 M115 260 V330 M405 260 V330" stroke-dasharray="3 5" opacity=".6"/>
+        </g>
+        <ellipse cx="300" cy="98" rx="46" ry="12" fill="rgba(238,108,62,.22)" stroke="#ee6c3e" stroke-width="1.5"/>
+        <g fill="#4ec7d6"><circle cx="150" cy="92" r="3.5"/><circle cx="210" cy="112" r="3.5"/><circle cx="390" cy="108" r="3.5"/></g>
+        <g stroke="#4ec7d6" stroke-width="1.6" fill="none">
+          <rect x="220" y="208" width="70" height="20" rx="2" fill="rgba(13,22,29,.9)"/>
+          <rect x="288" y="200" width="16" height="13" rx="2" fill="rgba(13,22,29,.9)"/>
+          <path d="M228 228 l-8 14 l6 10 M244 228 l6 14 l-6 10 M270 228 l-8 14 l6 10 M284 228 l6 14 l-6 10"/>
+        </g>
+        <g stroke="#4ec7d6" stroke-width="1.5" fill="rgba(13,22,29,.9)">
+          <rect x="120" y="340" width="12" height="26" rx="2"/><rect x="132" y="348" width="8" height="10"/>
+          <rect x="250" y="352" width="12" height="26" rx="2"/><rect x="262" y="360" width="8" height="10"/>
+          <rect x="360" y="342" width="12" height="26" rx="2"/><rect x="372" y="350" width="8" height="10"/>
+        </g>
+        <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#93a7b1">
+          <text x="40" y="58">3 · JUMEAU NUMÉRIQUE</text><text x="40" y="188">2 · VECTEUR MOBILE</text><text x="40" y="318">1 · TERRAIN</text>
+        </g>
+      </svg>
+      <ul class="layer-list">
+        <li><h3 class="label">Couche 1 · Terrain</h3><p>Capteurs fixes de gaz et de fumée dans les arbres, reliés en LoRaWAN, et stations météo pour mesurer le niveau de risque.</p><p class="now">Dans le prototype : stations publiques réelles, capteurs de gaz simulés.</p></li>
+        <li><h3 class="label">Couche 2 · Vecteur mobile</h3><p>Un robot quadrupède du type B2 Fire Rescue : caméra thermique et mesures là où l'on préfère ne pas envoyer d'homme. Il informe et protège le sapeur-pompier, il ne le remplace pas.</p><p class="now">Dans le prototype : robot virtuel générique. Le logiciel ne dépend pas d'un constructeur.</p></li>
+        <li><h3 class="label">Couche 3 · Jumeau numérique</h3><p>Le logiciel présenté ici. Il fonctionne dans un navigateur Web, sans installation, et rassemble les deux autres couches sur la même carte.</p><p class="now">Dans le prototype : opérationnel sur ordinateur portable, avec les données publiques en direct.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="t-limites">
+  <div class="wrap two">
+    <div>
+      <h2 id="t-limites">Ce que ce n'est pas</h2>
+      <p class="sub">Les limites, dites clairement</p>
+      <ul class="nots">
+        <li>Pas un outil opérationnel : un démonstrateur de laboratoire.</li>
+        <li>Pas un remplaçant des outils du CTA-CODIS ni de NexSIS 18-112 : un complément pour voir le terrain.</li>
+        <li>Pas une prévision de dégâts : un indicateur d'exposition, avec des seuils de démonstration à 60, 80 et 100 km/h.</li>
+        <li>Pas encore de relief ni d'arbres en 3D, et pas de robot réel connecté.</li>
+        <li>Pas de données personnelles ni de vidéosurveillance : uniquement des données publiques et des données simulées.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>La suite</h2>
+      <p class="sub">Une première étape co-construite</p>
+      <ol class="timeline">
+        <li><div class="when">Octobre 2026</div><div class="what">Premier échange avec le SDIS 53.</div></li>
+        <li class="next"><div class="when">Hiver 2026-2027</div><div class="what">Co-construction du scénario d'essai avec les équipes du SDIS.</div></li>
+        <li><div class="when">Printemps 2027</div><div class="what">Essai terrain proposé dans le bois de l'Huisserie, sous réserve de l'accord du SDIS et des gestionnaires du site.</div></li>
+        <li><div class="when">Été 2027</div><div class="what">Saison des feux.</div></li>
+      </ol>
+      <div class="contact">
+        <div><div class="label" style="font-size:13px">Démonstration du prototype sur demande</div><div>Pascal Gautier · Pascal Robotics, Laval</div></div>
+        <span class="mail" id="mail">pgautier@pascal-robotics.fr</span>
+        <button type="button" id="copy">Copier l'adresse</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="block suite-bloc" aria-label="Suite">
+  <div class="wrap">
+    <p class="label">Pascal Robotics</p>
+    <h2>Découvrir l'entreprise</h2>
+    <p class="intro">Intégration d'IA, de jumeaux numériques et de robotique mobile ou humanoïde, de la preuve de concept au terrain.</p>
+    <a class="btn primaire" href="/orchestrai" data-suite>Continuer vers le site Pascal Robotics →</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <div class="label" style="font-size:13px">Sources des données</div>
+      <ul>
+        <li><a href="https://geoservices.ign.fr/" target="_blank" rel="noopener">IGN Géoplateforme</a> : orthophotos, Admin Express, BD TOPO (Licence Ouverte)</li>
+        <li>Données météo : <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0), modèles <a href="https://meteofrance.com/" target="_blank" rel="noopener">Météo-France</a></li>
+        <li><a href="https://hubeau.eaufrance.fr/" target="_blank" rel="noopener">Hub'Eau</a> : hydrométrie temps réel</li>
+        <li><a href="https://www.georisques.gouv.fr/" target="_blank" rel="noopener">Géorisques</a> : installations classées</li>
+        <li><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a> : radar de pluie</li>
+        <li><a href="https://forest-fire.emergency.copernicus.eu/" target="_blank" rel="noopener">EFFIS, Copernicus</a> : danger météorologique de feu</li>
+        <li>Contour du bois de l'Huisserie © contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL)</li>
+      </ul>
+    </div>
+    <div>
+      <p>L.O.R.V. : Laboratoire d'Observation en Réalité Virtuelle. Prototype développé par Pascal Robotics avec CesiumJS, une bibliothèque libre de cartographie 3D.</p>
+      <p>Les captures et la vidéo datent du 22 octobre 2026 au soir. Les valeurs de vent affichées dans la patrouille ont été relevées ce soir-là. Le logiciel en direct interroge les sources publiques au moment de l'ouverture.</p>
+      <div class="stamp">SDIS 53 · OCTOBRE 2026</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+/* ---------- Vers le site : ouverture « paupière » de /orchestrai ---------- */
+document.querySelectorAll("[data-suite]").forEach(a => a.addEventListener("click", () => { try { sessionStorage.setItem("pr-intro-orb", "1"); } catch(e) {} }));
+
+/* ---------- Copie de l'adresse ---------- */
+const copyBtn = document.getElementById("copy");
+copyBtn.addEventListener("click", () => {
+  const txt = document.getElementById("mail").textContent;
+  const ok = () => { copyBtn.textContent = "Adresse copiée"; setTimeout(() => copyBtn.textContent = "Copier l'adresse", 2000); };
+  const sel = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById("mail")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); copyBtn.textContent = "Sélectionnée, faites Copier"; };
+  try { navigator.clipboard.writeText(txt).then(ok, sel); } catch(e) { sel(); }
+});
+
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Relief en fil de fer (décor du titre) ---------- */
+const cv = document.getElementById("terrain"), cx = cv.getContext("2d");
+function relief(X, Z, t){
+  return 0.75*Math.exp(-((X-0.85)**2/0.35 + (Z-1.55)**2/0.30)) + 0.35*Math.exp(-((X-1.5)**2/0.2 + (Z-2.2)**2/0.4))
+    + 0.05*Math.sin(X*4 + t*0.35) * Math.cos(Z*3);
+}
+function drawTerrain(t){
+  const w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+  if(cv.width !== Math.round(w*dpr)){ cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr); }
+  cx.setTransform(dpr,0,0,dpr,0,0); cx.clearRect(0,0,w,h);
+  const N = 64, M = 34, XA = -1.2, XB = 2.6, ZA = 0.55, ZB = 3.4, CAMY = 0.9;
+  const P = (X, Z) => { const Y = relief(X, Z, t); return [w*0.42 + X/Z*w*0.42, h*0.06 + (CAMY - Y)/Z*h*0.62]; };
+  cx.lineWidth = 1;
+  for(let j=0;j<=M;j++){ const Z = ZA + (ZB-ZA)*j/M; cx.strokeStyle = `rgba(78,199,214,${0.55 - 0.42*j/M})`; cx.beginPath();
+    for(let i=0;i<=N;i++){ const q = P(XA + (XB-XA)*i/N, Z); i ? cx.lineTo(q[0],q[1]) : cx.moveTo(q[0],q[1]); } cx.stroke(); }
+  cx.strokeStyle = "rgba(78,199,214,0.22)";
+  for(let i=0;i<=N;i++){ const X = XA + (XB-XA)*i/N; cx.beginPath();
+    for(let j=0;j<=M;j++){ const q = P(X, ZA + (ZB-ZA)*j/M); j ? cx.lineTo(q[0],q[1]) : cx.moveTo(q[0],q[1]); } cx.stroke(); }
+}
+let tt = 0;
+function loopTerrain(){ tt += 0.016; drawTerrain(tt); requestAnimationFrame(loopTerrain); }
+drawTerrain(0);
+if(!reduce) requestAnimationFrame(loopTerrain);
+addEventListener("resize", () => drawTerrain(tt));
+
+/* ---------- Patrouille : mêmes règles que le prototype ---------- */
+const PC = [-0.778657, 48.042777];
+const CHEMIN = [[-0.778657,48.042777],[-0.778017,48.042391],[-0.777858,48.04119],[-0.777372,48.036018],[-0.778712,48.035575],[-0.780062,48.035183],[-0.77998,48.034284],[-0.779993,48.033726],[-0.780139,48.033294],[-0.783134,48.033077],[-0.786548,48.028303],[-0.787003,48.027602]];
+const CONTOUR = [[-0.797356,48.039686],[-0.797131,48.039603],[-0.796841,48.038823],[-0.795142,48.039071],[-0.793761,48.039423],[-0.791439,48.038466],[-0.789824,48.037779],[-0.78865,48.037518],[-0.788755,48.037176],[-0.789017,48.036984],[-0.789703,48.037045],[-0.79038,48.035475],[-0.788424,48.03463],[-0.789553,48.033181],[-0.789058,48.033025],[-0.788464,48.032936],[-0.787401,48.03293],[-0.787551,48.032577],[-0.787822,48.032235],[-0.788225,48.031379],[-0.788093,48.031088],[-0.78894,48.030388],[-0.788998,48.03034],[-0.789427,48.02931],[-0.789152,48.028235],[-0.789053,48.028137],[-0.786926,48.027671],[-0.785772,48.02862],[-0.784995,48.029317],[-0.784958,48.029347],[-0.784655,48.029586],[-0.78417,48.029959],[-0.783902,48.03],[-0.783954,48.030172],[-0.783584,48.030541],[-0.783078,48.030894],[-0.782233,48.031676],[-0.781675,48.031845],[-0.780421,48.031895],[-0.780167,48.031905],[-0.779998,48.032294],[-0.779732,48.034975],[-0.779429,48.035074],[-0.778944,48.035137],[-0.778008,48.035352],[-0.777696,48.0353],[-0.776945,48.0344],[-0.776966,48.035112],[-0.777039,48.035798],[-0.777083,48.036327],[-0.777236,48.036841],[-0.777317,48.0391],[-0.777523,48.041716],[-0.777567,48.04252],[-0.777896,48.042504],[-0.779025,48.042449],[-0.779088,48.042589],[-0.779128,48.04268],[-0.779181,48.043132],[-0.779424,48.0444],[-0.78046,48.044555],[-0.780986,48.044802],[-0.781393,48.044993],[-0.7817,48.045136],[-0.78189,48.045636],[-0.782301,48.045812],[-0.782945,48.045832],[-0.783971,48.046302],[-0.784162,48.046791],[-0.785069,48.047131],[-0.785087,48.046385],[-0.78549,48.046389],[-0.785664,48.046677],[-0.786244,48.046844],[-0.787117,48.04695],[-0.787474,48.04691],[-0.788013,48.046758],[-0.788397,48.046547],[-0.788543,48.045911],[-0.788617,48.045628],[-0.788663,48.045461],[-0.788625,48.045149],[-0.78872,48.044823],[-0.789036,48.043957],[-0.790366,48.044531],[-0.791182,48.044918],[-0.792534,48.042881],[-0.795924,48.044201],[-0.795972,48.044131],[-0.79618,48.043383],[-0.796048,48.042473],[-0.796719,48.041537],[-0.796925,48.041533],[-0.796986,48.040858],[-0.797091,48.040264],[-0.797347,48.039761],[-0.797356,48.039686]];
+const R_T = 6371000, D2R = Math.PI/180, COSL = Math.cos(48.035*D2R);
+const toXY = q => [q[0]*D2R*COSL*R_T, q[1]*D2R*R_T];
+const fromXY = q => [q[0]/(D2R*COSL*R_T), q[1]/(D2R*R_T)];
+const dXY = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+const PXY = CHEMIN.map(toXY), POLY = CONTOUR.map(toXY), PCXY = toXY(PC);
+const CUM = [0]; for(let i=1;i<PXY.length;i++) CUM.push(CUM[i-1] + dXY(PXY[i-1], PXY[i]));
+const S_TOT = CUM[CUM.length-1];
+function xyAt(sv){ sv = Math.max(0, Math.min(S_TOT, sv)); let i = 1; while(i < CUM.length-1 && CUM[i] < sv) i++;
+  const f = (sv-CUM[i-1]) / ((CUM[i]-CUM[i-1]) || 1); return [PXY[i-1][0]+f*(PXY[i][0]-PXY[i-1][0]), PXY[i-1][1]+f*(PXY[i][1]-PXY[i-1][1])]; }
+function dansBois(q){ let ins = false; for(let i=0, j=POLY.length-1; i<POLY.length; j=i++){ const a=POLY[i], b=POLY[j];
+  if(((a[1]>q[1]) !== (b[1]>q[1])) && (q[0] < (b[0]-a[0])*(q[1]-a[1])/(b[1]-a[1])+a[0])) ins = !ins; } return ins; }
+function cote(sv, d){ const a = xyAt(sv-2), b = xyAt(sv+2), c = xyAt(sv), tx = b[0]-a[0], ty = b[1]-a[1], n = Math.hypot(tx,ty) || 1;
+  const droite = [c[0] + d*ty/n, c[1] - d*tx/n], gauche = [c[0] - d*ty/n, c[1] + d*tx/n]; return dansBois(droite) ? droite : gauche; }
+const DEPOT = {s:700, xy:cote(700, 9)};
+const FEU = {s:1500, xy:cote(1500, 45)};
+const CAPTEURS = [{id:"G1", xy:cote(450, 40), base:3}, {id:"G2", xy:cote(1100, 40), base:4}, {id:"G3", xy:cote(1620, 30), base:3}, {id:"G4", xy:cote(1960, 25), base:2}];
+const VIT = 1.4;
+const ARRETS = [{s:DEPOT.s, dur:40, cible:DEPOT.xy, id:"depot"}, {s:FEU.s, dur:150, cible:FEU.xy, id:"feu"}];
+const PLAN = (() => { const pl = []; let t = 0, sv = 0;
+  for(const a of ARRETS){ const dt = (a.s - sv)/VIT; pl.push({t0:t, t1:t+dt, s0:sv, s1:a.s}); t += dt; sv = a.s; pl.push({t0:t, t1:t+a.dur, s0:sv, s1:sv, arret:a}); t += a.dur; }
+  pl.push({t0:t, t1:t+(S_TOT-sv)/VIT, s0:sv, s1:S_TOT}); return pl; })();
+const T_FIN = PLAN[PLAN.length-1].t1;
+function etatAt(t){ const q = PLAN.find(x => t >= x.t0 && t <= x.t1) || PLAN[PLAN.length-1];
+  const f = q.t1 > q.t0 ? (t-q.t0)/(q.t1-q.t0) : 1; return {s:q.s0 + f*(q.s1-q.s0), arret:q.arret || null, enMarche:!q.arret && t < T_FIN}; }
+const firstT = pred => { for(let t=0; t<=T_FIN; t+=1) if(pred(t)) return t; return T_FIN; };
+const T_DEPOT = firstT(t => dXY(xyAt(etatAt(t).s), DEPOT.xy) <= 20);
+const T_FEU = firstT(t => dXY(xyAt(etatAt(t).s), FEU.xy) <= 70);
+const T_FEU_ARRET = PLAN.find(x => x.arret && x.arret.id === "feu").t0;
+const T_DEPOT_FIN = PLAN.find(x => x.arret && x.arret.id === "depot").t1;
+const T_G3 = T_FEU + 60;
+function co(c, t){ let v = c.base + 0.7*Math.sin(t/37 + c.base);
+  if(c.id === "G3" && t > T_FEU) v += Math.min(46, (t - T_FEU)*0.5);
+  if(c.id === "G2" && t > T_FEU + 200) v += Math.min(7, (t - T_FEU - 200)*0.05);
+  return Math.max(0, Math.round(v)); }
+function thermique(t){ const d = dXY(xyAt(etatAt(t).s), FEU.xy);
+  if(t >= T_FEU) return Math.round(150 + 18*Math.sin(t/23));
+  return Math.round(d < 140 ? 13 + (140-d)*0.35 : 13 + Math.sin(t/50)); }
+const fmt = (n, d=1) => n.toLocaleString("fr-FR", {minimumFractionDigits:d, maximumFractionDigits:d});
+const hhmmss = t => { t = Math.max(0, Math.round(t)); return [Math.floor(t/3600), Math.floor(t/60)%60, t%60].map(x => String(x).padStart(2,"0")).join(":"); };
+const VENT = {kmh:35, rafales:55, de:180, txt:"S", releve:"22/10/2026 à 21 h 37"};
+const EVENTS = [
+  {t:0, txt:`Départ du PC avancé (parking du bois) · patrouille de ${fmt(S_TOT/1000,1)} km`},
+  {t:T_DEPOT, txt:"Dépôt sauvage détecté à 9 m du chemin : pneus usagés · photo transmise au PC"},
+  {t:T_DEPOT_FIN, txt:"Reprise de la patrouille"},
+  {t:T_FEU, txt:"ALERTE · source de chaleur détectée par la caméra thermique, à environ 70 m", al:true},
+  {t:T_FEU_ARRET, txt:"Robot arrêté à 45 m, face à la source · vidéo et image thermique vers le PC", al:true},
+  {t:T_G3, txt:"Capteur G3 : monoxyde de carbone au-dessus de 30 ppm", al:true},
+  {t:T_FEU_ARRET + 150, txt:"Reprise de la patrouille · la zone reste sous surveillance des capteurs"},
+  {t:T_FIN, txt:`Fin de patrouille à la lisière sud · ${fmt(S_TOT/1000,1)} km parcourus`}
+].sort((a,b) => a.t - b.t);
+
+/* ---------- Plan SVG ---------- */
+const NS = "http://www.w3.org/2000/svg", svg = document.getElementById("map");
+const xs = POLY.map(p => p[0]), ys = POLY.map(p => p[1]), PAD = 90;
+const X0 = Math.min(...xs) - PAD, X1 = Math.max(...xs) + PAD, Y0 = Math.min(...ys) - PAD, Y1 = Math.max(...ys) + PAD;
+const W = X1 - X0, H = Y1 - Y0;
+svg.setAttribute("viewBox", `0 0 ${W.toFixed(0)} ${H.toFixed(0)}`);
+const sx = p => p[0] - X0, sy = p => Y1 - p[1];
+const pts = arr => arr.map(p => `${sx(p).toFixed(1)},${sy(p).toFixed(1)}`).join(" ");
+const el = (name, attrs, parent=svg) => { const e = document.createElementNS(NS, name); for(const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+const FS = W/34;  /* taille de texte en mètres du plan */
+const cote_txt = (x, dx) => x > W*0.6 ? {x:x-dx, a:"end"} : {x:x+dx, a:"start"};
+// grille de 250 m
+const grid = el("g", {stroke:"rgba(78,199,214,.10)", "stroke-width":2});
+for(let x = Math.ceil(X0/250)*250; x < X1; x += 250) el("line", {x1:x-X0, y1:0, x2:x-X0, y2:H}, grid);
+for(let y = Math.ceil(Y0/250)*250; y < Y1; y += 250) el("line", {x1:0, y1:Y1-y, x2:W, y2:Y1-y}, grid);
+el("polygon", {points:pts(POLY), fill:"#173a35", "fill-opacity":".85", stroke:"#4ec7d6", "stroke-width":5, "stroke-linejoin":"round"});
+const nomBois = el("text", {x:sx(toXY([-0.7915,48.0415])), y:sy(toXY([-0.7915,48.0415])), fill:"#9ff3ea", "font-family":"Barlow Condensed, sans-serif", "font-weight":600, "font-size":FS*1.05, "letter-spacing":FS*0.25, "text-anchor":"middle"});
+nomBois.textContent = "BOIS DE L'HUISSERIE";
+el("polyline", {points:pts(PXY), fill:"none", stroke:"#4ec7d6", "stroke-width":5, "stroke-dasharray":"18 14", opacity:".75"});
+const fait = el("polyline", {points:"", fill:"none", stroke:"#bff7f1", "stroke-width":9, "stroke-linecap":"round", "stroke-linejoin":"round"});
+// panache : direction du vent relevé, sans modélisation
+const panache = el("polygon", {points:"", fill:"rgba(214,219,226,.22)", stroke:"rgba(238,242,246,.55)", "stroke-width":3});
+const ventTxt = el("text", {fill:"#dfe8f1", "font-family":"IBM Plex Mono, monospace", "font-size":FS*0.62});
+// liaisons capteurs → PC
+CAPTEURS.forEach(c => el("line", {x1:sx(c.xy), y1:sy(c.xy), x2:sx(PCXY), y2:sy(PCXY), stroke:"rgba(78,199,214,.35)", "stroke-width":3, "stroke-dasharray":"4 10"}));
+const lien = el("line", {stroke:"#4ec7d6", "stroke-width":4, "stroke-dasharray":"10 8"});
+// PC avancé
+el("rect", {x:sx(PCXY)-22, y:sy(PCXY)-22, width:44, height:44, fill:"#0d161d", stroke:"#4ec7d6", "stroke-width":5});
+const pcP = cote_txt(sx(PCXY), 38);
+const pcT = el("text", {x:pcP.x, y:sy(PCXY)+FS*0.3, "text-anchor":pcP.a, fill:"#9ff3ea", "font-family":"Barlow Condensed, sans-serif", "font-weight":600, "font-size":FS*0.85});
+pcT.textContent = "PC AVANCÉ";
+// capteurs
+const capEls = CAPTEURS.map(c => {
+  const g = el("g", {});
+  const r = el("rect", {x:sx(c.xy)-16, y:sy(c.xy)-16, width:32, height:32, fill:"#c9ced3", stroke:"#4ec7d6", "stroke-width":5}, g);
+  const P = cote_txt(sx(c.xy), 26);
+  const t = el("text", {x:P.x, y:sy(c.xy)+FS*0.28, "text-anchor":P.a, "font-family":"IBM Plex Mono, monospace", "font-size":FS*0.66, fill:"#4ec7d6"}, g);
+  return {c, r, t};
+});
+// dépôt sauvage
+const depot = el("g", {opacity:0});
+el("circle", {cx:sx(DEPOT.xy), cy:sy(DEPOT.xy), r:20, fill:"#141414", stroke:"#ffb020", "stroke-width":6}, depot);
+el("text", {x:cote_txt(sx(DEPOT.xy), 30).x, "text-anchor":cote_txt(sx(DEPOT.xy), 30).a, y:sy(DEPOT.xy)+FS*0.3, fill:"#ffcf6a", "font-family":"Barlow Condensed, sans-serif", "font-weight":600, "font-size":FS*0.8}, depot).textContent = "DÉPÔT SAUVAGE";
+// foyer
+const feu = el("g", {opacity:0});
+const anneaux = [15, 35, 60].map(r => el("circle", {cx:sx(FEU.xy), cy:sy(FEU.xy), r, fill:"none", stroke:"#ee6c3e", "stroke-width":6}, feu));
+el("circle", {cx:sx(FEU.xy), cy:sy(FEU.xy), r:10, fill:"#ee6c3e"}, feu);
+const feuT = el("text", {x:sx(FEU.xy)-80, y:sy(FEU.xy)+FS*0.3, fill:"#ff9a5a", "font-family":"Barlow Condensed, sans-serif", "font-weight":600, "font-size":FS*0.8, "text-anchor":"end"}, feu);
+// robot
+const robot = el("g", {});
+el("circle", {r:30, fill:"rgba(78,199,214,.18)", stroke:"#4ec7d6", "stroke-width":4}, robot);
+el("path", {d:"M0,-26 L15,14 L0,6 L-15,14 Z", fill:"#eaf2f5"}, robot);
+// échelle et nord
+const yb = H - 50, xb = 50;
+el("line", {x1:xb, y1:yb, x2:xb+500, y2:yb, stroke:"#93a7b1", "stroke-width":5});
+el("line", {x1:xb, y1:yb-14, x2:xb, y2:yb+14, stroke:"#93a7b1", "stroke-width":5});
+el("line", {x1:xb+500, y1:yb-14, x2:xb+500, y2:yb+14, stroke:"#93a7b1", "stroke-width":5});
+el("text", {x:xb+250, y:yb-24, fill:"#93a7b1", "font-family":"IBM Plex Mono, monospace", "font-size":FS*0.66, "text-anchor":"middle"}).textContent = "500 m";
+el("path", {d:`M${W-60},${H-110} l-22,58 l22,-14 l22,14 Z`, fill:"#93a7b1"});
+el("text", {x:W-60, y:H-122, fill:"#93a7b1", "font-family":"IBM Plex Mono, monospace", "font-size":FS*0.7, "text-anchor":"middle"}).textContent = "N";
+
+// cône du panache (vent du sud → vers le nord)
+(() => { const vers = (VENT.de + 180) * D2R, L = 320, ouv = 14 * D2R, f = FEU.xy;
+  const pt = (ang, d) => [f[0] + d*Math.sin(ang), f[1] + d*Math.cos(ang)];
+  panache.setAttribute("points", pts([f, pt(vers-ouv, L), pt(vers, L*1.05), pt(vers+ouv, L)]));
+  const lp = pt(vers, L*1.12); ventTxt.setAttribute("x", sx(lp) + 20); ventTxt.setAttribute("y", sy(lp));
+  ventTxt.textContent = `vent ${VENT.kmh} km/h de ${VENT.txt}`; })();
+
+/* ---------- Panneau ---------- */
+const tel = document.getElementById("tel"), logBox = document.getElementById("log"), clock = document.getElementById("clock"), scrub = document.getElementById("scrub");
+scrub.max = Math.floor(T_FIN);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+let simT = T_G3 + 25, playing = false, speed = 60, last = null, lastLog = -1;
+function render(){
+  const t = simT, e = etatAt(t), ici = xyAt(e.s), ll = fromXY(ici), dPc = dXY(ici, PCXY);
+  const vers = e.arret ? e.arret.cible : xyAt(Math.min(S_TOT, e.s + 3));
+  let cap = (Math.atan2(vers[0]-ici[0], vers[1]-ici[1]) / D2R + 360) % 360;
+  if(e.s >= S_TOT - 0.5){ const av = xyAt(S_TOT - 3); cap = (Math.atan2(ici[0]-av[0], ici[1]-av[1]) / D2R + 360) % 360; }
+  const alerte = t >= T_FEU && t < T_FEU_ARRET + 150;
+  const etat = t >= T_FIN ? "Patrouille terminée" : e.arret ? (e.arret.id === "feu" ? "ALERTE · observation" : "Arrêt · signalement") : (t === 0 ? "Prêt au départ" : "Patrouille");
+  const coTxt = CAPTEURS.map(c => `${c.id} ${co(c,t)}`).join(" · ");
+  const cells = [
+    ["État", etat, alerte], ["Position", `${fmt(ll[1],5)} N · ${fmt(Math.abs(ll[0]),5)} O`],
+    ["Cap · vitesse", `${fmt(cap,0)}° · ${e.enMarche && t > 0 ? fmt(VIT,1) : "0,0"} m/s`], ["Parcouru", `${fmt(e.s/1000,2)} / ${fmt(S_TOT/1000,2)} km`],
+    ["Batterie · liaison", `${fmt(100 - t/60*0.35,0)} % · ${fmt(Math.max(35, Math.min(97, 97 - dPc/35)),0)} %`], ["Caméra thermique (max)", `${thermique(t)} °C`, t >= T_FEU],
+    ["CO capteurs (ppm)", coTxt, CAPTEURS.some(c => co(c,t) >= 30)], ["Vent sur le bois", `${VENT.kmh} km/h de ${VENT.txt} · raf. ${VENT.rafales}`]
+  ];
+  tel.innerHTML = cells.map(([k,v,a]) => `<div><div class="k">${esc(k)}</div><div class="v${a ? " al" : ""}">${esc(v)}</div></div>`).join("") +
+    `<div style="grid-column:1/-1"><div class="k">Nature des valeurs</div><div class="v"><span class="badge b-sim">SIMULÉ</span> robot et capteurs · <span class="badge b-modele">MODÉLISÉ</span> vent relevé le ${VENT.releve}</div></div>`;
+  clock.textContent = `${hhmmss(t)} / ${hhmmss(T_FIN)}`;
+  scrub.value = Math.floor(t);
+  const n = EVENTS.filter(ev => ev.t <= t).length;
+  if(n !== lastLog){ lastLog = n;
+    logBox.innerHTML = EVENTS.slice(0, n).reverse().map(ev => `<div class="${ev.al ? "al" : ""}"><time>${hhmmss(ev.t)}</time> · ${esc(ev.txt)}</div>`).join(""); }
+  // carte
+  const done = []; for(let i=0;i<CUM.length && CUM[i] < e.s;i++) done.push(PXY[i]); done.push(ici);
+  fait.setAttribute("points", pts(done.length > 1 ? done : [ici, ici]));
+  robot.setAttribute("transform", `translate(${sx(ici).toFixed(1)},${sy(ici).toFixed(1)}) rotate(${cap.toFixed(1)})`);
+  lien.setAttribute("x1", sx(ici)); lien.setAttribute("y1", sy(ici)); lien.setAttribute("x2", sx(PCXY)); lien.setAttribute("y2", sy(PCXY));
+  depot.setAttribute("opacity", t >= T_DEPOT ? 1 : 0);
+  feu.setAttribute("opacity", t >= T_FEU ? 1 : 0);
+  panache.setAttribute("opacity", t >= T_FEU ? 1 : 0); ventTxt.setAttribute("opacity", t >= T_FEU ? 1 : 0);
+  feuT.textContent = `ZONE DE CHALEUR · ${thermique(t)} °C`;
+  capEls.forEach(({c, r, t: tx}) => { const v = co(c, t), hot = v >= 30; tx.textContent = `${c.id} · ${v} ppm`;
+    tx.setAttribute("fill", hot ? "#ff9a5a" : "#4ec7d6"); r.setAttribute("stroke", hot ? "#ee6c3e" : "#4ec7d6"); });
+}
+function pulse(now){
+  if(!reduce && simT >= T_FEU) anneaux.forEach((a, k) => a.setAttribute("r", [15,35,60][k] + 6*Math.sin(now/420 - k*0.9)));
+}
+const playBtn = document.getElementById("play");
+function setPlaying(p){ playing = p; playBtn.textContent = p ? "❚❚ Pause" : "▶ Lecture"; last = null; }
+function frame(now){
+  if(playing){ if(last != null){ simT = Math.min(T_FIN, simT + (now - last)/1000*speed); } last = now;
+    if(simT >= T_FIN) setPlaying(false); render(); }
+  pulse(now);
+  requestAnimationFrame(frame);
+}
+playBtn.addEventListener("click", () => { if(simT >= T_FIN) simT = 0; setPlaying(!playing); });
+document.getElementById("restart").addEventListener("click", () => { simT = 0; lastLog = -1; setPlaying(true); render(); });
+document.getElementById("speed").addEventListener("change", e => speed = +e.target.value);
+scrub.addEventListener("input", () => { simT = +scrub.value; render(); });
+render();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

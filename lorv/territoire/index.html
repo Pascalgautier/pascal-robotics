@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Territoire Mayenne</title>
+<script>window.CESIUM_BASE_URL = "https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/";</script>
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Cesium.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/cesium@1.146.0/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#05080d; --panel:rgba(8,14,22,.82); --line:rgba(140,190,230,.18); --text:#dfe8f1; --muted:#8a9bb0;
+  --mesure:#3ddc97; --modele:#4cc3ff; --ref:#c9d1d9; --sim:#ffb020; --ko:#ff5d5d; --accent:#4cc3ff;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+#globe{position:fixed;inset:0}
+.cesium-viewer-bottom{display:none}
+.hud{position:fixed;z-index:10;background:var(--panel);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+/* En-tête */
+#top{top:14px;left:14px;right:14px;display:flex;align-items:center;gap:16px;padding:10px 14px}
+#top .brand{font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+#top .brand span{color:var(--accent)}
+#top .sub{color:var(--muted);font-size:12px}
+#top .spacer{flex:1}
+#top .proto{font-family:var(--mono);font-size:11px;color:var(--sim);border:1px solid rgba(255,176,32,.45);padding:3px 8px;border-radius:4px;letter-spacing:.08em}
+#clock{font-family:var(--mono);font-size:13px;color:var(--text)}
+/* Panneau couches */
+#layers{top:72px;left:14px;width:330px;max-height:calc(100% - 190px);overflow:auto;padding:12px}
+#layers h2,#detail h2{margin:0 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.layer{display:grid;grid-template-columns:18px 1fr auto;gap:2px 8px;align-items:start;padding:8px 6px;border-top:1px solid var(--line)}
+.layer:first-of-type{border-top:none}
+.layer input{margin:2px 0 0;accent-color:var(--accent)}
+.layer .name{font-size:13px}
+.layer .src{grid-column:2/4;font-size:11px;color:var(--muted)}
+.layer .status{grid-column:2/4;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.layer.disabled .name{color:var(--muted)}
+.badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;padding:2px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.b-mesure{color:var(--mesure)} .b-modele{color:var(--modele)} .b-ref{color:var(--ref)} .b-sim{color:var(--sim)} .b-ko{color:var(--ko)} .b-na{color:var(--muted)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--muted);vertical-align:1px}
+.dot.ok{background:var(--mesure)} .dot.load{background:var(--sim)} .dot.err{background:var(--ko)}
+/* Détail */
+#detail{top:72px;right:14px;width:340px;max-height:calc(100% - 170px);overflow:auto;padding:12px;display:none}
+#detail .sec{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+#detail .sec h3{margin:0 0 6px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+#detail .rub{font-size:12px;margin-bottom:6px;line-height:1.35}
+#detail .rub .c{font-family:var(--mono);color:var(--accent)}
+#detail .q{color:var(--muted);font-size:11px}
+#detail a{color:var(--accent)}
+#detail .note{font-size:11px;color:var(--muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--line);line-height:1.4}
+#detail .k{color:var(--muted);font-size:11px}
+#detail .v{font-size:13px;margin-bottom:6px}
+#detail button{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer}
+/* Bas */
+#bottom{left:50%;transform:translateX(-50%);bottom:14px;display:flex;gap:8px;padding:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 28px)}
+#bottom button{font:inherit;font-size:12px;color:var(--text);background:rgba(76,195,255,.08);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer}
+#bottom button:hover{border-color:var(--accent)}
+#bottom button.primary{background:rgba(76,195,255,.22);border-color:rgba(76,195,255,.6)}
+#legend{position:fixed;z-index:10;right:14px;bottom:14px;padding:8px 10px;font-size:11px;display:flex;flex-direction:column;gap:4px}
+#readout{position:fixed;z-index:10;left:14px;bottom:14px;padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+#warn{position:fixed;z-index:10;left:50%;transform:translateX(-50%);top:72px;font-size:11px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 10px;text-align:center;max-width:calc(100% - 720px)}
+#caption{position:fixed;z-index:9;left:50%;top:38%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;opacity:0;transition:opacity .8s}
+#caption.show{opacity:1}
+#caption .t{font-size:44px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+#caption .s{margin-top:8px;font-size:15px;color:var(--text);text-shadow:0 2px 12px rgba(0,0,0,.9)}
+#credits{position:fixed;z-index:5;right:14px;bottom:118px;font-size:10px;color:var(--muted);max-width:420px;text-align:right}
+#credits .cesium-credit-logoContainer{display:inline-block}
+#forecast{left:50%;transform:translateX(-50%);bottom:66px;width:min(600px, calc(100% - 28px));padding:10px 12px;display:none}
+#forecast.show{display:block}
+#forecast .row{display:flex;align-items:center;gap:10px}
+#forecast input[type=range]{flex:1;accent-color:var(--accent)}
+#forecast button{font:inherit;font-size:12px;color:var(--text);background:rgba(76,195,255,.14);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+#fcTime{font-family:var(--mono);font-size:12px;min-width:160px;text-align:right}
+#fcSummary{margin-top:7px;font-size:12px}
+#fcSummary .n{font-family:var(--mono);color:var(--sim)}
+#fcMax{margin-top:3px;font-size:12px;color:var(--text)}
+#fcNote{margin-top:5px;font-size:10.5px;color:var(--muted);line-height:1.35}
+.lg-title{margin-top:12px !important}
+.lg{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted)}
+.legend-img{display:block;margin-top:6px;max-width:100%;background:rgba(255,255,255,.9);border-radius:4px;padding:3px}
+.sitelist{grid-column:2/4;margin-top:6px;display:flex;flex-direction:column;gap:1px}
+.sitelist button{all:unset;cursor:pointer;font-size:11.5px;color:var(--text);padding:3px 5px;border-radius:4px;line-height:1.3}
+.sitelist button:hover,.sitelist button:focus-visible{background:rgba(76,195,255,.14)}
+.sitelist .dotc{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:0}
+#scn{top:72px;right:14px;width:340px;max-height:calc(100% - 150px);overflow:auto;padding:10px 12px;display:none}
+#layers.scn-off{display:none}
+#scn.show{display:block}
+#scn .hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#scn .ttl{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#7fe9df}
+#scn .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#scn button,#scn select{font:inherit;font-size:12px;color:var(--text);background:rgba(63,224,208,.12);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+#scn label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+#scnBar{height:4px;background:rgba(255,255,255,.08);border-radius:3px;margin:8px 0 6px;overflow:hidden}
+#scnBar i{display:block;height:100%;width:0;background:#3fe0d0}
+#scnTel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;font-size:11.5px}
+#scnTel .k{color:var(--muted);font-size:10.5px}
+#scnTel .v{font-family:var(--mono)}
+#scnTel .alerte{color:#ff8a3d}
+#scnLog{margin-top:7px;max-height:150px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.45;border-top:1px solid var(--line);padding-top:5px}
+#scnLog .al{color:#ff8a3d}
+#scnNote{margin-top:5px;font-size:10.5px;color:var(--muted);line-height:1.35}
+#toggleLayers{display:none}
+@media (max-width: 900px){
+  #warn{display:none}
+  #layers{width:calc(100% - 28px);max-height:45%;display:none}
+  #layers.open{display:block}
+  #toggleLayers{display:inline-block}
+  #legend,#readout{display:none}
+  #detail{left:14px;right:14px;width:auto;top:auto;bottom:80px}
+  #caption .t{font-size:28px}
+  #top .sub{display:none}
+}
+</style>
+</head>
+<body>
+<div id="globe"></div>
+
+<header id="top" class="hud">
+  <div class="brand">Digital Twin Lab · <span>Mayenne</span></div>
+  <div class="sub">Situation territoriale — démonstrateur</div>
+  <div class="spacer"></div>
+  <div class="proto">PROTOTYPE DE LABORATOIRE</div>
+  <div id="clock">--:--:--</div>
+</header>
+
+<div id="warn">Pas un outil opérationnel. Données publiques, sans garantie de délai ni d'exactitude.</div>
+
+<aside id="layers" class="hud">
+  <h2>Couches</h2>
+  <div id="layerList"></div>
+  <h2 class="lg-title">Légende</h2>
+  <div class="lg">
+    <div><span class="badge b-mesure">MESURÉ</span> capteur réel (station, radar)</div>
+    <div><span class="badge b-modele">MODÉLISÉ</span> sortie de modèle, dont prévisions</div>
+    <div><span class="badge b-ref">RÉFÉRENCE</span> base publique (IGN, Géorisques)</div>
+    <div><span class="badge b-sim">SIMULÉ</span> donnée fictive de démonstration</div>
+  </div>
+</aside>
+
+<aside id="detail" class="hud" aria-live="polite">
+  <button type="button" id="closeDetail" aria-label="Fermer">×</button>
+  <h2 id="detailTitle">Détail</h2>
+  <div id="detailBody"></div>
+</aside>
+
+<div id="caption"><div class="t" id="capT"></div><div class="s" id="capS"></div></div>
+
+<nav id="bottom" class="hud">
+  <button type="button" id="toggleLayers">Couches</button>
+  <button type="button" class="primary" id="btnDescent">Lancer la descente</button>
+  <button type="button" data-goto="france">France</button>
+  <button type="button" data-goto="mayenne">Mayenne</button>
+  <button type="button" data-goto="laval">Laval</button>
+  <button type="button" id="btnScn" class="primary">Scénario Huisserie</button>
+</nav>
+
+<section id="scn" class="hud" aria-label="Scénario de patrouille">
+  <div class="hd"><span class="ttl">Scénario · bois de l'Huisserie</span><span class="badge b-sim">SIMULÉ</span><span style="flex:1"></span><button type="button" id="scnQuit">Quitter</button></div>
+  <div class="row">
+    <button type="button" id="scnPlay">▶ Lancer la patrouille</button>
+    <button type="button" id="scnReset">↺ Recommencer</button>
+    <select id="scnSpeed" aria-label="Vitesse de lecture"><option value="10">× 10</option><option value="30" selected>× 30</option><option value="60">× 60</option></select>
+    <label><input type="checkbox" id="scnFollow"> Suivre le robot</label>
+    <span id="scnClock" style="flex-basis:100%;font-family:var(--mono);font-size:12px">00:00:00</span>
+  </div>
+  <div id="scnBar"><i></i></div>
+  <div id="scnTel"></div>
+  <div id="scnLog" aria-live="polite"></div>
+  <div id="scnNote">Réel : fond IGN, contour du bois, chemins forestiers suivis par le robot, vent du moment. Simulé : le robot, ses mesures, le dépôt sauvage, la source de chaleur et les capteurs de gaz. Le panache n'est pas modélisé : il indique seulement la direction du vent réel.</div>
+</section>
+
+<div id="readout" class="hud">—</div>
+
+<section id="forecast" class="hud" aria-label="Prévisions météo">
+  <div class="row">
+    <button type="button" id="fcPlay">▶ Lire 48 h</button>
+    <input type="range" id="fcRange" min="0" max="47" value="0" step="1" aria-label="Échéance de la prévision">
+    <div id="fcTime">—</div>
+  </div>
+  <div id="fcSummary">—</div>
+  <div id="fcMax"></div>
+  <div id="fcNote">Prévisions de modèles Météo-France (via Open-Meteo). L'exposition croise les rafales prévues avec les enjeux connus (sites SEVESO, communes) : c'est un indicateur, pas une prévision de dégâts. Seuils indicatifs de démonstration : 60, 80 et 100 km/h.</div>
+</section>
+
+<div id="credits"></div>
+
+<script>
+"use strict";
+(async function(){
+
+/* ---------- Réglages ---------- */
+const TZ = "Europe/Paris";
+const VILLES = [
+  {nom:"Laval", lat:48.0707, lon:-0.7734},
+  {nom:"Mayenne", lat:48.3031, lon:-0.6136},
+  {nom:"Château-Gontier", lat:47.8286, lon:-0.7028},
+  {nom:"Évron", lat:48.1562, lon:-0.4019},
+  {nom:"Ernée", lat:48.2975, lon:-0.9322},
+  {nom:"Craon", lat:47.8486, lon:-0.9497},
+  {nom:"Villaines-la-Juhel", lat:48.3436, lon:-0.2789},
+  {nom:"Gorron", lat:48.4108, lon:-0.8153}
+];
+const BBOX_LAVAL = [-0.785, 48.060, -0.760, 48.080]; // lon min, lat min, lon max, lat max
+const VUES = {
+  globe:   {lon:1.5,   lat:46.5,  h:18000000, heading:0, pitch:-90},
+  france:  {lon:2.2,   lat:46.6,  h:1900000,  heading:0, pitch:-90},
+  mayenne: {lon:-0.62, lat:48.12, h:165000,   heading:0, pitch:-90},
+  laval:   {lon:-0.7745,lat:48.0475,h:2300,   heading:0, pitch:-32}
+};
+
+/* ---------- Utilitaires ---------- */
+const $ = s => document.querySelector(s);
+const fmtHeure = d => new Intl.DateTimeFormat("fr-FR",{timeZone:TZ,hour:"2-digit",minute:"2-digit"}).format(d);
+const fmtNum = (n,dec=1) => n==null||isNaN(n) ? "—" : n.toLocaleString("fr-FR",{minimumFractionDigits:dec,maximumFractionDigits:dec});
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+async function getJSON(url){
+  const r = await fetch(url, {cache:"no-store"});
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+setInterval(() => { $("#clock").textContent = new Intl.DateTimeFormat("fr-FR",{timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date()); }, 1000);
+
+/* ---------- Globe (sans Cesium ion) ---------- */
+const viewer = new Cesium.Viewer("globe", {
+  baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+    Cesium.TileMapServiceImageryProvider.fromUrl(Cesium.buildModuleUrl("Assets/Textures/NaturalEarthII"))
+  ),
+  baseLayerPicker:false, geocoder:false, homeButton:false, sceneModePicker:false,
+  navigationHelpButton:false, animation:false, timeline:false, fullscreenButton:false,
+  infoBox:false, selectionIndicator:false, creditContainer: $("#credits")
+});
+viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#0b1320");
+viewer.scene.globe.depthTestAgainstTerrain = false;
+viewer.scene.fog.enabled = true;
+
+const ignOrtho = new Cesium.WebMapTileServiceImageryProvider({
+  url: "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&TILEMATRIXSET=PM&FORMAT=image/jpeg&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}",
+  layer:"ORTHOIMAGERY.ORTHOPHOTOS", style:"normal", format:"image/jpeg", tileMatrixSetID:"PM",
+  tilingScheme: new Cesium.WebMercatorTilingScheme(), maximumLevel:19,
+  rectangle: Cesium.Rectangle.fromDegrees(-5.6, 41.2, 9.8, 51.2),
+  credit: new Cesium.Credit("Orthophotos © IGN Géoplateforme")
+});
+viewer.imageryLayers.add(new Cesium.ImageryLayer(ignOrtho, {minimumTerrainLevel: 7}));
+
+function setView(v){
+  viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
+    orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0}
+  });
+}
+function flyTo(v, duration){
+  return new Promise(res => viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
+    orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0},
+    duration, complete:res, cancel:res
+  }));
+}
+setView(VUES.globe);
+
+/* Lecture position caméra */
+const readout = $("#readout");
+viewer.camera.changed.addEventListener(updateReadout);
+viewer.camera.percentageChanged = 0.01;
+function updateReadout(){
+  const c = viewer.camera.positionCartographic;
+  const lat = Cesium.Math.toDegrees(c.latitude), lon = Cesium.Math.toDegrees(c.longitude);
+  const h = c.height;
+  const alt = h > 10000 ? fmtNum(h/1000,0) + " km" : fmtNum(h/1000,1) + " km";
+  readout.textContent = `${fmtNum(Math.abs(lat),4)}° ${lat>=0?"N":"S"} · ${fmtNum(Math.abs(lon),4)}° ${lon>=0?"E":"O"} · alt. ${alt}`;
+}
+updateReadout();
+
+/* ---------- Modèle des couches ---------- */
+const BADGE = {mesure:["MESURÉ","b-mesure"], modele:["MODÉLISÉ","b-modele"], ref:["RÉFÉRENCE","b-ref"], sim:["SIMULÉ","b-sim"], na:["À VENIR","b-na"]};
+const layers = [
+  {id:"dep",   name:"Limite de la Mayenne", src:"IGN · Admin Express", nature:"ref", on:true},
+  {id:"meteo", name:"Météo — 8 communes", src:"Open-Meteo · modèles Météo-France", nature:"modele", on:true, refresh:600},
+  {id:"eau",   name:"Hauteurs d'eau", src:"Hub'Eau · hydrométrie temps réel", nature:"mesure", on:true, refresh:300},
+  {id:"seveso",name:"Sites SEVESO", src:"Géorisques · installations classées", nature:"ref", on:true},
+  {id:"prev",  name:"Vent prévu 48 h (grille)", src:"Open-Meteo · modèles Météo-France", nature:"modele", on:true, refresh:1800},
+  {id:"expo",  name:"Exposition aux rafales", src:"Indicateur calculé : rafales prévues × enjeux", nature:"modele", on:true},
+  {id:"radar", name:"Radar de pluie", src:"RainViewer · dernière image radar", nature:"mesure", on:true, refresh:600},
+  {id:"feu",   name:"Danger météo de feu (FWI)", src:"EFFIS / Copernicus · modèle Météo-France", nature:"modele", on:false},
+  {id:"bati",  name:"Bâtiments 3D · Laval centre", src:"IGN · BD TOPO (hauteurs)", nature:"ref", on:false},
+  {id:"vols",  name:"Vols en direct", src:"ADS-B public", nature:"na", disabled:true, note:"Nécessite un relais serveur (Cloudflare Worker gratuit, prévu)."},
+  {id:"robot", name:"Télémétrie robot", src:"Robot virtuel inspiré du B2", nature:"sim", disabled:true, note:"Étapes EXPLORER et INTERVENIR — données simulées."}
+];
+const state = {};
+layers.forEach(L => state[L.id] = {entities:[], primitive:null, loaded:false, timer:null, meta:{}});
+
+function renderLayers(){
+  $("#layerList").innerHTML = layers.map(L => {
+    const [bt, bc] = BADGE[L.nature];
+    return `<div class="layer ${L.disabled?"disabled":""}" data-id="${L.id}">
+      <input type="checkbox" id="chk-${L.id}" ${L.on?"checked":""} ${L.disabled?"disabled":""} aria-label="${esc(L.name)}">
+      <label class="name" for="chk-${L.id}">${esc(L.name)}</label>
+      <span class="badge ${bc}">${bt}</span>
+      <div class="src">${esc(L.src)}</div>
+      <div class="status" id="st-${L.id}">${L.disabled ? esc(L.note) : '<span class="dot"></span>en attente'}</div>
+      ${L.id==="feu" ? '<div class="src" id="lg-feu" hidden><img class="legend-img" alt="Légende de l\'indice FWI" src="https://maps.effis.emergency.copernicus.eu/effis?SERVICE=WMS&amp;REQUEST=GetLegendGraphic&amp;VERSION=1.1.1&amp;FORMAT=image/png&amp;LAYER=mf010.fwi"></div>' : ''}
+      ${L.id==="seveso" ? '<div class="sitelist" id="ls-seveso" aria-label="Sites SEVESO"></div>' : ''}
+    </div>`;
+  }).join("");
+  layers.forEach(L => {
+    if(L.disabled) return;
+    $("#chk-"+L.id).addEventListener("change", e => { L.on = e.target.checked; applyVisibility(L.id); if(L.on && !state[L.id].loaded && LOADERS[L.id]) loadLayer(L.id); if(L.id==="feu") $("#lg-feu").hidden = !L.on; });
+  });
+}
+function setStatus(id, kind, text){
+  const el = $("#st-"+id); if(!el) return;
+  el.innerHTML = `<span class="dot ${kind}"></span>${esc(text)}`;
+}
+function applyVisibility(id){
+  const L = layers.find(x=>x.id===id), S = state[id];
+  S.entities.forEach(e => e.show = L.on);
+  if(S.primitive) S.primitive.show = L.on;
+  if(S.layer) S.layer.show = L.on;
+}
+const infoById = new Map();
+function addEntity(id, opts, info){
+  const e = viewer.entities.add(opts);
+  e.show = layers.find(x=>x.id===id).on;
+  state[id].entities.push(e);
+  if(info) infoById.set(e.id, info);
+  return e;
+}
+function clearLayer(id){
+  state[id].entities.forEach(e => { infoById.delete(e.id); viewer.entities.remove(e); });
+  state[id].entities = [];
+}
+
+/* ---------- Couche : limite départementale ---------- */
+async function loadDep(){
+  const url = "https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=ADMINEXPRESS-COG-CARTO.LATEST:departement&OUTPUTFORMAT=application/json&SRSNAME=EPSG:4326&CQL_FILTER=code_insee='53'&COUNT=1";
+  const gj = await getJSON(url);
+  const g = gj.features[0].geometry;
+  const polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+  polys.forEach(p => {
+    const ring = p[0];
+    addEntity("dep", {
+      polyline:{ positions: Cesium.Cartesian3.fromDegreesArray(ring.flatMap(c=>[c[0],c[1]])), width:2.5,
+        material: new Cesium.PolylineGlowMaterialProperty({glowPower:0.18, color:Cesium.Color.fromCssColorString("#4cc3ff")}), clampToGround:false }
+    });
+  });
+  setStatus("dep","ok","contour chargé");
+}
+
+/* ---------- Couche : météo (Open-Meteo) ---------- */
+const WMO = c => c==null?"—": c===0?"ciel clair": c<=3?"nuageux": c<=48?"brouillard": c<=57?"bruine": c<=67?"pluie": c<=77?"neige": c<=82?"averses": c<=86?"averses de neige":"orage";
+const dirTxt = d => ["N","NE","E","SE","S","SO","O","NO"][Math.round(((d%360)+360)%360/45)%8];
+function destPoint(lat, lon, bearingDeg, distM){
+  const R=6371000, b=Cesium.Math.toRadians(bearingDeg), φ1=Cesium.Math.toRadians(lat), λ1=Cesium.Math.toRadians(lon), δ=distM/R;
+  const φ2=Math.asin(Math.sin(φ1)*Math.cos(δ)+Math.cos(φ1)*Math.sin(δ)*Math.cos(b));
+  const λ2=λ1+Math.atan2(Math.sin(b)*Math.sin(δ)*Math.cos(φ1), Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
+  return [Cesium.Math.toDegrees(λ2), Cesium.Math.toDegrees(φ2)];
+}
+async function loadMeteo(){
+  setStatus("meteo","load","chargement…");
+  const lat = VILLES.map(v=>v.lat).join(","), lon = VILLES.map(v=>v.lon).join(",");
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code&timezone=Europe%2FParis&wind_speed_unit=kmh&models=meteofrance_seamless`;
+  const res = await getJSON(url);
+  const arr = Array.isArray(res) ? res : [res];
+  clearLayer("meteo");
+  let tMaj = null;
+  arr.forEach((r,i) => {
+    const v = VILLES[i], c = r.current || {};
+    tMaj = c.time || tMaj;
+    const toward = (c.wind_direction_10m ?? 0) + 180;
+    const len = Math.max(1500, (c.wind_speed_10m||0) * 350);
+    const [lon2, lat2] = destPoint(v.lat, v.lon, toward, len);
+    const info = {titre:`Météo — ${v.nom}`, nature:"modele", lignes:[
+      ["Température", fmtNum(c.temperature_2m) + " °C"],
+      ["Humidité", fmtNum(c.relative_humidity_2m,0) + " %"],
+      ["Vent", `${fmtNum(c.wind_speed_10m,0)} km/h de ${dirTxt(c.wind_direction_10m)} (${fmtNum(c.wind_direction_10m,0)}°)`],
+      ["Rafales", fmtNum(c.wind_gusts_10m,0) + " km/h"],
+      ["Précipitations", fmtNum(c.precipitation) + " mm"],
+      ["Temps", WMO(c.weather_code)],
+      ["Valeur pour", c.time ? c.time.replace("T"," à ") : "—"],
+      ["Source", "Open-Meteo — sortie de modèles, pas une mesure de station"]
+    ]};
+    addEntity("meteo", {
+      position: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, 0),
+      point:{pixelSize:7, color:Cesium.Color.fromCssColorString("#4cc3ff"), outlineColor:Cesium.Color.BLACK, outlineWidth:1, distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 2500000)},
+      label:{text:`${v.nom}  ${fmtNum(c.temperature_2m)} °C\n${fmtNum(c.wind_speed_10m,0)} km/h ${dirTxt(c.wind_direction_10m)} · raf. ${fmtNum(c.wind_gusts_10m,0)}`,
+        font:"12px system-ui, sans-serif", fillColor:Cesium.Color.WHITE, outlineColor:Cesium.Color.BLACK, outlineWidth:3,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset:new Cesium.Cartesian2(10,-6), horizontalOrigin:Cesium.HorizontalOrigin.LEFT,
+        showBackground:true, backgroundColor:Cesium.Color.fromCssColorString("rgba(5,10,18,0.65)"),
+        distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 600000)}
+    }, info);
+    addEntity("meteo", {
+      polyline:{positions:Cesium.Cartesian3.fromDegreesArray([v.lon, v.lat, lon2, lat2]), width:9,
+        material:new Cesium.PolylineArrowMaterialProperty(Cesium.Color.fromCssColorString("#4cc3ff").withAlpha(0.85)),
+        distanceDisplayCondition:new Cesium.DistanceDisplayCondition(25000, 600000)}
+    }, info);
+  });
+  state.meteo.meta.n = arr.length;
+  setStatus("meteo","ok", `${arr.length} communes · valeur de ${tMaj ? tMaj.slice(11,16) : "—"} · lu à ${fmtHeure(new Date())}`);
+}
+
+/* ---------- Couche : hauteurs d'eau (Hub'Eau) ---------- */
+async function loadEau(){
+  setStatus("eau","load","chargement…");
+  const ref = await getJSON("https://hubeau.eaufrance.fr/api/v2/hydrometrie/referentiel/stations?code_departement=53&en_service=true&size=200&format=json");
+  const stations = ref.data.filter(s => s.longitude_station && s.latitude_station);
+  const results = await Promise.allSettled(stations.map(s =>
+    getJSON(`https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr?code_entite=${s.code_station}&grandeur_hydro=H&size=8&sort=desc`)
+  ));
+  clearLayer("eau");
+  let n = 0, hausse = 0, derniere = null;
+  const now = Date.now();
+  results.forEach((r, i) => {
+    const s = stations[i];
+    if(r.status !== "fulfilled" || !r.value.data || !r.value.data.length) return;
+    const obs = r.value.data;
+    const last = obs[0], prev = obs[obs.length-1];
+    const hm = last.resultat_obs / 1000, dh = (last.resultat_obs - prev.resultat_obs) / 10; // cm
+    const t = new Date(last.date_obs);
+    const ageMin = Math.round((now - t.getTime())/60000);
+    const tendance = dh > 1 ? "hausse" : dh < -1 ? "baisse" : "stable";
+    if(tendance === "hausse") hausse++;
+    if(!derniere || t > derniere) derniere = t;
+    n++;
+    const color = tendance==="hausse" ? "#ffb020" : tendance==="baisse" ? "#3ddc97" : "#9fd8ff";
+    const fleche = tendance==="hausse" ? "▲" : tendance==="baisse" ? "▼" : "■";
+    const info = {titre:s.libelle_station, nature: ageMin > 180 ? "differe" : "mesure", lignes:[
+      ["Cours d'eau", s.libelle_cours_eau || "—"],
+      ["Hauteur", fmtNum(hm,2) + " m"],
+      ["Variation", `${dh>0?"+":""}${fmtNum(dh,0)} cm sur ${obs.length>1 ? Math.round((t - new Date(prev.date_obs))/60000) : 0} min (${tendance})`],
+      ["Mesure du", fmtHeure(t) + (ageMin > 180 ? " — mesure ancienne" : ` (il y a ${ageMin} min)`)],
+      ["Station", s.code_station],
+      ["Source", "Hub'Eau, hydrométrie temps réel — mesure de capteur"]
+    ]};
+    addEntity("eau", {
+      position: Cesium.Cartesian3.fromDegrees(s.longitude_station, s.latitude_station, 0),
+      point:{pixelSize:9, color:Cesium.Color.fromCssColorString(color), outlineColor:Cesium.Color.BLACK, outlineWidth:1.5, distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 2500000)},
+      label:{text:`${fleche} ${fmtNum(hm,2)} m`, font:"11px ui-monospace, Menlo, monospace", fillColor:Cesium.Color.fromCssColorString(color),
+        outlineColor:Cesium.Color.BLACK, outlineWidth:3, style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        pixelOffset:new Cesium.Cartesian2(9,8), horizontalOrigin:Cesium.HorizontalOrigin.LEFT,
+        distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 120000)}
+    }, info);
+  });
+  state.eau.meta = {n, hausse};
+  setStatus("eau", n ? "ok" : "err", n ? `${n} stations · ${hausse} en hausse · dernière mesure ${derniere?fmtHeure(derniere):"—"}` : "aucune mesure reçue");
+}
+
+/* ---------- Couche : SEVESO (Géorisques) ---------- */
+const sevActif = d => !/fin d'exploitation|cessation|arr[êe]t/i.test(d.etatActivite || "");
+function sevesoInfo(d, actif){
+  const frDate = x => x ? x.slice(0,10).split("-").reverse().join("/") : "date inconnue";
+  const safeUrl = u => /^https:\/\/www\.georisques\.gouv\.fr\//.test(u || "") ? u : null;
+  const lignes = [
+    ["Statut", (d.statutSeveso || "—") + (d.ied ? " · directive IED" : "")],
+    ["État", (d.etatActivite || "—") + (actif ? "" : " — ancienne installation, distincte du site en activité")],
+    ["Régime", d.regime || "—"],
+    ["Adresse", [d.adresse1, d.adresse2, d.codePostal, d.commune].filter(Boolean).join(" ") || "—"],
+    ["Priorité nationale d'inspection", d.prioriteNationale ? "oui" : "non"],
+    ["Service d'inspection", d.serviceAIOT || "—"],
+    ["Identifiant (AIOT)", d.codeAIOT || "—"],
+    ["Fiche mise à jour le", frDate(d.date_maj)],
+    ["Source", "Géorisques — base publique des installations classées"]
+  ];
+  const rang = r => r.regimeAutoriseAlinea === "Autorisation" ? 0 : r.regimeAutoriseAlinea === "Enregistrement" ? 1 : 2;
+  const rub = (d.rubriques || []).slice().sort((a,b) => rang(a) - rang(b));
+  const insp = (d.inspections || []).slice().sort((a,b) => (b.dateInspection || "").localeCompare(a.dateInspection || ""));
+  const docs = (d.documentsHorsInspection || []).slice().sort((a,b) => (b.dateFichier || "").localeCompare(a.dateFichier || ""));
+  const fmtQ = r => r.quantiteTotale ? `${Number(r.quantiteTotale).toLocaleString("fr-FR")} ${r.unite || ""}`.trim() : "quantité non publiée";
+  let html = `<div class="sec"><h3>Activités classées (${rub.length})</h3>` + (rub.length ? rub.map(r =>
+      `<div class="rub"><span class="c">${esc(r.numeroRubrique)}${r.alinea ? "-" + esc(r.alinea) : ""}</span> ${esc(r.nature || "")}<div class="q">${esc(r.regimeAutoriseAlinea || "")} · ${esc(fmtQ(r))}</div></div>`).join("")
+    : `<div class="q">Aucune activité publiée pour cette fiche.</div>`) + `</div>`;
+  html += `<div class="sec"><h3>Inspections (${insp.length})</h3>` + (insp.length ? insp.slice(0,5).map(i => {
+      const f = i.fichierInspection, u = f && safeUrl(f.urlFichier);
+      return `<div class="rub">${esc(frDate(i.dateInspection))} · ${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">rapport publié</a>` : "rapport non publié"}</div>`; }).join("")
+    : `<div class="q">Aucune inspection publiée.</div>`) + `</div>`;
+  html += `<div class="sec"><h3>Arrêtés et documents (${docs.length})</h3>` + (docs.length ? docs.slice(0,5).map(f => {
+      const u = safeUrl(f.urlFichier), t = f.typeFichier || "document";
+      return `<div class="rub">${esc(frDate(f.dateFichier))} · ${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>` : esc(t)}</div>`; }).join("")
+    : `<div class="q">Aucun document publié.</div>`) + `</div>`;
+  html += `<div class="note">Ce que cette base publique ne contient pas : le détail de l'étude de dangers, les scénarios d'accident, les plans d'urgence (POI de l'exploitant, PPI de la préfecture) et l'emplacement des stockages dans le site. Une partie est consultable sous conditions ; le reste est réservé aux services de l'État et de secours. La préfecture publie en revanche l'information destinée à la population.</div>`;
+  return {titre:d.raisonSociale || "Installation classée", nature:"ref", lignes, html};
+}
+async function loadSeveso(){
+  setStatus("seveso","load","chargement…");
+  let page = 1, total = 1, all = [];
+  do {
+    const r = await getJSON(`https://georisques.gouv.fr/api/v1/installations_classees?departement=53&page=${page}&page_size=1000`);
+    all = all.concat(r.data || []); total = r.total_pages || 1; page++;
+  } while(page <= total && page <= 5);
+  const sev = all.filter(d => /seveso seuil/i.test(d.statutSeveso || "") && d.longitude && d.latitude);
+  state.seveso.list = sev.filter(sevActif).map(d => ({lat:d.latitude, lon:d.longitude, nom:d.raisonSociale || "Installation"}));
+  clearLayer("seveso");
+  let haut = 0;
+  let actifs = 0;
+  sev.forEach(d => {
+    const isHaut = /haut/i.test(d.statutSeveso);
+    const actif = sevActif(d);
+    if(actif){ actifs++; if(isHaut) haut++; }
+    const color = !actif ? "#8a8f98" : isHaut ? "#ff5d5d" : "#ff9a3c";
+    const nom = (d.raisonSociale || "Installation") + (actif ? "" : " (fin d'exploitation)");
+    addEntity("seveso", {
+      position: Cesium.Cartesian3.fromDegrees(d.longitude, d.latitude, 0),
+      point:{pixelSize:!actif ? 8 : isHaut ? 12 : 10, color:Cesium.Color.fromCssColorString(color).withAlpha(0.9), outlineColor:Cesium.Color.WHITE, outlineWidth:actif ? 1.5 : 1, distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 2500000)},
+      label:{text:nom, font:"11px system-ui, sans-serif", fillColor:actif ? Cesium.Color.WHITE : Cesium.Color.fromCssColorString("#c9ced6"), outlineColor:Cesium.Color.BLACK, outlineWidth:3,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset:new Cesium.Cartesian2(0, actif ? -16 : -13), distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 60000)}
+    }, sevesoInfo(d, actif));
+  });
+  const box = $("#ls-seveso");
+  if(box){
+    const items = sev.map(d => ({d, actif:sevActif(d), haut:/haut/i.test(d.statutSeveso)})).sort((a,b) => (b.actif - a.actif) || (b.haut - a.haut));
+    box.innerHTML = items.map((it,i) => `<button type="button" data-i="${i}"><span class="dotc" style="background:${!it.actif ? "#8a8f98" : it.haut ? "#ff5d5d" : "#ff9a3c"}"></span>${esc(it.d.raisonSociale || "Installation")} · ${esc(it.d.commune || "")}${it.actif ? "" : " (fin d'exploitation)"}</button>`).join("");
+    box.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      const it = items[+b.dataset.i];
+      flyTo({lon:it.d.longitude, lat:it.d.latitude - 0.023, h:2600, heading:0, pitch:-45}, 2.5);
+      showDetail(sevesoInfo(it.d, it.actif));
+    }));
+  }
+  state.seveso.meta = {n:actifs, haut};
+  setStatus("seveso","ok", `${actifs} sites en activité (${haut} seuil haut) · ${sev.length - actifs} fiche(s) en fin d'exploitation · ${all.length} installations classées au total`);
+  if(fc.ready) updateHour(fc.hour);
+}
+
+/* ---------- Couche : bâtiments 3D (BD TOPO) ---------- */
+const COUL_USAGE = {"Industriel":"#e0a35a","Commercial et services":"#7fb3d5","Résidentiel":"#a9b3bf","Agricole":"#8fbf7a","Religieux":"#c9a0dc","Sportif":"#6fd1c1","Annexe":"#7d8794"};
+async function loadBati(){
+  setStatus("bati","load","chargement des bâtiments…");
+  const [x1,y1,x2,y2] = BBOX_LAVAL;
+  const base = `https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=BDTOPO_V3:batiment&OUTPUTFORMAT=application/json&SRSNAME=EPSG:4326&BBOX=${x1},${y1},${x2},${y2},CRS:84&COUNT=5000&SORTBY=cleabs&PROPERTYNAME=geometrie,hauteur,usage_1,nature,nombre_d_etages,cleabs`;
+  let feats = [], start = 0, matched = Infinity;
+  while(start < matched && start < 20000){
+    const gj = await getJSON(base + "&STARTINDEX=" + start);
+    matched = gj.numberMatched ?? gj.totalFeatures ?? 0;
+    feats = feats.concat(gj.features || []);
+    if(!gj.features || !gj.features.length) break;
+    start += gj.features.length;
+    setStatus("bati","load",`${feats.length} / ${matched} bâtiments…`);
+  }
+  const instances = [];
+  feats.forEach(f => {
+    const p = f.properties || {}, g = f.geometry; if(!g) return;
+    const h = (p.hauteur && p.hauteur > 0) ? p.hauteur : 6;
+    const col = Cesium.Color.fromCssColorString(COUL_USAGE[p.usage_1] || "#a9b3bf");
+    const polys = g.type === "MultiPolygon" ? g.coordinates : g.type === "Polygon" ? [g.coordinates] : [];
+    polys.forEach((rings, k) => {
+      try{
+        const outer = Cesium.Cartesian3.fromDegreesArray(rings[0].flatMap(c=>[c[0],c[1]]));
+        const holes = rings.slice(1).map(r => new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(r.flatMap(c=>[c[0],c[1]]))));
+        instances.push(new Cesium.GeometryInstance({
+          geometry: new Cesium.PolygonGeometry({polygonHierarchy:new Cesium.PolygonHierarchy(outer, holes), height:0, extrudedHeight:h, vertexFormat:Cesium.PerInstanceColorAppearance.VERTEX_FORMAT}),
+          id:{kind:"bati", usage:p.usage_1, nature:p.nature, h, etages:p.nombre_d_etages, id:p.cleabs, estime:!(p.hauteur>0)},
+          attributes:{color:Cesium.ColorGeometryInstanceAttribute.fromColor(col)}
+        }));
+      }catch(e){}
+    });
+  });
+  if(state.bati.primitive) viewer.scene.primitives.remove(state.bati.primitive);
+  state.bati.primitive = viewer.scene.primitives.add(new Cesium.Primitive({
+    geometryInstances: instances,
+    appearance: new Cesium.PerInstanceColorAppearance({translucent:false, closed:true}),
+    asynchronous:true, releaseGeometryInstances:true
+  }));
+  state.bati.primitive.show = layers.find(x=>x.id==="bati").on;
+  state.bati.meta = {n:feats.length};
+  setStatus("bati","ok",`${feats.length} bâtiments · zone de ${Math.round((x2-x1)*74.4*10)/10} × ${Math.round((y2-y1)*111.2*10)/10} km`);
+}
+
+/* ---------- Prévisions : vent, rafales, pluie (grille Mayenne) ---------- */
+const GRID = {lat0:47.70, lat1:48.60, lon0:-1.25, lon1:0.00, nLat:7, nLon:7};
+const SEUILS = [{v:100, c:"#ff4d4d"}, {v:80, c:"#ff9a3c"}, {v:60, c:"#ffd23c"}];
+const fc = {cells:[], times:[], hour:0, ready:false, timer:null};
+const gustClass = g => SEUILS.find(t => g >= t.v) || null;
+const isoJour = () => new Intl.DateTimeFormat("sv-SE",{timeZone:TZ}).format(new Date());
+function fmtFcTime(str){
+  const d = new Date(str);
+  return new Intl.DateTimeFormat("fr-FR",{weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}).format(d);
+}
+function cellAt(lat, lon){
+  const dLat=(GRID.lat1-GRID.lat0)/GRID.nLat, dLon=(GRID.lon1-GRID.lon0)/GRID.nLon;
+  const i=Math.floor((lat-GRID.lat0)/dLat), j=Math.floor((lon-GRID.lon0)/dLon);
+  if(i<0||j<0||i>=GRID.nLat||j>=GRID.nLon) return null;
+  return fc.cells[i*GRID.nLon+j] || null;
+}
+function cellInfo(k){
+  const c = fc.cells[k], h = fc.hour, H = c.h;
+  const cum24 = H.precipitation.slice(h, h+24).reduce((a,b)=>a+(b||0),0);
+  const gmax = Math.max(...H.wind_gusts_10m.map(x=>x||0));
+  return {titre:`Prévision — maille ${fmtNum(c.lat,2)}° N · ${fmtNum(Math.abs(c.lon),2)}° O`, nature:"modele", lignes:[
+    ["Échéance", fmtFcTime(fc.times[h])],
+    ["Vent moyen", `${fmtNum(H.wind_speed_10m[h],0)} km/h de ${dirTxt(H.wind_direction_10m[h])}`],
+    ["Rafales", fmtNum(H.wind_gusts_10m[h],0) + " km/h"],
+    ["Pluie sur l'heure", fmtNum(H.precipitation[h]) + " mm"],
+    ["Pluie cumulée sur 24 h", fmtNum(cum24) + " mm"],
+    ["Rafale maximale sur 48 h", fmtNum(gmax,0) + " km/h"],
+    ["Source", "Open-Meteo, modèles Météo-France — prévision, pas une mesure"]
+  ]};
+}
+async function loadPrev(){
+  setStatus("prev","load","chargement…");
+  const dLat=(GRID.lat1-GRID.lat0)/GRID.nLat, dLon=(GRID.lon1-GRID.lon0)/GRID.nLon;
+  const pts=[];
+  for(let i=0;i<GRID.nLat;i++) for(let j=0;j<GRID.nLon;j++) pts.push({lat:GRID.lat0+(i+0.5)*dLat, lon:GRID.lon0+(j+0.5)*dLon, dLat, dLon});
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${pts.map(p=>p.lat.toFixed(3)).join(",")}&longitude=${pts.map(p=>p.lon.toFixed(3)).join(",")}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation&forecast_hours=48&models=meteofrance_seamless&timezone=Europe%2FParis&wind_speed_unit=kmh`;
+  const res = await getJSON(url);
+  const arr = Array.isArray(res) ? res : [res];
+  const keep = fc.hour;
+  clearLayer("prev"); clearLayer("expo");
+  fc.times = arr[0].hourly.time;
+  fc.cells = pts.map((p,k) => ({...p, h:arr[k].hourly}));
+  fc.cells.forEach((cell,k) => {
+    cell.rect = addEntity("expo", {rectangle:{
+      coordinates:Cesium.Rectangle.fromDegrees(cell.lon-cell.dLon/2, cell.lat-cell.dLat/2, cell.lon+cell.dLon/2, cell.lat+cell.dLat/2),
+      material:Cesium.Color.TRANSPARENT, height:0, distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 1500000)}}, () => cellInfo(k));
+    cell.arrow = addEntity("prev", {polyline:{positions:Cesium.Cartesian3.fromDegreesArray([cell.lon,cell.lat,cell.lon,cell.lat+0.001]), width:9,
+      material:new Cesium.PolylineArrowMaterialProperty(Cesium.Color.WHITE),
+      distanceDisplayCondition:new Cesium.DistanceDisplayCondition(20000, 900000)}}, () => cellInfo(k));
+  });
+  fc.ready = true;
+  state.expo.loaded = true;
+  const r = $("#fcRange"); r.max = fc.times.length-1;
+  const h = Math.min(keep, fc.times.length-1); r.value = h;
+  computeMax(); updateHour(h);
+  if(!SCN.active) $("#forecast").classList.add("show");
+  setStatus("prev","ok",`${fc.cells.length} points · 48 h · lu à ${fmtHeure(new Date())}`);
+  setStatus("expo","ok","recalculée à chaque échéance");
+}
+function computeMax(){
+  let best = {g:-1};
+  fc.cells.forEach(c => c.h.wind_gusts_10m.forEach((g,h) => { if(g!=null && g>best.g) best = {g, h, c}; }));
+  if(best.g < 0){ $("#fcMax").textContent = ""; return; }
+  const near = VILLES.reduce((a,v) => { const d=(v.lat-best.c.lat)**2+((v.lon-best.c.lon)*0.67)**2; return (!a||d<a.d) ? {v,d} : a; }, null);
+  const pmax = Math.max(...fc.cells.map(c => c.h.precipitation.slice(0,24).reduce((a,b)=>a+(b||0),0)));
+  $("#fcMax").textContent = `Rafale la plus forte prévue sur 48 h : ${fmtNum(best.g,0)} km/h, ${fmtFcTime(fc.times[best.h])}, secteur de ${near.v.nom}. Pluie cumulée maximale sur 24 h : ${fmtNum(pmax)} mm.`;
+}
+function updateHour(h){
+  if(!fc.ready) return;
+  fc.hour = h;
+  let n60=0, n80=0, n100=0;
+  fc.cells.forEach(cell => {
+    const H = cell.h, ws = H.wind_speed_10m[h] || 0, wd = H.wind_direction_10m[h] ?? 0, wg = H.wind_gusts_10m[h] || 0;
+    const cls = gustClass(wg);
+    if(wg>=100) n100++; else if(wg>=80) n80++; else if(wg>=60) n60++;
+    cell.rect.rectangle.material = cls ? Cesium.Color.fromCssColorString(cls.c).withAlpha(0.30) : Cesium.Color.fromCssColorString("#4cc3ff").withAlpha(0.05);
+    const [lon2, lat2] = destPoint(cell.lat, cell.lon, wd+180, Math.max(1500, ws*420));
+    cell.arrow.polyline.positions = Cesium.Cartesian3.fromDegreesArray([cell.lon, cell.lat, lon2, lat2]);
+    cell.arrow.polyline.material = new Cesium.PolylineArrowMaterialProperty(Cesium.Color.fromCssColorString(cls ? cls.c : "#cfe9ff").withAlpha(0.9));
+  });
+  const sev = state.seveso.list || [];
+  const sevExp = sev.filter(x => { const c = cellAt(x.lat, x.lon); return c && (c.h.wind_gusts_10m[h]||0) >= 80; }).length;
+  const villesExp = VILLES.filter(v => { const c = cellAt(v.lat, v.lon); return c && (c.h.wind_gusts_10m[h]||0) >= 60; }).map(v => v.nom);
+  $("#fcTime").textContent = fmtFcTime(fc.times[h]) + (h===0 ? " · heure en cours" : ` · +${h} h`);
+  $("#fcSummary").innerHTML = `Mailles en rafales : <span class="n">${n100}</span> ≥ 100 · <span class="n">${n80}</span> ≥ 80 · <span class="n">${n60}</span> ≥ 60 km/h · Enjeux exposés : <span class="n">${sevExp}</span> site(s) SEVESO en maille ≥ 80 km/h · communes en maille ≥ 60 km/h : ${villesExp.length ? esc(villesExp.join(", ")) : "aucune"}`;
+  if(layers.find(x=>x.id==="feu").on) setFwiDate(fc.times[h].slice(0,10));
+}
+
+/* ---------- Radar de pluie (RainViewer) ---------- */
+async function loadRadar(){
+  setStatus("radar","load","chargement…");
+  const rv = await getJSON("https://api.rainviewer.com/public/weather-maps.json");
+  const last = rv.radar.past[rv.radar.past.length-1];
+  const prov = new Cesium.UrlTemplateImageryProvider({url:`${rv.host}${last.path}/256/{z}/{x}/{y}/2/1_1.png`, maximumLevel:7, credit:new Cesium.Credit("Radar © RainViewer")});
+  if(state.radar.layer) viewer.imageryLayers.remove(state.radar.layer, true);
+  const lay = viewer.imageryLayers.addImageryProvider(prov);
+  lay.alpha = 0.75; lay.show = layers.find(x=>x.id==="radar").on;
+  state.radar.layer = lay;
+  setStatus("radar","ok",`image radar de ${fmtHeure(new Date(last.time*1000))} · lu à ${fmtHeure(new Date())}`);
+}
+
+/* ---------- Danger météo de feu (EFFIS, indice FWI) ---------- */
+let fwiDate = null;
+function setFwiDate(day){
+  if(fwiDate === day && state.feu.layer) return;
+  fwiDate = day;
+  if(state.feu.layer) viewer.imageryLayers.remove(state.feu.layer, true);
+  const prov = new Cesium.WebMapServiceImageryProvider({url:"https://maps.effis.emergency.copernicus.eu/effis", layers:"mf010.fwi",
+    parameters:{transparent:true, format:"image/png", time:day}, rectangle:Cesium.Rectangle.fromDegrees(-5.6, 41.2, 9.8, 51.2),
+    credit:new Cesium.Credit("Danger de feu © EFFIS / Copernicus")});
+  const lay = viewer.imageryLayers.addImageryProvider(prov);
+  lay.alpha = 0.6; lay.show = layers.find(x=>x.id==="feu").on;
+  state.feu.layer = lay;
+  setStatus("feu","ok",`indice du ${day.split("-").reverse().join("/")} (suit le curseur)`);
+}
+async function loadFeu(){
+  setFwiDate(fc.ready ? fc.times[fc.hour].slice(0,10) : isoJour());
+  $("#lg-feu").hidden = false;
+}
+
+/* ---------- Chargement ---------- */
+const LOADERS = {dep:loadDep, meteo:loadMeteo, eau:loadEau, seveso:loadSeveso, bati:loadBati, prev:loadPrev, radar:loadRadar, feu:loadFeu};
+async function loadLayer(id){
+  try { await LOADERS[id](); state[id].loaded = true; }
+  catch(e){ setStatus(id,"err","indisponible (" + (e.message||e) + ")"); console.warn(id, e); }
+  const L = layers.find(x=>x.id===id);
+  if(L.refresh && !state[id].timer) state[id].timer = setInterval(() => { if(L.on) loadLayer(id); }, L.refresh*1000);
+}
+renderLayers();
+["dep","meteo","eau","seveso","prev","radar"].forEach(loadLayer);
+
+/* ---------- Détail au clic ---------- */
+const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handler.setInputAction(click => {
+  const picked = viewer.scene.pick(click.position);
+  if(!Cesium.defined(picked)){ $("#detail").style.display="none"; return; }
+  let info = null;
+  if(picked.id instanceof Cesium.Entity){ const i = infoById.get(picked.id.id); info = typeof i === "function" ? i() : i; }
+  else if(picked.id && picked.id.kind === "bati"){
+    const b = picked.id;
+    info = {titre:"Bâtiment", nature:"ref", lignes:[
+      ["Usage", b.usage || "—"], ["Nature", b.nature || "—"],
+      ["Hauteur", b.estime ? "non renseignée (6 m par défaut)" : fmtNum(b.h,1)+" m"],
+      ["Étages", b.etages ?? "—"], ["Identifiant", b.id || "—"],
+      ["Source", "IGN BD TOPO — précision métrique, pas un relevé intérieur"]
+    ]};
+  }
+  if(!info){ $("#detail").style.display="none"; return; }
+  showDetail(info);
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+function showDetail(info){
+  const badge = info.nature==="differe" ? ["MESURÉ · DIFFÉRÉ","b-sim"] : BADGE[info.nature] || BADGE.ref;
+  $("#detailTitle").textContent = info.titre;
+  $("#detailBody").innerHTML = `<div style="margin:2px 0 10px"><span class="badge ${badge[1]}">${badge[0]}</span></div>` +
+    info.lignes.map(([k,v]) => `<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join("") + (info.html || "");
+  $("#detail").style.display = "block";
+  $("#detail").scrollTop = 0;
+}
+$("#closeDetail").addEventListener("click", () => $("#detail").style.display="none");
+
+/* ---------- Scénario : patrouille dans le bois de l'Huisserie (SIMULÉ) ---------- */
+const HUI = {
+  pc: [-0.778657, 48.042777],
+  centre: [-0.783132, 48.041226],
+  chemin: [[-0.778657,48.042777],[-0.778017,48.042391],[-0.777858,48.04119],[-0.777372,48.036018],[-0.778712,48.035575],[-0.780062,48.035183],[-0.77998,48.034284],[-0.779993,48.033726],[-0.780139,48.033294],[-0.783134,48.033077],[-0.786548,48.028303],[-0.787003,48.027602]],
+  contour: [[-0.797356,48.039686],[-0.797131,48.039603],[-0.796841,48.038823],[-0.795142,48.039071],[-0.793761,48.039423],[-0.791439,48.038466],[-0.789824,48.037779],[-0.78865,48.037518],[-0.788755,48.037176],[-0.789017,48.036984],[-0.789703,48.037045],[-0.79038,48.035475],[-0.788424,48.03463],[-0.789553,48.033181],[-0.789058,48.033025],[-0.788464,48.032936],[-0.787401,48.03293],[-0.787551,48.032577],[-0.787822,48.032235],[-0.788225,48.031379],[-0.788093,48.031088],[-0.78894,48.030388],[-0.788998,48.03034],[-0.789427,48.02931],[-0.789152,48.028235],[-0.789053,48.028137],[-0.786926,48.027671],[-0.785772,48.02862],[-0.784995,48.029317],[-0.784958,48.029347],[-0.784655,48.029586],[-0.78417,48.029959],[-0.783902,48.03],[-0.783954,48.030172],[-0.783584,48.030541],[-0.783078,48.030894],[-0.782233,48.031676],[-0.781675,48.031845],[-0.780421,48.031895],[-0.780167,48.031905],[-0.779998,48.032294],[-0.779732,48.034975],[-0.779429,48.035074],[-0.778944,48.035137],[-0.778008,48.035352],[-0.777696,48.0353],[-0.776945,48.0344],[-0.776966,48.035112],[-0.777039,48.035798],[-0.777083,48.036327],[-0.777236,48.036841],[-0.777317,48.0391],[-0.777523,48.041716],[-0.777567,48.04252],[-0.777896,48.042504],[-0.779025,48.042449],[-0.779088,48.042589],[-0.779128,48.04268],[-0.779181,48.043132],[-0.779424,48.0444],[-0.78046,48.044555],[-0.780986,48.044802],[-0.781393,48.044993],[-0.7817,48.045136],[-0.78189,48.045636],[-0.782301,48.045812],[-0.782945,48.045832],[-0.783971,48.046302],[-0.784162,48.046791],[-0.785069,48.047131],[-0.785087,48.046385],[-0.78549,48.046389],[-0.785664,48.046677],[-0.786244,48.046844],[-0.787117,48.04695],[-0.787474,48.04691],[-0.788013,48.046758],[-0.788397,48.046547],[-0.788543,48.045911],[-0.788617,48.045628],[-0.788663,48.045461],[-0.788625,48.045149],[-0.78872,48.044823],[-0.789036,48.043957],[-0.790366,48.044531],[-0.791182,48.044918],[-0.792534,48.042881],[-0.795924,48.044201],[-0.795972,48.044131],[-0.79618,48.043383],[-0.796048,48.042473],[-0.796719,48.041537],[-0.796925,48.041533],[-0.796986,48.040858],[-0.797091,48.040264],[-0.797347,48.039761],[-0.797356,48.039686]]
+};
+const horloge = () => (window.__FILM_MS != null ? window.__FILM_MS : performance.now());
+const SCN_MASQUE = ["prev","expo","radar","feu"];
+const SCN = {masque:{}, built:false, active:false, playing:false, simT:0, speed:30, last:null, lastUi:0, ents:[], fired:new Set(), log:[], wind:null, robot:null};
+const TURQ = "#3fe0d0", ORANGE = "#ff7a2e";
+const R_T = 6371000, D2R = Math.PI/180, COSL = Math.cos(48.035*D2R);
+const toXY = q => [q[0]*D2R*COSL*R_T, q[1]*D2R*R_T];
+const fromXY = q => [q[0]/(D2R*COSL*R_T), q[1]/(D2R*R_T)];
+const dXY = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+const llh = (arr, h) => Cesium.Cartesian3.fromDegreesArrayHeights(arr.flatMap(q => [q[0], q[1], h]));
+const cartXY = (q, h=0) => { const ll = fromXY(q); return Cesium.Cartesian3.fromDegrees(ll[0], ll[1], h); };
+const esp = t => t.split("").join(" ");
+const PXY = HUI.chemin.map(toXY), POLY = HUI.contour.map(toXY);
+const CUM = [0]; for(let i=1;i<PXY.length;i++) CUM.push(CUM[i-1] + dXY(PXY[i-1], PXY[i]));
+const S_TOT = CUM[CUM.length-1];
+function xyAt(sv){ sv = Math.max(0, Math.min(S_TOT, sv)); let i = 1; while(i < CUM.length-1 && CUM[i] < sv) i++;
+  const f = (sv-CUM[i-1]) / ((CUM[i]-CUM[i-1]) || 1); return [PXY[i-1][0]+f*(PXY[i][0]-PXY[i-1][0]), PXY[i-1][1]+f*(PXY[i][1]-PXY[i-1][1])]; }
+function dansBois(q){ let ins = false; for(let i=0, j=POLY.length-1; i<POLY.length; j=i++){ const a=POLY[i], b=POLY[j];
+  if(((a[1]>q[1]) !== (b[1]>q[1])) && (q[0] < (b[0]-a[0])*(q[1]-a[1])/(b[1]-a[1])+a[0])) ins = !ins; } return ins; }
+function cote(sv, d){ // point à d mètres du chemin, du côté qui reste dans le bois
+  const a = xyAt(sv-2), b = xyAt(sv+2), c = xyAt(sv), tx = b[0]-a[0], ty = b[1]-a[1], n = Math.hypot(tx,ty) || 1;
+  const droite = [c[0] + d*ty/n, c[1] - d*tx/n], gauche = [c[0] - d*ty/n, c[1] + d*tx/n];
+  return dansBois(droite) ? droite : gauche; }
+const DEPOT = {s:700, xy:cote(700, 9)};
+const FEU = {s:1500, xy:cote(1500, 45)};
+const CAPTEURS = [
+  {id:"G1", xy:cote(450, 40), base:3},
+  {id:"G2", xy:cote(1100, 40), base:4},
+  {id:"G3", xy:cote(1620, 30), base:3},
+  {id:"G4", xy:cote(1960, 25), base:2}
+];
+const VIT = 1.4;
+const ARRETS = [{s:DEPOT.s, dur:40, cible:DEPOT.xy, id:"depot"}, {s:FEU.s, dur:150, cible:FEU.xy, id:"feu"}];
+const PLAN = (() => { const pl = []; let t = 0, sv = 0;
+  for(const a of ARRETS){ const dt = (a.s - sv)/VIT; pl.push({t0:t, t1:t+dt, s0:sv, s1:a.s}); t += dt; sv = a.s; pl.push({t0:t, t1:t+a.dur, s0:sv, s1:sv, arret:a}); t += a.dur; }
+  pl.push({t0:t, t1:t+(S_TOT-sv)/VIT, s0:sv, s1:S_TOT}); return pl; })();
+const T_FIN = PLAN[PLAN.length-1].t1;
+function etatAt(t){ const q = PLAN.find(x => t >= x.t0 && t <= x.t1) || PLAN[PLAN.length-1];
+  const f = q.t1 > q.t0 ? (t-q.t0)/(q.t1-q.t0) : 1; return {s:q.s0 + f*(q.s1-q.s0), arret:q.arret || null, enMarche:!q.arret && t < T_FIN}; }
+const firstT = pred => { for(let t=0; t<=T_FIN; t+=1) if(pred(t)) return t; return T_FIN; };
+const T_DEPOT = firstT(t => dXY(xyAt(etatAt(t).s), DEPOT.xy) <= 20);
+const T_FEU = firstT(t => dXY(xyAt(etatAt(t).s), FEU.xy) <= 70);
+const T_FEU_ARRET = PLAN.find(x => x.arret && x.arret.id === "feu").t0;
+const T_DEPOT_FIN = PLAN.find(x => x.arret && x.arret.id === "depot").t1;
+const T_G3 = T_FEU + 60;
+function co(c, t){ let v = c.base + 0.7*Math.sin(t/37 + c.base);
+  if(c.id === "G3" && t > T_FEU) v += Math.min(46, (t - T_FEU)*0.5);
+  if(c.id === "G2" && t > T_FEU + 200) v += Math.min(7, (t - T_FEU - 200)*0.05);
+  return Math.max(0, Math.round(v)); }
+function thermique(t){ const d = dXY(xyAt(etatAt(t).s), FEU.xy);
+  if(t >= T_FEU) return Math.round(150 + 18*Math.sin(t/23));
+  return Math.round(d < 140 ? 13 + (140-d)*0.35 : 13 + Math.sin(t/50)); }
+const hhmmss = t => { t = Math.max(0, Math.round(t)); return [Math.floor(t/3600), Math.floor(t/60)%60, t%60].map(x => String(x).padStart(2,"0")).join(":"); };
+const EVENTS = [
+  {t:0, txt:`Départ du PC avancé (parking du bois) · patrouille par points de passage, ${fmtNum(S_TOT/1000,1)} km`},
+  {t:T_DEPOT, txt:"Dépôt sauvage détecté à 9 m du chemin : pneus usagés · photo transmise au PC"},
+  {t:T_DEPOT_FIN, txt:"Reprise de la patrouille"},
+  {t:T_FEU, txt:"ALERTE · source de chaleur détectée par la caméra thermique, à environ 70 m", al:true},
+  {t:T_FEU_ARRET, txt:"Robot arrêté à 45 m, orienté vers la source · vidéo et image thermique en direct vers le PC", al:true},
+  {t:T_G3, txt:"Capteur G3 : monoxyde de carbone au-dessus du seuil de 30 ppm", al:true},
+  {t:T_FEU_ARRET + 150, txt:"Reprise de la patrouille · la zone reste sous surveillance des capteurs"},
+  {t:T_FIN, txt:`Fin de patrouille à la lisière sud · ${fmtNum(S_TOT/1000,1)} km parcourus`}
+].sort((a,b) => a.t - b.t);
+const svgUri = s => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
+const ICON_CAPTEUR = svgUri("<svg xmlns='http://www.w3.org/2000/svg' width='40' height='48' viewBox='0 0 40 48'><polygon points='3,11 37,4 37,12 3,19' fill='#16232c' stroke='#7fd8ff' stroke-width='1'/><rect x='9' y='19' width='22' height='24' rx='2' fill='#c9ced3' stroke='#5b636b'/><circle cx='20' cy='30' r='3.4' fill='#3fe0d0'/><line x1='9' y1='38' x2='31' y2='38' stroke='#8a9198'/></svg>");
+const ICON_PNEU = svgUri("<svg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'><circle cx='17' cy='17' r='14' fill='#141414' stroke='#ffb020' stroke-width='3'/><circle cx='17' cy='17' r='5.5' fill='#555' stroke='#aaa' stroke-width='1.5'/></svg>");
+function arc(a, b, hMax, n=24){ const out = []; for(let i=0;i<=n;i++){ const f = i/n; const q = [a[0]+f*(b[0]-a[0]), a[1]+f*(b[1]-a[1])]; const ll = fromXY(q); out.push(ll[0], ll[1], Math.sin(Math.PI*f)*hMax); } return Cesium.Cartesian3.fromDegreesArrayHeights(out); }
+function cercle(c, r, n=72){ const out = []; for(let i=0;i<=n;i++){ const a = 2*Math.PI*i/n; const ll = fromXY([c[0]+r*Math.cos(a), c[1]+r*Math.sin(a)]); out.push(ll[0], ll[1], 1.5); } return Cesium.Cartesian3.fromDegreesArrayHeights(out); }
+const scnAdd = o => { const e = viewer.entities.add(o); SCN.ents.push(e); return e; };
+const apres = t0 => new Cesium.CallbackProperty(() => SCN.simT >= t0, false);
+const labelStyle = (txt, color, dy, maxDist) => ({text:txt, font:"600 12px system-ui, sans-serif", fillColor:Cesium.Color.fromCssColorString(color),
+  outlineColor:Cesium.Color.BLACK, outlineWidth:3, style:Cesium.LabelStyle.FILL_AND_OUTLINE, showBackground:true,
+  backgroundColor:Cesium.Color.fromCssColorString("rgba(5,12,18,0.72)"), pixelOffset:new Cesium.Cartesian2(0, dy),
+  verticalOrigin:Cesium.VerticalOrigin.BOTTOM, disableDepthTestDistance:Number.POSITIVE_INFINITY,
+  distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, maxDist || 9000)});
+
+function buildScn(){
+  if(SCN.built) return; SCN.built = true;
+  const turq = Cesium.Color.fromCssColorString(TURQ);
+  // Contour du bois et nom
+  scnAdd({polyline:{positions:llh(HUI.contour, 2), width:2, material:turq.withAlpha(0.65)}});
+  scnAdd({position:Cesium.Cartesian3.fromDegrees(-0.7905, 48.0405, 0), label:labelStyle(esp("BOIS DE L'HUISSERIE"), "#9ff3ea", 0, 12000)});
+  // Parcours : prévu (tirets) et parcouru (lumineux)
+  scnAdd({polyline:{positions:llh(HUI.chemin, 1.5), width:3,
+    material:new Cesium.PolylineDashMaterialProperty({color:turq.withAlpha(0.7), dashLength:14})}});
+  scnAdd({polyline:{width:6, material:new Cesium.PolylineGlowMaterialProperty({glowPower:0.25, color:turq}),
+    positions:new Cesium.CallbackProperty(() => { const e = etatAt(SCN.simT), pts = [];
+      for(let i=0;i<CUM.length && CUM[i] < e.s;i++) pts.push(fromXY(PXY[i])); pts.push(fromXY(xyAt(e.s)));
+      if(pts.length < 2) pts.push(fromXY(xyAt(e.s + 0.5)));
+      return llh(pts, 2); }, false)}});
+  // PC avancé
+  scnAdd({position:Cesium.Cartesian3.fromDegrees(HUI.pc[0], HUI.pc[1], 0), point:{pixelSize:11, color:turq, outlineColor:Cesium.Color.WHITE, outlineWidth:2, disableDepthTestDistance:Number.POSITIVE_INFINITY},
+    label:labelStyle(esp("PC AVANCÉ") + " · SIMULÉ", "#9ff3ea", -14)});
+  // Capteurs de gaz et leurs liaisons vers le PC
+  const pcXY = toXY(HUI.pc);
+  CAPTEURS.forEach(c => {
+    scnAdd({position:cartXY(c.xy), billboard:{image:ICON_CAPTEUR, width:30, height:36, verticalOrigin:Cesium.VerticalOrigin.BOTTOM, disableDepthTestDistance:Number.POSITIVE_INFINITY},
+      label:Object.assign(labelStyle("", TURQ, -40), {text:new Cesium.CallbackProperty(() => `${c.id} · CO ${co(c, SCN.simT)} ppm (sim.)`, false),
+        fillColor:new Cesium.CallbackProperty(() => Cesium.Color.fromCssColorString(co(c, SCN.simT) >= 30 ? ORANGE : TURQ), false)})});
+    scnAdd({polyline:{positions:arc(c.xy, pcXY, Math.min(120, dXY(c.xy, pcXY)*0.18)), width:3,
+      material:new Cesium.PolylineGlowMaterialProperty({glowPower:0.18, color:turq.withAlpha(0.8)})}});
+  });
+  // Dépôt sauvage (après détection)
+  scnAdd({position:cartXY(DEPOT.xy), billboard:{image:ICON_PNEU, width:26, height:26, show:apres(T_DEPOT), disableDepthTestDistance:Number.POSITIVE_INFINITY},
+    label:Object.assign(labelStyle(esp("DÉPÔT SAUVAGE") + " · SIMULÉ", "#ffcf6a", -18), {show:apres(T_DEPOT)})});
+  // Zone de chaleur (après détection) : anneaux pulsés
+  [15, 35, 60].forEach((r0, k) => scnAdd({polyline:{show:apres(T_FEU), width:3,
+    material:new Cesium.PolylineGlowMaterialProperty({glowPower:0.3, color:Cesium.Color.fromCssColorString(ORANGE)}),
+    positions:new Cesium.CallbackProperty(() => cercle(FEU.xy, r0 + 6*Math.sin(horloge()/420 - k*0.9)), false)}}));
+  scnAdd({position:cartXY(FEU.xy), ellipse:{show:apres(T_FEU), semiMajorAxis:9, semiMinorAxis:9, height:0.8, material:Cesium.Color.fromCssColorString(ORANGE).withAlpha(0.55)},
+    label:Object.assign(labelStyle("", "#ff9a5a", -40), {show:apres(T_FEU), text:new Cesium.CallbackProperty(() => `${esp("ZONE DE CHALEUR")}\n${thermique(SCN.simT)} °C en surface · SIMULÉ`, false)})});
+  // Robot quadrupède (modèle générique, rôle du B2 Fire Rescue)
+  const posCb = (time, result) => cartXY(xyAt(etatAt(SCN.simT).s));
+  const robotPos = Cesium.CallbackPositionProperty ? new Cesium.CallbackPositionProperty(posCb, false) : new Cesium.CallbackProperty(posCb, false);
+  const robotOri = new Cesium.CallbackProperty(() => {
+    const e = etatAt(SCN.simT), ici = xyAt(e.s);
+    let vers = e.arret ? e.arret.cible : xyAt(Math.min(S_TOT, e.s + 3));
+    if(dXY(vers, ici) < 0.5){ const av = xyAt(e.s - 3); vers = [2*ici[0]-av[0], 2*ici[1]-av[1]]; }
+    const cap = Math.atan2(vers[0]-ici[0], vers[1]-ici[1]);
+    // le modèle regarde vers son +X glTF, que Cesium place sur l'axe local Y : le cap s'applique tel quel
+    return Cesium.Transforms.headingPitchRollQuaternion(cartXY(ici), new Cesium.HeadingPitchRoll(cap, 0, 0));
+  }, false);
+  const marche = () => SCN.playing && etatAt(SCN.simT).enMarche;
+  const hanche = ph => new Cesium.NodeTransformationProperty({rotation:new Cesium.CallbackProperty(() =>
+    Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Z, marche() ? Cesium.Math.toRadians(20)*Math.sin(horloge()/1000*2*Math.PI/0.55 + ph) : 0), false)});
+  const genou = ph => new Cesium.NodeTransformationProperty({rotation:new Cesium.CallbackProperty(() =>
+    Cesium.Quaternion.fromAxisAngle(Cesium.Cartesian3.UNIT_Z, marche() ? Cesium.Math.toRadians(16)*Math.max(0, Math.sin(horloge()/1000*2*Math.PI/0.55 + ph + Math.PI/2)) : 0), false)});
+  SCN.robot = scnAdd({name:"Robot virtuel", position:robotPos, orientation:robotOri, viewFrom:new Cesium.Cartesian3(-35, -55, 30),
+    model:{uri:"robot-quadrupede.glb", minimumPixelSize:70, maximumScale:60, silhouetteColor:turq, silhouetteSize:1.5,
+      nodeTransformations:{hip_AG:hanche(0), hip_RD:hanche(0), hip_AD:hanche(Math.PI), hip_RG:hanche(Math.PI),
+        knee_AG:genou(0), knee_RD:genou(0), knee_AD:genou(Math.PI), knee_RG:genou(Math.PI)}},
+    label:labelStyle(esp("ROBOT VIRTUEL") + "\nrôle : B2 Fire Rescue · SIMULÉ", TURQ, -78)});
+  // Liaison robot → PC (arc qui suit le robot)
+  scnAdd({polyline:{width:3, material:new Cesium.PolylineGlowMaterialProperty({glowPower:0.2, color:turq}),
+    positions:new Cesium.CallbackProperty(() => { const r = xyAt(etatAt(SCN.simT).s); return arc(r, pcXY, Math.min(140, dXY(r, pcXY)*0.2 + 8)); }, false)}});
+}
+async function ventHuisserie(){
+  try {
+    const r = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=48.037&longitude=-0.783&current=wind_speed_10m,wind_direction_10m,wind_gusts_10m,temperature_2m&models=meteofrance_seamless&wind_speed_unit=kmh&timezone=Europe%2FParis`);
+    SCN.wind = r.current;
+    const vers = (SCN.wind.wind_direction_10m + 180) * D2R, L = 320, ouv = 14 * D2R, f = FEU.xy;
+    const pt = (ang, d) => [f[0] + d*Math.sin(ang), f[1] + d*Math.cos(ang)];
+    const cone = [f, pt(vers - ouv, L), pt(vers, L*1.05), pt(vers + ouv, L)].map(q => fromXY(q)).flat();
+    scnAdd({polygon:{hierarchy:Cesium.Cartesian3.fromDegreesArray(cone), material:Cesium.Color.fromCssColorString("#d6dbe2").withAlpha(0.32), outline:true, outlineColor:Cesium.Color.fromCssColorString("#eef2f6").withAlpha(0.7), show:apres(T_FEU), height:0.5}});
+    scnAdd({position:cartXY(pt(vers, L*1.08)), label:Object.assign(labelStyle(`Vent réel : ${fmtNum(SCN.wind.wind_speed_10m,0)} km/h de ${dirTxt(SCN.wind.wind_direction_10m)}\npanache indicatif, non modélisé`, "#dfe8f1", -6), {show:apres(T_FEU)})});
+  } catch(e) { SCN.wind = null; }
+}
+function majScn(){
+  const t = SCN.simT, e = etatAt(t), ici = xyAt(e.s), ll = fromXY(ici), dPc = dXY(ici, toXY(HUI.pc));
+  const etat = t >= T_FIN ? "Patrouille terminée" : e.arret ? (e.arret.id === "feu" ? "ALERTE · observation" : "Arrêt · signalement") : (t === 0 && !SCN.playing ? "Prêt au départ" : "Patrouille");
+  const alerte = t >= T_FEU && t < T_FEU_ARRET + 150;
+  const vers = e.arret ? e.arret.cible : xyAt(Math.min(S_TOT, e.s + 3));
+  const cap = (Math.atan2(vers[0]-ici[0], vers[1]-ici[1]) / D2R + 360) % 360;
+  const cells = [
+    ["État", etat, alerte], ["Position", `${fmtNum(ll[1],5)} N · ${fmtNum(Math.abs(ll[0]),5)} O`], ["Cap · vitesse", `${fmtNum(cap,0)}° · ${e.enMarche && SCN.playing ? fmtNum(VIT,1) : "0,0"} m/s`],
+    ["Parcouru", `${fmtNum(e.s/1000,2)} / ${fmtNum(S_TOT/1000,2)} km`], ["Batterie · liaison", `${fmtNum(100 - t/60*0.35,0)} % · ${fmtNum(Math.max(35, Math.min(97, 97 - dPc/35)),0)} %`],
+    ["Caméra thermique (max)", `${thermique(t)} °C`, t >= T_FEU],
+    ["CO capteurs (ppm)", CAPTEURS.map(c => `${c.id} ${co(c,t)}`).join(" · "), CAPTEURS.some(c => co(c,t) >= 30)],
+    ["Vent réel sur le bois", SCN.wind ? `${fmtNum(SCN.wind.wind_speed_10m,0)} km/h de ${dirTxt(SCN.wind.wind_direction_10m)} · raf. ${fmtNum(SCN.wind.wind_gusts_10m,0)}` : "indisponible"],
+    ["Source des mesures", "robot et capteurs : SIMULÉ"]
+  ];
+  $("#scnTel").innerHTML = cells.map(([k,v,a]) => `<div><div class="k">${esc(k)}</div><div class="v${a ? " alerte" : ""}">${esc(v)}</div></div>`).join("");
+  $("#scnClock").textContent = `${hhmmss(t)} / ${hhmmss(T_FIN)} (temps simulé)`;
+  $("#scnBar i").style.width = `${(t / T_FIN * 100).toFixed(1)}%`;
+}
+function journal(){
+  EVENTS.forEach((ev, i) => { if(SCN.simT >= ev.t && !SCN.fired.has(i)){ SCN.fired.add(i); SCN.log.push(ev); } });
+  $("#scnLog").innerHTML = SCN.log.slice().reverse().map(ev => `<div class="${ev.al ? "al" : ""}">${hhmmss(ev.t)} · ${esc(ev.txt)}</div>`).join("");
+}
+viewer.scene.preRender.addEventListener(() => {
+  const now = performance.now(); const dt = SCN.last == null ? 0 : (now - SCN.last)/1000; SCN.last = now;
+  if(!SCN.active) return;
+  if(SCN.playing){ SCN.simT = Math.min(T_FIN, SCN.simT + dt*SCN.speed); if(SCN.simT >= T_FIN){ SCN.playing = false; $("#scnPlay").textContent = "▶ Lancer la patrouille"; } }
+  if(now - SCN.lastUi > 150){ SCN.lastUi = now; journal(); majScn(); }
+});
+function ouvrirScn(){
+  buildScn(); SCN.active = true; SCN.ents.forEach(e => e.show = true);
+  SCN_MASQUE.forEach(id => { const L = layers.find(x => x.id === id); SCN.masque[id] = L.on;
+    if(L.on){ L.on = false; const c = $("#chk-" + id); if(c) c.checked = false; applyVisibility(id); } });
+  $("#layers").classList.add("scn-off");
+  $("#forecast").classList.remove("show"); $("#scn").classList.add("show"); $("#detail").style.display = "none";
+  if(!SCN.wind) ventHuisserie();
+  journal(); majScn();
+  flyTo({lon:-0.7790, lat:48.0195, h:1250, heading:-5, pitch:-33}, 3.5);
+}
+function fermerScn(){
+  SCN.active = false; SCN.playing = false; viewer.trackedEntity = undefined; $("#scnFollow").checked = false;
+  SCN.ents.forEach(e => e.show = false); $("#scn").classList.remove("show");
+  SCN_MASQUE.forEach(id => { if(SCN.masque[id]){ const L = layers.find(x => x.id === id); L.on = true;
+    const c = $("#chk-" + id); if(c) c.checked = true; applyVisibility(id); } });
+  $("#layers").classList.remove("scn-off");
+  if(fc.ready) $("#forecast").classList.add("show");
+}
+$("#btnScn").addEventListener("click", ouvrirScn);
+$("#scnQuit").addEventListener("click", fermerScn);
+$("#scnPlay").addEventListener("click", () => {
+  if(SCN.simT >= T_FIN){ SCN.simT = 0; SCN.fired.clear(); SCN.log = []; }
+  SCN.playing = !SCN.playing; $("#scnPlay").textContent = SCN.playing ? "❚❚ Pause" : "▶ Reprendre";
+});
+$("#scnReset").addEventListener("click", () => { SCN.simT = 0; SCN.playing = false; SCN.fired.clear(); SCN.log = []; $("#scnPlay").textContent = "▶ Lancer la patrouille"; journal(); majScn(); });
+$("#scnSpeed").addEventListener("change", e => SCN.speed = +e.target.value);
+$("#scnFollow").addEventListener("change", e => { viewer.trackedEntity = e.target.checked && SCN.robot ? SCN.robot : undefined; });
+
+/* ---------- Légendes et descente ---------- */
+function caption(t, s){
+  $("#capT").textContent = t; $("#capS").textContent = s || "";
+  $("#caption").classList.add("show");
+}
+const hideCaption = () => $("#caption").classList.remove("show");
+const wait = ms => new Promise(r => setTimeout(r, ms));
+let descentRunning = false;
+async function descente(){
+  if(descentRunning) return; descentRunning = true; $("#detail").style.display="none";
+  setView(VUES.globe);
+  caption("Territoire", "Du satellite au bâtiment");
+  await wait(1800);
+  hideCaption();
+  await flyTo(VUES.france, 4.5);
+  caption("France", "Fonds IGN · données publiques ouvertes");
+  await wait(1600); hideCaption();
+  await flyTo(VUES.mayenne, 4);
+  const e = state.eau.meta, s = state.seveso.meta;
+  caption("Mayenne", `${e.n ?? "…"} stations hydrométriques en direct · ${s.n ?? "…"} sites SEVESO · vent prévu sur 48 h`);
+  await wait(3200); hideCaption();
+  const L = layers.find(x=>x.id==="bati");
+  if(!L.on){ L.on = true; $("#chk-bati").checked = true; if(!state.bati.loaded) loadLayer("bati"); else applyVisibility("bati"); }
+  await flyTo(VUES.laval, 5);
+  caption("Laval", "Bâtiments IGN BD TOPO · étape suivante : SCANNER, l'intérieur du site");
+  await wait(3500); hideCaption();
+  descentRunning = false;
+}
+$("#btnDescent").addEventListener("click", descente);
+document.querySelectorAll("[data-goto]").forEach(b => b.addEventListener("click", () => {
+  const k = b.dataset.goto;
+  if(k === "laval"){ const L = layers.find(x=>x.id==="bati"); if(!L.on){ L.on = true; $("#chk-bati").checked = true; if(!state.bati.loaded) loadLayer("bati"); else applyVisibility("bati"); } }
+  flyTo(VUES[k], 3);
+}));
+$("#toggleLayers").addEventListener("click", () => $("#layers").classList.toggle("open"));
+$("#fcRange").addEventListener("input", e => updateHour(+e.target.value));
+$("#fcPlay").addEventListener("click", () => {
+  if(fc.timer){ clearInterval(fc.timer); fc.timer = null; $("#fcPlay").textContent = "▶ Lire 48 h"; return; }
+  if(!fc.ready) return;
+  $("#fcPlay").textContent = "❚❚ Pause";
+  fc.timer = setInterval(() => {
+    const r = $("#fcRange"), n = +r.value + 1;
+    if(n > +r.max){ clearInterval(fc.timer); fc.timer = null; $("#fcPlay").textContent = "▶ Lire 48 h"; return; }
+    r.value = n; updateHour(n);
+  }, 650);
+});
+
+/* ---------- Mode tournage (?tournage) : le script tournage.js pilote le moteur image par image ---------- */
+if(new URLSearchParams(location.search).has("tournage")){
+  window.__DTL = {viewer, layers, state, applyVisibility, loadLayer, infoById, fc, updateHour, gustClass, fmtFcTime, cellAt, SEUILS, VILLES, VUES,
+    SCN, SCN_MASQUE, buildScn, ventHuisserie, etatAt, xyAt, fromXY, toXY, dXY, thermique, co, CAPTEURS, HUI, FEU, DEPOT, VIT, S_TOT,
+    T_FIN, T_FEU, T_DEPOT, T_FEU_ARRET, T_DEPOT_FIN, T_G3, EVENTS, sevActif, dirTxt, fmtNum};
+  const sc = document.createElement("script"); sc.src = "tournage.js?v=" + Date.now(); document.body.appendChild(sc);
+}
+
+})();
+</script>
+</body>
+</html>

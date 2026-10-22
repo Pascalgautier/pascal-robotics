@@ -8,16 +8,15 @@
   <meta name="theme-color" content="#050b18">
   <link rel="canonical" href="https://pascal-robotics.fr/">
   <style>html,body{margin:0;padding:0;height:100%;background:#050b18}</style>
-  <!-- Ouverture « paupière » : plus d'Orbe ni de logo ici. On pose le drapeau puis on part aussitôt vers /orchestrai, dont le script
-       inline du <head> affiche les volets navy fermés (fente + filet bleu) et les ouvre au mouvement de la souris/du doigt.
-       (assets/intro-orb/ et la vidéo restent dans le dépôt mais ne sont plus chargés.) -->
+  <!-- Pré-landing L.O.R.V. (octobre 2026) : l'accueil part d'abord vers /lorv/ (vidéo et logiciel de télémétrie).
+       Les boutons « Site Pascal Robotics » de /lorv/ posent le drapeau sessionStorage['pr-intro-orb'] puis ouvrent /orchestrai,
+       qui garde son ouverture « paupière ». Pour revenir à l'accueil précédent : remettre '/orchestrai' ci-dessous et poser le drapeau ici. -->
   <script>
-    try { sessionStorage.setItem('pr-intro-orb', '1'); } catch (e) {}
-    location.replace('/orchestrai');
+    location.replace('/lorv/');
   </script>
-  <noscript><meta http-equiv="refresh" content="0;url=/orchestrai"></noscript>
+  <noscript><meta http-equiv="refresh" content="0;url=/lorv/"></noscript>
 </head>
 <body>
-  <p style="position:absolute;left:-9999px"><a href="/orchestrai">Pascal Robotics — OrchestrAI</a></p>
+  <p style="position:absolute;left:-9999px"><a href="/lorv/">L.O.R.V. · Vue de situation</a> · <a href="/orchestrai">Pascal Robotics — OrchestrAI</a></p>
 </body>
 </html>
