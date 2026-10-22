@@ -22,6 +22,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 .hud{position:fixed;z-index:10;background:var(--panel);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 /* En-tête */
 #top{top:14px;left:14px;right:14px;display:flex;align-items:center;gap:16px;padding:10px 14px}
+#top .quitter{font-size:12px;font-weight:600;color:var(--text);text-decoration:none;border:1px solid var(--line);background:rgba(76,195,255,.10);padding:5px 10px;border-radius:6px;white-space:nowrap}
+#top .quitter:hover{background:rgba(76,195,255,.22)}
 #top .brand{font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
 #top .brand span{color:var(--accent)}
 #top .sub{color:var(--muted);font-size:12px}
@@ -119,6 +121,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 <div id="globe"></div>
 
 <header id="top" class="hud">
+  <a class="quitter" href="../" title="Quitter le logiciel et revenir à la page de présentation">← Quitter</a>
   <div class="brand">Digital Twin Lab · <span>Mayenne</span></div>
   <div class="sub">Situation territoriale — démonstrateur</div>
   <div class="spacer"></div>
@@ -282,7 +285,7 @@ const layers = [
   {id:"seveso",name:"Sites SEVESO", src:"Géorisques · installations classées", nature:"ref", on:true},
   {id:"prev",  name:"Vent prévu 48 h (grille)", src:"Open-Meteo · modèles Météo-France", nature:"modele", on:true, refresh:1800},
   {id:"expo",  name:"Exposition aux rafales", src:"Indicateur calculé : rafales prévues × enjeux", nature:"modele", on:true},
-  {id:"radar", name:"Radar de pluie", src:"RainViewer · dernière image radar", nature:"mesure", on:true, refresh:600},
+  {id:"radar", name:"Radar de pluie", src:"RainViewer · dernière image radar", nature:"mesure", on:false, refresh:600},
   {id:"feu",   name:"Danger météo de feu (FWI)", src:"EFFIS / Copernicus · modèle Météo-France", nature:"modele", on:false},
   {id:"bati",  name:"Bâtiments 3D · Laval centre", src:"IGN · BD TOPO (hauteurs)", nature:"ref", on:false},
   {id:"vols",  name:"Vols en direct", src:"ADS-B public", nature:"na", disabled:true, note:"Nécessite un relais serveur (Cloudflare Worker gratuit, prévu)."},
@@ -694,7 +697,7 @@ async function loadLayer(id){
   if(L.refresh && !state[id].timer) state[id].timer = setInterval(() => { if(L.on) loadLayer(id); }, L.refresh*1000);
 }
 renderLayers();
-["dep","meteo","eau","seveso","prev","radar"].forEach(loadLayer);
+["dep","meteo","eau","seveso","prev"].forEach(loadLayer);
 
 /* ---------- Détail au clic ---------- */
 const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
