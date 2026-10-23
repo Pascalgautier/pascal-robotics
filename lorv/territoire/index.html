@@ -125,30 +125,31 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 }
 /* Téléphone */
 @media (max-width: 600px){
-  #top{top:10px;left:10px;right:10px;flex-wrap:wrap;gap:6px 10px;padding:8px 10px}
-  #top .quitter{padding:7px 10px}
+  #top{top:8px;left:8px;right:8px;flex-wrap:wrap;gap:4px 10px;padding:6px 10px}
+  #top .quitter{padding:5px 9px}
   #top .brand{flex:1 1 calc(100% - 100px);min-width:0;font-size:12px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #top .spacer{display:none}
   #top .proto{font-size:9.5px;padding:2px 6px}
   #clock{margin-left:auto;font-size:11px;color:var(--muted)}
 
-  #bottom{left:10px;right:10px;bottom:10px;transform:none;max-width:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}
-  #bottom button{min-height:40px;padding:6px;font-size:12.5px;line-height:1.2}
+  #bottom{left:8px;right:8px;bottom:8px;transform:none;max-width:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px}
+  #bottom button{min-height:34px;padding:4px 6px;font-size:12px;line-height:1.15}
   #bottom [data-goto]{order:1}
   #toggleLayers{display:block;order:2}
   #btnDescent{order:3}
   #btnScn{order:4}
 
-  #forecast{left:10px;right:10px;width:auto;transform:none;padding:8px 10px;max-height:calc(100% - var(--top-end,72px) - var(--bottom-start,66px) - 8px);overflow:auto}
-  #forecast .row{flex-wrap:wrap;gap:8px}
-  #forecast input[type=range]{order:3;flex:1 1 100%;margin:0;height:28px}
-  #forecast button{min-height:36px;padding:6px 12px}
-  #fcTime{min-width:0;margin-left:auto;font-size:11.5px}
-  #fcMore{display:inline-block}
+  /* Prévisions en barre compacte : lecture, curseur, détails ; l'échéance dessous ; le reste sur demande */
+  #forecast{left:8px;right:8px;width:auto;transform:none;padding:6px 8px;max-height:calc(100% - var(--top-end,72px) - var(--bottom-start,66px) - 8px);overflow:auto}
+  #forecast .row{flex-wrap:wrap;gap:4px 8px}
+  #fcPlay{order:0}
+  #forecast input[type=range]{order:1;flex:1 1 60px;min-width:0;margin:0;height:28px}
+  #fcMore{display:inline-block;order:2}
+  #fcTime{order:3;flex:1 1 100%;min-width:0;text-align:left;font-size:11px;color:var(--muted)}
+  #forecast button{min-height:32px;padding:4px 10px}
   #fcSummary,#fcMax{font-size:11.5px;line-height:1.35}
-  #fcSummary,#fcNote{display:none}
-  #forecast.plus #fcSummary{display:block}
-  #forecast.plus #fcNote{display:block}
+  #fcSummary,#fcMax,#fcNote{display:none}
+  #forecast.plus #fcSummary,#forecast.plus #fcMax,#forecast.plus #fcNote{display:block}
 
   #layers{left:10px;width:calc(100% - 20px)}
   #detail{left:10px;right:10px}
@@ -490,8 +491,9 @@ async function loadMeteo(){
     addEntity("meteo", {
       position: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, 0),
       point:{pixelSize:7, color:Cesium.Color.fromCssColorString("#4cc3ff"), outlineColor:Cesium.Color.BLACK, outlineWidth:1, distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 2500000)},
-      label:{text:`${v.nom}  ${fmtNum(c.temperature_2m)} °C\n${fmtNum(c.wind_speed_10m,0)} km/h ${dirTxt(c.wind_direction_10m)} · raf. ${fmtNum(c.wind_gusts_10m,0)}`,
-        font:"12px system-ui, sans-serif", fillColor:Cesium.Color.WHITE, outlineColor:Cesium.Color.BLACK, outlineWidth:3,
+      label:{text: innerWidth <= 600 ? `${v.nom} · raf. ${fmtNum(c.wind_gusts_10m,0)}`
+                 : `${v.nom}  ${fmtNum(c.temperature_2m)} °C\n${fmtNum(c.wind_speed_10m,0)} km/h ${dirTxt(c.wind_direction_10m)} · raf. ${fmtNum(c.wind_gusts_10m,0)}`,
+        font: innerWidth <= 600 ? "11px system-ui, sans-serif" : "12px system-ui, sans-serif", fillColor:Cesium.Color.WHITE, outlineColor:Cesium.Color.BLACK, outlineWidth:3,
         style:Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset:new Cesium.Cartesian2(10,-6), horizontalOrigin:Cesium.HorizontalOrigin.LEFT,
         showBackground:true, backgroundColor:Cesium.Color.fromCssColorString("rgba(5,10,18,0.65)"),
         distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0, 600000)}
