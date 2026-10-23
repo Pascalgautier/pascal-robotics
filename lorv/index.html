@@ -31,6 +31,7 @@ body{margin:0} img{max-width:100%} [hidden]{display:none!important}
   --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
   background-size:64px 64px;background-attachment:fixed}
@@ -209,6 +210,49 @@ footer .stamp{font-family:var(--display);font-weight:600;letter-spacing:.24em;co
   .chain,.tags,.lire{grid-template-columns:1fr}
   .tel{grid-template-columns:1fr 1fr}
   section.block{padding-block:52px}
+}
+
+/* Téléphone : le tableau devient une pile de fiches, les commandes passent au format tactile */
+@media (max-width:1000px), (hover:none){
+  body{background-attachment:scroll}
+}
+@media (max-width:700px){
+  .tablebox{overflow:visible;margin-top:36px;border:0;background:none}
+  .tablebox table{min-width:0;display:block}
+  .tablebox caption{display:block;padding:0 0 12px!important}
+  .tablebox thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tablebox tbody{display:grid;gap:10px}
+  .tablebox tr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;align-items:baseline;border:1px solid var(--line);background:rgba(17,29,38,.78);padding:14px 16px}
+  .tablebox td{display:block;border:0;padding:0;min-width:0}
+  .tablebox td:nth-child(1){grid-column:1/-1;font-weight:500;font-size:15.5px;line-height:1.4}
+  .tablebox td:nth-child(2){grid-column:1/-1;font-size:14px;margin-bottom:4px}
+  .tablebox td:nth-child(4){font-size:14px;color:#bfcdd4;line-height:1.45}
+}
+@media (max-width:560px){
+  .topbar .wrap{gap:10px 14px;padding-block:12px}
+  .sigle{font-size:16px;letter-spacing:.32em}
+  .proto{font-size:10.5px;padding:3px 7px}
+  .eyebrow{margin-bottom:16px}
+  .dash::before{flex-basis:26px}
+  .sub::before{flex-basis:24px}
+  .dedicace{padding-left:40px;font-size:17px}
+  .facts{gap:12px}
+  .facts li{display:grid;grid-template-columns:4.2em minmax(0,1fr);gap:12px;align-items:baseline}
+  .facts span{margin-top:0}
+  .shot figcaption{font-size:13px}
+  .frame{padding:10px}
+  .frame::before,.frame::after,.frame>.c1,.frame>.c2{width:20px;height:20px}
+  .ctrl{gap:8px}
+  .ctrl button{flex:1 1 auto;min-height:44px;padding:10px 12px;font-size:15px}
+  .ctrl select{min-height:44px;padding:8px 10px;font-size:15px}
+  #scrub{height:32px}
+  .panel{padding:14px}
+  .tel{gap:10px 14px}
+  .tel .v{font-size:13px}
+  .log{max-height:220px;font-size:12px}
+  .contact{padding:16px}
+  .contact .mail{overflow-wrap:anywhere}
+  .contact button{min-height:44px;padding:8px 14px}
 }
 @media (prefers-reduced-motion:reduce){ .pulse{animation:none;display:none} }
 </style>
@@ -650,6 +694,16 @@ el("text", {x:W-60, y:H-122, fill:"#93a7b1", "font-family":"IBM Plex Mono, monos
   panache.setAttribute("points", pts([f, pt(vers-ouv, L), pt(vers, L*1.05), pt(vers+ouv, L)]));
   const lp = pt(vers, L*1.12); ventTxt.setAttribute("x", sx(lp) + 20); ventTxt.setAttribute("y", sy(lp));
   ventTxt.textContent = `vent ${VENT.kmh} km/h de ${VENT.txt}`; })();
+
+// Sur téléphone le plan est réduit : les étiquettes grossissent pour rester lisibles
+const TEXTES = Array.from(svg.querySelectorAll("text")).filter(t => t !== nomBois && t !== ventTxt).map(t => [t, +t.getAttribute("font-size")]);
+function echelleTextes(){
+  const w = svg.getBoundingClientRect().width || 600;
+  const k = Math.max(1, Math.min(1.7, 560 / w));
+  TEXTES.forEach(([t, fs]) => t.setAttribute("font-size", (fs * k).toFixed(1)));
+}
+echelleTextes();
+addEventListener("resize", echelleTextes);
 
 /* ---------- Panneau ---------- */
 const tel = document.getElementById("tel"), logBox = document.getElementById("log"), clock = document.getElementById("clock"), scrub = document.getElementById("scrub");

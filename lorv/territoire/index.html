@@ -70,6 +70,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 #caption .s{margin-top:8px;font-size:15px;color:var(--text);text-shadow:0 2px 12px rgba(0,0,0,.9)}
 #credits{position:fixed;z-index:5;right:14px;bottom:118px;font-size:10px;color:var(--muted);max-width:420px;text-align:right}
 #credits .cesium-credit-logoContainer{display:inline-block}
+#credits .cesium-widget-credits{position:static}
 #forecast{left:50%;transform:translateX(-50%);bottom:66px;width:min(600px, calc(100% - 28px));padding:10px 12px;display:none}
 #forecast.show{display:block}
 #forecast .row{display:flex;align-items:center;gap:10px}
@@ -105,6 +106,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 #scnLog .al{color:#ff8a3d}
 #scnNote{margin-top:5px;font-size:10.5px;color:var(--muted);line-height:1.35}
 #toggleLayers{display:none}
+#fcMore{display:none}
 @media (max-width: 900px){
   #warn{display:none}
   #layers{width:calc(100% - 28px);max-height:45%;display:none}
@@ -114,6 +116,51 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
   #detail{left:14px;right:14px;width:auto;top:auto;bottom:80px}
   #caption .t{font-size:28px}
   #top .sub{display:none}
+  /* Les panneaux se calent entre l'en-tête et la barre du bas, quelle que soit leur hauteur réelle */
+  #layers{top:var(--top-end,72px);max-height:calc(100% - var(--top-end,72px) - var(--bottom-start,66px) - 8px)}
+  #detail{bottom:var(--bottom-start,80px);max-height:calc(100% - var(--top-end,72px) - var(--bottom-start,80px) - 8px)}
+  #forecast{bottom:var(--bottom-start,66px)}
+  #caption{width:calc(100% - 32px)}
+  #credits{bottom:auto;top:var(--top-end,72px);right:10px;max-width:60%}
+}
+/* Téléphone */
+@media (max-width: 600px){
+  #top{top:10px;left:10px;right:10px;flex-wrap:wrap;gap:6px 10px;padding:8px 10px}
+  #top .quitter{padding:7px 10px}
+  #top .brand{flex:1 1 calc(100% - 100px);min-width:0;font-size:12px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #top .spacer{display:none}
+  #top .proto{font-size:9.5px;padding:2px 6px}
+  #clock{margin-left:auto;font-size:11px;color:var(--muted)}
+
+  #bottom{left:10px;right:10px;bottom:10px;transform:none;max-width:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}
+  #bottom button{min-height:40px;padding:6px;font-size:12.5px;line-height:1.2}
+  #bottom [data-goto]{order:1}
+  #toggleLayers{display:block;order:2}
+  #btnDescent{order:3}
+  #btnScn{order:4}
+
+  #forecast{left:10px;right:10px;width:auto;transform:none;padding:8px 10px;max-height:calc(100% - var(--top-end,72px) - var(--bottom-start,66px) - 8px);overflow:auto}
+  #forecast .row{flex-wrap:wrap;gap:8px}
+  #forecast input[type=range]{order:3;flex:1 1 100%;margin:0;height:28px}
+  #forecast button{min-height:36px;padding:6px 12px}
+  #fcTime{min-width:0;margin-left:auto;font-size:11.5px}
+  #fcMore{display:inline-block}
+  #fcSummary,#fcMax{font-size:11.5px;line-height:1.35}
+  #fcSummary,#fcNote{display:none}
+  #forecast.plus #fcSummary{display:block}
+  #forecast.plus #fcNote{display:block}
+
+  #layers{left:10px;width:calc(100% - 20px)}
+  #detail{left:10px;right:10px}
+  #scn{left:10px;right:10px;width:auto;top:auto;bottom:var(--bottom-start,66px);max-height:min(48%, calc(100% - var(--top-end,72px) - var(--bottom-start,66px) - 8px));padding:10px}
+  #scn button,#scn select{min-height:36px}
+  #scnTel{font-size:11px}
+  #scnLog{max-height:90px}
+
+  #caption .t{font-size:24px;letter-spacing:.16em}
+  #caption .s{font-size:13px}
+  #credits{font-size:9px}
+  #credits img{max-height:14px;width:auto}
 }
 </style>
 </head>
@@ -182,6 +229,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
     <button type="button" id="fcPlay">▶ Lire 48 h</button>
     <input type="range" id="fcRange" min="0" max="47" value="0" step="1" aria-label="Échéance de la prévision">
     <div id="fcTime">—</div>
+    <button type="button" id="fcMore" aria-expanded="false">Détails</button>
   </div>
   <div id="fcSummary">—</div>
   <div id="fcMax"></div>
@@ -224,6 +272,15 @@ async function getJSON(url){
   if(!r.ok) throw new Error("HTTP " + r.status);
   return r.json();
 }
+/* Hauteur réelle de l'en-tête et de la barre du bas : les panneaux se placent entre les deux */
+function majHud(){
+  const t = $("#top").getBoundingClientRect(), b = $("#bottom").getBoundingClientRect();
+  document.documentElement.style.setProperty("--top-end", Math.round(t.bottom + 8) + "px");
+  document.documentElement.style.setProperty("--bottom-start", Math.round(innerHeight - b.top + 8) + "px");
+}
+majHud();
+addEventListener("resize", majHud);
+if(window.ResizeObserver){ const ro = new ResizeObserver(majHud); ro.observe($("#top")); ro.observe($("#bottom")); }
 setInterval(() => { $("#clock").textContent = new Intl.DateTimeFormat("fr-FR",{timeZone:TZ,hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date()); }, 1000);
 
 /* ---------- Globe (sans Cesium ion) ---------- */
@@ -248,13 +305,28 @@ const ignOrtho = new Cesium.WebMapTileServiceImageryProvider({
 });
 viewer.imageryLayers.add(new Cesium.ImageryLayer(ignOrtho, {minimumTerrainLevel: 7}));
 
+/* Écran vertical (téléphone) : Cesium garde 60° sur la hauteur, le champ en largeur devient étroit.
+   On recule la caméra pour que le globe, la France ou la Mayenne tiennent dans la largeur,
+   et, sur téléphone, on remonte les vues de dessus au-dessus des panneaux du bas. */
+const TOURNAGE = new URLSearchParams(location.search).has("tournage");
+function cadrage(v){
+  const w = viewer.canvas.clientWidth, h = viewer.canvas.clientHeight;
+  if(TOURNAGE || !w || !h || w >= h) return v;
+  const a = w / h, dessus = v.pitch <= -80, globe = v.h > 6000000;
+  const k = globe ? Math.min(2.6, 1.2 / a) : dessus ? Math.min(1.6, 0.75 / a) : Math.min(1.4, Math.sqrt(1 / a));
+  const out = Object.assign({}, v, {h: v.h * k});
+  if(dessus && !globe && innerWidth <= 600) out.lat = v.lat - 0.12 * 2 * out.h * Math.tan(Math.PI / 6) / 111320;
+  return out;
+}
 function setView(v){
+  v = cadrage(v);
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
     orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0}
   });
 }
 function flyTo(v, duration){
+  v = cadrage(v);
   return new Promise(res => viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
     orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0},
@@ -972,6 +1044,10 @@ document.querySelectorAll("[data-goto]").forEach(b => b.addEventListener("click"
   flyTo(VUES[k], 3);
 }));
 $("#toggleLayers").addEventListener("click", () => $("#layers").classList.toggle("open"));
+$("#fcMore").addEventListener("click", () => {
+  const plus = $("#forecast").classList.toggle("plus");
+  $("#fcMore").textContent = plus ? "Moins" : "Détails"; $("#fcMore").setAttribute("aria-expanded", plus);
+});
 $("#fcRange").addEventListener("input", e => updateHour(+e.target.value));
 $("#fcPlay").addEventListener("click", () => {
   if(fc.timer){ clearInterval(fc.timer); fc.timer = null; $("#fcPlay").textContent = "▶ Lire 48 h"; return; }
