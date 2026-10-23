@@ -309,31 +309,62 @@ viewer.imageryLayers.add(new Cesium.ImageryLayer(ignOrtho, {minimumTerrainLevel:
    On recule la caméra pour que le globe, la France ou la Mayenne tiennent dans la largeur,
    et, sur téléphone, on remonte les vues de dessus au-dessus des panneaux du bas. */
 const TOURNAGE = new URLSearchParams(location.search).has("tournage");
+const TAN_V = Math.tan(Math.PI / 6);   // demi-champ vertical de Cesium en écran vertical (60°)
+/* Zone de carte vraiment visible sur téléphone : entre l'en-tête et les panneaux du bas */
+function zoneLibre(){
+  const H = viewer.canvas.clientHeight, css = getComputedStyle(document.documentElement);
+  const haut = parseFloat(css.getPropertyValue("--top-end")) || 90;
+  const bas = parseFloat(css.getPropertyValue("--bottom-start")) || 66;
+  const f = $("#forecast");
+  const prev = f.classList.contains("show") ? f.getBoundingClientRect().height + 8 : 130;   // le panneau météo s'ouvre peu après le chargement
+  return {haut, bas: Math.max(haut + 120, H - bas - prev)};
+}
 function cadrage(v){
   const w = viewer.canvas.clientWidth, h = viewer.canvas.clientHeight;
   if(TOURNAGE || !w || !h || w >= h) return v;
   const a = w / h, dessus = v.pitch <= -80, globe = v.h > 6000000;
-  const k = globe ? Math.min(2.6, 1.2 / a) : dessus ? Math.min(1.6, 0.75 / a) : Math.min(1.4, Math.sqrt(1 / a));
+  if(globe){
+    /* Le globe entier, centré dans la zone libre : diamètre à 88 % de la place disponible */
+    const z = zoneLibre(), D = 0.88 * Math.min(w - 20, z.bas - z.haut);
+    const theta = Math.atan(D * TAN_V / h), R = 6371000;
+    const dec = (h / 2 - (z.haut + z.bas) / 2) / (h / 2) * TAN_V;   // décalage vers le haut, en tangente
+    return Object.assign({}, v, {h: R / Math.sin(theta) - R, decalage: Math.atan(dec)});
+  }
+  const k = dessus ? Math.min(1.6, 0.75 / a) : Math.min(1.4, Math.sqrt(1 / a));
   const out = Object.assign({}, v, {h: v.h * k});
-  if(dessus && !globe && innerWidth <= 600) out.lat = v.lat - 0.12 * 2 * out.h * Math.tan(Math.PI / 6) / 111320;
+  if(dessus && innerWidth <= 600){
+    const z = zoneLibre(), u = (h / 2 - (z.haut + z.bas) / 2) / (h / 2);
+    out.lat = v.lat - u * out.h * TAN_V / 111320;   // la caméra recule vers le sud : la zone remonte au centre de la place libre
+  }
   return out;
+}
+/* Orientation : cap et inclinaison, ou, pour le globe décalé, visée un peu au sud du nadir, nord en haut */
+function orientation(v, dest){
+  if(!v.decalage) return {heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0};
+  const m = Cesium.Transforms.eastNorthUpToFixedFrame(dest);
+  const N = Cesium.Matrix4.getColumn(m, 1, new Cesium.Cartesian4()), U = Cesium.Matrix4.getColumn(m, 2, new Cesium.Cartesian4());
+  const n = new Cesium.Cartesian3(N.x, N.y, N.z), u = new Cesium.Cartesian3(U.x, U.y, U.z), c = Math.cos(v.decalage), s = Math.sin(v.decalage);
+  const add = (p, q, x, y) => Cesium.Cartesian3.add(Cesium.Cartesian3.multiplyByScalar(p, x, new Cesium.Cartesian3()), Cesium.Cartesian3.multiplyByScalar(q, y, new Cesium.Cartesian3()), new Cesium.Cartesian3());
+  return {direction: Cesium.Cartesian3.normalize(add(u, n, -c, -s), new Cesium.Cartesian3()), up: Cesium.Cartesian3.normalize(add(n, u, c, -s), new Cesium.Cartesian3())};
 }
 function setView(v){
   v = cadrage(v);
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
-    orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0}
-  });
+  const dest = Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h);
+  viewer.camera.setView({destination: dest, orientation: orientation(v, dest)});
 }
 function flyTo(v, duration){
   v = cadrage(v);
-  return new Promise(res => viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h),
-    orientation:{heading:Cesium.Math.toRadians(v.heading), pitch:Cesium.Math.toRadians(v.pitch), roll:0},
-    duration, complete:res, cancel:res
-  }));
+  const dest = Cesium.Cartesian3.fromDegrees(v.lon, v.lat, v.h);
+  surGlobe = false;
+  return new Promise(res => viewer.camera.flyTo({destination: dest, orientation: orientation(v, dest), duration, complete:res, cancel:res}));
 }
+/* Tant que la personne n'a pas quitté la vue du globe, on le recadre quand l'écran ou les panneaux changent de taille */
+let surGlobe = true;
+["pointerdown", "wheel", "touchstart"].forEach(e => viewer.canvas.addEventListener(e, () => { surGlobe = false; }, {passive: true}));
+const recadrerGlobe = () => { if(surGlobe && !TOURNAGE) setView(VUES.globe); };
 setView(VUES.globe);
+addEventListener("resize", recadrerGlobe);
+if(window.ResizeObserver) new ResizeObserver(recadrerGlobe).observe($("#forecast"));
 
 /* Lecture position caméra */
 const readout = $("#readout");
