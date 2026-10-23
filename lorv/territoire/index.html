@@ -1060,6 +1060,21 @@ $("#fcPlay").addEventListener("click", () => {
   }, 650);
 });
 
+/* ---------- Lien depuis une alerte (?lat=…&lon=…) : le logiciel s'ouvre sur le point signalé ---------- */
+{
+  const q = new URLSearchParams(location.search);
+  const qLat = parseFloat(q.get("lat")), qLon = parseFloat(q.get("lon"));
+  if(!TOURNAGE && isFinite(qLat) && isFinite(qLon) && qLat > 41 && qLat < 52 && qLon > -6 && qLon < 10){
+    viewer.entities.add({
+      position: Cesium.Cartesian3.fromDegrees(qLon, qLat),
+      point: {pixelSize: 14, color: Cesium.Color.fromCssColorString("#ff9a3c"), outlineColor: Cesium.Color.WHITE, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY},
+      label: {text: "Point de l'alerte", font: "600 13px system-ui, sans-serif", fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK, outlineWidth: 3,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -22), disableDepthTestDistance: Number.POSITIVE_INFINITY}
+    });
+    setTimeout(() => flyTo({lon: qLon, lat: qLat - 0.03, h: 6000, heading: 0, pitch: -45}, 4), 900);
+  }
+}
+
 /* ---------- Mode tournage (?tournage) : le script tournage.js pilote le moteur image par image ---------- */
 if(new URLSearchParams(location.search).has("tournage")){
   window.__DTL = {viewer, layers, state, applyVisibility, loadLayer, infoById, fc, updateHour, gustClass, fmtFcTime, cellAt, SEUILS, VILLES, VUES,
