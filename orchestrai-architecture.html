@@ -334,6 +334,8 @@ section[id]{scroll-margin-top:84px}
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928">
 <script src="assets/fx/pr-fx.js?v=20260928" defer data-fx-theme="blue" data-fx-titles="main h2" data-fx-blocks=".chain li,.node,.core,.dest-card,.eco-g,.road-col"></script>
+<link rel="stylesheet" href="assets/nav-projets.css?v=20261117">
+<script src="assets/nav-projets.js?v=20261117" defer></script>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -356,6 +358,12 @@ section[id]{scroll-margin-top:84px}
       <a class="nav-locked" href="ecosysteme-laval.html"><span data-i18n="nav.eco">Écosystème</span><svg class="nav-lock" viewBox="0 0 16 16" width="9" height="9" role="img" aria-label="Accès protégé" data-i18n-aria="nav.locked" focusable="false"><title data-i18n="nav.locked">Accès protégé</title><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="currentColor"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
       <a href="accueil.html#paths" data-i18n="nav.paths">Par où commencer</a>
       <a href="accueil.html#founder" data-i18n="nav.founder">Fondateur</a>
+      <details class="nav-drop">
+        <summary data-i18n="nav.projects">Projets</summary>
+        <div class="nav-drop-panel">
+          <a href="/lorv/" data-i18n="nav.lorv">L.O.R.V. — projet en pause</a>
+        </div>
+      </details>
       <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
@@ -591,6 +599,8 @@ var I18N = {
   "nav.paths": "Par où commencer",
   "nav.founder": "Fondateur",
   "nav.contact": "Contact",
+  "nav.projects": "Projets",
+  "nav.lorv": "L.O.R.V. — projet en pause",
   "st.active": "Actif",
   "st.exp": "Expérimental",
   "st.future": "Futur",
@@ -731,6 +741,8 @@ var I18N = {
   "nav.paths": "Where to start",
   "nav.founder": "Founder",
   "nav.contact": "Contact",
+  "nav.projects": "Projects",
+  "nav.lorv": "L.O.R.V. — paused project",
   "st.active": "Active",
   "st.exp": "Experimental",
   "st.future": "Future",

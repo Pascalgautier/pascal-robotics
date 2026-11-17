@@ -323,6 +323,8 @@ img{display:block;max-width:100%;height:auto}
 <!-- Shared effects: scroll-linked title fill + neon hover border on blocks (assets/fx) -->
 <link rel="stylesheet" href="assets/fx/pr-fx.css?v=20260928b">
 <script src="assets/fx/pr-fx.js?v=20260928b" defer data-fx-theme="blue" data-fx-titles="#doc h2" data-fx-blocks="#doc .notice,#doc .card,#doc .actor,#doc .step,#doc .road-item,#doc .decision,#doc .closing"></script>
+<link rel="stylesheet" href="assets/nav-projets.css?v=20261117">
+<script src="assets/nav-projets.js?v=20261117" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -344,6 +346,12 @@ img{display:block;max-width:100%;height:auto}
       <a class="nav-locked is-active" href="ecosysteme-laval.html" aria-current="page"><span data-i18n="nav.eco">Écosystème</span><svg class="nav-lock" viewBox="0 0 16 16" width="9" height="9" role="img" aria-label="Accès protégé" data-i18n-aria="nav.locked" focusable="false"><title data-i18n="nav.locked">Accès protégé</title><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="currentColor"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
       <a href="accueil.html#paths" data-i18n="nav.paths">Par où commencer</a>
       <a href="accueil.html#founder" data-i18n="nav.founder">Fondateur</a>
+      <details class="nav-drop">
+        <summary data-i18n="nav.projects">Projets</summary>
+        <div class="nav-drop-panel">
+          <a href="/lorv/" data-i18n="nav.lorv">L.O.R.V. — projet en pause</a>
+        </div>
+      </details>
       <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
@@ -657,6 +665,8 @@ img{display:block;max-width:100%;height:auto}
       "nav.paths": "Par où commencer",
       "nav.founder": "Fondateur",
       "nav.contact": "Contact",
+      "nav.projects": "Projets",
+      "nav.lorv": "L.O.R.V. — projet en pause",
       "gate.kicker": "Accès restreint",
       "gate.title": "Écosystème LAVAL",
       "gate.body": "Document de travail consortium · Physical AI. Entrez le mot de passe pour afficher le contenu.",
@@ -680,6 +690,8 @@ img{display:block;max-width:100%;height:auto}
       "nav.paths": "Where to start",
       "nav.founder": "Founder",
       "nav.contact": "Contact",
+      "nav.projects": "Projects",
+      "nav.lorv": "L.O.R.V. — paused project",
       "gate.kicker": "Restricted access",
       "gate.title": "LAVAL Ecosystem",
       "gate.body": "Consortium working document · Physical AI. Enter the password to view the content.",
