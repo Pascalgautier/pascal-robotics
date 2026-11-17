@@ -518,6 +518,8 @@ section[id]{scroll-margin-top:84px}
   .oasc *, .oasc *::before { animation: none !important; }
 }
 </style>
+<link rel="stylesheet" href="assets/nav-projets.css?v=20261117">
+<script src="assets/nav-projets.js?v=20261117" defer></script>
 </head>
 <body id="top">
 <a class="skip" href="#content" data-i18n="skip">Aller au contenu</a>
@@ -540,6 +542,12 @@ section[id]{scroll-margin-top:84px}
       <a class="nav-locked" href="ecosysteme-laval.html"><span data-i18n="nav.eco">Écosystème</span><svg class="nav-lock" viewBox="0 0 16 16" width="9" height="9" role="img" aria-label="Accès protégé" data-i18n-aria="nav.locked" focusable="false"><title data-i18n="nav.locked">Accès protégé</title><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="currentColor"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
       <a href="accueil.html#paths" data-i18n="nav.paths">Par où commencer</a>
       <a href="accueil.html#founder" data-i18n="nav.founder">Fondateur</a>
+      <details class="nav-drop">
+        <summary data-i18n="nav.projects">Projets</summary>
+        <div class="nav-drop-panel">
+          <a href="/lorv/" data-i18n="nav.lorv">L.O.R.V. — projet en pause</a>
+        </div>
+      </details>
       <a class="contact-pill" href="accueil.html#contact" data-i18n="nav.contact">Contact</a>
       </div>
       <button type="button" class="nav-more" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu" data-i18n-aria="nav.menu">
@@ -778,6 +786,8 @@ var I18N = {
   "nav.paths": "Par où commencer",
   "nav.founder": "Fondateur",
   "nav.contact": "Contact",
+  "nav.projects": "Projets",
+  "nav.lorv": "L.O.R.V. — projet en pause",
   "hero.by.aria": "Pascal Robotics — retour à l’accueil",
   "hero.verbs": "COMPREND. ORCHESTRE. MESURE. APPREND.",
   "hero.lead": "Une plateforme en développement qui aide à choisir et orchestrer la bonne combinaison d’IA pour chaque besoin.",
@@ -867,6 +877,8 @@ var I18N = {
   "nav.paths": "Where to start",
   "nav.founder": "Founder",
   "nav.contact": "Contact",
+  "nav.projects": "Projects",
+  "nav.lorv": "L.O.R.V. — paused project",
   "hero.by.aria": "Pascal Robotics — back to home",
   "hero.verbs": "UNDERSTANDS. ORCHESTRATES. MEASURES. LEARNS.",
   "hero.lead": "A platform in development that helps choose and orchestrate the right combination of AI for each need.",
