@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>VALÉRIEN — Jouer contre l'ordinateur</title>
+<!--
+  ============================================================================
+  FRED ÉCHIQUIER — VALÉRIEN 3D — V7
+  ----------------------------------------------------------------------------
+  Historique : V6 (1 pion, tige en rainure) → V6.2 (boule, pièce pendue) →
+  V6.3 (prise à deux pièces) → V7 (32 pièces, partie courte, gestes fluides).
+
+  Mécanique validée par Pascal (21/11/2026) :
+   - une rainure laisse passer deux tiges côte à côte ;
+   - la pièce prise sort par le côté crénelé le plus proche ;
+   - on peut SOULEVER une pièce jusqu'à ce que la boule bute sous les cases ;
+   - une fois soulevée, la tige s'incline dans la rainure : le corps se
+     déplace en courbe et CONTOURNE les autres pièces (monter, aller, poser).
+
+  Modèle du geste (un coup) :
+   1. levée verticale (la boule remonte vers le dessous des cases) ;
+   2. l'axe de la tige parcourt les rainures (trajet en lignes de rainures) ;
+      le corps suit une courbe lissée, écartée des pièces voisines, dans la
+      limite d'inclinaison de la tige (pivot : point où la tige traverse
+      le plateau) ;
+   3. pose verticale et recentrage sur la case.
+  Chaque image est contrôlée : collision 3D pièce / plateau, tige en rainure,
+  boule retenue, écart corps / corps avec toutes les autres pièces.
+
+  Dépendances (CDN) : three@0.160.0, OrbitControls, RoomEnvironment.
+  Unité : le « pas » = case + rainure (≈ 50 mm, à confirmer). [H] = hypothèse.
+  ============================================================================
+-->
+<style>
+  :root { --bg:#1d2126; --panel:rgba(20,23,27,.86); --txt:#e8e8e8; --mut:#9aa3ad; --ok:#4cc38a; --ko:#ff5d5d; --warn:#f3b33d; --acc:#ff8a2a; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--txt);
+    font:13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  #c { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .panel { position:fixed; background:var(--panel); border:1px solid #333a42; border-radius:10px; padding:10px 12px; backdrop-filter:blur(6px); }
+  #ui { top:10px; left:10px; width:300px; max-height:calc(100% - 20px); overflow:auto; }
+  #ui h1 { font-size:14px; margin:0 0 2px; letter-spacing:.3px; }
+  #ui .sub { color:var(--mut); font-size:11px; margin-bottom:8px; }
+  #ui h2 { font-size:11px; text-transform:uppercase; color:var(--mut); margin:10px 0 5px; letter-spacing:.6px; }
+  .row { display:flex; flex-wrap:wrap; gap:5px; }
+  button { background:#2b3139; color:var(--txt); border:1px solid #444c56; border-radius:7px; padding:6px 9px; font:inherit; cursor:pointer; }
+  button:hover { border-color:#6b7683; }
+  button.on { background:#3d2a17; border-color:var(--acc); color:#ffd2ad; }
+  input[type=range] { width:100%; }
+  #moves { font-variant-numeric:tabular-nums; }
+  #moves div { display:flex; justify-content:space-between; gap:6px; padding:2px 4px; border-radius:5px; }
+  #moves div.cur { background:#3d2a17; }
+  #moves .v { white-space:nowrap; font-size:11px; }
+  .ok { color:var(--ok); } .ko { color:var(--ko); } .warn { color:var(--warn); } .mut { color:var(--mut); }
+  #caption { left:50%; transform:translateX(-50%); bottom:14px; max-width:min(720px, calc(100% - 20px)); text-align:center; font-size:15px; }
+  #caption b { color:#ffd2ad; }
+  #toggleUI { position:fixed; top:10px; right:10px; display:none; z-index:5; }
+  .hyp { font-size:11px; color:var(--mut); }
+  #moves { max-height:260px; overflow:auto; }
+  #gamebar { top:10px; left:calc(50% + 160px); transform:translateX(-50%); text-align:center; max-width:min(560px, calc(100% - 360px)); }
+  #gamebar b { color:#ffd2ad; }
+  #promo { display:none; top:50%; left:50%; transform:translate(-50%,-50%); gap:6px; align-items:center; z-index:9; font-size:15px; }
+  @media (max-width: 700px) {
+    #ui { width:calc(100% - 20px); max-height:44%; }
+    #toggleUI { display:block; }
+    #ui.hidden { display:none; }
+    #caption { font-size:13px; bottom:8px; }
+    #gamebar { left:50%; top:auto; bottom:62px; max-width:calc(100% - 20px); width:calc(100% - 20px); padding:7px 8px; }
+    #gamebar button { padding:5px 7px; font-size:12px; }
+  }
+  #backSite { position:fixed; top:12px; right:14px; z-index:8; display:inline-flex; align-items:center; gap:8px;
+    padding:9px 16px; border-radius:999px; background:rgba(15,17,20,.78); color:#f2efe8; border:1px solid rgba(201,165,107,.6);
+    font:500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-decoration:none; backdrop-filter:blur(6px); }
+  #backSite:hover { background:rgba(15,17,20,.92); }
+  @media (max-width:700px) { #caption { top:52px !important; bottom:auto !important; } }
+  @media (max-width:700px) { #backSite { right:auto; left:12px; top:10px; padding:8px 13px; font-size:12px; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<a id="backSite" href="../index.html#live" target="_top">← Retour au site</a>
+<button id="toggleUI" class="panel">☰</button>
+
+<div id="ui" class="panel">
+  <h1>VALÉRIEN — Jouer</h1>
+  <div class="sub">32 pièces imperdables · gestes soulevés et courbes · jeu contre l'ordinateur</div>
+
+  <h2>Mode</h2>
+  <div class="row">
+    <button id="mDemo" class="on">Démonstration</button>
+    <button id="mJeu">Jouer contre l'ordinateur</button>
+  </div>
+
+  <div id="lecture">
+  <h2>Lecture</h2>
+  <div class="row">
+    <button id="bPlay" class="on">⏸ Pause</button>
+    <button id="bNext">⏭ Coup suivant</button>
+    <button id="bRestart">⟲ Recommencer</button>
+    <button id="bSlow">Ralenti ×¼</button>
+  </div>
+  <label class="hyp">Vitesse <input id="speed" type="range" min="0.4" max="1.8" step="0.05" value="1"></label>
+  </div>
+
+  <h2>Vues</h2>
+  <div class="row">
+    <button id="vPersp" class="on">Vue d'ensemble</button>
+    <button id="vPlayer">Joueur blanc</button>
+    <button id="vTop">Dessus</button>
+    <button id="vExit">Sorties (côté a)</button>
+    <button id="vAmb">Ambiance</button>
+    <button id="vXray">Rayons X</button>
+    <button id="vRot">Rotation 360°</button>
+    <button id="vTrace">Trajectoires</button>
+  </div>
+
+  <h2>Décor</h2>
+  <div class="row">
+    <button id="dStudio" class="on">Blanc</button>
+    <button id="dGare">Lieu 360°</button>
+  </div>
+  <div id="gareUI" style="display:none; margin-top:6px">
+    <div class="row" style="margin-bottom:4px">
+      <button id="p_parc">Parc</button>
+      <button id="p_gare">Gare</button>
+      <button id="p_place">Place</button>
+      <button id="p_jardin">Jardin</button>
+      <button id="p_salle">Salle ancienne</button>
+      <button id="p_victorien">Salon victorien</button>
+      <button id="p_salon">Salon moderne</button>
+    </div>
+    <div class="row" style="margin-bottom:4px">
+      <button id="gChairs" class="on">Chaises</button>
+    </div>
+    <div class="hyp" id="gareMsg"></div>
+    <div class="row" style="margin:4px 0">
+      <button id="gGround" class="on">Sol projeté</button>
+      <button id="gSphere">Sphère à l'infini</button>
+    </div>
+    <label class="hyp">Hauteur de prise de vue (m) <input id="gH" type="range" min="1.2" max="2.2" step="0.05" value="1.65"></label>
+    <label class="hyp">Rayon du sol projeté (m) <input id="gR" type="range" min="3" max="60" step="0.5" value="20"></label>
+    <div class="hyp" id="gCredit"></div>
+    <label class="hyp">Orientation du panorama <input id="gYaw" type="range" min="-180" max="180" step="1" value="-90"></label>
+    <label class="hyp">Orientation de la lumière <input id="gSun" type="range" min="-180" max="180" step="1" value="0"></label>
+    <label class="hyp">Luminosité du panorama <input id="gBright" type="range" min="0.4" max="1.6" step="0.02" value="1"></label>
+    <label class="hyp">Flou d'arrière-plan <input id="gBlur" type="range" min="0" max="8" step="0.5" value="0"></label>
+    <div class="row" style="margin-top:4px">
+      <button id="gFile">Choisir un panorama…</button>
+      <input id="gFileIn" type="file" accept="image/jpeg,image/webp,image/png" style="display:none">
+    </div>
+  </div>
+
+  <h2 id="movesTitle">Partie et contrôles mécaniques</h2>
+  <div id="moves"></div>
+  <div class="hyp" id="summary" style="margin-top:6px"></div>
+</div>
+
+<div id="caption" class="panel">Chargement…</div>
+
+<div id="gamebar" class="panel" style="display:none">
+  <div class="row" style="justify-content:center">
+    <button id="lv1">Débutant</button><button id="lv2" class="on">Amateur</button><button id="lv3">Confirmé</button>
+    <button id="gNew">Nouvelle partie</button><button id="gResign">Abandonner</button>
+  </div>
+  <div id="gScore" style="margin-top:5px"></div>
+  <div id="gMat" class="hyp"></div>
+</div>
+<div id="promo" class="panel">
+  <span>Promotion :</span>
+  <button data-p="q">Dame</button><button data-p="r">Tour</button><button data-p="b">Fou</button><button data-p="n">Cavalier</button>
+</div>
+
+<script id="engineSrc">
+/* ==========================================================================
+   MOTEUR D'ÉCHECS VALÉRIEN — règles complètes + adversaire (alpha-bêta)
+   Indépendant de la 3D : utilisé dans la page (coups légaux) et dans un
+   Web Worker (réflexion de l'ordinateur sans figer l'animation).
+   Cases : index = rangée * 8 + colonne (a1 = 0, h8 = 63).
+   Pièces : 'PNBRQK' Blancs, 'pnbrqk' Noirs, null = vide.
+   ========================================================================== */
+function makeEngine() {
+  const FILES = 'abcdefgh';
+  const name = i => FILES[i & 7] + ((i >> 3) + 1);
+  const VAL = { p:100, n:320, b:330, r:500, q:900, k:0 };
+  // tables de position (vue des Blancs, rangée 8 en premier)
+  const PST = {
+    p:[0,0,0,0,0,0,0,0, 50,50,50,50,50,50,50,50, 10,10,20,30,30,20,10,10, 5,5,10,25,25,10,5,5, 0,0,0,20,20,0,0,0, 5,-5,-10,0,0,-10,-5,5, 5,10,10,-20,-20,10,10,5, 0,0,0,0,0,0,0,0],
+    n:[-50,-40,-30,-30,-30,-30,-40,-50, -40,-20,0,0,0,0,-20,-40, -30,0,10,15,15,10,0,-30, -30,5,15,20,20,15,5,-30, -30,0,15,20,20,15,0,-30, -30,5,10,15,15,10,5,-30, -40,-20,0,5,5,0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50],
+    b:[-20,-10,-10,-10,-10,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,10,10,5,0,-10, -10,5,5,10,10,5,5,-10, -10,0,10,10,10,10,0,-10, -10,10,10,10,10,10,10,-10, -10,5,0,0,0,0,5,-10, -20,-10,-10,-10,-10,-10,-10,-20],
+    r:[0,0,0,0,0,0,0,0, 5,10,10,10,10,10,10,5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, 0,0,0,5,5,0,0,0],
+    q:[-20,-10,-10,-5,-5,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,5,5,5,0,-10, -5,0,5,5,5,5,0,-5, 0,0,5,5,5,5,0,-5, -10,5,5,5,5,5,0,-10, -10,0,5,0,0,0,0,-10, -20,-10,-10,-5,-5,-10,-10,-20],
+    k:[-30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -20,-30,-30,-40,-40,-30,-30,-20, -10,-20,-20,-20,-20,-20,-20,-10, 20,20,0,0,0,0,20,20, 20,30,10,0,0,10,30,20],
+    kEnd:[-50,-40,-30,-20,-20,-30,-40,-50, -30,-20,-10,0,0,-10,-20,-30, -30,-10,20,30,30,20,-10,-30, -30,-10,30,40,40,30,-10,-30, -30,-10,30,40,40,30,-10,-30, -30,-10,20,30,30,20,-10,-30, -30,-30,0,0,0,0,-30,-30, -50,-30,-30,-30,-30,-30,-30,-50],
+  };
+  const pstIdx = (sq, white) => white ? (7 - (sq >> 3)) * 8 + (sq & 7) : sq;
+  const isW = p => p && p === p.toUpperCase();
+  const colorOf = p => p ? (isW(p) ? 'w' : 'b') : null;
+
+  const S = { B:new Array(64).fill(null), side:'w', castle:'KQkq', ep:-1, half:0, full:1, keys:[] };
+  function reset() {
+    const back = 'RNBQKBNR';
+    S.B.fill(null);
+    for (let f = 0; f < 8; f++) { S.B[f] = back[f]; S.B[8 + f] = 'P'; S.B[48 + f] = 'p'; S.B[56 + f] = back[f].toLowerCase(); }
+    S.side = 'w'; S.castle = 'KQkq'; S.ep = -1; S.half = 0; S.full = 1; S.keys = [key()];
+  }
+  const key = () => S.B.map(p => p || '.').join('') + S.side + S.castle + S.ep;
+
+  const KN = [[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+  const KG = [[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+  const DIAG = [[1,1],[1,-1],[-1,1],[-1,-1]], ORTH = [[1,0],[-1,0],[0,1],[0,-1]];
+  const at = (f, r) => (f < 0 || f > 7 || r < 0 || r > 7) ? undefined : S.B[r * 8 + f];
+
+  function attacked(sq, by) {   // la case sq est-elle attaquée par la couleur by ?
+    const f = sq & 7, r = sq >> 3, W = by === 'w';
+    const pr = r + (W ? -1 : 1);
+    for (const df of [-1, 1]) if (at(f + df, pr) === (W ? 'P' : 'p')) return true;
+    for (const [a, b] of KN) if (at(f + a, r + b) === (W ? 'N' : 'n')) return true;
+    for (const [a, b] of KG) if (at(f + a, r + b) === (W ? 'K' : 'k')) return true;
+    for (const [dirs, set] of [[DIAG, W ? 'BQ' : 'bq'], [ORTH, W ? 'RQ' : 'rq']])
+      for (const [a, b] of dirs) { let x = f + a, y = r + b;
+        while (true) { const p = at(x, y); if (p === undefined) break; if (p) { if (set.includes(p)) return true; break; } x += a; y += b; } }
+    return false;
+  }
+  const kingSq = c => S.B.indexOf(c === 'w' ? 'K' : 'k');
+  const inCheck = (c = S.side) => attacked(kingSq(c), c === 'w' ? 'b' : 'w');
+
+  function pseudo(capsOnly = false) {
+    const out = [], us = S.side, W = us === 'w';
+    const push = (from, to, extra = {}) => {
+      const cap = S.B[to];
+      if (capsOnly && !cap && !extra.ep && !extra.promo) return;
+      out.push({ from, to, piece:S.B[from], cap:extra.ep ? (W ? 'p' : 'P') : cap, ...extra });
+    };
+    for (let sq = 0; sq < 64; sq++) {
+      const p = S.B[sq]; if (!p || colorOf(p) !== us) continue;
+      const t = p.toLowerCase(), f = sq & 7, r = sq >> 3;
+      if (t === 'p') {
+        const dir = W ? 1 : -1, r1 = r + dir, last = W ? 7 : 0, startR = W ? 1 : 6;
+        const addP = (to, extra = {}) => { if ((to >> 3) === last) for (const pr of 'qrbn') push(sq, to, { ...extra, promo:pr }); else push(sq, to, extra); };
+        if (r1 >= 0 && r1 <= 7 && !S.B[r1 * 8 + f]) {
+          addP(r1 * 8 + f);
+          if (r === startR && !S.B[(r + 2 * dir) * 8 + f] && !capsOnly) push(sq, (r + 2 * dir) * 8 + f, { dbl:true });
+        }
+        for (const df of [-1, 1]) { const x = f + df; if (x < 0 || x > 7 || r1 < 0 || r1 > 7) continue; const to = r1 * 8 + x;
+          if (S.B[to] && colorOf(S.B[to]) !== us) addP(to);
+          else if (to === S.ep) push(sq, to, { ep:true, capSq:r * 8 + x }); }
+      } else if (t === 'n' || t === 'k') {
+        for (const [a, b] of (t === 'n' ? KN : KG)) { const x = f + a, y = r + b; if (x < 0 || x > 7 || y < 0 || y > 7) continue;
+          const to = y * 8 + x; if (!S.B[to] || colorOf(S.B[to]) !== us) push(sq, to); }
+        if (t === 'k' && !capsOnly) {   // roque
+          const home = W ? 4 : 60, them = W ? 'b' : 'w';
+          if (sq === home && !attacked(home, them)) {
+            if (S.castle.includes(W ? 'K' : 'k') && !S.B[home + 1] && !S.B[home + 2] && S.B[home + 3] === (W ? 'R' : 'r') && !attacked(home + 1, them) && !attacked(home + 2, them))
+              push(sq, home + 2, { castle:'K', rook:[home + 3, home + 1] });
+            if (S.castle.includes(W ? 'Q' : 'q') && !S.B[home - 1] && !S.B[home - 2] && !S.B[home - 3] && S.B[home - 4] === (W ? 'R' : 'r') && !attacked(home - 1, them) && !attacked(home - 2, them))
+              push(sq, home - 2, { castle:'Q', rook:[home - 4, home - 1] });
+          }
+        }
+      } else {
+        const dirs = t === 'b' ? DIAG : t === 'r' ? ORTH : DIAG.concat(ORTH);
+        for (const [a, b] of dirs) { let x = f + a, y = r + b;
+          while (x >= 0 && x <= 7 && y >= 0 && y <= 7) { const to = y * 8 + x;
+            if (!S.B[to]) push(sq, to); else { if (colorOf(S.B[to]) !== us) push(sq, to); break; } x += a; y += b; } }
+      }
+    }
+    return out;
+  }
+
+  const undo = [];
+  function make(m) {
+    undo.push({ m, castle:S.castle, ep:S.ep, half:S.half, full:S.full, capPiece:m.ep ? S.B[m.capSq] : S.B[m.to] });
+    const W = S.side === 'w';
+    if (m.ep) S.B[m.capSq] = null;
+    S.B[m.to] = m.promo ? (W ? m.promo.toUpperCase() : m.promo) : S.B[m.from];
+    S.B[m.from] = null;
+    if (m.rook) { S.B[m.rook[1]] = S.B[m.rook[0]]; S.B[m.rook[0]] = null; }
+    // droits de roque
+    const strip = (sq) => { if (sq === 4) S.castle = S.castle.replace(/[KQ]/g, ''); if (sq === 60) S.castle = S.castle.replace(/[kq]/g, '');
+      if (sq === 0) S.castle = S.castle.replace('Q', ''); if (sq === 7) S.castle = S.castle.replace('K', '');
+      if (sq === 56) S.castle = S.castle.replace('q', ''); if (sq === 63) S.castle = S.castle.replace('k', ''); };
+    strip(m.from); strip(m.to);
+    S.ep = m.dbl ? (m.from + m.to) >> 1 : -1;
+    S.half = (m.piece.toLowerCase() === 'p' || m.cap) ? 0 : S.half + 1;
+    if (!W) S.full++;
+    S.side = W ? 'b' : 'w';
+  }
+  function unmake() {
+    const u = undo.pop(), m = u.m;
+    S.side = S.side === 'w' ? 'b' : 'w';
+    S.B[m.from] = m.piece;
+    if (m.ep) { S.B[m.to] = null; S.B[m.capSq] = u.capPiece; } else S.B[m.to] = u.capPiece;
+    if (m.rook) { S.B[m.rook[0]] = S.B[m.rook[1]]; S.B[m.rook[1]] = null; }
+    S.castle = u.castle; S.ep = u.ep; S.half = u.half; S.full = u.full;
+  }
+  function legal(capsOnly = false) {
+    const us = S.side, out = [];
+    for (const m of pseudo(capsOnly)) { make(m); if (!inCheck(us)) out.push(m); unmake(); }
+    return out;
+  }
+
+  // ---- évaluation (du point de vue du camp au trait) ----
+  function evaluate() {
+    let s = 0, mat = 0;
+    for (let sq = 0; sq < 64; sq++) { const p = S.B[sq]; if (p && p.toLowerCase() !== 'k' && p.toLowerCase() !== 'p') mat += VAL[p.toLowerCase()]; }
+    const end = mat <= 1500;
+    for (let sq = 0; sq < 64; sq++) {
+      const p = S.B[sq]; if (!p) continue;
+      const t = p.toLowerCase(), W = isW(p);
+      const v = VAL[t] + (t === 'k' && end ? PST.kEnd : PST[t])[pstIdx(sq, W)];
+      s += W ? v : -v;
+    }
+    return S.side === 'w' ? s : -s;
+  }
+  const MATE = 100000;
+  let nodes = 0, deadline = Infinity, stopped = false;
+  const order = ms => ms.sort((a, b) => ((b.cap ? VAL[b.cap.toLowerCase()] * 10 - VAL[b.piece.toLowerCase()] : 0) + (b.promo ? 800 : 0))
+                                       - ((a.cap ? VAL[a.cap.toLowerCase()] * 10 - VAL[a.piece.toLowerCase()] : 0) + (a.promo ? 800 : 0)));
+  function quiesce(alpha, beta, d) {
+    nodes++;
+    const stand = evaluate(); if (stand >= beta) return beta; if (stand > alpha) alpha = stand;
+    if (d > 6) return alpha;
+    for (const m of order(legal(true))) { make(m); const sc = -quiesce(-beta, -alpha, d + 1); unmake();
+      if (sc >= beta) return beta; if (sc > alpha) alpha = sc; }
+    return alpha;
+  }
+  function search(depth, alpha, beta, ply, useQ) {
+    if ((++nodes & 1023) === 0 && Date.now() > deadline) stopped = true;
+    if (stopped) return 0;
+    if (ply > 0 && S.half >= 100) return 0;
+    const ms = legal();
+    if (!ms.length) return inCheck() ? -MATE + ply : 0;
+    if (depth <= 0) return useQ ? quiesce(alpha, beta, 0) : evaluate();
+    for (const m of order(ms)) { make(m); const sc = -search(depth - 1, -beta, -alpha, ply + 1, useQ); unmake();
+      if (stopped) return 0;
+      if (sc >= beta) return beta; if (sc > alpha) alpha = sc; }
+    return alpha;
+  }
+  /* Niveaux : 1 Débutant (1 coup d'avance + hasard), 2 Amateur, 3 Confirmé */
+  function best(level = 2) {
+    const ms = legal(); if (!ms.length) return null;
+    const cfg = { 1:{ d:1, q:false, noise:90, time:400 }, 2:{ d:2, q:true, noise:15, time:1500 }, 3:{ d:4, q:true, noise:0, time:2500 } }[level] || { d:2, q:true, noise:15, time:1500 };
+    deadline = Date.now() + cfg.time; nodes = 0;
+    let bestM = ms[0], scored = ms.map(m => ({ m, s:0 }));
+    for (let d = 1; d <= cfg.d; d++) {      // approfondissement itératif
+      stopped = false; const cur = [];
+      const list = scored.sort((a, b) => b.s - a.s).map(x => x.m);
+      for (const m of list) { make(m); const sc = -search(d - 1, -MATE - 1, MATE + 1, 1, cfg.q); unmake();
+        if (stopped) break; const nz = cfg.noise || (S.full <= 4 ? 12 : 0); cur.push({ m, s:sc + (nz ? (Math.random() - 0.5) * 2 * nz : 0) }); }
+      if (stopped && cur.length < list.length) { if (cur.length) { const top = cur.sort((a, b) => b.s - a.s)[0]; if (top.s > scored[0].s) bestM = top.m; } break; }
+      scored = cur; bestM = cur.sort((a, b) => b.s - a.s)[0].m;
+    }
+    return bestM;
+  }
+
+  // ---- fin de partie ----
+  function status() {
+    const ms = legal();
+    if (!ms.length) return inCheck() ? { over:true, result:S.side === 'w' ? '0-1' : '1-0', why:'mat' } : { over:true, result:'½-½', why:'pat' };
+    if (S.half >= 100) return { over:true, result:'½-½', why:'règle des 50 coups' };
+    const k = key(); if (S.keys.filter(x => x === k).length >= 3) return { over:true, result:'½-½', why:'triple répétition' };
+    const left = S.B.filter(p => p && p.toLowerCase() !== 'k');
+    if (!left.length || (left.length === 1 && 'nb'.includes(left[0].toLowerCase()))) return { over:true, result:'½-½', why:'matériel insuffisant' };
+    return { over:false, check:inCheck() };
+  }
+  // notation française simplifiée : Cf3, Fxc6+, exd5, O-O, e8=D#
+  const FRL = { n:'C', b:'F', r:'T', q:'D', k:'R', p:'' };
+  function san(m) {
+    let s;
+    if (m.castle) s = m.castle === 'K' ? 'O-O' : 'O-O-O';
+    else {
+      const t = m.piece.toLowerCase();
+      let dis = '';
+      if (t !== 'p' && t !== 'k') {
+        const twins = legal().filter(x => x.to === m.to && x.from !== m.from && x.piece === m.piece);
+        if (twins.length) dis = twins.some(x => (x.from & 7) === (m.from & 7)) ? name(m.from)[1] : name(m.from)[0];
+      }
+      s = (t === 'p' ? (m.cap ? name(m.from)[0] : '') : FRL[t] + dis) + (m.cap ? 'x' : '') + name(m.to) + (m.promo ? '=' + FRL[m.promo] : '');
+    }
+    make(m); const st = status(); unmake();
+    return s + (st.over && st.why === 'mat' ? '#' : inCheckAfter(m) ? '+' : '');
+  }
+  function inCheckAfter(m) { make(m); const c = inCheck(); unmake(); return c; }
+  function play(m) { const label = san(m); make(m); S.keys.push(key()); undo.length = 0; return label; }
+  function load(st) { S.B = st.B.slice(); S.side = st.side; S.castle = st.castle; S.ep = st.ep; S.half = st.half; S.full = st.full; S.keys = (st.keys || []).slice(); }
+  const dump = () => ({ B:S.B.slice(), side:S.side, castle:S.castle, ep:S.ep, half:S.half, full:S.full, keys:S.keys.slice() });
+  const material = () => { let w = 0, b = 0; for (const p of S.B) if (p && p.toLowerCase() !== 'k') { if (isW(p)) w += VAL[p.toLowerCase()]; else b += VAL[p]; } return { w, b }; };
+
+  reset();
+  return { S, reset, legal, best, status, san, play, load, dump, name, material, perft };
+
+  function perft(d) { if (!d) return 1; let n = 0; for (const m of legal()) { make(m); n += perft(d - 1); unmake(); } return n; }
+}
+if (typeof self !== 'undefined' && typeof window === 'undefined') {   // Web Worker
+  self.onmessage = e => { const E = makeEngine(); E.load(e.data.state); const m = E.best(e.data.level); self.postMessage({ id:e.data.id, m }); };
+}
+
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ==========================================================================
+   1. CONFIG — géométrie (unité = pas). [H] = hypothèse non validée.
+   Repère : x = colonnes (a → h), z = rangées (rangée 1 en +z, Blancs),
+            y = vertical (fond du bac à y = 0).
+   ========================================================================== */
+const C = {
+  PAS_MM: 50,            // [H]
+  plateW: 0.80,          // [H] rainure 0,20 pas ≈ 10 mm (deux tiges côte à côte : validé)
+  plateT: 0.04,
+  plateTopY: 1.30,
+  pillarW: 0.24,         // piliers cylindriques Ø 0,24 pas (≈ 14 mm) — corrigé d'après la photo (Pascal, 22/11)
+  rodR: 0.032,
+  bendR: 0.07,
+  footT: 0.06,
+  ballR: 0.15,           // [H] boule > rainure·√2/2 : retenue aux croisements
+  ballY: 0.25,           // [H] boule au repos → tige ≈ 1 pas
+  wallInner: 4.16, wallT: 0.03, wallTopY: 1.24,
+  notchW: 0.10, notchD: 0.25, notchPitch: 0.5,
+  flangeW: 0.10,
+  LIFT: 0.80,            // levée de la pièce. Butée de la boule ≈ 0,90 pas (≈ 45 mm) ; marge ≈ 5 mm
+  TILT_MAX: 0.34,        // [H] écart horizontal maxi du corps permis par l'inclinaison de la tige (≈ 17 mm)
+  CLEAR: 0.035,          // jeu visé entre deux pièces pendant les gestes (≈ 1,8 mm)
+};
+C.yPB = C.plateTopY - C.plateT;
+C.notchBottom = C.wallTopY - C.notchD;
+C.wallOuter = C.wallInner + C.wallT;
+C.yRod = C.rodR + 0.003;
+C.ballLocalY = C.ballY - C.plateTopY;
+
+/* ==========================================================================
+   2. SCÈNE
+   ========================================================================== */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, preserveDrawingBuffer:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x2a3038);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const ROOM_ENV = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environment = ROOM_ENV;
+const camera = new THREE.PerspectiveCamera(36, 1, 0.05, 400);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.minDistance = 1.5; controls.maxDistance = 40;
+scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a3f2a, 0.55));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(-9, 22, 12); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left:-14, right:14, top:14, bottom:-14, near:1, far:70 });
+sun.shadow.bias = -0.0004; scene.add(sun);
+
+const M = {
+  steel:  new THREE.MeshStandardMaterial({ color:0xb9bdc2, metalness:0.85, roughness:0.38 }),
+  alu:    new THREE.MeshStandardMaterial({ color:0xd9dcdf, metalness:0.55, roughness:0.45 }),
+  pillarDark: new THREE.MeshStandardMaterial({ color:0x2a2c30, metalness:0.3, roughness:0.6 }),
+  white:  new THREE.MeshStandardMaterial({ color:0xf4f4f2, roughness:0.35 }),
+  black:  new THREE.MeshStandardMaterial({ color:0x16171a, roughness:0.4 }),
+  pieceW: new THREE.MeshStandardMaterial({ color:0xeae2c8, roughness:0.55 }),
+  pieceB: new THREE.MeshStandardMaterial({ color:0x1f1d1c, roughness:0.42 }),
+};
+const xrayable = [M.steel, M.alu, M.pillarDark, M.white, M.black];
+
+/* ==========================================================================
+   3. PLATEAU + BOÎTES DE COLLISION
+   ========================================================================== */
+const board = new THREE.Group(); scene.add(board);
+const boxes = [], pedestal = [];
+const sqCenter = (f, r) => new THREE.Vector2(f - 3.5, 3.5 - r);
+const sqName = (f, r) => 'abcdefgh'[f] + (r + 1);
+const parseSq = s => ({ f:'abcdefgh'.indexOf(s[0]), r:+s[1] - 1 });
+function solid(w, h, d, x, y, z, mat, tag) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; board.add(m);
+  if (tag) boxes.push({ min:[x - w / 2, y - h / 2, z - d / 2], max:[x + w / 2, y + h / 2, z + d / 2], tag });
+  return m;
+}
+(function buildBoard() {
+  for (let f = 0; f < 8; f++) for (let r = 0; r < 8; r++) {
+    const c = sqCenter(f, r), dark = (f + r) % 2 === 0;
+    solid(C.plateW, C.plateT, C.plateW, c.x, C.plateTopY - C.plateT / 2, c.y, dark ? M.black : M.white, 'case ' + sqName(f, r));
+    { // pilier cylindrique ; pour les contrôles on garde son carré englobant (plus prudent)
+      const pm = new THREE.Mesh(new THREE.CylinderGeometry(C.pillarW / 2, C.pillarW / 2, C.yPB - 0.004, 32), dark ? M.pillarDark : M.alu);
+      pm.position.set(c.x, C.yPB / 2, c.y); pm.castShadow = pm.receiveShadow = true; board.add(pm);
+      boxes.push({ min:[c.x - C.pillarW / 2, 0, c.y - C.pillarW / 2], max:[c.x + C.pillarW / 2, C.yPB, c.y + C.pillarW / 2], tag:'pilier ' + sqName(f, r) }); }
+  }
+  const W = C.wallOuter;
+  solid(2 * W, 0.04, 2 * W, 0, -0.02, 0, M.steel, 'fond du bac');
+  const notches = []; for (let z = -4; z <= 4 + 1e-9; z += C.notchPitch) notches.push(z);
+  for (const s of [-1, 1]) {
+    const x = s * (C.wallInner + C.wallT / 2);
+    solid(C.wallT, C.notchBottom, 2 * W, x, C.notchBottom / 2, 0, M.steel, 'paroi crénelée');
+    const edges = [-W]; for (const z of notches) edges.push(z - C.notchW / 2, z + C.notchW / 2); edges.push(W);
+    for (let i = 0; i < edges.length; i += 2) { const z0 = edges[i], z1 = edges[i + 1]; if (z1 - z0 < 1e-6) continue;
+      solid(C.wallT, C.notchD, z1 - z0, x, C.notchBottom + C.notchD / 2, (z0 + z1) / 2, M.steel, 'créneau de paroi'); }
+  }
+  for (const s of [-1, 1]) {
+    solid(2 * W, C.wallTopY, C.wallT, 0, C.wallTopY / 2, s * (C.wallInner + C.wallT / 2), M.steel, "paroi d'extrémité");
+    solid(2 * C.wallInner, 0.02, C.flangeW, 0, C.wallTopY - 0.01, s * (C.wallInner - C.flangeW / 2), M.steel, 'retour de paroi');
+  }
+  pedestal.push(solid(1.2, 14.5, 1.2, 0, -7.3, 0, M.steel, 'pied de table'));   // [H] plateau à ≈ 80 cm du sol
+  const base = new THREE.Mesh(new THREE.BoxGeometry(10, 0.2, 10), M.steel);   // platine carrée inox (photo du parc)
+  base.position.y = -14.55; base.castShadow = true; base.receiveShadow = true; board.add(base); pedestal.push(base);
+  const mk = (txt, x, z) => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+    const g = cv.getContext('2d'); g.fillStyle = '#cfd6de'; g.font = 'bold 40px sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, 32, 34);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(cv), depthTest:false, transparent:true }));
+    sp.scale.set(0.32, 0.32, 1); sp.position.set(x, C.plateTopY + 0.05, z); board.add(sp);
+  };
+})();
+
+/* ==========================================================================
+   4. PIÈCES — corps Staunton simplifiés (hauteurs proches de la photo :
+   roi ≈ 1,25 pas, pion ≈ 0,7 pas), pied plat, tige courbée, boule.
+   ========================================================================== */
+const PROFILES = {   // (rayon, hauteur) en pas
+  P: [[0,0],[0.24,0],[0.24,0.04],[0.21,0.08],[0.17,0.11],[0.12,0.17],[0.09,0.33],[0.08,0.42],[0.13,0.45],[0.13,0.48],[0.08,0.5],[0,0.5]],
+  R: [[0,0],[0.27,0],[0.27,0.05],[0.23,0.09],[0.19,0.13],[0.15,0.2],[0.14,0.55],[0.18,0.6],[0.19,0.8],[0.15,0.8],[0.15,0.74],[0,0.74]],
+  B: [[0,0],[0.26,0],[0.26,0.05],[0.22,0.09],[0.17,0.13],[0.12,0.22],[0.09,0.5],[0.15,0.54],[0.15,0.57],[0.09,0.6],[0,0.6]],
+  Q: [[0,0],[0.28,0],[0.28,0.05],[0.24,0.09],[0.19,0.13],[0.13,0.24],[0.09,0.66],[0.17,0.7],[0.17,0.73],[0.1,0.76],[0.12,0.86],[0.17,0.97],[0.13,0.99],[0,0.99]],
+  K: [[0,0],[0.28,0],[0.28,0.05],[0.24,0.09],[0.19,0.13],[0.13,0.25],[0.1,0.72],[0.18,0.76],[0.18,0.79],[0.1,0.82],[0.12,0.92],[0.16,1.02],[0.12,1.05],[0,1.05]],
+  N: [[0,0],[0.27,0],[0.27,0.05],[0.23,0.09],[0.19,0.13],[0.17,0.16],[0,0.16]],
+};
+const NAMES = { P:'pion', R:'tour', N:'cavalier', B:'fou', Q:'dame', K:'roi' };
+const FR = { P:'', R:'T', N:'C', B:'F', Q:'D', K:'R' };
+
+function bodyMeshes(type, mat, side) {
+  const out = [];
+  const lathe = new THREE.Mesh(new THREE.LatheGeometry(PROFILES[type].map(p => new THREE.Vector2(p[0], p[1])), 40), mat);
+  out.push(lathe);
+  const add = (geo, x, y, z, sy = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.y = sy; out.push(m); return m; };
+  if (type === 'P') add(new THREE.SphereGeometry(0.11, 28, 18), 0, 0.6, 0);
+  if (type === 'B') { add(new THREE.SphereGeometry(0.115, 28, 18), 0, 0.74, 0, 1.45); add(new THREE.SphereGeometry(0.04, 16, 10), 0, 0.94, 0); }
+  if (type === 'Q') add(new THREE.SphereGeometry(0.06, 16, 10), 0, 1.05, 0);
+  if (type === 'K') { add(new THREE.BoxGeometry(0.05, 0.2, 0.05), 0, 1.15, 0); add(new THREE.BoxGeometry(0.15, 0.05, 0.05), 0, 1.17, 0); }
+  if (type === 'R') for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + Math.PI / 4;
+    add(new THREE.BoxGeometry(0.07, 0.07, 0.09), 0.15 * Math.cos(a), 0.83, 0.15 * Math.sin(a)).rotation.y = -a; }
+  if (type === 'N') {      // tête de cheval extrudée, tournée vers l'adversaire
+    const s = new THREE.Shape(), pts = [[-0.16,0.14],[0.13,0.14],[0.11,0.3],[0.06,0.42],[0.19,0.54],[0.25,0.61],[0.22,0.69],[0.1,0.77],[0.02,0.86],[-0.04,0.8],[-0.12,0.74],[-0.18,0.6],[-0.2,0.4],[-0.18,0.22]];
+    s.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) s.lineTo(p[0], p[1]); s.closePath();
+    const g = new THREE.ExtrudeGeometry(s, { depth:0.16, bevelEnabled:true, bevelThickness:0.025, bevelSize:0.02, bevelSegments:3 });
+    g.translate(0, 0, -0.08);
+    const head = new THREE.Mesh(g, mat); head.rotation.y = side * Math.PI / 2; out.push(head);
+  }
+  return out;
+}
+
+/* Construit une pièce complète. Origine : centre de la base, au niveau du dessus des cases. */
+function buildPiece(type, side, mat) {
+  const off = new THREE.Vector2(0, 0.5 * side);            // [H] hypothèse A : tige au milieu du bord, côté du joueur
+  const L = off.length(), dir = off.clone().normalize();
+  const g = new THREE.Group();
+  const body = bodyMeshes(type, mat, side);
+  for (const m of body) { m.castShadow = true; m.receiveShadow = true; g.add(m); }
+  const arm = new THREE.Group(); arm.rotation.y = Math.atan2(-dir.y, dir.x); g.add(arm);
+  const r0 = PROFILES[type][1][0] * 0.55;
+  const fs = new THREE.Shape();
+  fs.moveTo(r0, -0.09); fs.lineTo(L - C.bendR, -0.04); fs.lineTo(L - C.bendR, 0.04); fs.lineTo(r0, 0.09); fs.closePath();
+  const foot = new THREE.Mesh(new THREE.ExtrudeGeometry(fs, { depth:C.footT, bevelEnabled:false }), mat);
+  foot.rotation.x = Math.PI / 2; foot.position.y = C.footT; foot.castShadow = true; arm.add(foot);
+  const path = new THREE.CurvePath();
+  path.add(new THREE.LineCurve3(new THREE.Vector3(L - C.bendR - 0.05, C.yRod, 0), new THREE.Vector3(L - C.bendR, C.yRod, 0)));
+  const arc = []; for (let i = 0; i <= 12; i++) { const t = Math.PI / 2 * (1 - i / 12);
+    arc.push(new THREE.Vector3(L - C.bendR + C.bendR * Math.cos(t), C.yRod - C.bendR + C.bendR * Math.sin(t), 0)); }
+  path.add(new THREE.CatmullRomCurve3(arc));
+  path.add(new THREE.LineCurve3(new THREE.Vector3(L, C.yRod - C.bendR, 0), new THREE.Vector3(L, C.ballLocalY, 0)));
+  const rod = new THREE.Mesh(new THREE.TubeGeometry(path, 100, C.rodR, 12, false), mat); rod.castShadow = true; arm.add(rod);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(C.ballR, 28, 18), mat); ball.position.set(L, C.ballLocalY, 0); arm.add(ball);
+
+  // échantillons de surface du corps (repère local) + table rayon(hauteur)
+  g.updateMatrixWorld(true);
+  const surf = [], rTab = new Float32Array(80); let height = 0;
+  const v = new THREE.Vector3();
+  for (const m of body) {
+    const pos = m.geometry.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(m.matrix);
+      height = Math.max(height, v.y);
+      const k = Math.max(0, Math.min(79, Math.round(v.y / 0.02)));
+      rTab[k] = Math.max(rTab[k], Math.hypot(v.x, v.z));
+      if (i % 3 === 0) surf.push(v.clone());
+    }
+  }
+  for (let k = 1; k < 79; k++) if (rTab[k] === 0 && k * 0.02 < height) rTab[k] = Math.max(rTab[k - 1], rTab[k + 1]);
+  const toLocal = (u, y, w = 0) => new THREE.Vector3(u * dir.x - w * dir.y, y, u * dir.y + w * dir.x);
+  for (const u of [r0, (r0 + L - C.bendR) / 2, L - C.bendR]) for (const w of [-0.06, 0, 0.06]) for (const y of [0, C.footT]) surf.push(toLocal(u, y, w * (u > r0 + 0.01 ? 0.6 : 1)));
+  const rodPts = [];
+  for (let u = r0 + 0.05; u < L - C.bendR; u += 0.03) rodPts.push(toLocal(u, C.yRod));
+  for (let i = 0; i <= 10; i++) { const t = Math.PI / 2 * (1 - i / 10); rodPts.push(toLocal(L - C.bendR + C.bendR * Math.cos(t), C.yRod - C.bendR + C.bendR * Math.sin(t))); }
+  for (let y = C.yRod - C.bendR - 0.03; y > C.ballLocalY + C.ballR * 0.7; y -= 0.03) rodPts.push(toLocal(L, y));
+  const ballC = toLocal(L, C.ballLocalY);
+  g.userData = { type, side, off, surf, rodPts, ballC, rTab, height, com:new THREE.Vector3(0, 0.35 * height, 0), parts:[foot, rod, ball] };
+  return g;
+}
+const radiusAt = (pc, y) => (y < 0 || y > pc.g.userData.height) ? 0 : pc.g.userData.rTab[Math.max(0, Math.min(79, Math.round(y / 0.02)))];
+
+/* ==========================================================================
+   5. CONTRÔLES
+   ========================================================================== */
+const plateHalf = C.plateW / 2, pillarHalf = C.pillarW / 2;
+function insidePlate(x, z) {
+  if (Math.abs(x) > 4 || Math.abs(z) > 4) return false;
+  const cx = Math.floor(x) + 0.5, cz = Math.floor(z) + 0.5;
+  return Math.abs(x - cx) <= plateHalf && Math.abs(z - cz) <= plateHalf;
+}
+function underFlange(x, z) { return Math.abs(z) >= C.wallInner - C.flangeW && Math.abs(z) <= C.wallInner && Math.abs(x) <= C.wallInner; }
+const distToRect = (px, pz, cx, cz, h) => Math.hypot(Math.max(Math.abs(px - cx) - h, 0), Math.max(Math.abs(pz - cz) - h, 0));
+// Axe de la tige D (point où la tige traverse le plateau) : en rainure, boule retenue, boule loin des piliers
+function checkAnchor(D) {
+  const fx = Math.abs(D.x - Math.round(D.x)), fz = Math.abs(D.y - Math.round(D.y)), free = (1 - C.plateW) / 2 - C.rodR;
+  const rodMargin = Math.max(free - fx, free - fz);
+  // calcul exact : la boule recouvre-t-elle une case (ou le retour de paroi) ?
+  let blocked = Math.abs(D.y) + C.ballR > C.wallInner - C.flangeW;
+  for (let i = Math.floor(D.x) - 1; i <= Math.floor(D.x) + 1 && !blocked; i++) for (let j = Math.floor(D.y) - 1; j <= Math.floor(D.y) + 1; j++) {
+    if (i < -4 || i > 3 || j < -4 || j > 3) continue;
+    if (distToRect(D.x, D.y, i + 0.5, j + 0.5, plateHalf) < C.ballR - 1e-6) { blocked = true; break; } }
+  return { ok:rodMargin >= -1e-6 && blocked && Math.abs(D.x) <= 4 + 1e-6 && Math.abs(D.y) <= 4 + 1e-6, rodMargin, blocked };
+}
+const TOL = 0.008, _v = new THREE.Vector3();
+function boxDist(p, b) {
+  const dx = Math.max(b.min[0] - p.x, 0, p.x - b.max[0]), dy = Math.max(b.min[1] - p.y, 0, p.y - b.max[1]), dz = Math.max(b.min[2] - p.z, 0, p.z - b.max[2]);
+  const d = Math.hypot(dx, dy, dz); if (d > 0) return d;
+  return -Math.min(p.x - b.min[0], b.max[0] - p.x, p.y - b.min[1], b.max[1] - p.y, p.z - b.min[2], b.max[2] - p.z);
+}
+// Pièce entière contre le plateau
+function check3D(pc, pos, quat) {
+  const u = pc.g.userData; let worst = Infinity, tag = '', part = '';
+  const R = 2.4, near = boxes.filter(b => pos.x > b.min[0] - R && pos.x < b.max[0] + R && pos.y > b.min[1] - R && pos.y < b.max[1] + R && pos.z > b.min[2] - R && pos.z < b.max[2] + R);
+  const test = (local, rad, name) => {
+    _v.copy(local).applyQuaternion(quat).add(pos);
+    for (const b of near) {
+      if (_v.x < b.min[0] - 0.4 || _v.x > b.max[0] + 0.4 || _v.y < b.min[1] - 0.4 || _v.y > b.max[1] + 0.4 || _v.z < b.min[2] - 0.4 || _v.z > b.max[2] + 0.4) continue;
+      const m = boxDist(_v, b) - rad; if (m < worst) { worst = m; tag = b.tag; part = name; }
+    }
+  };
+  for (const p of u.surf) test(p, 0, 'corps'); for (const p of u.rodPts) test(p, C.rodR, 'tige'); test(u.ballC, C.ballR, 'boule');
+  return { margin:worst, ok:worst > -TOL, tag, part };
+}
+// Corps / corps : la pièce en mouvement (éventuellement inclinée) contre les pièces posées
+const UP = new THREE.Vector3(0, 1, 0);
+function bodyMargin(pc, pos, quat, others) {
+  let m = Infinity, who = null; const axis = UP.clone().applyQuaternion(quat), H = pc.g.userData.height;
+  for (let t = 0; t <= H; t += 0.04) {
+    const W = pos.clone().addScaledVector(axis, t), rM = radiusAt(pc, t);
+    if (rM <= 0) continue;
+    for (const o of others) {
+      const y = W.y - o.rest.pos.y, rO = radiusAt(o, y); if (rO <= 0) continue;
+      const d = Math.hypot(W.x - o.rest.pos.x, W.z - o.rest.pos.z) - rM - rO;
+      if (d < m) { m = d; who = o; }
+    }
+  }
+  return { margin:m, who };
+}
+// Jeu requis (plan) entre la pièce soulevée de h et une pièce posée — pour la planification
+const clrCache = new Map();
+function clearance(pc, h, o) {
+  const key = pc.type + o.type + Math.round(h * 50);
+  if (clrCache.has(key)) return clrCache.get(key);
+  let c = 0;
+  for (let y = Math.max(0, h); y <= Math.min(o.g.userData.height, h + pc.g.userData.height); y += 0.02)
+    c = Math.max(c, radiusAt(pc, y - h) + radiusAt(o, y));
+  clrCache.set(key, c); return c;
+}
+
+/* ==========================================================================
+   6. TRAJET DE LA TIGE DANS LES RAINURES (lignes x ou z entières)
+   Plusieurs variantes (L dans un sens ou l'autre, escalier pour les
+   diagonales) ; on garde celle dont le corps gêne le moins et qui reste la
+   plus proche de la ligne droite (geste naturel).
+   ========================================================================== */
+const isInt = v => Math.abs(v - Math.round(v)) < 1e-6;
+const V2 = (x, z) => new THREE.Vector2(x, z);
+function snapNode(D, toward) {
+  if (isInt(D.x) && isInt(D.y)) return D.clone();
+  const alongX = isInt(D.y), v = alongX ? D.x : D.y, t = alongX ? toward.x : toward.y;
+  const a = Math.floor(v), b = Math.ceil(v);
+  let pick = Math.abs(a - t) <= Math.abs(b - t) ? a : b;
+  if (Math.abs(pick) > 4) pick = Math.abs(a) <= 4 ? a : b;
+  return alongX ? V2(pick, D.y) : V2(D.x, pick);
+}
+function clean(pts) {
+  const out = [];
+  for (const p of pts) if (!out.length || out[out.length - 1].distanceTo(p) > 1e-6) out.push(p.clone());
+  for (let i = out.length - 2; i > 0; i--) { const a = out[i - 1], b = out[i], c = out[i + 1];
+    if (Math.abs((b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x)) < 1e-9) out.splice(i, 1); }
+  return out;
+}
+function anchorCandidates(Ds, De) {
+  if ((isInt(Ds.y) && isInt(De.y) && Math.abs(Ds.y - De.y) < 1e-6) || (isInt(Ds.x) && isInt(De.x) && Math.abs(Ds.x - De.x) < 1e-6)) return [[Ds, De]];
+  const Ns = snapNode(Ds, De), Ne = snapNode(De, Ds), out = [];
+  out.push(clean([Ds, Ns, V2(Ns.x, Ne.y), Ne, De]));
+  out.push(clean([Ds, Ns, V2(Ne.x, Ns.y), Ne, De]));
+  const dx = Ne.x - Ns.x, dz = Ne.y - Ns.y;
+  if (dx && dz) {   // escalier : alterne les deux directions, puis termine en ligne droite
+    const st = [Ds, Ns]; let p = Ns.clone();
+    const n = Math.min(Math.abs(dx), Math.abs(dz));
+    for (const first of ['z', 'x']) {
+      const pts = [Ds, Ns]; p = Ns.clone();
+      for (let i = 0; i < n; i++) {
+        if (first === 'z') { p = V2(p.x, p.y + Math.sign(dz)); pts.push(p); p = V2(p.x + Math.sign(dx), p.y); pts.push(p); }
+        else { p = V2(p.x + Math.sign(dx), p.y); pts.push(p); p = V2(p.x, p.y + Math.sign(dz)); pts.push(p); }
+      }
+      pts.push(Ne, De); out.push(clean(pts));
+    }
+  }
+  return out;
+}
+const pathLen = p => { let L = 0; for (let i = 1; i < p.length; i++) L += p[i].distanceTo(p[i - 1]); return L; };
+function pointAt(path, s) {   // s = abscisse curviligne
+  for (let i = 1; i < path.length; i++) { const l = path[i].distanceTo(path[i - 1]);
+    if (s <= l || i === path.length - 1) return path[i - 1].clone().lerp(path[i], Math.min(1, s / Math.max(l, 1e-9))); s -= l; }
+  return path[path.length - 1].clone();
+}
+
+/* ==========================================================================
+   7. GESTE D'UN COUP : levée, trajet courbe, pose (ou bascule hors du bac)
+   Les poses sont pré-calculées image par image (N échantillons), puis
+   interpolées pendant la lecture.
+   ========================================================================== */
+const smooth = u => { u = Math.min(1, Math.max(0, u)); return u * u * (3 - 2 * u); };
+const smoother = u => { u = Math.min(1, Math.max(0, u)); return u * u * u * (u * (u * 6 - 15) + 10); };
+
+/* Pose d'une pièce dont la tige passe en D (plan), soulevée de h, corps écarté de δ :
+   rotation autour du point où la tige traverse le plateau. */
+function carriedPose(pc, D, h, delta) {
+  const off = pc.g.userData.off;
+  const O = new THREE.Vector3(D.x - off.x, C.plateTopY + h, D.y - off.y);
+  const len = delta.length();
+  if (len < 1e-6) return { pos:O, quat:new THREE.Quaternion(), tilt:0 };
+  const Q = new THREE.Vector3(D.x, C.plateTopY, D.y);
+  const dHat = new THREE.Vector3(delta.x / len, 0, delta.y / len);
+  const axis = new THREE.Vector3().crossVectors(UP, dHat).normalize();
+  const th = Math.atan2(len, Math.max(h, 0.25));
+  const q = new THREE.Quaternion().setFromAxisAngle(axis, th);
+  return { pos:Q.clone().add(O.clone().sub(Q).applyQuaternion(q)), quat:q, tilt:th };
+}
+
+function scorePath(pc, path, others) {
+  const off = pc.g.userData.off, L = pathLen(path), A = path[0].clone().sub(off), B = path[path.length - 1].clone().sub(off);
+  let pen = 0, dev = 0, n = 40;
+  for (let i = 0; i <= n; i++) {
+    const P = pointAt(path, L * i / n).sub(off);
+    for (const o of others) { const c = clearance(pc, C.LIFT, o) + C.CLEAR, d = P.distanceTo(o.rest.P); if (d < c) pen += c - d; }
+    const ab = B.clone().sub(A), t = Math.max(0, Math.min(1, P.clone().sub(A).dot(ab) / Math.max(ab.lengthSq(), 1e-9)));
+    dev += P.distanceTo(A.clone().addScaledVector(ab, t));
+  }
+  return pen * 20 + dev / n + L * 0.05;
+}
+
+/* Calcule les échantillons d'un geste.
+   mode 'move' : levée → trajet → pose ; mode 'carry' : levée → trajet, la pièce reste levée (avant bascule). */
+function buildGesture(pc, path, others, mode = 'move', N = 120, LIFT = C.LIFT) {
+  const off = pc.g.userData.off, L = pathLen(path);
+  const S = [];
+  for (let i = 0; i < N; i++) {
+    const s = i / (N - 1);
+    const lift = mode === 'move' ? smooth(s / 0.2) * smooth((1 - s) / 0.2) : smooth(s / 0.2);
+    const q = mode === 'move' ? smoother((s - 0.11) / 0.78) : smoother((s - 0.11) / 0.89);
+    const D = pointAt(path, L * q);
+    const w = Math.min(lift, smooth(q / 0.12), smooth((1 - q) / 0.12)) * (mode === 'carry' ? smooth((1 - q) / 0.25) : 1);
+    S.push({ s, h:LIFT * lift, q, D, base:D.clone().sub(off), P:D.clone().sub(off), w });
+  }
+  // relaxation : lisser la courbe du corps et l'écarter des pièces, dans la limite d'inclinaison
+  for (let it = 0; it < 90; it++) {
+    const prev = S.map(x => x.P.clone());
+    for (let i = 1; i < N - 1; i++) {
+      const x = S[i];
+      const lap = prev[i - 1].clone().add(prev[i + 1]).multiplyScalar(0.5);
+      x.P.lerp(lap, 0.5);
+      for (const o of others) {
+        const c = clearance(pc, x.h, o) + C.CLEAR; if (c <= 0) continue;
+        const d = x.P.clone().sub(o.rest.P), dl = d.length();
+        if (dl < c) x.P.add(dl > 1e-6 ? d.multiplyScalar((c - dl) / dl) : V2(0.01, 0));
+      }
+      const dv = x.P.clone().sub(x.base), lim = C.TILT_MAX * x.w;
+      if (dv.length() > lim) dv.setLength(lim);
+      // la boule, sous le pivot, part à l'opposé du corps : elle ne doit pas toucher les parois
+      const k = Math.max(0, C.plateTopY - (C.ballY + x.h)) / Math.max(x.h, 0.25), BL = C.wallInner - C.ballR - 0.012;
+      for (const ax of ['x', 'y']) { const b = x.D[ax] - dv[ax] * k;
+        if (b > BL) dv[ax] = (x.D[ax] - BL) / Math.max(k, 1e-6); if (b < -BL) dv[ax] = (x.D[ax] + BL) / Math.max(k, 1e-6); }
+      x.P.copy(x.base).add(dv);
+    }
+  }
+  return S.map(x => { const ps = carriedPose(pc, x.D, x.h, x.P.clone().sub(x.base)); return { pos:ps.pos, quat:ps.quat, tilt:ps.tilt, D:x.D, h:x.h }; });
+}
+
+/* ==========================================================================
+   8. PIÈCE PRISE : sortie par le côté crénelé le plus proche (validé),
+   créneau libre au milieu d'une case, bascule, la pièce pend tête en bas.
+   ========================================================================== */
+const slots = { '-1':new Set(), '1':new Set() };   // créneaux occupés (z) par côté
+/* Choix du créneau de sortie.
+   1) côté crénelé le plus proche, un créneau au milieu d'une case, une pièce par case (validé) ;
+   2) si ce côté est plein (8 pièces), l'autre côté — [H12] hypothèse à valider ;
+   3) si les deux côtés sont pleins (plus de 16 prises), créneaux au droit des rainures — [H12] à valider. */
+function pickSlot(s, zPref) {
+  const half = []; for (let z = -3.5; z <= 3.5; z += 1) half.push(z);
+  const free = side => half.filter(z => [...slots[side]].every(u => Math.abs(u - z) >= 0.99));
+  const near = list => list.sort((a, b) => Math.abs(a - zPref) - Math.abs(b - zPref))[0];
+  let f = free(s); if (f.length) return { s, z:near(f), hyp:false };
+  f = free(-s); if (f.length) return { s:-s, z:near(f), hyp:true };
+  const ints = []; for (let z = -3; z <= 3; z += 1) ints.push(z);
+  for (const side of [s, -s]) { const g = ints.filter(z => !slots[side].has(z)); if (g.length) return { s:side, z:near(g), hyp:true }; }
+  return { s, z:zPref, hyp:true };
+}
+function wedgePoint(s, z) {
+  const bx = C.wallInner - C.ballR, hd = bx - (3.5 + plateHalf);
+  return new THREE.Vector3(s * bx, C.yPB - Math.sqrt(Math.max(C.ballR * C.ballR - hd * hd, 0)), z);
+}
+function computeHang(pc, s, zN) {
+  const u = pc.g.userData, B = wedgePoint(s, zN);
+  const vx = C.wallOuter - Math.abs(B.x), vy = C.notchBottom - B.y;
+  const ang = Math.atan2(vy, vx) + Math.asin(C.rodR / Math.hypot(vx, vy));
+  const d = new THREE.Vector3(s * Math.cos(ang), Math.sin(ang), 0);
+  const alpha = Math.atan2(Math.cos(ang), Math.sin(ang));
+  const qTilt = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -s * alpha);
+  const O0 = B.clone().sub(u.ballC);
+  const pose = q => ({ pos:B.clone().add(O0.clone().sub(B).applyQuaternion(q)), quat:q });
+  const samples = [];
+  for (let k = -36; k <= 36; k++) {
+    const psi = k * 5 * Math.PI / 180, q = new THREE.Quaternion().setFromAxisAngle(d, psi).multiply(qTilt), p = pose(q);
+    samples.push({ psi, p, ok:check3D(pc, p.pos, q).ok, comY:u.com.clone().applyQuaternion(q).add(p.pos).y });
+  }
+  let best = samples[36];
+  for (const dirn of [-1, 1]) for (let i = 36; i >= 0 && i < samples.length; i += dirn) { if (!samples[i].ok) break; if (samples[i].comY < best.comY - 1e-6) best = samples[i]; }
+  return { B, d, qTilt, O0, psi:best.psi, pose, final:best.p, angleDeg:-ang * 180 / Math.PI };
+}
+/* Bascule en trois temps (comme validé en V6.2) :
+   a) la boule monte et se coince sous le bord de la case, pièce droite ;
+   b) la pièce bascule autour de la boule, la tige passe dans le créneau ;
+   c) la pièce pivote sur sa tige jusqu'à l'équilibre, tête en bas. */
+function buildTip(pc, fromPose, hang, N = 80) {
+  const ball0 = pc.g.userData.ballC.clone().applyQuaternion(fromPose.quat).add(fromPose.pos);
+  const lift = hang.B.clone().sub(ball0), out = [];
+  const nA = 14, nC = Math.abs(hang.psi) > 1e-6 ? 22 : 0, nB = N - nA - nC;
+  for (let i = 0; i < nA; i++) { const u = smooth((i + 1) / nA); out.push({ pos:fromPose.pos.clone().addScaledVector(lift, u), quat:new THREE.Quaternion(), tilt:0, D:null }); }
+  for (let i = 0; i < nB; i++) { const q = new THREE.Quaternion().slerp(hang.qTilt, smoother((i + 1) / nB)); const p = hang.pose(q); out.push({ pos:p.pos, quat:q, tilt:0, D:null }); }
+  for (let i = 0; i < nC; i++) { const q = new THREE.Quaternion().setFromAxisAngle(hang.d, hang.psi * smooth((i + 1) / nC)).multiply(hang.qTilt); const p = hang.pose(q); out.push({ pos:p.pos, quat:q, tilt:0, D:null }); }
+  return out;
+}
+
+/* ==========================================================================
+   9. PARTIE — démonstration : 1. e4 d5 2. exd5 Cc6 3. Fb5 Dxd5 4. Fxc6+ bxc6
+   La chronologie se construit coup par coup (appendMove), ce qui sert aussi
+   au mode « Jouer contre l'ordinateur ».
+   ========================================================================== */
+const GAME = [
+  ['e2', 'e4', '1. e4'], ['d7', 'd5', '1… d5'], ['e4', 'd5', '2. exd5'], ['b8', 'c6', '2… Cc6'],
+  ['f1', 'b5', '3. Fb5'], ['d8', 'd5', '3… Dxd5'], ['b5', 'c6', '4. Fxc6+'], ['b7', 'c6', '4… bxc6'],
+];
+const PCS = [];
+const START = 'RNBQKBNR';
+for (const [side, rBack, rPawn, mat] of [[1, 0, 1, M.pieceW], [-1, 7, 6, M.pieceB]]) {
+  for (let f = 0; f < 8; f++) {
+    for (const [type, r] of [[START[f], rBack], ['P', rPawn]]) {
+      const pm = mat.clone(), g = buildPiece(type, side, pm); scene.add(g);   // matériau propre à chaque pièce (opacité)
+      PCS.push({ type, side, g, pm, sq:{ f, r }, name:NAMES[type] + (side > 0 ? ' blanc' : ' noir') });
+    }
+  }
+}
+function restOf(pc, sq) {
+  const c = sqCenter(sq.f, sq.r), off = pc.g.userData.off;
+  return { pos:new THREE.Vector3(c.x, C.plateTopY, c.y), quat:new THREE.Quaternion(), P:c.clone(), D:c.clone().add(off) };
+}
+for (const pc of PCS) { pc.rest = restOf(pc, pc.sq); pc.start = { ...pc.sq }; pc.g.position.copy(pc.rest.pos); }
+
+const TL = { segs:[], total:0, moves:[], aims:[], cursor:0.8 };
+/* Tempo : durées × 1,22 par rapport à la V7.1 (demande de Pascal : un peu plus posé). */
+const TEMPO = 1.22, PAUSE = 0.6, AIM = 1.5, AFTER_AIM = 0.2, AFTER_EXIT = 0.35, FADE = 0.8;
+const occAt = (f, r) => PCS.find(p => !p.out && p.sq.f === f && p.sq.r === r);
+// instantané des pièces posées au moment du coup (leurs poses changent ensuite)
+const snap = list => list.map(p => ({ type:p.type, g:p.g, name:p.name, rest:{ pos:p.rest.pos.clone(), P:p.rest.P.clone() } }));
+
+/* Couronne de promotion — [H13] la pièce reste physiquement un pion (elle est captive) ;
+   on la coiffe d'une couronne dorée pour indiquer qu'elle joue comme une dame. À valider. */
+const GOLD = new THREE.MeshStandardMaterial({ color:0xd4a640, metalness:0.9, roughness:0.25, emissive:0x2a1a00 });
+function crownMesh(promo) {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 10, 32), GOLD); ring.rotation.x = Math.PI / 2; g.add(ring);
+  for (let i = 0; i < 5; i++) { const a = i * 2 * Math.PI / 5, s = new THREE.Mesh(new THREE.SphereGeometry(0.022, 10, 8), GOLD);
+    s.position.set(0.1 * Math.cos(a), 0.05, 0.1 * Math.sin(a)); g.add(s); }
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d');
+  x.fillStyle = '#d4a640'; x.font = 'bold 44px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(FR[promo] || 'D', 32, 34);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(cv), depthTest:false, transparent:true }));
+  sp.scale.set(0.26, 0.26, 1); sp.position.y = 0.3; sp.renderOrder = 15; g.add(sp);
+  g.position.y = 0.73; g.visible = false; return g;
+}
+
+function resetMech() {
+  for (const pc of PCS) {
+    pc.sq = { ...pc.start }; pc.rest = restOf(pc, pc.sq); pc.out = false; pc.hang = null;
+    for (const c of pc.crowns || []) pc.g.remove(c.mesh); pc.crowns = [];
+  }
+  slots['-1'].clear(); slots['1'].clear();
+  TL.segs = []; TL.moves = []; TL.aims = []; TL.cursor = 0.8; TL.total = 0.8;
+  aimCur = null; traceSeg = undefined;
+}
+
+/* ① la pièce prise sort par le côté crénelé et bascule. Retourne l'instant de fin. */
+function addCapture(vic, label, tStart, mv) {
+  const s0 = vic.sq.f >= 4 ? 1 : -1;
+  const others = snap(PCS.filter(p => !p.out && p !== vic));
+  const zPref = vic.rest.P.y;
+  const slot = pickSlot(s0, zPref), s = slot.s, zN = slot.z; slots[s].add(zN);
+  if (slot.hyp) mv.hyp = (mv.hyp || '') + ' [H12 créneau]';
+  const Ds = vic.rest.D, Dedge = sqCenter(s > 0 ? 7 : 0, vic.sq.r).add(vic.g.userData.off);
+  // la tige peut rejoindre le bord par sa rangée ou par une rangée voisine si la sienne est encombrée
+  const cands = [];
+  for (const dz of [0, -1, 1, -2, 2]) {
+    const zr = Ds.y + dz; if (Math.abs(zr) > 4) continue;
+    const N0 = snapNode(Ds, V2(Ds.x - s, zr));
+    const pts = dz ? [Ds, N0, V2(N0.x, zr), V2(4 * s, zr), V2(4 * s, zN)] : [Ds, Dedge, V2(4 * s, Ds.y), V2(4 * s, zN)];
+    cands.push(clean(pts));
+  }
+  // on construit les trajets de sortie et on garde le premier sans faute (sinon celui qui laisse le plus de jeu)
+  let pick = null;
+  for (const [sc, pth] of cands.map(p => [scorePath(vic, p, others), p]).sort((x, y) => x[0] - y[0])) {
+    const cy = buildGesture(vic, pth, others, 'carry'), q = quickCheck(vic, cy, others), key = q.bad * 1000 - Math.min(q.body, 0.2) * 10 + sc * 0.01;
+    if (!pick || key < pick.key) pick = { key, path:pth, carry:cy };
+    if (!q.bad && q.body > C.CLEAR * 0.6) break;
+  }
+  const path = pick.path, carry = pick.carry;
+  const hang = computeHang(vic, s, zN);
+  const tip = buildTip(vic, carry[carry.length - 1], hang);
+  const dCarry = (0.8 + 0.3 * Math.pow(pathLen(path), 0.8)) * 1.05 * TEMPO, dTip = 1.15 * TEMPO;
+  const seg = { pc:vic, t0:tStart, dur:dCarry + dTip, samples:carry.concat(tip), split:carry.length / (carry.length + tip.length), dSplit:dCarry / (dCarry + dTip),
+                others, path, fade:{ tRestore:tStart + dCarry + dTip * 0.55 }, label:`${label} — <b>${vic.name} pris</b> : on le soulève, il glisse vers le bord et bascule dans un créneau` };
+  TL.segs.push(seg); mv.segs.push(seg);
+  vic.out = true; vic.hang = hang; vic.rest = { pos:hang.final.pos, quat:hang.final.quat, P:null, D:null };
+  return tStart + dCarry + dTip + AFTER_EXIT;   // l'attaquant attend que la pièce prise soit dehors
+}
+/* Trajets de la tige pour une position chargée : en plus des L et escaliers directs,
+   des détours par une rainure voisine (décalage d'un pas), qui laissent plus de place au corps. */
+function moveCandidates(Ds, De) {
+  const base = anchorCandidates(Ds, De), Ns = snapNode(Ds, De), Ne = snapNode(De, Ds), out = base.slice();
+  for (const o of [V2(1, 0), V2(-1, 0), V2(0, 1), V2(0, -1)]) {
+    const A = Ns.clone().add(o), B = Ne.clone().add(o);
+    if (Math.max(Math.abs(A.x), Math.abs(A.y), Math.abs(B.x), Math.abs(B.y)) > 4) continue;
+    for (const q of anchorCandidates(A, B)) out.push(clean([Ds, Ns, ...q, Ne, De]));
+  }
+  return out;
+}
+/* Contrôle rapide d'un geste (une image sur deux) : nombre d'images fautives et jeu mini corps / corps */
+function quickCheck(pc, samples, others) {
+  let bad = 0, body = Infinity;
+  for (let i = 0; i < samples.length; i += 2) {
+    const x = samples[i];
+    if (!check3D(pc, x.pos, x.quat).ok) bad++;
+    if (x.D) { if (!checkAnchor(x.D).ok) bad++; const bm = bodyMargin(pc, x.pos, x.quat, others); body = Math.min(body, bm.margin); if (bm.margin < -TOL) bad++; }
+  }
+  return { bad, body };
+}
+/* Choisit le meilleur geste : on construit les trajets les plus prometteurs et on garde
+   le premier sans faute (sinon celui qui laisse le plus de jeu). */
+function bestGesture(pc, cands, others, lift) {
+  const ranked = cands.map(p => [scorePath(pc, p, others), p]).sort((x, y) => x[0] - y[0]).slice(0, 7);
+  let best = null;
+  for (const [sc, path] of ranked) {
+    const samples = buildGesture(pc, path, others, 'move', 120, lift), q = quickCheck(pc, samples, others);
+    const key = q.bad * 1000 - Math.min(q.body, 0.2) * 10 + sc * 0.01;
+    if (!best || key < best.key) best = { key, path, samples, q };
+    if (!q.bad && q.body > C.CLEAR * 0.6) break;
+  }
+  return best;
+}
+/* ② une pièce joue de sa case vers b. Retourne l'instant de fin du geste. */
+function addPlay(pc, b, label, tStart, mv, note = '', lift = C.LIFT) {
+  const others = snap(PCS.filter(p => !p.out && p !== pc));
+  const De = sqCenter(b.f, b.r).add(pc.g.userData.off), a = pc.sq;
+  const { path, samples } = bestGesture(pc, moveCandidates(pc.rest.D, De), others, lift);
+  const dur = (0.8 + 0.3 * Math.pow(pathLen(path), 0.8)) * TEMPO;
+  const seg = { pc, t0:tStart, dur, samples, others, path, label:`${label} — ${pc.name} ${sqName(a.f, a.r)} → ${sqName(b.f, b.r)}${note}` };
+  TL.segs.push(seg); mv.segs.push(seg);
+  pc.sq = { ...b }; pc.rest = restOf(pc, b);
+  return tStart + dur;
+}
+/* Ajoute un coup à la chronologie, à partir de l'instant t0.
+   m = { from, to, label, capSq?, rook?:[from, to], promo? } */
+function appendMove(m, t0 = TL.cursor) {
+  const a = parseSq(m.from), b = parseSq(m.to), pc = occAt(a.f, a.r);
+  const cs = parseSq(m.capSq || m.to), vic = occAt(cs.f, cs.r);
+  const mv = { label:m.label, t0, segs:[], pc, vic };
+  let t = t0;
+  if (vic) {          // ⓪ l'attaquant vise : trajectoire courbe vers la pièce visée
+    TL.aims.push({ vic, t0:t, dur:AIM, from:pc.rest.pos.clone(), to:vic.rest.pos.clone(), hFrom:pc.g.userData.height, hTo:vic.g.userData.height,
+                   label:`${m.label} — le ${pc.name} <b>vise</b> le ${vic.name} en ${sqName(cs.f, cs.r)}${m.capSq ? ' (prise en passant)' : ''}` });
+    t += AIM + AFTER_AIM;
+    t = addCapture(vic, m.label, t, mv);
+  }
+  t = addPlay(pc, b, m.label, t, mv, vic ? ' (prise)' : m.rook ? ' (roque : le roi d\'abord)' : '');
+  if (m.rook) {       // [H14] roque : le roi, puis la tour qui le contourne — geste réel à confirmer
+    const ra = parseSq(m.rook[0]), rb = parseSq(m.rook[1]), rk = occAt(ra.f, ra.r);
+    if (rk) t = addPlay(rk, rb, m.label, t + 0.15, mv, ' (roque : puis la tour)');
+    mv.hyp = (mv.hyp || '') + ' [H14 roque]';
+  }
+  if (m.promo) {      // [H13] promotion : couronne sur le pion
+    const mesh = crownMesh(m.promo); pc.g.add(mesh); pc.crowns = pc.crowns || []; pc.crowns.push({ t, mesh });
+    pc.promo = m.promo; mv.hyp = (mv.hyp || '') + ' [H13 promotion]';
+  }
+  mv.t1 = t;
+  TL.moves.push(mv);
+  TL.cursor = t + PAUSE; TL.total = TL.cursor + 0.8;
+  verifyMove(mv); renderMoves();
+  return mv;
+}
+function buildTimeline() {
+  resetMech();
+  for (const [from, to, label] of GAME) appendMove({ from, to, label });
+}
+
+/* Contrôle de chaque image de chaque geste */
+function verifyMove(mv) {
+  mv.res = { board:Infinity, boardTag:'', body:Infinity, bodyWho:'', tilt:0, anchorBad:0, bad:0 };
+  for (const seg of mv.segs) for (let i = 0; i < seg.samples.length; i++) {
+    const x = seg.samples[i];
+    const c3 = check3D(seg.pc, x.pos, x.quat);
+    if (c3.margin < mv.res.board) { mv.res.board = c3.margin; mv.res.boardTag = `${c3.part} / ${c3.tag}`; }
+    if (!c3.ok) mv.res.bad++;
+    if (x.D) { const a = checkAnchor(x.D); if (!a.ok) { mv.res.anchorBad++; mv.res.bad++; } }
+    if (x.D) { const bm = bodyMargin(seg.pc, x.pos, x.quat, seg.others);
+      if (bm.margin < mv.res.body) { mv.res.body = bm.margin; mv.res.bodyWho = bm.who ? bm.who.name : ''; }
+      if (bm.margin < -TOL) mv.res.bad++; }
+    mv.res.tilt = Math.max(mv.res.tilt, x.tilt);
+  }
+}
+
+/* ==========================================================================
+   10. LECTURE
+   ========================================================================== */
+function sampleSeg(seg, u) {
+  const S = seg.samples; let k;
+  if (seg.split) {   // deux sous-gestes de durées différentes (trajet puis bascule)
+    k = u < seg.dSplit ? (u / seg.dSplit) * (S.length * seg.split - 1) : (S.length * seg.split - 1) + ((u - seg.dSplit) / (1 - seg.dSplit)) * (S.length * (1 - seg.split));
+  } else k = u * (S.length - 1);
+  k = Math.max(0, Math.min(S.length - 1, k));
+  const i = Math.floor(k), j = Math.min(S.length - 1, i + 1), f = k - i;
+  return { pos:S[i].pos.clone().lerp(S[j].pos, f), quat:S[i].quat.clone().slerp(S[j].quat, f) };
+}
+function poseAt(pc, t) {
+  let last = null;
+  for (const seg of TL.segs) if (seg.pc === pc && t >= seg.t0) last = seg;
+  if (!last) { const c = sqCenter(pc.start.f, pc.start.r); return { pos:new THREE.Vector3(c.x, C.plateTopY, c.y), quat:new THREE.Quaternion() }; }
+  return sampleSeg(last, Math.min(1, (t - last.t0) / last.dur));
+}
+const play = { t:0, playing:true, until:null, speed:1, slow:false };
+/* Opacité de la pièce prise : 100 % → 80 % au départ, retour à 100 % une fois dehors */
+function opacityAt(pc, t) {
+  for (const seg of TL.segs) if (seg.pc === pc && seg.fade && t >= seg.t0 && t <= seg.t0 + seg.dur + 0.5)
+    return 1 - (1 - FADE) * smooth((t - seg.t0) / 0.35) * (1 - smooth((t - seg.fade.tRestore) / 0.45));
+  return 1;
+}
+/* Flash rouge (½ s) de la pièce visée, quand la flèche l'atteint */
+const RED = new THREE.Color(0xe02020);
+function flashAt(pc, t) {
+  for (const a of TL.aims) if (a.vic === pc) { const u = (t - (a.t0 + 0.62)) / 0.5; if (u > 0 && u < 1) return Math.sin(Math.PI * u); }
+  return 0;
+}
+function setFlash(pc, k) {
+  const m = pc.pm; if (!m.userData.base) m.userData.base = m.color.clone();
+  m.color.copy(m.userData.base).lerp(RED, k); m.emissive.setRGB(0.55 * k, 0.02 * k, 0.02 * k);
+}
+function setOpacity(pc, o) {
+  const m = pc.pm, tr = o < 0.999;
+  if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; }
+  m.opacity = o;
+}
+/* Trajectoire de visée : arc orange qui se dessine de l'attaquant vers la cible, puis s'efface */
+const aimMat = new THREE.MeshBasicMaterial({ color:0xff8a2a, transparent:true, opacity:0, depthTest:false });
+const aimGroup = new THREE.Group(); aimGroup.renderOrder = 20; scene.add(aimGroup);
+let aimCur = null, aimTube = null, aimHead = null, aimRing = null;
+const AIM_SEG = 90, AIM_RAD = 8;
+function setupAim(a) {
+  aimGroup.clear(); if (aimTube) aimTube.geometry.dispose();
+  const A = a.from.clone().add(new THREE.Vector3(0, a.hFrom + 0.15, 0)), B = a.to.clone().add(new THREE.Vector3(0, a.hTo + 0.2, 0));
+  const M2 = A.clone().lerp(B, 0.5).add(new THREE.Vector3(0, 1.1 + 0.25 * A.distanceTo(B), 0));
+  const curve = new THREE.QuadraticBezierCurve3(A, M2, B);
+  aimTube = new THREE.Mesh(new THREE.TubeGeometry(curve, AIM_SEG, 0.03, AIM_RAD, false), aimMat);
+  aimHead = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 16), aimMat);
+  aimHead.position.copy(B); aimHead.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), curve.getTangent(1));
+  aimRing = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.025, 8, 48), aimMat);
+  aimRing.rotation.x = Math.PI / 2; aimRing.position.copy(a.to).add(new THREE.Vector3(0, 0.02, 0));
+  for (const m of [aimTube, aimHead, aimRing]) { m.renderOrder = 20; aimGroup.add(m); }
+}
+function drawAim(t) {
+  const a = TL.aims.find(x => t >= x.t0 && t <= x.t0 + x.dur);
+  if (!a) { aimMat.opacity = 0; aimGroup.visible = false; return null; }
+  if (a !== aimCur) { aimCur = a; setupAim(a); }
+  const u = (t - a.t0) / a.dur, grow = smooth(u / 0.4), fade = 1 - smooth((u - 0.75) / 0.25);
+  aimGroup.visible = true; aimMat.opacity = 0.95 * fade;
+  aimTube.geometry.setDrawRange(0, Math.floor(grow * AIM_SEG) * AIM_RAD * 6);
+  aimHead.visible = grow > 0.98; aimRing.visible = grow > 0.98;
+  aimRing.scale.setScalar(1 + 0.08 * Math.sin(t * 9));
+  return a;
+}
+function applyTime(t) {
+  for (const pc of PCS) {
+    const p = poseAt(pc, t); pc.g.position.copy(p.pos); pc.g.quaternion.copy(p.quat); setOpacity(pc, opacityAt(pc, t)); setFlash(pc, flashAt(pc, t));
+    if (pc.crowns) for (const c of pc.crowns) c.mesh.visible = t >= c.t;
+    if (pc === sel) pc.pm.emissive.setRGB(0.32, 0.14, 0.0);   // pièce choisie par le joueur
+  }
+  const aim = drawAim(t);
+  let cur = null; for (const seg of TL.segs) if (t >= seg.t0 && t <= seg.t0 + seg.dur + 0.3) cur = seg;
+  const mi = TL.moves.findIndex(m => t >= m.t0 - 0.05 && t <= m.t1 + 0.4);
+  document.querySelectorAll('#moves div[data-i]').forEach(d => d.classList.toggle('cur', +d.dataset.i === mi));
+  if (aim) caption(aim.label);
+  else if (cur) caption(cur.label);
+  else if (MODE === 'jeu') caption(gameCaption());
+  else if (!TL.moves.length) caption('');
+  else if (t >= TL.moves[TL.moves.length - 1].t1) caption('Fin de la séquence — <b>aucune pièce n\'a quitté le jeu</b> : les pièces prises pendent hors du bac, toujours reliées.');
+  else if (t < TL.moves[0].t0) caption('Position de départ — les 32 pièces sont reliées au plateau par leur tige.');
+  drawTrace(cur);
+}
+
+/* ==========================================================================
+   11. INTERFACE
+   ========================================================================== */
+const $ = id => document.getElementById(id);
+function caption(html) { if ($('caption').innerHTML !== html) $('caption').innerHTML = html; }
+const mm = v => (v * C.PAS_MM).toFixed(1) + ' mm';
+function renderMoves() {
+  let html = '', bad = 0, minBody = Infinity, maxTilt = 0, minBoard = Infinity;
+  TL.moves.forEach((m, i) => {
+    const r = m.res; bad += r.bad; minBody = Math.min(minBody, r.body); maxTilt = Math.max(maxTilt, r.tilt); minBoard = Math.min(minBoard, r.board);
+    html += `<div data-i="${i}"><span>${m.label}${m.hyp ? ` <span class="warn">${m.hyp}</span>` : ''}</span><span class="v ${r.bad ? 'ko' : 'ok'}">${r.bad ? '✗ ' + r.bad : '✓'} · jeu ${mm(Math.max(r.body, 0))} · tige ${(r.tilt * 180 / Math.PI).toFixed(0)}°</span></div>`;
+  });
+  $('moves').innerHTML = html; $('moves').scrollTop = 1e6;
+  $('summary').innerHTML = `${bad ? `<span class="ko">${bad} image(s) non conformes</span>` : '<span class="ok">Toutes les images sont conformes</span>'} : pièce / plateau (jeu mini ${mm(Math.max(minBoard, 0))}), tige en rainure, boule retenue, pièce / pièces (jeu mini ${mm(minBody)}). Inclinaison maxi de la tige : ${(maxTilt * 180 / Math.PI).toFixed(0)}°. Levée : ${mm(C.LIFT)} (butée de la boule ≈ ${mm(0.898)}).`;
+  window.__valerienResult = { bad, minBody, maxTilt, minBoard, moves:TL.moves.map(m => ({ label:m.label, ...m.res })) };
+}
+
+let traceLine = null, showTrace = false, traceSeg = null;
+function drawTrace(seg) {
+  if (seg === traceSeg) return; traceSeg = seg;
+  if (traceLine) { scene.remove(traceLine); traceLine.traverse(o => o.geometry && o.geometry.dispose()); traceLine = null; }
+  if (!seg) return;
+  traceLine = new THREE.Group();
+  const a = new THREE.Line(new THREE.BufferGeometry().setFromPoints(seg.path.map(p => new THREE.Vector3(p.x, C.plateTopY + 0.01, p.y))), new THREE.LineBasicMaterial({ color:0xff8a2a, depthTest:false }));
+  const b = new THREE.Line(new THREE.BufferGeometry().setFromPoints(seg.samples.map(x => x.pos.clone().add(new THREE.Vector3(0, 0.02, 0)))), new THREE.LineBasicMaterial({ color:0x4aa8ff, depthTest:false }));
+  a.renderOrder = b.renderOrder = 10; traceLine.add(a, b); traceLine.visible = showTrace; scene.add(traceLine);
+}
+
+let xray = false, autoRot = false;
+function setXray(on) {
+  xray = on; $('vXray').classList.toggle('on', on);
+  for (const m of xrayable) { m.transparent = on; m.opacity = on ? 0.25 : 1; m.depthWrite = !on; m.needsUpdate = true; }
+  for (const p of pedestal) p.visible = !on;
+}
+/* Cadrage : le plateau entier, centré dans la zone libre de l'écran (à droite du
+   panneau sur ordinateur), vu de face côté Blancs, bien à plat. */
+const PANEL = () => (innerWidth > 700 && $('ui').style.display !== 'none' && !$('ui').classList.contains('hidden')) ? 330 : 0;
+function applyViewOffset() {
+  const W = innerWidth, H = innerHeight, p = PANEL();
+  if (p) camera.setViewOffset(W, H, -p / 2, 0, W, H); else camera.clearViewOffset();
+}
+function fitDistance(radius) {
+  const W = innerWidth - PANEL(), H = innerHeight, vf = THREE.MathUtils.degToRad(camera.fov);
+  const hf = 2 * Math.atan(Math.tan(vf / 2) * W / H);
+  return radius / Math.sin(Math.min(vf, hf) / 2);
+}
+function orbitPos(target, dist, elevDeg, azDeg) {
+  const el = THREE.MathUtils.degToRad(elevDeg), az = THREE.MathUtils.degToRad(azDeg);
+  return new THREE.Vector3(target.x + dist * Math.cos(el) * Math.sin(az), target.y + dist * Math.sin(el), target.z + dist * Math.cos(el) * Math.cos(az));
+}
+let camAnim = null;
+function flyTo(pos, target, dur = 1000) { camAnim = { p0:camera.position.clone(), t0:controls.target.clone(), p1:pos, t1:target, start:performance.now(), dur }; }
+const VIEWS = {
+  persp:  () => { const port = camera.aspect < 1, T = new THREE.Vector3(0, port ? 0.4 : 0.6, port ? 0.2 : 0.35); return [orbitPos(T, fitDistance(port ? 4.75 : 6.3), port ? 56 : 44, 0), T]; },
+  player: () => {
+    if (MODE === 'jeu') { const port = camera.aspect < 1, T = new THREE.Vector3(0, 0.9, port ? 1.1 : 0.25); return [orbitPos(T, fitDistance(port ? 4.2 : 5.5), port ? 64 : 56, 0), T]; }   // jeu : plus haut, toutes les pièces visibles
+    const T = new THREE.Vector3(0, 0.9, 0.6); return [orbitPos(T, fitDistance(5.6), 28, 0), T]; },
+  top:    () => { const T = new THREE.Vector3(0, 1.2, 0.25); return [orbitPos(T, fitDistance(5.9), 89.5, 0), T]; },
+  amb:    () => { // joueur assis : œil à ≈ 1,25 m du sol, à ≈ 1,1 m de l'échiquier, regard incliné de 14° : l'échiquier en bas, le hall au-dessus
+    const Pc = PANOS[gare.cur] || {}, port = camera.aspect < 1, eyeY = FLOOR_Y + (Pc.eye || 1.25) * 1000 / C.PAS_MM, horiz = (port ? 30 * Math.min(Pc.camK || 1, 1.2) : 22 * (Pc.camK || 1)), pitch = port ? 20 : 14;
+    const T = new THREE.Vector3(0, eyeY - horiz * Math.tan(THREE.MathUtils.degToRad(pitch)), 0.4);
+    return [orbitPos(T, horiz / Math.cos(THREE.MathUtils.degToRad(pitch)), pitch, (PANOS[gare.cur] && PANOS[gare.cur].camAz) || 18), T]; },
+  exit:   () => { const T = new THREE.Vector3(-4.0, 0.2, -0.8); return [orbitPos(T, fitDistance(3.2), 14, -68), T]; },
+};
+let curView = 'persp', userMoved = false, uiToggled = false;
+controls.addEventListener('start', () => { userMoved = true; });
+function setView(v, instant = false) {
+  curView = v; userMoved = false;
+  for (const id of ['vPersp', 'vPlayer', 'vTop', 'vExit', 'vAmb']) $(id).classList.remove('on');
+  $({ persp:'vPersp', player:'vPlayer', top:'vTop', exit:'vExit', amb:'vAmb' }[v]).classList.add('on');
+  const [p, t] = VIEWS[v]();
+  if (instant) { camera.position.copy(p); controls.target.copy(t); camAnim = null; } else flyTo(p, t);
+}
+$('bPlay').onclick = () => { play.playing = !play.playing; play.until = null; if (play.playing && play.t >= TL.total) play.t = 0; syncPlay(); };
+function syncPlay() { $('bPlay').textContent = play.playing ? '⏸ Pause' : '▶ Lecture'; $('bPlay').classList.toggle('on', play.playing); }
+$('bNext').onclick = () => {
+  const next = TL.moves.find(m => m.t0 > play.t + 0.01);
+  if (!next) { play.t = 0; applyTime(0); return; }
+  play.t = Math.max(play.t, next.t0 - 0.05); play.until = next.t1 + 0.05; play.playing = true; syncPlay();
+};
+$('bRestart').onclick = () => { play.t = 0; play.until = null; play.playing = true; syncPlay(); };
+$('bSlow').onclick = () => { play.slow = !play.slow; $('bSlow').classList.toggle('on', play.slow); };
+$('speed').oninput = e => play.speed = +e.target.value;
+$('vPersp').onclick = () => setView('persp');
+$('vPlayer').onclick = () => setView('player');
+$('vTop').onclick = () => setView('top');
+$('vExit').onclick = () => setView('exit');
+$('vXray').onclick = () => setXray(!xray);
+$('vRot').onclick = () => { autoRot = !autoRot; controls.autoRotate = autoRot; controls.autoRotateSpeed = 0.8; $('vRot').classList.toggle('on', autoRot); };
+$('vTrace').onclick = () => { showTrace = !showTrace; $('vTrace').classList.toggle('on', showTrace); if (traceLine) traceLine.visible = showTrace; };
+$('toggleUI').onclick = () => { uiToggled = true; $('ui').classList.toggle('hidden'); resize(); };
+
+
+/* ==========================================================================
+   11b. DÉCORS (textures dessinées dans le navigateur, aucune image externe)
+   Sol à ≈ 80 cm sous le plateau. Trois ambiances neutres au choix.
+   ========================================================================== */
+const FLOOR_Y = -14.65;
+const decor = new THREE.Group(); scene.add(decor);
+function canvasTex(w, h, draw, repeat = 1) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  if (repeat !== 1) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
+  return t;
+}
+function gradientBg(top, mid, bottom) {
+  return canvasTex(8, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, top); gr.addColorStop(0.55, mid); gr.addColorStop(1, bottom); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+}
+function rng(seed) { let x = seed; return () => (x = (x * 16807) % 2147483647) / 2147483647; }
+function clearDecor() { while (decor.children.length) { const o = decor.children.pop(); o.traverse(m => { if (m.geometry) m.geometry.dispose(); if (m.material) { if (m.material.map) m.material.map.dispose(); m.material.dispose(); } }); } }
+
+const DECORS = {
+  /* Studio : fond de studio photo, sol gris clair qui se fond dans le fond (dégradé radial) */
+  studio() {
+    scene.background = gradientBg('#d9dcdf', '#c3c7cb', '#9ea3a8');
+    scene.fog = new THREE.Fog(0xb8bcc0, 45, 120);
+    const tex = canvasTex(1024, 1024, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+      gr.addColorStop(0, '#e4e6e8'); gr.addColorStop(0.45, '#cdd0d3'); gr.addColorStop(1, '#b8bcc0'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(90, 96), new THREE.MeshStandardMaterial({ map:tex, roughness:0.92, metalness:0 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; floor.receiveShadow = true; decor.add(floor);
+    return { exposure:1.0, sun:2.2, hemi:0.6 };
+  },
+  /* Salon : parquet de chêne en lames, mur clair au fond, lumière chaude */
+  parquet() {
+    scene.background = gradientBg('#e9e2d6', '#ddd3c3', '#c9bca8');
+    scene.fog = new THREE.Fog(0xd8cebd, 40, 110);
+    const r = rng(7);
+    const wood = canvasTex(1024, 1024, (g, w, h) => {
+      const rows = 8, lh = h / rows;
+      for (let i = 0; i < rows; i++) {
+        let x = -r() * 400;
+        while (x < w) {
+          const len = 380 + r() * 300, l = 46 + r() * 10, hue = 30 + r() * 6;
+          g.fillStyle = `hsl(${hue}, ${38 + r() * 10}%, ${l}%)`; g.fillRect(x, i * lh, len, lh);
+          g.globalAlpha = 0.12; for (let k = 0; k < 14; k++) { g.fillStyle = r() > 0.5 ? '#5a3c22' : '#f0d9b5';
+            g.fillRect(x, i * lh + r() * lh, len, 1 + r() * 2); } g.globalAlpha = 1;
+          g.fillStyle = 'rgba(40,25,12,0.55)'; g.fillRect(x, i * lh, 2, lh);
+          x += len;
+        }
+        g.fillStyle = 'rgba(40,25,12,0.5)'; g.fillRect(0, i * lh, w, 2);
+      }
+    }, 1);
+    wood.wrapS = wood.wrapT = THREE.RepeatWrapping; wood.repeat.set(9, 9);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(160, 160), new THREE.MeshStandardMaterial({ map:wood, roughness:0.55, metalness:0 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; floor.receiveShadow = true; decor.add(floor);
+    const wallMat = new THREE.MeshStandardMaterial({ color:0xe8e1d4, roughness:0.95 });
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(160, 60), wallMat); wall.position.set(0, FLOOR_Y + 30, -34); wall.receiveShadow = true; decor.add(wall);
+    const skirt = new THREE.Mesh(new THREE.BoxGeometry(160, 1.6, 0.3), new THREE.MeshStandardMaterial({ color:0xf3efe8, roughness:0.6 }));
+    skirt.position.set(0, FLOOR_Y + 0.8, -33.8); decor.add(skirt);
+    return { exposure:1.05, sun:2.4, hemi:0.65, warm:true };
+  },
+  /* Galerie : grandes dalles de pierre claire, joints fins, fond gris profond — prépare l'ambiance « hall » */
+  gallery() {
+    scene.background = gradientBg('#6f747a', '#8a8f94', '#a9adb1');
+    scene.fog = new THREE.Fog(0x9a9fa4, 35, 110);
+    const r = rng(11);
+    const stone = canvasTex(1024, 1024, (g, w, h) => {
+      const n = 2, s = w / n;
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        const l = 80 + r() * 6; g.fillStyle = `hsl(40, 6%, ${l}%)`; g.fillRect(i * s, j * s, s, s);
+        for (let k = 0; k < 900; k++) { g.fillStyle = `rgba(${r() > 0.5 ? '90,88,84' : '255,255,250'},${0.05 + r() * 0.07})`;
+          g.fillRect(i * s + r() * s, j * s + r() * s, 1 + r() * 3, 1 + r() * 3); }
+      }
+      g.strokeStyle = 'rgba(70,70,70,0.45)'; g.lineWidth = 3;
+      for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * s, 0); g.lineTo(i * s, h); g.stroke(); g.beginPath(); g.moveTo(0, i * s); g.lineTo(w, i * s); g.stroke(); }
+    });
+    stone.wrapS = stone.wrapT = THREE.RepeatWrapping; stone.repeat.set(10, 10);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(180, 180), new THREE.MeshStandardMaterial({ map:stone, roughness:0.32, metalness:0.05 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; floor.receiveShadow = true; decor.add(floor);
+    return { exposure:0.95, sun:2.6, hemi:0.5 };
+  },
+  none() { scene.background = new THREE.Color(0x2a3038); scene.fog = null; return { exposure:1, sun:2.2, hemi:0.55 }; },
+};
+
+/* ==========================================================================
+   11c. DÉCOR « GARE 360° » (V7.4 expérimentale)
+   Panorama équirectangulaire (JPEG / WebP, format 2:1) plaqué à l'intérieur
+   d'une sphère qui suit la caméra : la gare est « à l'infini », sans
+   déformation quand la caméra se déplace (mais sans parallaxe).
+   Sol : celui de la photo. Sous la table : un plan invisible qui ne reçoit
+   que l'ombre portée, et une ombre de contact douce.
+   Aucune modification de l'échiquier, des pièces ni des gestes.
+   ========================================================================== */
+const IS_MOBILE = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) <= 820);
+const MAX_TEX = renderer.capabilities.maxTextureSize;
+const PANO_W = (IS_MOBILE || MAX_TEX < 4096 || (navigator.deviceMemory && navigator.deviceMemory <= 4)) ? 2048
+  : (MAX_TEX >= 8192 && !(navigator.deviceMemory && navigator.deviceMemory < 8)) ? 8192 : 4096;
+/* Lieux disponibles (panoramas Poly Haven, licence CC0 : usage commercial libre, crédit apprécié).
+   yaw : orientation par défaut ; R : rayon du sol projeté (m) ; H : hauteur de prise de vue (m). */
+const PANOS = {
+  parc:   { label:'Parc', credit:'Charolettenbrunn Park — Poly Haven (CC0)', yaw:-90, R:20, H:1.65, camAz:80, camK:1.6, eye:1.35 },
+  gare:   { label:'Gare', credit:'Hamburg Hbf — Greg Zaal, Poly Haven (CC0)', yaw:-60, R:30, H:1.65 },
+  place:  { label:'Place', credit:'Schadowplatz, Düsseldorf — Greg Zaal, Poly Haven (CC0)', yaw:180, R:25, H:1.65 },
+  jardin: { label:'Jardin', credit:'Symmetrical Garden 02 — Poly Haven (CC0)', yaw:90, R:15, H:1.65 },
+  salle:  { label:'Salle ancienne', credit:'Music Hall 02 — Sergej Majboroda, Poly Haven (CC0)', yaw:90, R:7, H:1.65 },
+  victorien: { label:'Salon victorien', credit:'Combination Room — Poly Haven (CC0)', yaw:-90, R:4, H:1.65 },
+  salon:  { label:'Salon moderne', credit:'Lebombo — Greg Zaal, Poly Haven (CC0)', yaw:180, R:3.5, H:1.65 },
+};
+const panoFiles = k => ({ 8192:['8k', '4k', '2k'], 4096:['4k', '2k'], 2048:['2k', '4k'] }[PANO_W]).map(r => `${k}-360-${r}.webp`);
+const gare = { cur:'parc', bitmap:null, tex:null, sphere:null, ground:null, mode:'ground', H:1.65, R:20, blur:0, yaw:-90, sunYaw:0, bright:1, loading:false };   // lieu par défaut : le parc
+
+/* Redimensionne (et floute légèrement si demandé) l'image source dans un canvas à la taille adaptée à l'appareil */
+function panoCanvas() {
+  const w = Math.min(PANO_W, gare.bitmap.width), h = w / 2;
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const g = cv.getContext('2d');
+  if (gare.blur > 0) g.filter = `blur(${gare.blur * w / 4096}px)`;
+  // dessin avec débord horizontal pour que le flou se raccorde au joint gauche/droite du panorama
+  g.drawImage(gare.bitmap, -w, 0, w, h); g.drawImage(gare.bitmap, 0, 0, w, h); g.drawImage(gare.bitmap, w, 0, w, h);
+  return cv;
+}
+/* Reflets : en mode Lieu 360°, l'inox et les pièces reflètent le panorama lui-même (copie réduite 1024 px) */
+let panoEnv = null;
+function buildPanoEnv() {
+  if (panoEnv) { panoEnv.dispose(); panoEnv = null; }
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512;
+  const g = cv.getContext('2d'), w = 1024;
+  // même orientation que le panorama affiché (décalage horizontal = lacet)
+  const off = Math.round(((-gare.yaw / 360) % 1 + 1) % 1 * w);
+  g.drawImage(gare.bitmap, off - w, 0, w, 512); g.drawImage(gare.bitmap, off, 0, w, 512);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping;
+  panoEnv = pmrem.fromEquirectangular(t).texture; t.dispose();
+  if ($('dGare').classList.contains('on')) scene.environment = panoEnv;
+}
+function buildPanoTexture() {
+  if (gare.tex) gare.tex.dispose();
+  const t = new THREE.CanvasTexture(panoCanvas());
+  t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping;
+  t.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+  gare.tex = t;
+  if (gare.sphere) { gare.sphere.material.map = t; gare.sphere.material.needsUpdate = true; }
+  if (gare.ground) gare.ground.material.uniforms.map.value = t;
+  if (gare.sphere || gare.ground) showGareMode();
+  buildPanoEnv();
+}
+async function loadPanoFromBlob(blob, name) {
+  gare.bitmap = await createImageBitmap(blob);
+  if (Math.abs(gare.bitmap.width / gare.bitmap.height - 2) > 0.05) gareMsg(`⚠ « ${name} » n'est pas au format 2:1 (${gare.bitmap.width} × ${gare.bitmap.height}) : le panorama sera déformé.`);
+  else gareMsg(`Panorama : ${name} (${gare.bitmap.width} × ${gare.bitmap.height}, affiché en ${Math.min(PANO_W, gare.bitmap.width)} px${IS_MOBILE ? ', version téléphone' : ''}).`);
+  buildPanoTexture();
+}
+async function loadBundledPano() {
+  const want = gare.cur;
+  for (const f of panoFiles(want)) {
+    try { const r = await fetch(f); if (!r.ok) continue; const bl = await r.blob(); if (gare.cur !== want) return true; await loadPanoFromBlob(bl, f); return true; } catch (e) { /* fichier suivant */ }
+  }
+  return false;
+}
+function gareMsg(t) { $('gareMsg').textContent = t; }
+function sunFromYaw() {
+  const a = THREE.MathUtils.degToRad(gare.sunYaw), r = Math.hypot(-9, 12);
+  sun.position.set(r * Math.sin(a - 0.64), 22, r * Math.cos(a - 0.64));
+}
+
+/* Sol projeté (d'après GroundProjectedSkybox de three r160, adapté) :
+   le bas du panorama est projeté sur un vrai sol plat, à la hauteur du sol de la
+   scène, sous la table ; au-delà de « la taille du hall », l'image reste à l'infini.
+   Le centre de prise de vue est sous l'échiquier, à hauteur d'œil. */
+function makeGroundSkybox(tex) {
+  const mat = new THREE.ShaderMaterial({
+    uniforms:{ map:{ value:tex }, height:{ value:1 }, radius:{ value:1 }, center:{ value:new THREE.Vector3() }, yaw:{ value:0 }, bright:{ value:1 } },
+    vertexShader:`varying vec3 vWorldPosition;
+      void main(){ vec4 wp = modelMatrix * vec4(position, 1.0); vWorldPosition = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader:`varying vec3 vWorldPosition;
+      uniform sampler2D map; uniform float height; uniform float radius; uniform vec3 center; uniform float yaw; uniform float bright;
+      float diskIntersect(vec3 ro, vec3 rd, vec3 c, vec3 n, float r){ float d = dot(rd, n); if (d > 0.0) return 1e6;
+        vec3 o = ro - c; float t = -dot(n, o) / d; vec3 q = o + rd * t; return (dot(q, q) < r * r) ? t : 1e6; }
+      float sphereIntersect(vec3 ro, vec3 rd, vec3 ce, float ra){ vec3 oc = ro - ce; float b = dot(oc, rd); float c = dot(oc, oc) - ra * ra;
+        float h = b * b - c; if (h < 0.0) return -1.0; return -b + sqrt(h); }
+      #include <common>
+      void main(){
+        vec3 rd = normalize(vWorldPosition - cameraPosition);
+        vec3 ro = cameraPosition - center;                 // repère centré sur le point de prise de vue
+        float ts = sphereIntersect(ro, rd, vec3(0.0), radius);
+        vec3 p = vec3(0.0, 1.0, 0.0);
+        if (ts > 0.0) { float td = diskIntersect(ro, rd, vec3(0.0, -height, 0.0), vec3(0.0, 1.0, 0.0), radius); p = ro + min(ts, td) * rd; }
+        vec3 dir = normalize(p);
+        float c = cos(yaw), s = sin(yaw); dir = vec3(c * dir.x - s * dir.z, dir.y, s * dir.x + c * dir.z);
+        gl_FragColor = vec4(texture2D(map, equirectUv(dir)).rgb * bright, 1.0);
+        #include <colorspace_fragment>
+      }`,
+    side:THREE.BackSide, depthWrite:false, toneMapped:false,
+  });
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), mat);
+  m.frustumCulled = false; m.renderOrder = -10;
+  return m;
+}
+const PAS_PER_M = 1000 / C.PAS_MM;   // 20 pas par mètre
+function updateGroundParams() {
+  if (!gare.ground) return;
+  const u = gare.ground.material.uniforms, H = gare.H * PAS_PER_M, R = gare.R * PAS_PER_M;
+  u.height.value = H; u.radius.value = R; u.center.value.set(0, FLOOR_Y + H, 0);
+  u.yaw.value = THREE.MathUtils.degToRad(gare.yaw); u.bright.value = gare.bright;
+  gare.ground.scale.setScalar(R * 1.6); gare.ground.position.set(0, FLOOR_Y + H, 0);
+  camera.far = Math.max(400, R * 4); camera.updateProjectionMatrix();
+}
+function showGareMode() {
+  const ok = !!gare.tex;
+  if (gare.sphere) gare.sphere.visible = ok && gare.mode === 'sphere';
+  if (gare.ground) gare.ground.visible = ok && gare.mode === 'ground';
+  $('gGround').classList.toggle('on', gare.mode === 'ground'); $('gSphere').classList.toggle('on', gare.mode === 'sphere');
+}
+
+DECORS.gare = function () {
+  scene.fog = null;
+  scene.background = new THREE.Color(0x8a8f94);          // en attendant le panorama
+  // a) sphère à l'infini : suit la caméra ; géométrie retournée (x → −x) pour ne pas voir l'image en miroir
+  const geo = new THREE.SphereGeometry(300, IS_MOBILE ? 48 : 96, IS_MOBILE ? 24 : 48); geo.scale(-1, 1, 1);
+  const mat = new THREE.MeshBasicMaterial({ depthWrite:false, depthTest:false, fog:false, toneMapped:false });
+  mat.color.setScalar(gare.bright);
+  const sphere = new THREE.Mesh(geo, mat);
+  sphere.renderOrder = -10; sphere.frustumCulled = false; sphere.rotation.y = THREE.MathUtils.degToRad(-gare.yaw);
+  decor.add(sphere); gare.sphere = sphere;
+  if (gare.tex) { mat.map = gare.tex; mat.needsUpdate = true; }
+  // b) sol projeté
+  gare.ground = makeGroundSkybox(gare.tex); decor.add(gare.ground); updateGroundParams();
+  showGareMode();
+  // attrape-ombre : invisible, ne montre que l'ombre portée
+  const sc = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity:0.38 }));
+  sc.rotation.x = -Math.PI / 2; sc.position.y = FLOOR_Y + 0.01; sc.receiveShadow = true; decor.add(sc);
+  // ombre de contact douce sous le pied
+  const ct = canvasTex(256, 256, (g, w, h) => { const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    gr.addColorStop(0, 'rgba(0,0,0,0.55)'); gr.addColorStop(0.45, 'rgba(0,0,0,0.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+  const contact = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.MeshBasicMaterial({ map:ct, transparent:true, depthWrite:false }));
+  contact.rotation.x = -Math.PI / 2; contact.position.y = FLOOR_Y + 0.02; decor.add(contact);
+  sunFromYaw();
+  camera.fov = 50; camera.updateProjectionMatrix();          // focale « 35 mm » : moins d'effet téléobjectif sur le fond
+  if (!gare.bitmap && !gare.loading) {
+    gare.loading = true; gareMsg('Chargement du panorama…');
+    loadBundledPano().then(ok => { gare.loading = false;
+      if (!ok) gareMsg('Aucun panorama intégré à la page : « Choisir un panorama… » pour charger une image équirectangulaire 2:1 (JPEG ou WebP).'); });
+  }
+  return { exposure:1.0, sun:2.4, hemi:0.6 };
+};
+// la sphère à l'infini suit la caméra (pas de translation du panorama → pas de déformation)
+function updateGare() { if (gare.sphere && gare.sphere.parent) gare.sphere.position.copy(camera.position); }
+
+/* Qualité adaptée au téléphone en mode Gare */
+function applyQuality() {
+  const g = $('dGare').classList.contains('on');
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, g && IS_MOBILE ? 1.5 : 2));
+  const ms = g && IS_MOBILE ? 1024 : 2048;
+  if (sun.shadow.mapSize.x !== ms) { sun.shadow.mapSize.set(ms, ms); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+  scene.environment = g && panoEnv ? panoEnv : ROOM_ENV;
+  if (!g) { sun.position.set(-9, 22, 12); gare.sphere = null; gare.ground = null; camera.fov = 36; camera.far = 400; camera.updateProjectionMatrix(); }
+  resize();
+}
+
+let envTimer = null;
+$('gYaw').oninput = e => { clearTimeout(envTimer); envTimer = setTimeout(() => { if (gare.bitmap) buildPanoEnv(); }, 250); gare.yaw = +e.target.value; if (gare.sphere) gare.sphere.rotation.y = THREE.MathUtils.degToRad(-gare.yaw); updateGroundParams(); };
+$('gSun').oninput = e => { gare.sunYaw = +e.target.value; sunFromYaw(); };
+$('gBright').oninput = e => { gare.bright = +e.target.value; if (gare.sphere) gare.sphere.material.color.setScalar(gare.bright); updateGroundParams(); };
+$('gH').oninput = e => { gare.H = +e.target.value; updateGroundParams(); };
+$('gR').oninput = e => { gare.R = +e.target.value; updateGroundParams(); };
+$('gGround').onclick = () => { gare.mode = 'ground'; showGareMode(); };
+$('gSphere').onclick = () => { gare.mode = 'sphere'; showGareMode(); };
+let blurTimer = null;
+$('gBlur').oninput = e => { gare.blur = +e.target.value; clearTimeout(blurTimer); blurTimer = setTimeout(() => { if (gare.bitmap) buildPanoTexture(); }, 150); };
+/* Choix du lieu : réglages par défaut du lieu, puis chargement de son panorama */
+function selectPano(k) {
+  const P = PANOS[k]; gare.cur = k; gare.yaw = P.yaw; gare.R = P.R; gare.H = P.H;
+  $('gYaw').value = P.yaw; $('gR').value = P.R; $('gH').value = P.H; $('gCredit').textContent = 'Photo : ' + P.credit;
+  for (const q in PANOS) $('p_' + q).classList.toggle('on', q === k);
+  if (gare.sphere) gare.sphere.rotation.y = THREE.MathUtils.degToRad(-gare.yaw);
+  updateGroundParams();
+  gare.bitmap = null; if (gare.tex) { gare.tex.dispose(); gare.tex = null; } showGareMode();
+  gare.loading = true; gareMsg('Chargement du panorama…');
+  loadBundledPano().then(ok => { gare.loading = false; if (!ok) gareMsg('Panorama introuvable pour ce lieu.'); });
+  if (curView === 'amb') setView('amb');
+}
+for (const k in PANOS) $('p_' + k).onclick = () => selectPano(k);
+$('gCredit').textContent = 'Photo : ' + PANOS.parc.credit; $('p_parc').classList.add('on');
+$('gFile').onclick = () => $('gFileIn').click();
+$('gFileIn').onchange = async e => { const f = e.target.files[0]; if (!f) return; gareMsg('Lecture de l’image…');
+  try { await loadPanoFromBlob(f, f.name); } catch (err) { gareMsg('Image illisible : ' + err.message); } };
+
+/* ==========================================================================
+   11d. CHAISES DE BISTROT (d'après la photo du parc)
+   Cadre en tube d'aluminium : pieds avant prolongés en accoudoirs, accoudoirs
+   et dossier formant une seule boucle ; assise en 6 lattes de bois, dossier en
+   3 lattes cintrées. Cotes [H] : assise à 45 cm, accoudoirs à 66 cm, dossier
+   à 74 cm (1 m = 20 pas). Les chaises ne font pas partie de la mécanique.
+   ========================================================================== */
+const MC = {
+  alu:  new THREE.MeshStandardMaterial({ color:0xd5d8dc, metalness:0.9, roughness:0.28 }),
+  wood: new THREE.MeshStandardMaterial({ color:0xa8693a, roughness:0.62 }),
+};
+function tube(points, r = 0.24, closed = false) {
+  const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)), closed, 'catmullrom', 0.3);
+  const m = new THREE.Mesh(new THREE.TubeGeometry(curve, closed ? 80 : 48, r, 10, closed), MC.alu);
+  m.castShadow = true; m.receiveShadow = true; return m;
+}
+function curvedSlat(radius, a0, a1, height, thick) {
+  // secteur d'anneau extrudé verticalement : latte de dossier cintrée
+  const sh = new THREE.Shape();
+  sh.absarc(0, 0, radius + thick, a0, a1, false); sh.absarc(0, 0, radius, a1, a0, true);
+  const g = new THREE.ExtrudeGeometry(sh, { depth:height, bevelEnabled:true, bevelThickness:0.05, bevelSize:0.05, bevelSegments:2, curveSegments:24 });
+  g.rotateX(-Math.PI / 2);        // le secteur passe dans le plan horizontal, l'épaisseur devient la hauteur
+  const m = new THREE.Mesh(g, MC.wood); m.castShadow = true; m.receiveShadow = true; return m;
+}
+function buildChair() {
+  const c = new THREE.Group();          // origine : sol, centre de l'assise ; la chaise regarde vers +z
+  const SY = 9, AY = 13.2;
+  for (const sx of [-1, 1]) {
+    // pied avant qui monte en accoudoir, puis rejoint la boucle du dossier
+    c.add(tube([[sx * 4.5, 0, 4.6], [sx * 4.35, 4.5, 4.3], [sx * 4.2, 9.5, 3.9], [sx * 4.2, 12.4, 3.4], [sx * 4.5, AY, 2.0], [sx * 4.8, AY + 0.2, -0.5]]));
+    // pied arrière
+    c.add(tube([[sx * 4.6, 0, -5.4], [sx * 4.45, 4.5, -4.6], [sx * 4.3, SY - 0.3, -3.8]]));
+    // traverse latérale sous l'assise
+    c.add(tube([[sx * 4.3, SY - 0.5, -3.9], [sx * 4.25, SY - 0.5, 0], [sx * 4.2, SY - 0.5, 3.9]], 0.2));
+  }
+  // boucle accoudoirs + dossier (fer à cheval)
+  c.add(tube([[-4.8, AY + 0.2, -0.5], [-4.75, AY + 0.6, -2.8], [-3.7, AY + 1.0, -4.6], [-1.9, AY + 1.3, -5.4], [0, AY + 1.4, -5.6],
+              [1.9, AY + 1.3, -5.4], [3.7, AY + 1.0, -4.6], [4.75, AY + 0.6, -2.8], [4.8, AY + 0.2, -0.5]]));
+  // montants du dossier qui portent les lattes
+  for (const sx of [-1, 1]) c.add(tube([[sx * 4.3, SY - 0.3, -3.8], [sx * 4.4, AY - 1.5, -4.3], [sx * 3.7, AY + 1.0, -4.6]], 0.2));
+  // traverses avant et arrière sous l'assise
+  c.add(tube([[-4.2, SY - 0.5, 3.9], [0, SY - 0.6, 4.0], [4.2, SY - 0.5, 3.9]], 0.2));
+  c.add(tube([[-4.3, SY - 0.5, -3.9], [0, SY - 0.6, -4.0], [4.3, SY - 0.5, -3.9]], 0.2));
+  // assise : 6 lattes, légère descente vers l'avant
+  for (let i = 0; i < 6; i++) {
+    const z = -3.3 + i * 1.34;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(8.6, 0.3, 1.05), MC.wood);
+    m.position.set(0, SY + 0.05 - (i === 5 ? 0.25 : 0) - Math.max(0, z) * 0.03, z); m.rotation.x = i === 5 ? 0.35 : 0;
+    m.castShadow = m.receiveShadow = true; c.add(m);
+  }
+  // dossier : 3 lattes cintrées (rayon ≈ 5,2 pas autour du centre de l'assise)
+  for (const [k, y] of [[0, 10.7], [1, 12.0], [2, 13.3]]) {
+    const slat = curvedSlat(5.0 - k * 0.05, Math.PI * 0.62, Math.PI * 0.38 + Math.PI * 0.0, 1.05, 0.28);
+    // a0 > a1 : on les inverse proprement
+    c.add(slat); slat.position.set(0, y, 0);
+  }
+  return c;
+}
+// remplacement des lattes de dossier : arc derrière l'assise, de −55° à +55° autour de −z
+function backSlat(y) {
+  const g = new THREE.Group();
+  const s = curvedSlat(4.9, -Math.PI / 2 - 0.95, -Math.PI / 2 + 0.95, 1.05, 0.28);
+  // dans le plan XY, l'arc est centré sur −y ; après rotateX(−90°), −y devient +z : on retourne pour l'avoir derrière (−z)
+  s.rotation.y = Math.PI; g.add(s); g.position.y = y; return g;
+}
+function buildChairFinal() {
+  const c = buildChair();
+  // on retire les lattes provisoires (3 derniers enfants) et on pose les vraies
+  for (let i = 0; i < 3; i++) c.remove(c.children[c.children.length - 1]);
+  for (const y of [10.6, 11.9, 13.2]) c.add(backSlat(y));
+  return c;
+}
+const chairs = new THREE.Group(); chairs.visible = false; scene.add(chairs);
+for (const [side, ang] of [[1, 0.22], [-1, -0.22]]) {
+  const ch = buildChairFinal();
+  // chaque joueur fait face à l'échiquier, assis côté de ses pièces, légèrement de biais comme sur la photo
+  ch.position.set(side * 1.6, FLOOR_Y, side * 13.5);
+  ch.rotation.y = (side > 0 ? Math.PI : 0) + ang;
+  chairs.add(ch);
+}
+let chairsOn = true;
+function updateChairs() { chairs.visible = chairsOn && $('dGare').classList.contains('on'); $('gChairs').classList.toggle('on', chairsOn); }
+$('gChairs').onclick = () => { chairsOn = !chairsOn; updateChairs(); };
+const hemi = scene.children.find(o => o.isHemisphereLight);
+function setDecor(k) {
+  clearDecor();
+  const cfg = DECORS[k]();
+  renderer.toneMappingExposure = cfg.exposure; sun.intensity = cfg.sun; if (hemi) hemi.intensity = cfg.hemi;
+  sun.color.set(cfg.warm ? 0xfff1dc : 0xffffff);
+  for (const [id, key] of [['dStudio', 'studio'], ['dGare', 'gare']]) $(id).classList.toggle('on', key === k);
+  $('gareUI').style.display = k === 'gare' ? '' : 'none';
+  if (typeof updateChairs === 'function') updateChairs();
+  applyQuality();
+}
+$('dStudio').onclick = () => setDecor('studio');
+$('dGare').onclick = () => { setDecor('gare'); setView('amb'); };   // en mode Gare : vue basse pour voir le hall
+$('vAmb').onclick = () => setView('amb');
+
+/* ==========================================================================
+   11c. JOUER CONTRE L'ORDINATEUR
+   Le joueur a les Blancs. Toucher une pièce blanche, puis une case orange.
+   Chaque coup (du joueur ou de l'ordinateur) est animé avec la même mécanique
+   que la démonstration et contrôlé image par image.
+   Hypothèses à valider : [H12] plus de 8 pièces prises d'un même côté,
+   [H13] promotion (le pion reste un pion, couronné), [H14] ordre du roque.
+   ========================================================================== */
+let MODE = 'demo', sel = null;
+const game = { E:makeEngine(), level:2, thinking:false, over:null, reqId:0 };
+const LEVELS = { 1:'Débutant', 2:'Amateur', 3:'Confirmé' };
+let scores = { 1:{ w:0, l:0, d:0 }, 2:{ w:0, l:0, d:0 }, 3:{ w:0, l:0, d:0 } };
+try { const s = JSON.parse(localStorage.getItem('valerien_scores_v1')); if (s && s[1]) scores = s; } catch (e) {}
+const saveScores = () => { try { localStorage.setItem('valerien_scores_v1', JSON.stringify(scores)); } catch (e) {} };
+
+// réflexion de l'ordinateur dans un Worker (l'animation reste fluide) ; repli sur le fil principal
+let worker = null;
+try {
+  worker = new Worker(URL.createObjectURL(new Blob([document.getElementById('engineSrc').textContent], { type:'text/javascript' })));
+  worker.onmessage = e => onAIMove(e.data.id, e.data.m);
+  worker.onerror = () => { worker = null; };
+} catch (e) { worker = null; }
+function askAI() {
+  game.thinking = true; const id = ++game.reqId, state = game.E.dump(), level = game.level, t0 = performance.now();
+  const deliver = m => setTimeout(() => onAIMove(id, m), Math.max(0, 700 - (performance.now() - t0)));   // petit temps de réflexion visible
+  if (worker) { worker.onmessage = e => deliver(e.data.m); worker.postMessage({ id, state, level }); }
+  else setTimeout(() => { const E2 = makeEngine(); E2.load(state); deliver(E2.best(level)); }, 30);
+}
+function onAIMove(id, m) {
+  if (id !== game.reqId || MODE !== 'jeu' || game.over) return;
+  game.thinking = false;
+  if (!m) return;
+  // le coup du Worker est une copie : on retrouve le coup légal équivalent
+  const legal = game.E.legal().find(x => x.from === m.from && x.to === m.to && (x.promo || '') === (m.promo || ''));
+  if (legal) playMove(legal);
+}
+
+function toMech(m, label) {
+  const n = game.E.name, out = { from:n(m.from), to:n(m.to), label };
+  if (m.ep) out.capSq = n(m.capSq);
+  if (m.rook) out.rook = [n(m.rook[0]), n(m.rook[1])];
+  if (m.promo) out.promo = m.promo.toUpperCase();
+  return out;
+}
+function playMove(m) {
+  const E = game.E, white = E.S.side === 'w', num = E.S.full;
+  const label = `${num}${white ? '.' : '…'} ${E.san(m)}`;
+  E.play(m);
+  appendMove(toMech(m, label), Math.max(TL.cursor, play.t));
+  play.playing = true; play.until = null; syncPlay();
+  const st = E.status();
+  if (st.over) endGame(st);
+  else if (E.S.side === 'b') askAI();
+  updateGameBar();
+}
+function endGame(st) {
+  game.over = st;
+  const sc = scores[game.level];
+  if (st.result === '1-0') sc.w++; else if (st.result === '0-1') sc.l++; else sc.d++;
+  saveScores(); updateGameBar();
+}
+function newGame() {
+  game.reqId++; game.thinking = false; game.over = null; sel = null; clearTargets();
+  game.E.reset(); resetMech(); renderMoves();
+  play.t = TL.cursor; play.playing = true; play.until = null; syncPlay();
+  updateGameBar();
+}
+function resign() {
+  if (game.over || MODE !== 'jeu' || !TL.moves.length) return;
+  game.reqId++; game.thinking = false; endGame({ over:true, result:'0-1', why:'abandon' });
+}
+const humanCanPlay = () => MODE === 'jeu' && !game.over && !game.thinking && game.E.S.side === 'w' && play.t >= TL.cursor - PAUSE - 0.01;
+
+function gameCaption() {
+  const E = game.E;
+  if (game.over) {
+    const o = game.over, why = { mat:'échec et mat', pat:'pat', abandon:'abandon' }[o.why] || o.why;
+    const res = o.result === '1-0' ? '<b>Tu as gagné</b>' : o.result === '0-1' ? "<b>L'ordinateur a gagné</b>" : '<b>Partie nulle</b>';
+    const out = PCS.filter(p => p.out).length;
+    return `${res} (${why}). ${out} pièce${out > 1 ? 's' : ''} prise${out > 1 ? 's' : ''}, aucune n'a quitté le jeu. Touche « Nouvelle partie » pour rejouer.`;
+  }
+  if (game.thinking || E.S.side === 'b') return "L'ordinateur réfléchit…";
+  const chk = E.status().check ? '<b>Échec !</b> ' : '';
+  if (sel) return `${chk}${sel.name} choisi : touche une case orange (ou une autre pièce blanche).`;
+  return `${chk}À toi de jouer, tu as les Blancs : touche une pièce blanche.`;
+}
+
+// ---- repères des cases jouables ----
+const tgtMat = new THREE.MeshBasicMaterial({ color:0xff8a2a, transparent:true, opacity:0.85, depthWrite:false });
+const tgtGroup = new THREE.Group(); scene.add(tgtGroup);
+const dotGeo = new THREE.CircleGeometry(0.14, 32), ringGeo = new THREE.RingGeometry(0.3, 0.37, 40);
+function clearTargets() { tgtGroup.clear(); }
+let selMoves = [];
+function showTargets(pc) {
+  clearTargets(); if (!pc) return;
+  const idx = pc.sq.r * 8 + pc.sq.f;
+  selMoves = game.E.legal().filter(m => m.from === idx);
+  for (const m of selMoves) {
+    const c = sqCenter(m.to & 7, m.to >> 3), cap = !!m.cap;
+    const mesh = new THREE.Mesh(cap ? ringGeo : dotGeo, tgtMat);
+    mesh.rotation.x = -Math.PI / 2; mesh.position.set(c.x, C.plateTopY + 0.004, c.y); mesh.renderOrder = 12; tgtGroup.add(mesh);
+  }
+}
+function select(pc) { sel = pc; showTargets(pc); }
+
+// ---- toucher l'échiquier ----
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -C.plateTopY);
+let downXY = null;
+canvas.addEventListener('pointerdown', e => { downXY = [e.clientX, e.clientY]; });
+canvas.addEventListener('pointerup', e => {
+  if (!downXY || Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]) > 7) return;
+  downXY = null; if (MODE === 'jeu') onBoardClick(e);
+});
+function onBoardClick(e) {
+  if (!humanCanPlay()) return;
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  // 1) une pièce ?
+  const live = PCS.filter(p => !p.out), hits = ray.intersectObjects(live.map(p => p.g), true);
+  let sq = null, hitPc = null;
+  if (hits.length) { let o = hits[0].object; while (o && !live.some(p => p.g === o)) o = o.parent; hitPc = live.find(p => p.g === o); if (hitPc) sq = hitPc.sq; }
+  // 2) sinon une case
+  if (!sq) { const P = new THREE.Vector3(); if (ray.ray.intersectPlane(plane, P)) { const f = Math.round(P.x + 3.5), rr = Math.round(3.5 - P.z); if (f >= 0 && f < 8 && rr >= 0 && rr < 8) sq = { f, r:rr }; } }
+  if (!sq) { select(null); return; }
+  const idx = sq.r * 8 + sq.f;
+  const ms = sel ? selMoves.filter(m => m.to === idx) : [];
+  if (ms.length) {
+    if (ms.length > 1) askPromotion(ms); else { const m = ms[0]; select(null); playMove(m); }
+    return;
+  }
+  const own = hitPc && hitPc.side > 0 ? hitPc : occAt(sq.f, sq.r);
+  select(own && own.side > 0 && own !== sel ? own : null);
+}
+function askPromotion(ms) {
+  const box = $('promo'); box.style.display = 'flex';
+  box.querySelectorAll('button').forEach(b => b.onclick = () => {
+    box.style.display = 'none'; const m = ms.find(x => x.promo === b.dataset.p) || ms[0]; select(null); playMove(m);
+  });
+}
+
+// ---- barre de jeu ----
+function updateGameBar() {
+  const s = scores[game.level], mat = game.E.material(), d = Math.round((mat.w - mat.b) / 100);
+  $('gScore').innerHTML = `Toi <b>${s.w}</b> · Ordi <b>${s.l}</b> · Nulles <b>${s.d}</b> <span class="mut">(${LEVELS[game.level]})</span>`;
+  $('gMat').textContent = d ? `Matériel : ${d > 0 ? '+' : ''}${d} pour ${d > 0 ? 'toi' : "l'ordinateur"}` : 'Matériel égal';
+  for (const k of [1, 2, 3]) $('lv' + k).classList.toggle('on', game.level === k);
+}
+for (const k of [1, 2, 3]) $('lv' + k).onclick = () => { if (game.level === k) return; game.level = k; newGame(); };
+$('gNew').onclick = newGame;
+$('gResign').onclick = resign;
+function setMode(m) {
+  MODE = m; select(null);
+  $('mDemo').classList.toggle('on', m === 'demo'); $('mJeu').classList.toggle('on', m === 'jeu');
+  $('gamebar').style.display = m === 'jeu' ? '' : 'none';
+  $('lecture').style.display = m === 'jeu' ? 'none' : '';
+  $('movesTitle').textContent = m === 'jeu' ? 'Coups joués et contrôles mécaniques' : 'Partie et contrôles mécaniques';
+  if (m === 'jeu') { newGame(); setView('player'); }
+  else { game.reqId++; game.thinking = false; buildTimeline(); play.t = 0; play.playing = true; syncPlay(); }
+}
+$('mDemo').onclick = () => setMode('demo');
+$('mJeu').onclick = () => setMode('jeu');
+
+/* ==========================================================================
+   12. BOUCLE
+   ========================================================================== */
+function resize() {
+  // téléphone : panneau replié tant que l'utilisateur ne l'a pas ouvert
+  if (!uiToggled) $('ui').classList.toggle('hidden', innerWidth <= 700);
+  renderer.setSize(innerWidth, innerHeight, true); camera.aspect = innerWidth / innerHeight; applyViewOffset(); camera.updateProjectionMatrix();
+  // la taille de la fenêtre change (chargement dans l'app, rotation) : on recadre, sauf si l'utilisateur a déplacé la vue
+  if (!userMoved && typeof VIEWS !== 'undefined') setView(curView, true);
+}
+addEventListener('resize', resize); if (window.visualViewport) visualViewport.addEventListener('resize', resize);
+resize(); setTimeout(resize, 300); setTimeout(resize, 1200);   // la vue intégrée de l'app peut prendre sa taille définitive après le chargement
+const clock = new THREE.Clock();
+function tick() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (camAnim) {
+    const u = smooth((performance.now() - camAnim.start) / camAnim.dur);
+    camera.position.lerpVectors(camAnim.p0, camAnim.p1, u); controls.target.lerpVectors(camAnim.t0, camAnim.t1, u);
+    if (u >= 1) camAnim = null;
+  }
+  if (play.playing) {
+    play.t += dt * play.speed * (play.slow ? 0.25 : 1);
+    if (play.until !== null && play.t >= play.until) { play.t = play.until; play.until = null; play.playing = false; syncPlay(); }
+    if (play.t >= TL.total) { play.t = TL.total; play.playing = false; syncPlay(); }
+  }
+  applyTime(play.t);
+  controls.update();
+  updateGare();
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+resize();
+buildTimeline();
+updateGameBar();
+setDecor('gare');          // ouverture directe dans le parc (Lieu 360°), vue « Ambiance »
+setView('amb', true);
+if (!/[?&]demo\b/.test(location.search)) setMode('jeu');   // V8 : ouverture directe en mode jeu (?demo pour la démonstration)
+tick();
+window.__valerien = { C, PCS, TL, play, applyTime, setView, setDecor, resize, gare, loadPanoFromBlob, check3D, bodyMargin, checkAnchor, buildTimeline, game, setMode, playMove, appendMove, newGame, camera };
+</script>
+</body>
+</html>

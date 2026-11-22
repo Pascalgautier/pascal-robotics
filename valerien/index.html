@@ -67,6 +67,9 @@
   .hero .copy, .hero .shade, .hero .scrollhint { transition:opacity 1.4s ease; }
   body.filmfirst .hero .copy, body.filmfirst .hero .shade, body.filmfirst .hero .scrollhint { opacity:0; }
   body.filmfirst .hero .brand, body.filmfirst .hero .tagline, body.filmfirst .hero .medal, body.filmfirst .hero .ctas { animation-play-state:paused; }
+  .playlink { margin-top:clamp(16px, 2.4vh, 24px); font:400 13px/1 var(--sans); letter-spacing:.06em; color:rgba(255,255,255,.7); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.28); padding-bottom:4px; opacity:0; animation:rise 1.4s 1.7s ease forwards; transition:color .2s, border-color .2s; }
+  .playlink:hover { color:#fff; border-color:var(--brass2); }
+  body.filmfirst .hero .playlink { animation-play-state:paused; }
   /* Héros : le film en boucle */
   :root { --brand:'Cinzel', 'Trajan Pro', serif; --brandW:400; --brandSp:.2em; }
   .hero { position:relative; height:100svh; min-height:560px; background:#000; color:#fff; overflow:hidden; padding:0; }
@@ -319,6 +322,7 @@ else try {
       <a class="btn gold" href="#contact">Demander un devis</a>
       <a class="btn ghost" href="#live">Voir la 3D en direct</a>
     </div>
+    <a class="playlink" href="3d/jeu.html">♟ Jouer une partie contre l'ordinateur</a>
   </div>
   <div class="scrollhint">Découvrir ↓</div>
 </section>
@@ -338,7 +342,7 @@ else try {
     <div class="head reveal">
       <div><div class="eyebrow">En direct</div><h2>Une partie se joue sous vos yeux</h2>
       <p>Chaque pièce se soulève, glisse et se repose sans jamais quitter le plateau. Les pièces prises sortent par le côté et restent accrochées.</p></div>
-      <a class="btn ghost" href="3d/">Explorer en plein écran ↗</a>
+      <div style="display:flex; gap:10px; flex-wrap:wrap"><a class="btn ghost" href="3d/">Explorer en plein écran ↗</a><a class="btn ghost" href="3d/jeu.html">♟ Jouer contre l'ordinateur</a></div>
     </div>
     <div class="frame reveal"><iframe src="3d/index.html?embed" title="VALÉRIEN en 3D : une partie jouée en direct" loading="lazy" allow="fullscreen"></iframe></div>
   </div>
