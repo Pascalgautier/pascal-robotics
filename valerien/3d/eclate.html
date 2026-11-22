@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VALÉRIEN — le mécanisme en vue éclatée</title>
+<style>
+  html, body { margin:0; height:100%; background:transparent; overflow:hidden; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing:antialiased; }
+  canvas { display:block; width:100%; height:100%; }
+  #labels { position:absolute; inset:0; pointer-events:none; }
+  .lab { position:absolute; transform:translate(-50%, -100%); white-space:nowrap; font-size:clamp(11px, 1.5vw, 14px); font-weight:500; color:#141516; letter-spacing:.02em;
+         opacity:0; transition:opacity .5s; padding-bottom:6px; }
+  .lab::after { content:''; position:absolute; left:50%; bottom:-2px; width:7px; height:7px; margin-left:-3.5px; border-radius:50%; background:#a8834e; box-shadow:0 0 0 3px rgba(168,131,78,.25); }
+  .lab.alert::after { display:none; }
+  .lab span { display:inline-block; background:rgba(251,250,247,.92); border:1px solid rgba(20,21,22,.12); border-radius:999px; padding:5px 11px; }
+  .lab.alert span { background:#141516; color:#fff; border-color:#141516; }
+  .lab.alert::after { background:#d4482f; box-shadow:0 0 0 4px rgba(212,72,47,.3); }
+  #cap { position:absolute; left:50%; top:2%; transform:translateX(-50%); width:min(92%, 560px); text-align:center; font-size:clamp(12px, 1.7vw, 15px); line-height:1.45; color:#3b3d40; opacity:0; transition:opacity .6s; }
+  #cap b { color:#141516; font-weight:600; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="labels"></div>
+<div id="cap"></div>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="module">
+/* ==========================================================================
+   VALÉRIEN — vue éclatée animée du mécanisme (boucle de 20 s)
+   Mêmes dimensions que la démonstration 3D validée (unité : 1 pas = case + rainure) :
+   cases 0,80 · rainure 0,20 · tige Ø 0,064 · boule Ø 0,30 · piliers 0,36.
+   La boule, plus large que la rainure, passe sous les cases et bute dessous :
+   la pièce se soulève et se déplace, elle ne peut pas sortir du plateau.
+   ========================================================================== */
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const C = { plateW:0.80, plateT:0.04, plateTopY:1.30, pillarW:0.36, rodR:0.032, bendR:0.07, footT:0.06, ballR:0.15, ballY:0.25 };
+C.yPB = C.plateTopY - C.plateT; C.yRod = C.rodR + 0.003; C.ballLocalY = C.ballY - C.plateTopY;
+const STOP = C.yPB - C.ballR - C.ballY;          // levée maximale : la boule touche le dessous des cases (≈ 0,86 pas)
+
+// ---- rendu ----
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.localClippingEnabled = true;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 100);
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(4, 7, 5); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.02; Object.assign(key.shadow.camera, { left:-3, right:3, top:3, bottom:-3 }); scene.add(key);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d2c6, 0.5));
+
+// ---- matériaux (le plan de coupe ne s'applique qu'au plateau) ----
+const cut = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 50);
+const mk = (o) => new THREE.MeshPhysicalMaterial({ clippingPlanes:[cut], clipShadows:true, side:THREE.FrontSide, transparent:false, ...o });
+const M = {
+  black:mk({ color:0x111214, roughness:0.22, clearcoat:0.6 }), white:mk({ color:0xeeeeea, roughness:0.3, clearcoat:0.5 }),
+  alu:mk({ color:0xc9ccd0, metalness:0.9, roughness:0.32 }), dark:mk({ color:0x2a2c30, metalness:0.6, roughness:0.4 }),
+  steel:mk({ color:0xb9bcc2, metalness:0.95, roughness:0.28 }),
+  piece:new THREE.MeshPhysicalMaterial({ color:0x18191b, roughness:0.38, metalness:0.15, clearcoat:0.35 }),
+};
+const box = (w, h, d, x, y, z, m) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; scene.add(o); return o; };
+
+// ---- un extrait de plateau : 3 × 3 cases ----
+const squares = [], pillars = [];
+for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+  const dark = (i + j) % 2 === 0;
+  squares.push(box(C.plateW, C.plateT, C.plateW, i, C.plateTopY - C.plateT / 2, j, dark ? M.black : M.white));
+  // piliers cylindriques (Ø 0,36 pas), sans contact exact avec le fond ni avec la case
+  const pl = new THREE.Mesh(new THREE.CylinderGeometry(C.pillarW / 2, C.pillarW / 2, C.yPB - 0.004, 48), dark ? M.dark : M.alu);
+  pl.position.set(i, C.yPB / 2, j);   // 2 mm de jeu en haut et en bas : aucune face confondue
+  pl.castShadow = pl.receiveShadow = true; pl.renderOrder = 1; scene.add(pl); pillars.push(pl);
+}
+const base = box(3.3, 0.04, 3.3, 0, -0.02, 0, M.steel);
+squares.forEach(s => { s.userData.y0 = s.position.y; s.renderOrder = 2; }); base.renderOrder = 0; pillars.forEach(p => p.userData.y0 = p.position.y); base.userData.y0 = base.position.y;
+
+// ---- le pion : corps, pied, tige courbée, boule (même construction que la démo validée) ----
+const piece = new THREE.Group(); scene.add(piece);
+(function buildPawn() {
+  const prof = [[0,0],[0.24,0],[0.24,0.04],[0.21,0.08],[0.17,0.11],[0.12,0.17],[0.09,0.33],[0.08,0.42],[0.13,0.45],[0.13,0.48],[0.08,0.5],[0,0.5]];
+  const add = m => { m.castShadow = true; m.receiveShadow = true; piece.add(m); return m; };
+  add(new THREE.Mesh(new THREE.LatheGeometry(prof.map(p => new THREE.Vector2(p[0], p[1])), 48), M.piece));
+  add(new THREE.Mesh(new THREE.SphereGeometry(0.11, 32, 20), M.piece)).position.y = 0.6;
+  const L = 0.5, r0 = 0.24 * 0.55;                 // tige vers le bord arrière de la case (+z)
+  const arm = new THREE.Group(); arm.rotation.y = -Math.PI / 2; piece.add(arm);
+  const fs = new THREE.Shape(); fs.moveTo(r0, -0.09); fs.lineTo(L - C.bendR, -0.04); fs.lineTo(L - C.bendR, 0.04); fs.lineTo(r0, 0.09); fs.closePath();
+  const foot = new THREE.Mesh(new THREE.ExtrudeGeometry(fs, { depth:C.footT, bevelEnabled:false }), M.piece); foot.rotation.x = Math.PI / 2; foot.position.y = C.footT; arm.add(foot);
+  const path = new THREE.CurvePath();
+  path.add(new THREE.LineCurve3(new THREE.Vector3(L - C.bendR - 0.05, C.yRod, 0), new THREE.Vector3(L - C.bendR, C.yRod, 0)));
+  const arc = []; for (let i = 0; i <= 12; i++) { const t = Math.PI / 2 * (1 - i / 12); arc.push(new THREE.Vector3(L - C.bendR + C.bendR * Math.cos(t), C.yRod - C.bendR + C.bendR * Math.sin(t), 0)); }
+  path.add(new THREE.CatmullRomCurve3(arc));
+  path.add(new THREE.LineCurve3(new THREE.Vector3(L, C.yRod - C.bendR, 0), new THREE.Vector3(L, C.ballLocalY, 0)));
+  const rod = new THREE.Mesh(new THREE.TubeGeometry(path, 100, C.rodR, 14, false), M.piece); rod.castShadow = true; arm.add(rod);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(C.ballR, 40, 24), M.piece); ball.position.set(L, C.ballLocalY, 0); ball.castShadow = true; arm.add(ball);
+})();
+// anneau rouge : contact boule / dessous des cases
+const ring = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.012, 12, 48), new THREE.MeshBasicMaterial({ color:0xd4482f, transparent:true, opacity:0 }));
+ring.rotation.x = Math.PI / 2; scene.add(ring);
+
+// ---- étiquettes (HTML) ----
+const LAB = {};
+for (const [k, t, alert] of [['case', 'Case'], ['rainure', 'Rainure'], ['tige', 'Tige courbée'], ['boule', 'Boule captive'], ['pilier', 'Pilier'], ['stop', 'Bloquée sous les cases', true]]) {
+  const d = document.createElement('div'); d.className = 'lab' + (alert ? ' alert' : ''); d.innerHTML = `<span>${t}</span>`;
+  document.getElementById('labels').appendChild(d); LAB[k] = { el:d, p:new THREE.Vector3() };
+}
+const cap = document.getElementById('cap');
+let capTxt = '';
+const setCap = t => { if (t === capTxt) return; capTxt = t; cap.style.opacity = 0; setTimeout(() => { cap.innerHTML = t; cap.style.opacity = t ? 1 : 0; }, t ? 250 : 0); };
+
+// ---- outils d'animation ----
+const ease = u => { u = Math.min(1, Math.max(0, u)); return u * u * (3 - 2 * u); };
+const seg = (t, a, b) => ease((t - a) / (b - a));
+const lerp = (a, b, u) => a + (b - a) * u;
+const camAt = (az, el, dist, T) => { const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
+  return [new THREE.Vector3(T.x + dist * Math.cos(e) * Math.sin(a), T.y + dist * Math.sin(e), T.z + dist * Math.cos(e) * Math.cos(a)), T]; };
+// cadrages : vue 3/4 haute, vue coupée de profil (on regarde le long de la rainure), vue 3/4 basse
+const SHOTS = {
+  hi:   { az:38, el:24, dist:7.2, T:new THREE.Vector3(0.2, 0.95, 0.25) },
+  low:  { az:32, el:8,  dist:6.9, T:new THREE.Vector3(0.3, 1.15, 0.3) },
+  side: { az:90, el:4,  dist:5.8, T:new THREE.Vector3(0, 1.5, 0.4) },
+};
+const mixShot = (A, B, u) => ({ az:lerp(A.az, B.az, u), el:lerp(A.el, B.el, u), dist:lerp(A.dist, B.dist, u), T:A.T.clone().lerp(B.T, u) });
+
+/* Chronologie (s) :
+   0–2  plateau assemblé · 2–4 les piliers s'effacent, les cases deviennent translucides
+   4–7  étiquettes · 7–8.5 coupe de profil le long de la rainure
+   8.5–10.5 on tire la pièce vers le haut : la boule bute sous les cases (contact rouge)
+   10.5–12 la pièce redescend · 12–15 elle glisse vers la case voisine, la tige suit la rainure
+   15–18 retour, le plateau se reconstitue · 18–20 pause */
+const LOOP = 20;
+function frame(t) {
+  const reveal = seg(t, 2, 4) * (1 - seg(t, 15.5, 18));
+  const section = seg(t, 7, 8.5) * (1 - seg(t, 11.5, 13));
+  // caméra
+  let S = mixShot(SHOTS.hi, SHOTS.low, reveal);
+  S = mixShot(S, SHOTS.side, section);
+  const [pos, T] = camAt(S.az + 6 * Math.sin(t * 2 * Math.PI / LOOP), S.el, S.dist, S.T);
+  camera.position.copy(pos); camera.lookAt(T);
+  // plateau : piliers et fond descendent et s'effacent, cases translucides
+  pillars.forEach(p => { p.position.y = p.userData.y0 - 0.5 * reveal; });
+  base.position.y = base.userData.y0 - 0.5 * reveal;
+  const fade = (m, o) => { const tr = o < 0.999; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } m.opacity = o; m.depthWrite = !tr; };
+  fade(M.dark, 1 - 0.85 * reveal); fade(M.alu, 1 - 0.85 * reveal); fade(M.steel, 1 - 0.9 * reveal);
+  fade(M.black, 1 - 0.45 * reveal); fade(M.white, 1 - 0.45 * reveal);
+  // en coupe, on montre l'intérieur des cases tranchées
+  const side = section > 0.01 ? THREE.DoubleSide : THREE.FrontSide;
+  for (const m of [M.black, M.white, M.dark, M.alu]) if (m.side !== side) { m.side = side; m.needsUpdate = true; }
+  cut.constant = section > 0.01 ? lerp(3, 0.0, section) : 50;
+  // pièce : soulevée jusqu'à la butée, puis glissement vers la case voisine (la tige suit la rainure z = 0,5)
+  const lift = STOP * (seg(t, 8.5, 10.2) - seg(t, 10.6, 12)) + 0.28 * (seg(t, 12.2, 12.8) - seg(t, 14.4, 15)) + 0.28 * (seg(t, 15.3, 15.9) - seg(t, 17.3, 17.9));
+  const x = seg(t, 12.8, 14.4) - seg(t, 15.9, 17.3);
+  const bump = t > 10.0 && t < 10.6 ? 0.012 * Math.sin((t - 10.0) / 0.6 * Math.PI * 3) * Math.exp(-(t - 10.0) * 5) : 0;
+  piece.position.set(x, C.plateTopY + 0.002 + lift - Math.abs(bump), 0);   // la base du pion ne se confond pas avec la case
+  const touching = t > 10.0 && t < 11.0;
+  ring.position.set(0, C.yPB - 0.004, 0.5); ring.material.opacity = touching ? 0.9 * (1 - Math.max(0, (t - 10.6) / 0.4)) : 0;
+  // étiquettes
+  LAB.case.p.set(-1, C.plateTopY + 0.02, -0.75); LAB.rainure.p.set(-1.0, C.plateTopY, 0.5);
+  LAB.tige.p.set(x + 0.02, C.plateTopY + lift - 0.2, 0.5); LAB.boule.p.set(x, C.ballY + lift - C.ballR, 0.5);
+  LAB.pilier.p.set(1, 0.55 - 0.5 * reveal, -1);
+  LAB.stop.p.set(0, C.plateTopY + 0.04, 1.15);
+  const show = { case:t > 4 && t < 7, rainure:(t > 4.4 && t < 7) || (t > 8.6 && t < 10), tige:t > 4.8 && t < 7.2, boule:(t > 5.2 && t < 7.4) || (t > 12.6 && t < 14.8), pilier:t > 0.6 && t < 2.6, stop:touching };
+  const W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
+  for (const k in LAB) {
+    const v = LAB[k].p.clone().project(camera);
+    LAB[k].el.style.left = ((v.x + 1) / 2 * W) + 'px'; LAB[k].el.style.top = ((1 - v.y) / 2 * H) + 'px';
+    LAB[k].el.style.opacity = show[k] ? 1 : 0;
+  }
+  // légende
+  if (t < 2) setCap('Les 64 cases reposent chacune sur un pilier.');
+  else if (t < 7) setCap('Entre les cases, un réseau de <b>rainures</b>. La <b>tige</b> de chaque pièce y plonge et se termine par une <b>boule</b> sous le plateau.');
+  else if (t < 12) setCap('<b>La boule est plus large que la rainure.</b> On peut soulever la pièce : la boule bute sous les cases, elle ne passe jamais.');
+  else if (t < 15.3) setCap('La tige glisse dans les rainures : la pièce se déplace librement, sans quitter le jeu.');
+  else setCap('Imperdable, par construction.');
+}
+
+// ---- boucle ----
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
+  camera.fov = w / h < 0.9 ? 42 : w / h < 1.2 ? 35 : 30; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+let visible = true, t0 = performance.now(), paused = 0, pauseAt = 0;
+new IntersectionObserver(es => { const v = es[0].isIntersecting; if (v === visible) return; visible = v;
+  if (!v) pauseAt = performance.now(); else paused += performance.now() - pauseAt; }).observe(document.body);
+const forced = new URLSearchParams(location.search).get('t');
+function tick() {
+  requestAnimationFrame(tick);
+  if (!visible && forced === null) return;
+  const t = forced !== null ? +forced : ((performance.now() - t0 - paused) / 1000) % LOOP;
+  frame(t); renderer.render(scene, camera);
+}
+tick();
+</script>
+</body>
+</html>
