@@ -88,7 +88,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<a id="backSite" href="../index.html" target="_top">← Retour au site</a>
+<a id="backSite" href="../index.html#live" target="_top">← Retour au site</a>
 <button id="toggleUI" class="panel">☰</button>
 
 <div id="ui" class="panel">
@@ -175,7 +175,7 @@ const C = {
   plateW: 0.80,          // [H] rainure 0,20 pas ≈ 10 mm (deux tiges côte à côte : validé)
   plateT: 0.04,
   plateTopY: 1.30,
-  pillarW: 0.36,
+  pillarW: 0.24,         // piliers cylindriques Ø 0,24 pas (≈ 14 mm) — corrigé d'après la photo (Pascal, 22/11)
   rodR: 0.032,
   bendR: 0.07,
   footT: 0.06,
@@ -248,7 +248,10 @@ function solid(w, h, d, x, y, z, mat, tag) {
   for (let f = 0; f < 8; f++) for (let r = 0; r < 8; r++) {
     const c = sqCenter(f, r), dark = (f + r) % 2 === 0;
     solid(C.plateW, C.plateT, C.plateW, c.x, C.plateTopY - C.plateT / 2, c.y, dark ? M.black : M.white, 'case ' + sqName(f, r));
-    solid(C.pillarW, C.yPB, C.pillarW, c.x, C.yPB / 2, c.y, dark ? M.pillarDark : M.alu, 'pilier ' + sqName(f, r));
+    { // pilier cylindrique ; pour les contrôles on garde son carré englobant (plus prudent)
+      const pm = new THREE.Mesh(new THREE.CylinderGeometry(C.pillarW / 2, C.pillarW / 2, C.yPB - 0.004, 32), dark ? M.pillarDark : M.alu);
+      pm.position.set(c.x, C.yPB / 2, c.y); pm.castShadow = pm.receiveShadow = true; board.add(pm);
+      boxes.push({ min:[c.x - C.pillarW / 2, 0, c.y - C.pillarW / 2], max:[c.x + C.pillarW / 2, C.yPB, c.y + C.pillarW / 2], tag:'pilier ' + sqName(f, r) }); }
   }
   const W = C.wallOuter;
   solid(2 * W, 0.04, 2 * W, 0, -0.02, 0, M.steel, 'fond du bac');

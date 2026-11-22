@@ -28,14 +28,14 @@
 /* ==========================================================================
    VALÉRIEN — vue éclatée animée du mécanisme (boucle de 20 s)
    Mêmes dimensions que la démonstration 3D validée (unité : 1 pas = case + rainure) :
-   cases 0,80 · rainure 0,20 · tige Ø 0,064 · boule Ø 0,30 · piliers 0,36.
+   cases 0,80 · rainure 0,20 · tige Ø 0,064 · boule Ø 0,30 · piliers cylindriques Ø 0,24.
    La boule, plus large que la rainure, passe sous les cases et bute dessous :
    la pièce se soulève et se déplace, elle ne peut pas sortir du plateau.
    ========================================================================== */
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-const C = { plateW:0.80, plateT:0.04, plateTopY:1.30, pillarW:0.36, rodR:0.032, bendR:0.07, footT:0.06, ballR:0.15, ballY:0.25 };
+const C = { plateW:0.80, plateT:0.04, plateTopY:1.30, pillarW:0.24, rodR:0.032, bendR:0.07, footT:0.06, ballR:0.15, ballY:0.25 };
 C.yPB = C.plateTopY - C.plateT; C.yRod = C.rodR + 0.003; C.ballLocalY = C.ballY - C.plateTopY;
 const STOP = C.yPB - C.ballR - C.ballY;          // levée maximale : la boule touche le dessous des cases (≈ 0,86 pas)
 
@@ -69,7 +69,7 @@ const squares = [], pillars = [];
 for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
   const dark = (i + j) % 2 === 0;
   squares.push(box(C.plateW, C.plateT, C.plateW, i, C.plateTopY - C.plateT / 2, j, dark ? M.black : M.white));
-  // piliers cylindriques (Ø 0,36 pas), sans contact exact avec le fond ni avec la case
+  // piliers cylindriques (Ø 0,24 pas), sans contact exact avec le fond ni avec la case
   const pl = new THREE.Mesh(new THREE.CylinderGeometry(C.pillarW / 2, C.pillarW / 2, C.yPB - 0.004, 48), dark ? M.dark : M.alu);
   pl.position.set(i, C.yPB / 2, j);   // 2 mm de jeu en haut et en bas : aucune face confondue
   pl.castShadow = pl.receiveShadow = true; pl.renderOrder = 1; scene.add(pl); pillars.push(pl);
