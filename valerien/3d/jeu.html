@@ -1697,7 +1697,7 @@ function endGame(st) {
 function newGame() {
   game.reqId++; game.thinking = false; game.over = null; sel = null; clearTargets();
   game.E.reset(); resetMech(); renderMoves();
-  gclock.start = null; gclock.end = null; if (typeof camFollow !== 'undefined') camFollow.phase = 'idle';
+  gclock.start = null; gclock.end = null; if (typeof camFollow !== 'undefined' && camFollow.phase !== 'idle') camUp();
   play.t = TL.cursor; play.playing = true; play.until = null; syncPlay();
   updateGameBar();
 }
@@ -1863,33 +1863,43 @@ $('boardClose').onclick = () => $('boardBox').classList.remove('show');
 const camFollow = { on:store.get('valerien_cam', true), phase:'idle', pc:null };
 $('gCam').classList.toggle('on', camFollow.on);
 $('gCam').onclick = () => { camFollow.on = !camFollow.on; store.set('valerien_cam', camFollow.on); $('gCam').classList.toggle('on', camFollow.on);
-  if (!camFollow.on && camFollow.phase !== 'idle') { camFollow.phase = 'idle'; setView('player'); } };
-const CAM_OFF = new THREE.Vector3(0, 2.5, 2.0);           // derrière la pièce, côté Blancs, en plongée (on voit par-dessus la rangée du roi)
-function closeView(p) { const T = new THREE.Vector3(p.x, C.plateTopY + 0.35, p.z - 0.35); return [T.clone().add(CAM_OFF), T]; }
+  if (!camFollow.on && camFollow.phase !== 'idle') camUp(); };
+/* Vue « derrière la pièce » : la caméra se place derrière la pièce blanche choisie, à hauteur d'œil,
+   avec une focale plus longue (≈ 60 mm), et regarde vers le camp noir. Elle y reste pendant le coup
+   du joueur et pendant la réponse de l'ordinateur (on voit la pièce noire et sa flèche de visée).
+   Dès qu'une pièce blanche va être prise, ou quand tout est joué, elle remonte à la vue de jeu. */
+const CAM_OFF = new THREE.Vector3(0.3, 3.1, 2.9);           // derrière la pièce (côté Blancs), assez haut pour passer au-dessus de la rangée du roi
+const CAM_FOV = 36;                                        // focale plus longue que la vue de jeu
+let fovSaved = null;
+function setFov(f) { if (camera.fov !== f) { camera.fov = f; camera.updateProjectionMatrix(); applyViewOffset && applyViewOffset(); } }
+function closeView(p) { const T = new THREE.Vector3(p.x, C.plateTopY + 0.4, p.z - 1.0); return [new THREE.Vector3(p.x, C.plateTopY, p.z).add(CAM_OFF), T]; }
+function camUp() { camFollow.phase = 'idle'; camFollow.pc = null; if (fovSaved !== null) { setFov(fovSaved); fovSaved = null; } setView('player'); }
 function camOnSelect(pc) {
   if (!camFollow.on || MODE !== 'jeu') return;
-  if (pc) { const [P, T] = closeView(pc.g.position); flyTo(P, T, 750); camFollow.phase = 'piece'; camFollow.pc = pc; }
-  else if (camFollow.phase === 'piece') { camFollow.phase = 'idle'; setView('player'); }
+  if (pc) { if (fovSaved === null) fovSaved = camera.fov; setFov(CAM_FOV);
+    const [P, T] = closeView(pc.g.position); flyTo(P, T, 750); camFollow.phase = 'piece'; camFollow.pc = pc; }
+  else if (camFollow.phase === 'piece') camUp();
 }
 // la main reprend la caméra (vrai glisser, pas un simple toucher) : caméra libre jusqu'au prochain choix de pièce
 let camDown = null;
 canvas.addEventListener('pointerdown', e => { camDown = [e.clientX, e.clientY]; });
 canvas.addEventListener('pointerup', () => { camDown = null; });
-canvas.addEventListener('pointermove', e => {
-  if (camDown && Math.hypot(e.clientX - camDown[0], e.clientY - camDown[1]) > 10 && camFollow.phase !== 'idle') { camFollow.phase = 'idle'; camAnim = null; }
-});
-canvas.addEventListener('wheel', () => { if (camFollow.phase !== 'idle') { camFollow.phase = 'idle'; camAnim = null; } }, { passive:true });
+const freeCam = () => { if (camFollow.phase !== 'idle') { camFollow.phase = 'idle'; camAnim = null; if (fovSaved !== null) { setFov(fovSaved); fovSaved = null; } } };
+canvas.addEventListener('pointermove', e => { if (camDown && Math.hypot(e.clientX - camDown[0], e.clientY - camDown[1]) > 10) freeCam(); });
+canvas.addEventListener('wheel', freeCam, { passive:true });
 function camFollowTick(dt) {
-  if (!camFollow.on || MODE !== 'jeu' || camFollow.phase === 'idle') return;
-  if (camFollow.phase === 'follow') {
-    // la pièce en mouvement : segment ou visée en cours
-    const t = play.t, seg = TL.segs.find(x => t >= x.t0 && t <= x.t0 + x.dur), aim = TL.aims.find(x => t >= x.t0 && t <= x.t0 + x.dur);
-    const pc = seg ? seg.pc : aim ? PCS.find(p => p.g.position.distanceTo(aim.from) < 0.01) || camFollow.pc : camFollow.pc;
-    if (pc) { camFollow.pc = pc; const [P, T] = closeView(pc.g.position); const k = 1 - Math.exp(-dt * 3.2);
-      if (!camAnim) { camera.position.lerp(P, k); controls.target.lerp(T, k); } }
-    // tout est joué (coup du joueur et réponse de l'ordinateur) : retour à la vue de jeu
-    if (!game.thinking && play.t >= TL.cursor - PAUSE - 0.01 && (game.over || game.E.S.side === 'w')) { camFollow.phase = 'idle'; setView('player'); }
+  if (!camFollow.on || MODE !== 'jeu' || camFollow.phase !== 'follow') return;
+  const t = play.t, seg = TL.segs.find(x => t >= x.t0 && t <= x.t0 + x.dur);
+  // une pièce blanche va être prise (réponse de l'ordinateur) : on remonte tout de suite
+  if (seg && seg.fade && seg.pc.side > 0) { camUp(); return; }
+  // on reste derrière la pièce blanche jouée : elle avance, la caméra l'accompagne ; sinon la caméra reste fixe
+  const pc = camFollow.pc;
+  if (pc && !pc.out && !camAnim && seg && seg.pc === pc) {
+    const [P, T] = closeView(pc.g.position), k = 1 - Math.exp(-dt * 3.2);
+    camera.position.lerp(P, k); controls.target.lerp(T, k);
   }
+  // tout est joué (coup du joueur et réponse de l'ordinateur) : retour à la vue de jeu
+  if (!game.thinking && play.t >= TL.cursor - PAUSE - 0.01 && (game.over || game.E.S.side === 'w')) camUp();
 }
 
 /* ==========================================================================

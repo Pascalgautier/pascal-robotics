@@ -519,8 +519,8 @@ else try {
   // Vidéo plus légère sur petit écran ; relance si le navigateur a mis la lecture en pause
   (function () {
     const v = document.getElementById('heroVid');
-    // ?boucle=v1 : l'ancienne boucle (premier rendu), pour comparer
-    const tag = new URLSearchParams(location.search).get('boucle') === 'v1' ? '-v1' : '';
+    // ?boucle=v1 / ?boucle=v2 : anciennes boucles, pour comparer
+    const bq = new URLSearchParams(location.search).get('boucle'), tag = bq === 'v1' ? '-v1' : bq === 'v2' ? '-v2' : '';   // par défaut : boucle v3
     const small = Math.min(screen.width, screen.height) < 700 || (navigator.connection && navigator.connection.saveData);
     if (tag || small) { v.poster = `video/boucle${tag}-poster.jpg`; v.src = `video/boucle${tag}${small ? '-720' : ''}.mp4`; }
     const p = v.play(); if (p && p.catch) p.catch(() => {});
