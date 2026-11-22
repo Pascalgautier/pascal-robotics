@@ -1864,19 +1864,20 @@ const camFollow = { on:store.get('valerien_cam', true), phase:'idle', pc:null };
 $('gCam').classList.toggle('on', camFollow.on);
 $('gCam').onclick = () => { camFollow.on = !camFollow.on; store.set('valerien_cam', camFollow.on); $('gCam').classList.toggle('on', camFollow.on);
   if (!camFollow.on && camFollow.phase !== 'idle') camUp(); };
-/* Vue « derrière la pièce » : la caméra se place derrière la pièce blanche choisie, à hauteur d'œil,
-   avec une focale plus longue (≈ 60 mm), et regarde vers le camp noir. Elle y reste pendant le coup
+/* Vue « derrière la pièce » : la caméra se place derrière la pièce blanche choisie, un peu au-dessus de la rangée du roi,
+   avec une focale grand angle (≈ 22 mm), et regarde vers le centre du camp noir. Elle y reste pendant le coup
    du joueur et pendant la réponse de l'ordinateur (on voit la pièce noire et sa flèche de visée).
    Dès qu'une pièce blanche va être prise, ou quand tout est joué, elle remonte à la vue de jeu. */
-const CAM_OFF = new THREE.Vector3(0.3, 3.1, 2.9);           // derrière la pièce (côté Blancs), assez haut pour passer au-dessus de la rangée du roi
-const CAM_FOV = 36;                                        // focale plus longue que la vue de jeu
+const CAM_OFF = new THREE.Vector3(0, 1.95, 1.75);          // derrière la pièce blanche, un peu au-dessus de la rangée du roi
+const CAM_FOV = () => camera.aspect < 1 ? 74 : 56;            // grand angle (≈ 22 mm) : on voit tout le camp adverse
 let fovSaved = null;
 function setFov(f) { if (camera.fov !== f) { camera.fov = f; camera.updateProjectionMatrix(); applyViewOffset && applyViewOffset(); } }
-function closeView(p) { const T = new THREE.Vector3(p.x, C.plateTopY + 0.4, p.z - 1.0); return [new THREE.Vector3(p.x, C.plateTopY, p.z).add(CAM_OFF), T]; }
+function closeView(p) { const T = new THREE.Vector3(p.x * 0.55, C.plateTopY + 0.2, -1.6);   // regard vers le centre du camp noir
+  return [new THREE.Vector3(p.x, C.plateTopY, p.z).add(CAM_OFF), T]; }
 function camUp() { camFollow.phase = 'idle'; camFollow.pc = null; if (fovSaved !== null) { setFov(fovSaved); fovSaved = null; } setView('player'); }
 function camOnSelect(pc) {
   if (!camFollow.on || MODE !== 'jeu') return;
-  if (pc) { if (fovSaved === null) fovSaved = camera.fov; setFov(CAM_FOV);
+  if (pc) { if (fovSaved === null) fovSaved = camera.fov; setFov(CAM_FOV());
     const [P, T] = closeView(pc.g.position); flyTo(P, T, 750); camFollow.phase = 'piece'; camFollow.pc = pc; }
   else if (camFollow.phase === 'piece') camUp();
 }
