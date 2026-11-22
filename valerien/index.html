@@ -63,6 +63,10 @@
   #intro.out { opacity:0; pointer-events:none; }
   body.introing .hero .brand, body.introing .hero .tagline, body.introing .hero .medal, body.introing .hero .ctas { animation-play-state:paused; }
   #introSkip { position:absolute; right:18px; bottom:18px; background:none; border:1px solid rgba(255,255,255,.3); color:rgba(255,255,255,.75); border-radius:999px; padding:7px 14px; font:500 12px var(--sans); letter-spacing:.06em; cursor:pointer; }
+  /* Premier passage du film : sans texte ; le texte apparaît au deuxième passage de la boucle */
+  .hero .copy, .hero .shade, .hero .scrollhint { transition:opacity 1.4s ease; }
+  body.filmfirst .hero .copy, body.filmfirst .hero .shade, body.filmfirst .hero .scrollhint { opacity:0; }
+  body.filmfirst .hero .brand, body.filmfirst .hero .tagline, body.filmfirst .hero .medal, body.filmfirst .hero .ctas { animation-play-state:paused; }
   /* Héros : le film en boucle */
   :root { --brand:'Cinzel', 'Trajan Pro', serif; --brandW:400; --brandSp:.2em; }
   .hero { position:relative; height:100svh; min-height:560px; background:#000; color:#fff; overflow:hidden; padding:0; }
@@ -183,7 +187,7 @@
   }
 </style>
 </head>
-<body class="introing">
+<body class="introing filmfirst">
 
 
 <!-- ======================= INTRO : le logo VALÉRIEN en 3D (≈ 3,5 s, puis le film) ======================= -->
@@ -552,6 +556,33 @@ if (cv && LOGO) try {
     R.render(scene, cam);
   })();
 } catch (e) { cv.style.display = 'none'; }
+</script>
+
+<script>
+  /* Le film passe une première fois seul, puis le texte apparaît quand la boucle repart.
+     Si l'intro n'a pas été jouée (retour sur la page), le texte est là tout de suite. */
+  (function () {
+    const b = document.body, v = document.getElementById('heroVid');
+    const show = () => b.classList.remove('filmfirst');
+    if (!document.getElementById('intro') || !v) { show(); return; }
+    let armed = false, last = 0, guard = null;
+    const arm = () => {
+      if (armed) return; armed = true;
+      try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {}
+      last = 0;
+      // filet de sécurité : si la vidéo ne tourne pas, on affiche le texte quand même
+      guard = setTimeout(() => { if (v.paused || v.currentTime < 0.5) show(); }, 4000);
+      setTimeout(show, 40000);
+    };
+    v.addEventListener('timeupdate', () => {
+      if (!armed) return;
+      if (v.currentTime + 1 < last) { show(); }        // la boucle est repartie au début
+      last = v.currentTime;
+    });
+    v.addEventListener('error', show);
+    new MutationObserver(() => { if (!b.classList.contains('introing')) arm(); }).observe(b, { attributes:true, attributeFilter:['class'] });
+    if (!b.classList.contains('introing')) arm();
+  })();
 </script>
 </body>
 </html>
