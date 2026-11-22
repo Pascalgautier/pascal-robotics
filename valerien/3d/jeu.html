@@ -75,6 +75,18 @@
   #backSite:hover { background:rgba(15,17,20,.92); }
   @media (max-width:700px) { #caption { top:52px !important; bottom:auto !important; } }
   @media (max-width:700px) { #backSite { right:auto; left:12px; top:10px; padding:8px 13px; font-size:12px; } }
+  .clock { display:inline-flex; align-items:center; padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.18); font:600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color:#ffe2c4; letter-spacing:.04em; }
+  .modal { position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45); backdrop-filter:blur(3px); }
+  .modal.show { display:flex; }
+  .modal .card { background:rgba(18,20,24,.96); color:#eee; border:1px solid rgba(201,165,107,.45); border-radius:14px; padding:20px 22px; width:min(380px, 92vw); box-shadow:0 30px 60px rgba(0,0,0,.5); }
+  .modal .card.wide { width:min(640px, 94vw); max-height:84vh; overflow:auto; }
+  .modal h3 { margin:0 0 6px; font:500 20px/1.2 'Cinzel', Georgia, serif; letter-spacing:.06em; color:#f3dfb9; }
+  .modal input { width:100%; box-sizing:border-box; margin-top:8px; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#0e1013; color:#fff; font-size:16px; }
+  .modal table { width:100%; border-collapse:collapse; font-size:13px; }
+  .modal th, .modal td { padding:7px 6px; border-bottom:1px solid rgba(255,255,255,.08); text-align:left; }
+  .modal th { color:#c9a56b; font-weight:600; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+  .modal td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .modal tr.me td { color:#ffd9a8; }
 </style>
 <script type="importmap">
 { "imports": {
@@ -169,9 +181,31 @@
     <button id="lv1">Débutant</button><button id="lv2" class="on">Amateur</button><button id="lv3">Confirmé</button>
     <button id="gNew">Nouvelle partie</button><button id="gResign">Abandonner</button>
   </div>
+  <div class="row" style="justify-content:center; margin-top:6px">
+    <button id="gName">👤 <span id="gNameTxt">Joueur</span></button>
+    <span id="gClock" class="clock">⏱ 00:00</span>
+    <button id="gBoard">🏆 Scores</button>
+    <button id="gCam" class="on" title="La caméra s'approche de la pièce choisie et suit le coup">🎥 Caméra active</button>
+  </div>
   <div id="gScore" style="margin-top:5px"></div>
   <div id="gMat" class="hyp"></div>
 </div>
+<div id="nameBox" class="modal"><div class="card">
+  <h3>Ton prénom</h3><p class="hyp">Il sert au tableau des scores, enregistré sur cet appareil.</p>
+  <input id="nameIn" maxlength="18" placeholder="Ex. Pascal" autocomplete="given-name">
+  <div class="row" style="justify-content:flex-end; margin-top:12px"><button id="nameOk" class="on">Jouer</button></div>
+</div></div>
+<div id="endBox" class="modal"><div class="card">
+  <h3 id="endTitle">Partie terminée</h3><p id="endTxt"></p>
+  <div class="row" style="justify-content:flex-end; margin-top:12px"><button id="endBoard">🏆 Tableau des scores</button><button id="endNew" class="on">Rejouer</button></div>
+</div></div>
+<div id="boardBox" class="modal"><div class="card wide">
+  <h3>Tableau des scores — contre l'ordinateur</h3>
+  <div class="row" id="boardTabs" style="margin:6px 0 10px"></div>
+  <div id="boardTbl"></div>
+  <p class="hyp" style="margin-top:10px">Scores enregistrés sur cet appareil. Meilleure victoire = le moins de coups (puis le plus rapide).</p>
+  <div class="row" style="justify-content:flex-end; margin-top:8px"><button id="boardClose" class="on">Fermer</button></div>
+</div></div>
 <div id="promo" class="panel">
   <span>Promotion :</span>
   <button data-p="q">Dame</button><button data-p="r">Tour</button><button data-p="b">Fou</button><button data-p="n">Cavalier</button>
@@ -1644,8 +1678,10 @@ function toMech(m, label) {
 function playMove(m) {
   const E = game.E, white = E.S.side === 'w', num = E.S.full;
   const label = `${num}${white ? '.' : '…'} ${E.san(m)}`;
+  if (white && !gclock.start) gclock.start = performance.now();     // l'horloge part au premier coup du joueur
   E.play(m);
   appendMove(toMech(m, label), Math.max(TL.cursor, play.t));
+  if (camFollow.on && camFollow.phase !== 'idle') camFollow.phase = 'follow';   // la caméra suit le coup, puis la réponse
   play.playing = true; play.until = null; syncPlay();
   const st = E.status();
   if (st.over) endGame(st);
@@ -1656,11 +1692,12 @@ function endGame(st) {
   game.over = st;
   const sc = scores[game.level];
   if (st.result === '1-0') sc.w++; else if (st.result === '0-1') sc.l++; else sc.d++;
-  saveScores(); updateGameBar();
+  saveScores(); updateGameBar(); recordGame(st);
 }
 function newGame() {
   game.reqId++; game.thinking = false; game.over = null; sel = null; clearTargets();
   game.E.reset(); resetMech(); renderMoves();
+  gclock.start = null; gclock.end = null; if (typeof camFollow !== 'undefined') camFollow.phase = 'idle';
   play.t = TL.cursor; play.playing = true; play.until = null; syncPlay();
   updateGameBar();
 }
@@ -1700,7 +1737,7 @@ function showTargets(pc) {
     mesh.rotation.x = -Math.PI / 2; mesh.position.set(c.x, C.plateTopY + 0.004, c.y); mesh.renderOrder = 12; tgtGroup.add(mesh);
   }
 }
-function select(pc) { sel = pc; showTargets(pc); }
+function select(pc) { const prev = sel; sel = pc; showTargets(pc); if (pc !== prev && typeof camOnSelect === 'function') camOnSelect(pc); }
 
 // ---- toucher l'échiquier ----
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -C.plateTopY);
@@ -1725,7 +1762,7 @@ function onBoardClick(e) {
   const idx = sq.r * 8 + sq.f;
   const ms = sel ? selMoves.filter(m => m.to === idx) : [];
   if (ms.length) {
-    if (ms.length > 1) askPromotion(ms); else { const m = ms[0]; select(null); playMove(m); }
+    if (ms.length > 1) askPromotion(ms); else { const m = ms[0]; sel = null; clearTargets(); playMove(m); }
     return;
   }
   const own = hitPc && hitPc.side > 0 ? hitPc : occAt(sq.f, sq.r);
@@ -1734,7 +1771,7 @@ function onBoardClick(e) {
 function askPromotion(ms) {
   const box = $('promo'); box.style.display = 'flex';
   box.querySelectorAll('button').forEach(b => b.onclick = () => {
-    box.style.display = 'none'; const m = ms.find(x => x.promo === b.dataset.p) || ms[0]; select(null); playMove(m);
+    box.style.display = 'none'; const m = ms.find(x => x.promo === b.dataset.p) || ms[0]; sel = null; clearTargets(); playMove(m);
   });
 }
 
@@ -1759,6 +1796,101 @@ function setMode(m) {
 }
 $('mDemo').onclick = () => setMode('demo');
 $('mJeu').onclick = () => setMode('jeu');
+
+
+/* ==========================================================================
+   11d. HORLOGE, JOUEUR, TABLEAU DES SCORES, CAMÉRA ACTIVE
+   ========================================================================== */
+// --- joueur et historique (enregistrés sur cet appareil) ---
+const store = { get:(k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
+                set:(k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+let player = store.get('valerien_player', '');
+let history = store.get('valerien_history_v1', []);      // { name, level, result, moves, secs, date }
+const fmt = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(x).padStart(2, '0'); };
+function setPlayer(n) { player = (n || '').trim().slice(0, 18) || 'Joueur'; store.set('valerien_player', player); $('gNameTxt').textContent = player; }
+function askName(then) {
+  const box = $('nameBox'); box.classList.add('show'); const inp = $('nameIn'); inp.value = player && player !== 'Joueur' ? player : '';
+  setTimeout(() => inp.focus(), 50);
+  const ok = () => { box.classList.remove('show'); setPlayer(inp.value); if (then) then(); };
+  $('nameOk').onclick = ok; inp.onkeydown = e => { if (e.key === 'Enter') ok(); };
+}
+$('gName').onclick = () => askName();
+$('gNameTxt').textContent = player || 'Joueur';
+
+// --- horloge de la partie : démarre au premier coup du joueur, s'arrête à la fin ---
+const gclock = { start:null, end:null };
+const elapsed = () => gclock.start ? ((gclock.end || performance.now()) - gclock.start) / 1000 : 0;
+setInterval(() => { if (MODE === 'jeu') $('gClock').textContent = '⏱ ' + fmt(elapsed()); }, 250);
+
+// --- fin de partie : enregistrement et fenêtre de résultat ---
+function recordGame(st) {
+  gclock.end = performance.now();
+  const result = st.result === '1-0' ? 'V' : st.result === '0-1' ? 'D' : 'N';
+  const moves = Math.ceil(TL.moves.length / 2);
+  history.push({ name:player || 'Joueur', level:game.level, result, moves, secs:Math.round(elapsed()), date:new Date().toISOString().slice(0, 10) });
+  if (history.length > 500) history = history.slice(-500);
+  store.set('valerien_history_v1', history);
+  const why = { mat:'échec et mat', pat:'pat', abandon:'abandon' }[st.why] || st.why;
+  $('endTitle').textContent = result === 'V' ? 'Victoire !' : result === 'D' ? "L'ordinateur gagne" : 'Partie nulle';
+  $('endTxt').innerHTML = `${why[0].toUpperCase() + why.slice(1)} en <b>${moves}</b> coups, durée <b>${fmt(elapsed())}</b> — niveau ${LEVELS[game.level]}.`;
+  // la fenêtre s'ouvre quand l'animation du dernier coup est terminée
+  const wait = () => { if (play.t >= TL.cursor - PAUSE - 0.01) $('endBox').classList.add('show'); else setTimeout(wait, 200); }; wait();
+}
+$('endNew').onclick = () => { $('endBox').classList.remove('show'); newGame(); };
+$('endBoard').onclick = () => { $('endBox').classList.remove('show'); showBoard(game.level); };
+
+// --- tableau des scores, par niveau ---
+function showBoard(level) {
+  const tabs = $('boardTabs'); tabs.innerHTML = '';
+  for (const k of [1, 2, 3]) { const b = document.createElement('button'); b.textContent = LEVELS[k]; b.classList.toggle('on', k === level); b.onclick = () => showBoard(k); tabs.appendChild(b); }
+  const rows = {};
+  for (const h of history.filter(x => x.level === level)) {
+    const r = rows[h.name] || (rows[h.name] = { name:h.name, n:0, V:0, D:0, N:0, best:null });
+    r.n++; r[h.result]++;
+    if (h.result === 'V' && (!r.best || h.moves < r.best.moves || (h.moves === r.best.moves && h.secs < r.best.secs))) r.best = h;
+  }
+  const list = Object.values(rows).sort((a, b) => (b.V - a.V) || ((b.V / b.n) - (a.V / a.n)) || (a.D - b.D));
+  $('boardTbl').innerHTML = list.length ? `<table><tr><th>#</th><th>Joueur</th><th class="n">Parties</th><th class="n">V</th><th class="n">N</th><th class="n">D</th><th class="n">Réussite</th><th>Meilleure victoire</th></tr>${
+    list.map((r, i) => `<tr class="${r.name === player ? 'me' : ''}"><td>${i + 1}</td><td>${r.name.replace(/[<>&]/g, '')}</td><td class="n">${r.n}</td><td class="n">${r.V}</td><td class="n">${r.N}</td><td class="n">${r.D}</td><td class="n">${Math.round(100 * r.V / r.n)} %</td><td>${r.best ? r.best.moves + ' coups · ' + fmt(r.best.secs) : '—'}</td></tr>`).join('')}</table>`
+    : '<p class="hyp">Aucune partie enregistrée à ce niveau pour l\'instant.</p>';
+  $('boardBox').classList.add('show');
+}
+$('gBoard').onclick = () => showBoard(game.level);
+$('boardClose').onclick = () => $('boardBox').classList.remove('show');
+
+// --- caméra active : s'approche de la pièce choisie, suit le coup, puis revient ---
+const camFollow = { on:store.get('valerien_cam', true), phase:'idle', pc:null };
+$('gCam').classList.toggle('on', camFollow.on);
+$('gCam').onclick = () => { camFollow.on = !camFollow.on; store.set('valerien_cam', camFollow.on); $('gCam').classList.toggle('on', camFollow.on);
+  if (!camFollow.on && camFollow.phase !== 'idle') { camFollow.phase = 'idle'; setView('player'); } };
+const CAM_OFF = new THREE.Vector3(0, 2.5, 2.0);           // derrière la pièce, côté Blancs, en plongée (on voit par-dessus la rangée du roi)
+function closeView(p) { const T = new THREE.Vector3(p.x, C.plateTopY + 0.35, p.z - 0.35); return [T.clone().add(CAM_OFF), T]; }
+function camOnSelect(pc) {
+  if (!camFollow.on || MODE !== 'jeu') return;
+  if (pc) { const [P, T] = closeView(pc.g.position); flyTo(P, T, 750); camFollow.phase = 'piece'; camFollow.pc = pc; }
+  else if (camFollow.phase === 'piece') { camFollow.phase = 'idle'; setView('player'); }
+}
+// la main reprend la caméra (vrai glisser, pas un simple toucher) : caméra libre jusqu'au prochain choix de pièce
+let camDown = null;
+canvas.addEventListener('pointerdown', e => { camDown = [e.clientX, e.clientY]; });
+canvas.addEventListener('pointerup', () => { camDown = null; });
+canvas.addEventListener('pointermove', e => {
+  if (camDown && Math.hypot(e.clientX - camDown[0], e.clientY - camDown[1]) > 10 && camFollow.phase !== 'idle') { camFollow.phase = 'idle'; camAnim = null; }
+});
+canvas.addEventListener('wheel', () => { if (camFollow.phase !== 'idle') { camFollow.phase = 'idle'; camAnim = null; } }, { passive:true });
+function camFollowTick(dt) {
+  if (!camFollow.on || MODE !== 'jeu' || camFollow.phase === 'idle') return;
+  if (camFollow.phase === 'follow') {
+    // la pièce en mouvement : segment ou visée en cours
+    const t = play.t, seg = TL.segs.find(x => t >= x.t0 && t <= x.t0 + x.dur), aim = TL.aims.find(x => t >= x.t0 && t <= x.t0 + x.dur);
+    const pc = seg ? seg.pc : aim ? PCS.find(p => p.g.position.distanceTo(aim.from) < 0.01) || camFollow.pc : camFollow.pc;
+    if (pc) { camFollow.pc = pc; const [P, T] = closeView(pc.g.position); const k = 1 - Math.exp(-dt * 3.2);
+      if (!camAnim) { camera.position.lerp(P, k); controls.target.lerp(T, k); } }
+    // tout est joué (coup du joueur et réponse de l'ordinateur) : retour à la vue de jeu
+    if (!game.thinking && play.t >= TL.cursor - PAUSE - 0.01 && (game.over || game.E.S.side === 'w')) { camFollow.phase = 'idle'; setView('player'); }
+  }
+}
 
 /* ==========================================================================
    12. BOUCLE
@@ -1786,6 +1918,7 @@ function tick() {
     if (play.t >= TL.total) { play.t = TL.total; play.playing = false; syncPlay(); }
   }
   applyTime(play.t);
+  camFollowTick(dt);
   controls.update();
   updateGare();
   renderer.render(scene, camera);
@@ -1796,7 +1929,7 @@ buildTimeline();
 updateGameBar();
 setDecor('gare');          // ouverture directe dans le parc (Lieu 360°), vue « Ambiance »
 setView('amb', true);
-if (!/[?&]demo\b/.test(location.search)) setMode('jeu');   // V8 : ouverture directe en mode jeu (?demo pour la démonstration)
+if (!/[?&]demo\b/.test(location.search)) { setMode('jeu'); if (!player) askName(); }   // V8 : ouverture directe en mode jeu (?demo pour la démonstration)
 tick();
 window.__valerien = { C, PCS, TL, play, applyTime, setView, setDecor, resize, gare, loadPanoFromBlob, check3D, bodyMargin, checkAnchor, buildTimeline, game, setMode, playMove, appendMove, newGame, camera };
 </script>
