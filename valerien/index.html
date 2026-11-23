@@ -58,6 +58,15 @@
   .brandlink { display:flex; align-items:center; gap:12px; text-decoration:none; }
   #navLogo { width:44px; height:44px; flex:none; }
   /* Intro : logo 3D */
+
+  /* Bouton son : discret, en bas à gauche, visible aussi pendant l'intro */
+  #sndBtn { position:fixed; left:18px; bottom:18px; z-index:120; display:flex; align-items:center; gap:7px;
+            background:rgba(0,0,0,.35); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+            border:1px solid rgba(255,255,255,.28); color:rgba(255,255,255,.82); border-radius:999px;
+            padding:7px 13px 7px 10px; font:500 12px var(--sans); letter-spacing:.06em; cursor:pointer; transition:border-color .3s, color .3s; }
+  #sndBtn:hover { border-color:rgba(255,255,255,.6); color:#fff; }
+  #sndBtn svg { width:17px; height:17px; }
+  #sndBtn .w { transition:opacity .3s; } #sndBtn:not(.on) .w { opacity:0; } #sndBtn.on .x { opacity:0; }
   #intro { position:fixed; inset:0; z-index:100; background:#000; transition:opacity .9s ease; }
   #intro canvas { width:100%; height:100%; display:block; }
   #intro.out { opacity:0; pointer-events:none; }
@@ -194,6 +203,12 @@
 
 
 <!-- ======================= INTRO : le logo VALÉRIEN en 3D (≈ 3,5 s, puis le film) ======================= -->
+<button id="sndBtn" aria-label="Activer le son" title="Activer le son">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/>
+    <g class="w"><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></g>
+    <g class="x"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g>
+  </svg><span>Son</span></button>
 <div id="intro" aria-hidden="true"><canvas id="introCv"></canvas><button id="introSkip">Passer</button></div>
 <script>try { if (sessionStorage.getItem('valIntro') === '1' || location.hash) { document.getElementById('intro').remove(); document.body.classList.remove('introing'); } } catch (e) {}</script>
 <script>/* filet de sécurité : si la 3D ne se charge pas, l'intro disparaît d'elle-même */ setTimeout(() => { const i = document.getElementById('intro'); if (i) { i.classList.add('out'); document.body.classList.remove('introing'); setTimeout(() => i.remove(), 900); } }, 10000);</script>
@@ -210,7 +225,7 @@ const LOGO = window.VAL_LOGO;
 const intro = document.getElementById('intro');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let done = false;
-const finish = () => { if (done) return; done = true; if (!intro) return; intro.classList.add('out'); document.body.classList.remove('introing'); setTimeout(() => intro.remove(), 900); };
+const finish = () => { if (done) return; done = true; window.__introDone = true; if (!intro) return; intro.classList.add('out'); document.body.classList.remove('introing'); setTimeout(() => intro.remove(), 900); };
 const skipBtn = document.getElementById('introSkip'); if (skipBtn) skipBtn.onclick = finish;
 const seen = (() => { try { return sessionStorage.getItem('valIntro') === '1'; } catch (e) { return false; } })();
 try { sessionStorage.setItem('valIntro', '1'); } catch (e) {}
@@ -249,7 +264,7 @@ else try {
   const inOut = u => { u = Math.min(1, Math.max(0, u)); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
   (function loop() {
     if (done) return;
-    const now = performance.now(); clock += Math.min(0.05, (now - last) / 1000); last = now; const t = clock;
+    const now = performance.now(); clock += Math.min(0.05, (now - last) / 1000); last = now; const t = clock; window.__introT = t;   // lu par le module son
     if (V1) {
       const a = ease(t / 1.1);
       ring.scale.setScalar(0.86 + 0.14 * a); ring.rotation.z = (1 - a) * -0.9;
@@ -342,7 +357,7 @@ else try {
     <div class="head reveal">
       <div><div class="eyebrow">En direct</div><h2>Une partie se joue sous vos yeux</h2>
       <p>Chaque pièce se soulève, glisse et se repose sans jamais quitter le plateau. Les pièces prises sortent par le côté et restent accrochées.</p></div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap"><a class="btn ghost" href="3d/">Explorer en plein écran ↗</a><a class="btn ghost" href="3d/jeu.html">♟ Jouer contre l'ordinateur</a></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap"><a class="btn ghost" href="3d/index.html">Explorer en plein écran ↗</a><a class="btn ghost" href="3d/jeu.html">♟ Jouer contre l'ordinateur</a></div>
     </div>
     <div class="frame reveal"><iframe src="3d/index.html?embed" title="VALÉRIEN en 3D : une partie jouée en direct" loading="lazy" allow="fullscreen"></iframe></div>
   </div>
@@ -374,7 +389,7 @@ else try {
       <h2 style="margin:16px 0 22px">Idéal en libre-service</h2>
       <p class="lead">Aucune pièce à ranger, à compter ou à remplacer. Le plateau en inox et les pièces en alliage haute résistance supportent le vent, la pluie et le soleil, avec une maintenance minimale.</p>
       <div style="margin-top:30px; display:flex; gap:12px; flex-wrap:wrap">
-        <a class="btn dark" href="3d/">Voir le mécanisme en 3D</a>
+        <a class="btn dark" href="3d/index.html">Voir le mécanisme en 3D</a>
         <a class="btn line" href="https://www.youtube.com/watch?v=_9b8bulB9T4" target="_blank" rel="noopener">La vidéo du Concours Lépine ↗</a>
       </div>
     </div>
@@ -587,6 +602,67 @@ if (cv && LOGO) try {
     new MutationObserver(() => { if (!b.classList.contains('introing')) arm(); }).observe(b, { attributes:true, attributeFilter:['class'] });
     if (!b.classList.contains('introing')) arm();
   })();
+</script>
+<script>
+/* L'aperçu 3D intégré demande l'ouverture en plein écran : la page la charge elle-même. */
+addEventListener('message', e => { const d = e.data;
+  if (d && d.valerien === 'plein-ecran' && typeof d.url === 'string' && new URL(d.url).origin === location.origin) location.href = d.url; });
+</script>
+<script>
+/* ===== Son du site =====
+   Les navigateurs interdisent le son tant que le visiteur n'a pas cliqué : tout démarre donc muet.
+   Le bouton « Son » (en bas à gauche, visible dès l'intro) active :
+     - le whoosh d'entrée de l'anneau (t = 0 s de l'intro),
+     - la musique d'ambiance, en boucle sans raccord, qui démarre en fondu à la fin de l'intro.
+   Le choix est mémorisé : au retour, le son reprend au premier clic ou toucher sur la page. */
+(() => {
+  const btn = document.getElementById('sndBtn'); if (!btn) return;
+  const KEY = 'valerien_son', LOOP = 4 * 15.583333;          // durée exacte de la boucle musicale
+  let ctx, master, bufs = {}, loading, on = false, music = null, firedIn = false;
+  const load = () => loading || (loading = Promise.all(['whoosh-in', 'ambiance'].map(n =>
+    fetch('son/' + n + '.mp3').then(r => r.arrayBuffer()).then(a => ctx.decodeAudioData(a)).then(b => bufs[n] = b))));
+  const shot = (n, gain = 0.9) => { const b = bufs[n]; if (!b || !on) return;
+    const s = ctx.createBufferSource(), g = ctx.createGain(); g.gain.value = gain; s.buffer = b; s.connect(g).connect(master); s.start(); };
+  function startMusic() {
+    if (music || !on || !bufs.ambiance) return;
+    const b = bufs.ambiance, d = b.getChannelData(0);
+    let i0 = 0; while (i0 < 4096 && Math.abs(d[i0]) < 1e-4) i0++;   // silence d'encodage MP3 en tête, retiré pour une boucle sans raccord
+    const s = ctx.createBufferSource(), g = ctx.createGain();
+    s.buffer = b; s.loop = true; s.loopStart = i0 / b.sampleRate; s.loopEnd = Math.min(b.duration, s.loopStart + LOOP);
+    g.gain.setValueAtTime(0, ctx.currentTime); g.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 3);
+    s.connect(g).connect(master); s.start(0, s.loopStart); music = { s, g };
+  }
+  const introRunning = () => !!document.getElementById('intro') && !window.__introDone;
+  function watch() {                                          // suit l'horloge de l'intro pour caler les whooshs
+    if (!on) return;
+    const t = window.__introT;
+    if (introRunning() && t !== undefined) {
+      if (!firedIn && t < 0.35) { firedIn = true; shot('whoosh-in'); }
+      requestAnimationFrame(watch);
+    } else setTimeout(startMusic, introRunning() ? 0 : 400);
+  }
+  async function enable() {
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    if (!master) { master = ctx.createGain(); master.connect(ctx.destination); }
+    await ctx.resume(); on = true; btn.classList.add('on'); btn.setAttribute('aria-label', 'Couper le son');
+    master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(1, ctx.currentTime);
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    await load(); if (!on) return;
+    if (introRunning()) watch(); else startMusic();
+  }
+  function disable() {
+    on = false; btn.classList.remove('on'); btn.setAttribute('aria-label', 'Activer le son');
+    try { localStorage.setItem(KEY, '0'); } catch (e) {}
+    if (ctx) { master.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
+      setTimeout(() => { if (!on) { if (music) { music.s.stop(); music = null; } ctx.suspend(); } }, 1200); }
+  }
+  btn.addEventListener('click', e => { e.stopPropagation(); on ? disable() : enable(); });
+  // au retour d'un visiteur qui avait choisi le son : reprise au premier geste sur la page
+  let pref = null; try { pref = localStorage.getItem(KEY); } catch (e) {}
+  if (pref === '1') { const go = () => { if (!on) enable(); }; ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, go, { once:true, capture:true })); }
+  // onglet caché : on suspend, on reprend au retour
+  document.addEventListener('visibilitychange', () => { if (!ctx || !on) return; document.hidden ? ctx.suspend() : ctx.resume(); });
+})();
 </script>
 </body>
 </html>

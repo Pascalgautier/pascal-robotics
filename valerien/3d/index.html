@@ -39,7 +39,10 @@
     font:13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   #c { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
   .panel { position:fixed; background:var(--panel); border:1px solid #333a42; border-radius:10px; padding:10px 12px; backdrop-filter:blur(6px); }
-  #ui { top:10px; left:10px; width:300px; max-height:calc(100% - 20px); overflow:auto; }
+  /* Menu en tiroir : replié par défaut, il glisse depuis la gauche ; bouton rond semi-transparent pour l'ouvrir */
+  #ui { top:58px; left:10px; width:300px; max-height:calc(100% - 68px); overflow:auto;
+        transition:transform .45s cubic-bezier(.2,.7,.2,1), opacity .35s; }
+  #ui.hidden { transform:translateX(calc(-100% - 30px)); opacity:0; pointer-events:none; }
   #ui h1 { font-size:14px; margin:0 0 2px; letter-spacing:.3px; }
   #ui .sub { color:var(--mut); font-size:11px; margin-bottom:8px; }
   #ui h2 { font-size:11px; text-transform:uppercase; color:var(--mut); margin:10px 0 5px; letter-spacing:.6px; }
@@ -55,12 +58,13 @@
   .ok { color:var(--ok); } .ko { color:var(--ko); } .warn { color:var(--warn); } .mut { color:var(--mut); }
   #caption { left:50%; transform:translateX(-50%); bottom:14px; max-width:min(720px, calc(100% - 20px)); text-align:center; font-size:15px; }
   #caption b { color:#ffd2ad; }
-  #toggleUI { position:fixed; top:10px; right:10px; display:none; z-index:5; }
+  #toggleUI { position:fixed; top:10px; left:10px; z-index:9; width:40px; height:40px; padding:0; border-radius:50%;
+              display:grid; place-items:center; color:var(--txt); font-size:17px; cursor:pointer; opacity:.5; transition:opacity .25s; }
+  #toggleUI:hover, #toggleUI.open { opacity:1; }
   .hyp { font-size:11px; color:var(--mut); }
   @media (max-width: 700px) {
     #ui { width:calc(100% - 20px); max-height:44%; }
-    #toggleUI { display:block; }
-    #ui.hidden { display:none; }
+    #sndBtn { left:auto !important; right:10px; top:10px !important; }
     #caption { font-size:13px; bottom:8px; }
   }
   body.embed #ui, body.embed #toggleUI { display:none !important; }
@@ -72,12 +76,17 @@
   #embedBar button, #embedBar a { background:rgba(15,17,20,.72); color:#f2efe8; border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:7px 13px; font:12px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-decoration:none; cursor:pointer; backdrop-filter:blur(6px); }
   @media (max-width:700px) { body.embed #caption { bottom:52px; } }
   /* Bouton de retour au site (page 3D ouverte en plein écran depuis le site) */
-  #backSite { position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:8; display:inline-flex; align-items:center; gap:8px;
+  /* Bouton son (chants d'oiseaux en extérieur) — page plein écran seulement */
+  #sndBtn { position:fixed; top:10px; left:60px; z-index:8; display:flex; align-items:center; gap:7px; background:rgba(15,17,20,.72);
+            border:1px solid rgba(255,255,255,.22); color:#e8e6e1; border-radius:999px; padding:7px 13px 7px 10px; font:500 12px system-ui, sans-serif; cursor:pointer; }
+  #sndBtn svg { width:16px; height:16px; } #sndBtn:not(.on) .w { opacity:0; } #sndBtn.on .x { opacity:0; }
+  body.embed #sndBtn { display:none; }
+    #backSite { position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:8; display:inline-flex; align-items:center; gap:8px;
     padding:9px 16px; border-radius:999px; background:rgba(15,17,20,.78); color:#f2efe8; border:1px solid rgba(201,165,107,.6);
     font:500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-decoration:none; backdrop-filter:blur(6px); }
   #backSite:hover { background:rgba(15,17,20,.92); }
   body.embed #backSite { display:none; }
-  @media (max-width:700px) { #backSite { left:12px; transform:none; } }
+  @media (max-width:700px) { #backSite { left:60px; transform:none; } }
 </style>
 <script type="importmap">
 { "imports": {
@@ -88,10 +97,11 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+<button id="sndBtn" aria-label="Activer le son" title="Musique et ambiance du lieu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><g class="w"><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></g><g class="x"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g></svg><span>Son</span></button>
 <a id="backSite" href="../index.html#live" target="_top">← Retour au site</a>
-<button id="toggleUI" class="panel">☰</button>
+<button id="toggleUI" class="panel" aria-label="Afficher le menu" title="Menu">☰</button>
 
-<div id="ui" class="panel">
+<div id="ui" class="panel hidden">
   <h1>VALÉRIEN 3D — V7.4e</h1>
   <div class="sub">32 pièces imperdables · partie courte · gestes soulevés et courbes</div>
 
@@ -116,6 +126,10 @@
     <button id="vTrace">Trajectoires</button>
   </div>
 
+  <h2>Sons (avec le bouton « Son » activé)</h2>
+  <div class="row" id="mixRow">
+    <button data-mix="musique">♫ Musique</button><button data-mix="fond">Ambiance du lieu</button><button data-mix="pieces">Pièces qui se posent</button>
+  </div>
   <h2>Décor</h2>
   <div class="row">
     <button id="dStudio" class="on">Blanc</button>
@@ -158,7 +172,7 @@
 </div>
 
 <div id="caption" class="panel">Chargement…</div>
-<div id="embedBar"><button id="eInteract">Manipuler en 3D</button><a id="eFull" href="./" target="_top">Plein écran ↗</a></div>
+<div id="embedBar"><button id="eInteract">Manipuler en 3D</button><a id="eFull" href="index.html" target="_top">Plein écran ↗</a></div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -853,6 +867,11 @@ const VIEWS = {
     const Pc = PANOS[gare.cur] || {}, port = camera.aspect < 1, eyeY = FLOOR_Y + (Pc.eye || 1.25) * 1000 / C.PAS_MM, horiz = (port ? 30 * Math.min(Pc.camK || 1, 1.2) : 22 * (Pc.camK || 1)), pitch = port ? 20 : 14;
     const T = new THREE.Vector3(0, eyeY - horiz * Math.tan(THREE.MathUtils.degToRad(pitch)), 0.4);
     return [orbitPos(T, horiz / Math.cos(THREE.MathUtils.degToRad(pitch)), pitch, (PANOS[gare.cur] && PANOS[gare.cur].camAz) || 18), T]; },
+  // vue d'ouverture de la page plein écran : à l'opposé de la vue précédente, côté colonne a, un peu
+  // en retrait et en contre-plongée légère pour voir les pièces prises entrer au « garage » (pendues hors du bac)
+  defaut: () => { const T = new THREE.Vector3(1.3, 0.7, 0.9), P = new THREE.Vector3(-7.4, 2.0, -1.5);
+    if (camera.aspect < 1) P.sub(T).multiplyScalar(1.7).add(T);
+    return [P, T]; },
   exit:   () => { const T = new THREE.Vector3(-4.0, 0.2, -0.8); return [orbitPos(T, fitDistance(3.2), 14, -68), T]; },
 };
 let curView = 'persp', userMoved = false, uiToggled = false;
@@ -860,7 +879,7 @@ controls.addEventListener('start', () => { userMoved = true; });
 function setView(v, instant = false) {
   curView = v; userMoved = false;
   for (const id of ['vPersp', 'vPlayer', 'vTop', 'vExit', 'vAmb']) $(id).classList.remove('on');
-  $({ persp:'vPersp', player:'vPlayer', top:'vTop', exit:'vExit', amb:'vAmb' }[v]).classList.add('on');
+  const bt = $({ persp:'vPersp', player:'vPlayer', top:'vTop', exit:'vExit', amb:'vAmb' }[v]); if (bt) bt.classList.add('on');
   const [p, t] = VIEWS[v]();
   if (instant) { camera.position.copy(p); controls.target.copy(t); camAnim = null; } else flyTo(p, t);
 }
@@ -879,9 +898,25 @@ $('vPlayer').onclick = () => setView('player');
 $('vTop').onclick = () => setView('top');
 $('vExit').onclick = () => setView('exit');
 $('vXray').onclick = () => setXray(!xray);
-$('vRot').onclick = () => { autoRot = !autoRot; controls.autoRotate = autoRot; controls.autoRotateSpeed = 0.8; $('vRot').classList.toggle('on', autoRot); };
+const ROT_SPEED = 0.4;   // rotation automatique : 50 % plus lente qu'avant (0,8), un tour complet ≈ 2 min 30
+function setAutoRot(v) { autoRot = v; controls.autoRotate = v; controls.autoRotateSpeed = ROT_SPEED; if (typeof rotRamp !== 'undefined') rotRamp = null; $('vRot').classList.toggle('on', v); }
+$('vRot').onclick = () => setAutoRot(!autoRot);
+/* Page plein écran : la caméra tourne toute seule autour de l'échiquier dès l'ouverture.
+   Clic / toucher / molette : elle s'arrête et on reprend la main ; dès qu'on lâche, elle repart
+   d'elle-même avec une accélération douce (≈ 2,5 s). Le bouton « Rotation » la coupe pour de bon. */
+let rotRamp = null, rotWheelTimer = null;
+if (!new URLSearchParams(location.search).has('embed')) {
+  setAutoRot(true);
+  const pause = () => { if (!autoRot) return; controls.autoRotate = false; rotRamp = null; };
+  const reprise = () => { if (!autoRot) return; controls.autoRotate = true; controls.autoRotateSpeed = 0; rotRamp = performance.now(); };
+  renderer.domElement.addEventListener('pointerdown', pause);
+  controls.addEventListener('end', reprise);
+  renderer.domElement.addEventListener('wheel', () => { pause(); clearTimeout(rotWheelTimer); rotWheelTimer = setTimeout(reprise, 900); }, { passive:true });
+}
 $('vTrace').onclick = () => { showTrace = !showTrace; $('vTrace').classList.toggle('on', showTrace); if (traceLine) traceLine.visible = showTrace; };
-$('toggleUI').onclick = () => { uiToggled = true; $('ui').classList.toggle('hidden'); resize(); };
+function syncToggle() { const open = !$('ui').classList.contains('hidden'); $('toggleUI').textContent = open ? '✕' : '☰';
+  $('toggleUI').classList.toggle('open', open); $('toggleUI').setAttribute('aria-label', open ? 'Masquer le menu' : 'Afficher le menu'); }
+$('toggleUI').onclick = () => { uiToggled = true; $('ui').classList.toggle('hidden'); syncToggle(); resize(); };
 
 
 /* ==========================================================================
@@ -1270,8 +1305,8 @@ $('vAmb').onclick = () => setView('amb');
    12. BOUCLE
    ========================================================================== */
 function resize() {
-  // téléphone : panneau replié tant que l'utilisateur ne l'a pas ouvert
-  if (!uiToggled) $('ui').classList.toggle('hidden', innerWidth <= 700);
+  // menu replié tant que le visiteur ne l'a pas ouvert (bouton ☰ en haut à gauche)
+  if (!uiToggled) { $('ui').classList.add('hidden'); if (typeof syncToggle === 'function') syncToggle(); }
   renderer.setSize(innerWidth, innerHeight, true); camera.aspect = innerWidth / innerHeight; applyViewOffset(); camera.updateProjectionMatrix();
   // la taille de la fenêtre change (chargement dans l'app, rotation) : on recadre, sauf si l'utilisateur a déplacé la vue
   if (!userMoved && typeof VIEWS !== 'undefined') setView(curView, true);
@@ -1279,6 +1314,26 @@ function resize() {
 addEventListener('resize', resize); if (window.visualViewport) visualViewport.addEventListener('resize', resize);
 resize(); setTimeout(resize, 300); setTimeout(resize, 1200);   // la vue intégrée de l'app peut prendre sa taille définitive après le chargement
 const clock = new THREE.Clock();
+/* Impact : une pièce qui redescend et touche le plateau (hauteur qui revient à 0, pièce droite).
+   On ne déclenche qu'en lecture normale (pas lors d'un saut dans la chronologie ou d'un retour au début). */
+let landPrevT = null;
+const landH = new Map(), landW = new Map();
+function detectLandings(t) {
+  const normal = landPrevT !== null && t > landPrevT && t - landPrevT < 0.12;
+  for (const pc of PCS) {
+    const h = pc.g.position.y - C.plateTopY, up = Math.abs(pc.g.quaternion.w) > 0.999;
+    if (h > 0.004) landH.set(pc, 'en l\'air');                          // la pièce a décollé
+    else if (h <= 0.0015 && landH.get(pc) === 'en l\'air') {            // … et vient de retoucher sa case
+      landH.set(pc, 'posée');
+      if (normal && up) window.dispatchEvent(new CustomEvent('valerien-impact', { detail:{ x:pc.g.position.x, y:pc.g.position.y, z:pc.g.position.z, type:pc.type, side:pc.side } }));
+    }
+    const w = Math.abs(pc.g.quaternion.w), pw = landW.get(pc);
+    if (normal && pw !== undefined && pw >= 0.97 && w < 0.97)          // la pièce prise bascule : départ au garage
+      window.dispatchEvent(new CustomEvent('valerien-sortie', { detail:{ x:pc.g.position.x, y:pc.g.position.y, z:pc.g.position.z, type:pc.type, side:pc.side } }));
+    landW.set(pc, w);
+  }
+  landPrevT = t;
+}
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (camAnim) {
@@ -1289,9 +1344,12 @@ function tick() {
   if (play.playing) {
     play.t += dt * play.speed * (play.slow ? 0.25 : 1);
     if (play.until !== null && play.t >= play.until) { play.t = play.until; play.until = null; play.playing = false; syncPlay(); }
-    if (play.t >= TL.total) { if (typeof EMBED !== 'undefined' && EMBED) { if (!play.endAt) play.endAt = performance.now(); if (performance.now() - play.endAt > 3500) { play.t = 0; play.endAt = 0; } else play.t = TL.total; } else { play.t = TL.total; play.playing = false; syncPlay(); } }
+    if (play.t >= TL.total) { if (true) {   // en boucle, intégrée ou plein écran
+      if (!play.endAt) play.endAt = performance.now(); if (performance.now() - play.endAt > 3500) { play.t = 0; play.endAt = 0; } else play.t = TL.total; } else { play.t = TL.total; play.playing = false; syncPlay(); } }
   }
   applyTime(play.t);
+  detectLandings(play.t);
+  if (rotRamp !== null) { const u = Math.min(1, (performance.now() - rotRamp) / 2500); controls.autoRotateSpeed = ROT_SPEED * u * u * (3 - 2 * u); if (u >= 1) rotRamp = null; }
   // Site : plan rapproché sur l'échiquier et lent tour automatique de caméra (≈ 1 tour en 90 s),
   // tant que le visiteur ne manipule pas la 3D
   if (typeof EMBED !== 'undefined' && EMBED && !controls.enabled && !camAnim) {
@@ -1315,9 +1373,165 @@ if (EMBED) {
 }
 buildTimeline();
 setDecor('gare');          // ouverture directe dans le parc (Lieu 360°), vue « Ambiance »
-setView('amb', true);
+setView(EMBED ? 'amb' : 'defaut', true);
 tick();
-window.__valerien = { C, PCS, TL, play, applyTime, setView, setDecor, resize, gare, loadPanoFromBlob, check3D, bodyMargin, checkAnchor, buildTimeline };
+window.__valerien = { C, PCS, TL, camera, controls, play, detectLandings, applyTime, setView, setDecor, resize, gare, loadPanoFromBlob, check3D, bodyMargin, checkAnchor, buildTimeline };
+</script>
+<script>
+/* « Plein écran » depuis l'aperçu intégré : la page parente (le site) ouvre elle-même la 3D.
+   Un lien target="_top" est bloqué dans certains cadres (aperçus, applis mobiles) : on passe donc
+   par un message à la page parente, avec ouverture dans un nouvel onglet en secours. */
+(() => { const a = document.getElementById('eFull'); if (!a) return;
+  a.addEventListener('click', e => {
+    if (window.parent === window) return;                       // page déjà ouverte seule : lien normal
+    e.preventDefault();
+    const url = new URL('index.html', location.href).href;
+    let ok = false;
+    try { window.parent.postMessage({ valerien: 'plein-ecran', url }, '*'); ok = true; } catch (err) {}
+    if (!ok) window.open(url, '_blank');
+  });
+})();
+</script>
+<script>
+/* ===== Son de la page plein écran =====
+   Selon le lieu affiché (décor « Lieu 360° ») :
+     Parc, Jardin      musique du site + chants d'oiseaux en arrière-plan
+     Gare              musique du site + ambiance de hall (voyageurs, pas, annonce lointaine)
+     Place             musique du site + vent léger
+     Salon victorien   pas de musique du site : valse de Strauss en fond
+     Salon moderne     pas de musique du site : R&B en fond
+     Salle ancienne    pas de musique du site : jazz en fond
+     Studio            musique du site seule
+   Les fonds sont tous au même niveau (celui réglé pour les oiseaux) ; fondus à chaque changement.
+   Rien dans l'aperçu intégré au site. Même mémoire que la page d'accueil (valerien_son). */
+(() => {
+  const btn = document.getElementById('sndBtn');
+  if (!btn || new URLSearchParams(location.search).has('embed')) return;
+  const KEY = 'valerien_son', VOL_MUSIQUE = 0.5, VOL_FOND = 0.039;
+  const LIEUX = {                       // lieu -> [musique du site ?, piste de fond]
+    parc: [true, 'oiseaux'], jardin: [true, 'oiseaux'], gare: [true, 'gare'], place: [true, 'vent'],
+    victorien: [false, 'valse'], salon: [false, 'rnb'], salle: [false, 'jazz'],
+  };
+  const P = (url, boucle) => ({ url, boucle, buf: null, src: null, gain: null, loading: null });
+  const pistes = {                      // durées exactes des boucles (s)
+    musique: P('../son/ambiance.mp3', 4 * 15.583333), oiseaux: P('oiseaux.mp3', 60), gare: P('gare.mp3', 60),
+    vent: P('vent.mp3', 60), valse: P('valse.mp3', 32 * 0.98), jazz: P('jazz.mp3', 16 * 4 * 60 / 116), rnb: P('rnb.mp3', 8 * 4 * 60 / 72),
+  };
+  let ctx, master, on = false;
+  const MIX_KEY = 'valerien_mix';                    // interrupteurs du menu : musique / ambiance du lieu / pièces
+  let mix = { musique:true, fond:true, pieces:true };
+  try { Object.assign(mix, JSON.parse(localStorage.getItem(MIX_KEY) || '{}')); } catch (e) {}
+  const syncMix = () => document.querySelectorAll('#mixRow button').forEach(b => b.classList.toggle('on', !!mix[b.dataset.mix]));
+  document.querySelectorAll('#mixRow button').forEach(b => b.addEventListener('click', () => {
+    mix[b.dataset.mix] = !mix[b.dataset.mix]; try { localStorage.setItem(MIX_KEY, JSON.stringify(mix)); } catch (e) {}
+    syncMix(); tick();
+  }));
+  syncMix();
+  function lieu() {                     // [musique ?, fond] pour ce qui est affiché maintenant
+    const v = window.__valerien, d = document.getElementById('dGare');
+    if (!(v && v.gare && d && d.classList.contains('on'))) return [true, null];          // Studio
+    return LIEUX[v.gare.cur] || [true, null];
+  }
+  const load = p => p.loading || (p.loading = fetch(p.url).then(r => r.arrayBuffer())
+    .then(a => ctx.decodeAudioData(a)).then(b => { p.buf = b; tick(); }).catch(() => {}));
+  function start(p) {
+    if (p.src || !p.buf) return;
+    const d = p.buf.getChannelData(0); let i0 = 0; while (i0 < 4096 && Math.abs(d[i0]) < 1e-5) i0++;   // silence MP3 en tête
+    p.src = ctx.createBufferSource(); p.src.buffer = p.buf; p.src.loop = true;
+    p.src.loopStart = i0 / p.buf.sampleRate; p.src.loopEnd = Math.min(p.buf.duration, p.src.loopStart + p.boucle);
+    p.src.connect(p.gain); p.src.start(0, p.src.loopStart);
+  }
+  function tick() {
+    if (!ctx) return;
+    const [mus, fond] = lieu(), t = ctx.currentTime;
+    for (const [k, p] of Object.entries(pistes)) {
+      const vol = !on ? 0 : k === 'musique' ? (mus && mix.musique ? VOL_MUSIQUE : 0) : (k === fond && mix.fond ? VOL_FOND : 0);
+      if (vol > 0) { if (p.buf) start(p); else load(p); }
+      if (p.gain) p.gain.gain.setTargetAtTime(vol, t, 0.8);
+    }
+  }
+  function setup() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.connect(ctx.destination);
+    for (const p of Object.values(pistes)) { p.gain = ctx.createGain(); p.gain.gain.value = 0; p.gain.connect(master); }
+    setInterval(tick, 400);
+  }
+  let enable = async function () {
+    setup(); await ctx.resume(); on = true; btn.classList.add('on'); btn.setAttribute('aria-label', 'Couper le son');
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    tick();
+  };
+  function disable() {
+    on = false; btn.classList.remove('on'); btn.setAttribute('aria-label', 'Activer le son');
+    try { localStorage.setItem(KEY, '0'); } catch (e) {}
+    tick();
+  }
+  btn.addEventListener('click', e => { e.stopPropagation(); on ? disable() : enable(); });
+  let pref = null; try { pref = localStorage.getItem(KEY); } catch (e) {}
+  if (pref === '1') {
+    setup(); ctx.resume().then(() => { if (ctx.state === 'running' && !on) enable(); }).catch(() => {});
+    ['pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, () => { if (!on) enable(); }, { once:true, capture:true }));
+  }
+
+  /* ----- Impact des pièces qui se posent : son spatialisé -----
+     La source est placée à l'endroit exact de la pièce, l'auditeur à la caméra : plus on s'approche,
+     plus l'impact est fort et présent (atténuation avec la distance + aigus qui s'éteignent au loin). */
+  const SON_CAMP = { blanc:'1', noir:'4' };        // pièces blanches : feutre ; pièces noires : mat
+  const impBufs = {}, impLead = {};
+  function loadImp(k) {
+    if (impBufs[k] || !ctx) return;
+    impBufs[k] = 'chargement';
+    fetch('impact' + k + '.mp3').then(r => r.arrayBuffer()).then(a => ctx.decodeAudioData(a)).then(b => {
+      const d = b.getChannelData(0); let i0 = 0; while (i0 < 4096 && Math.abs(d[i0]) < 1e-4) i0++;
+      impBufs[k] = b; impLead[k] = i0 / b.sampleRate;
+    }).catch(() => { delete impBufs[k]; });
+  }
+  const loadAll = () => { loadImp(SON_CAMP.blanc); loadImp(SON_CAMP.noir); };
+  const IMP_GAIN = 1.6, SORTIE_GAIN = IMP_GAIN * 1.4;   // « wouf » de sortie : 40 % plus fort que les impacts
+  const RATE = { P:1.08, N:1.0, B:1.0, R:0.96, Q:0.9, K:0.88 };   // pièces plus lourdes : son plus grave
+  function impact(d) {
+    const k = d.side > 0 ? SON_CAMP.blanc : SON_CAMP.noir, b = impBufs[k];
+    if (!on || !ctx || !mix.pieces || !b || b === 'chargement') return;
+    const cam = window.__valerien && window.__valerien.camera;
+    const dist = cam ? Math.hypot(d.x - cam.position.x, d.y - cam.position.y, d.z - cam.position.z) : 5;
+    const src = ctx.createBufferSource(), lp = ctx.createBiquadFilter(), g = ctx.createGain(), pan = ctx.createPanner();
+    src.buffer = b; src.playbackRate.value = (RATE[d.type] || 1) * (0.97 + Math.random() * 0.06);
+    lp.type = 'lowpass'; lp.frequency.value = Math.max(2500, 18000 / (1 + dist / 4));
+    g.gain.value = IMP_GAIN * (0.85 + Math.random() * 0.3);
+    pan.panningModel = 'equalpower'; pan.distanceModel = 'inverse'; pan.refDistance = 3; pan.rolloffFactor = 1; pan.maxDistance = 200;
+    if (pan.positionX) { pan.positionX.value = d.x; pan.positionY.value = d.y; pan.positionZ.value = d.z; } else pan.setPosition(d.x, d.y, d.z);
+    src.connect(lp).connect(g).connect(pan).connect(master);
+    const slot = Math.floor(Math.random() * 3);                     // une des 3 variantes du fichier
+    src.start(ctx.currentTime, impLead[k] + slot * 0.5, 0.45);
+  }
+  addEventListener('valerien-impact', e => impact(e.detail));
+  let sortieBuf = null;
+  const loadSortie = () => { if (sortieBuf || !ctx) return; sortieBuf = 'chargement';
+    fetch('sortie.mp3').then(r => r.arrayBuffer()).then(a => ctx.decodeAudioData(a)).then(b => sortieBuf = b).catch(() => { sortieBuf = null; }); };
+  addEventListener('valerien-sortie', e => {                     // la pièce prise part au garage : « wouf » spatialisé
+    const d = e.detail, b = sortieBuf;
+    if (!on || !ctx || !mix.pieces || !b || b === 'chargement') return;
+    const src = ctx.createBufferSource(), g = ctx.createGain(), pan = ctx.createPanner();
+    src.buffer = b; src.playbackRate.value = 0.95 + Math.random() * 0.1; g.gain.value = SORTIE_GAIN;
+    pan.panningModel = 'equalpower'; pan.distanceModel = 'inverse'; pan.refDistance = 3; pan.rolloffFactor = 1; pan.maxDistance = 200;
+    if (pan.positionX) { pan.positionX.value = d.x; pan.positionY.value = d.y; pan.positionZ.value = d.z; } else pan.setPosition(d.x, d.y, d.z);
+    src.connect(g).connect(pan).connect(master); src.start();
+  });
+  (function suivreCamera() {                                        // l'auditeur suit la caméra
+    requestAnimationFrame(suivreCamera);
+    const v = window.__valerien; if (!ctx || !on || !v || !v.camera) return;
+    const c = v.camera, e = c.matrixWorld.elements, L = ctx.listener;
+    if (L.positionX) {
+      L.positionX.value = c.position.x; L.positionY.value = c.position.y; L.positionZ.value = c.position.z;
+      L.forwardX.value = -e[8]; L.forwardY.value = -e[9]; L.forwardZ.value = -e[10];
+      L.upX.value = e[4]; L.upY.value = e[5]; L.upZ.value = e[6];
+    } else { L.setPosition(c.position.x, c.position.y, c.position.z); L.setOrientation(-e[8], -e[9], -e[10], e[4], e[5], e[6]); }
+  })();
+  const _enable = enable;
+  enable = async function () { await _enable(); loadAll(); loadSortie(); };
+  document.addEventListener('visibilitychange', () => { if (ctx && on) document.hidden ? ctx.suspend() : ctx.resume(); });
+})();
 </script>
 </body>
 </html>
