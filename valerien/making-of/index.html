@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VALÉRIEN, making-of</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE  : carnet de tournage, sobre et précis, la parole à l'image
+   IDEA   : le plateau du VALÉRIEN : cases noires et blanches séparées par des rainures, la tige qui relie tout
+   PICTURE: en ouverture, le curseur qui révèle le vrai VALÉRIEN à la place de la table de l'IA
+   COLOUR : nuit graphite, inox brossé en support, un or pâle (#c9a96a) comme seul accent
+   TYPE   : Cinzel (le nom VALÉRIEN du site) pour les titres, Inter pour le texte
+   LAYOUT : un fil vertical (la rainure) relie les chapitres ; images et vidéos en pleine largeur, paires côte à côte */
+:root{color-scheme:dark;--bg:#0c0c0d;--bg2:#141416;--ink:#e9e6df;--mute:#9b978e;--line:#2a2a2d;--or:#c9a96a;--inox:linear-gradient(90deg,#3a3b3e,#6b6d72 40%,#3d3e41 60%,#5a5c60)}
+:root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:64px;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-family:Cinzel,Georgia,serif;font-weight:500;line-height:1.08;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,6vw,58px);letter-spacing:.12em}
+h2{font-size:clamp(26px,3.6vw,40px);letter-spacing:.06em}
+h3{font-size:17px;font-weight:600;margin:26px 0 6px;color:var(--ink)}
+p{margin:0 0 12px;max-width:68ch}
+a{color:var(--or)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(4vw,16px)}
+header.hero{padding:34px 0 26px;background:radial-gradient(1200px 500px at 70% -10%,#24211b 0,transparent 60%)}
+.hero .lead{color:var(--mute);font-size:17px;margin-top:10px;max-width:62ch}
+.hero .cmp{margin-top:22px}
+.cap{color:var(--mute);font-size:14px;margin-top:8px}
+nav.toc{position:sticky;top:0;z-index:5;background:rgba(12,12,13,.92);backdrop-filter:blur(6px);border-block:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+nav.toc a{flex:none;color:var(--ink);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:6px;min-height:40px;display:flex;align-items:center}
+nav.toc a:hover,nav.toc a:focus-visible{background:#1d1c1a;color:var(--or);outline:none}
+section.ch{position:relative;padding:clamp(36px,5vw,70px) 0 10px}
+section.ch .wrap{position:relative;padding-left:max(4vw,16px)}
+/* la rainure : fil vertical qui relie les chapitres */
+section.ch .wrap::before{content:"";position:absolute;left:calc(max(4vw,16px) - 22px);top:8px;bottom:-40px;width:3px;background:var(--inox);opacity:.55;border-radius:2px}
+.when{display:inline-flex;align-items:center;gap:8px;color:var(--or);font-size:14px;font-weight:500;margin-bottom:8px}
+.when::before{content:"";width:12px;height:12px;background:conic-gradient(#e9e6df 0 25%,#111 0 50%,#e9e6df 0 75%,#111 0);border-radius:2px;margin-left:-29px;box-shadow:0 0 0 3px var(--bg)}
+@media(max-width:700px){section.ch .wrap{padding-left:40px}section.ch .wrap::before{left:16px}}
+.intro{color:#cfcbc2;font-size:17px;margin-top:12px}
+figure{margin:18px 0 0}
+figure img,figure video{display:block;width:100%;height:auto;border-radius:8px;background:#000}
+figcaption{color:var(--mute);font-size:14px;margin-top:7px;max-width:70ch}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:760px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.g2{grid-template-columns:minmax(0,1fr)}}
+.note{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-top:16px;font-size:15px;color:#cfcbc2;max-width:76ch}
+.note b{color:var(--or);font-weight:500}
+ul.tight{margin:6px 0 12px;padding-left:20px;max-width:70ch}ul.tight li{margin:4px 0}
+/* comparateur à curseur (images ou vidéos) */
+.cmp{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#000;cursor:ew-resize;user-select:none;touch-action:pan-y;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.cmp>img,.cmp>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.cmp>.top{clip-path:inset(0 calc(100% - var(--x,50%)) 0 0)}
+.cmp .bar{position:absolute;top:0;bottom:0;left:var(--x,50%);width:2px;margin-left:-1px;background:#fff;pointer-events:none}
+.cmp .knob{position:absolute;top:50%;left:50%;width:46px;height:46px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.93);color:#111;display:grid;place-items:center;font-size:18px;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+.cmp .lab{position:absolute;top:12px;padding:5px 10px;border-radius:4px;font-size:13px;background:rgba(0,0,0,.6);pointer-events:none}
+.cmp .lab.l{left:12px}.cmp .lab.r{right:12px}
+.cmp:focus-visible{outline:2px solid var(--or);outline-offset:3px}
+/* défilement horizontal : évolution de l'incrustation */
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;margin-top:16px}
+.rail figure{flex:0 0 min(78%,640px);scroll-snap-align:start;margin:0}
+.railnav{display:flex;gap:8px;margin-top:8px}
+button{background:#1b1b1e;color:var(--ink);border:1px solid #34343a;border-radius:6px;padding:10px 14px;font:inherit;font-size:14px;cursor:pointer;min-height:44px}
+button:hover,button:focus-visible{border-color:var(--or);outline:none}
+.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+@media(max-width:760px){.figs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fig1{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px}
+.fig1 .n{font-family:Cinzel,serif;font-size:clamp(26px,3.4vw,36px);color:var(--or);line-height:1.1;white-space:nowrap}
+.fig1 .t{color:var(--mute);font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 40px;color:var(--mute);font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <h1>VALÉRIEN</h1>
+  <p class="lead">Le making-of. Du vrai échiquier de Frédéric Brochard, primé au Concours Lépine 2025, à sa version 3D, son site, son son et un film tourné avec l'IA. Du 21 au 24 novembre 2026.</p>
+  <div class="cmp" data-cmp style="--x:55%" tabindex="0" aria-label="Comparateur : glisser pour comparer">
+    <img src="img/p4a_v6.jpg" alt="Le vrai VALÉRIEN incrusté dans la gare">
+    <img class="top" src="img/p4a_ia_table.jpg" alt="Image générée par l'IA, avec une table en bois">
+    <span class="lab l">Avant · la table inventée par l'IA</span>
+    <span class="lab r">Après · le vrai VALÉRIEN en 3D</span>
+    <div class="bar"><div class="knob">⇆</div></div>
+  </div>
+  <p class="cap">Glisse le curseur. Le plan 4a du film : l'IA a dessiné la gare, les personnages et une table quelconque ; la table a été effacée et remplacée par le modèle 3D exact, rendu dans Blender à la même perspective.</p>
+</div></header>
+
+<nav class="toc" aria-label="Chapitres"><div class="wrap">
+  <a href="#objet">L'objet réel</a><a href="#meca">La mécanique 3D</a><a href="#site">Le site</a><a href="#produit">Le film produit</a><a href="#son">Le son</a><a href="#film">Le temps d'une partie</a><a href="#montage">Le montage</a><a href="#bilan">Bilan</a>
+</div></nav>
+
+<main>
+<section class="ch" id="objet"><div class="wrap">
+  <div class="when">Le point de départ</div>
+  <h2>Un échiquier dont on ne perd aucune pièce</h2>
+  <p class="intro">Les 32 pièces du VALÉRIEN restent attachées au plateau. Chaque pièce a une tige courbée et un ancrage qui glisse dans les rainures entre les cases. Une pièce prise sort sur le bord sans jamais se détacher. Tout le projet part de ces photos : elles restent la référence absolue.</p>
+  <div class="g4" style="margin-top:18px">
+    <figure><img src="img/photo_parc.jpg" alt="Le VALÉRIEN dans un parc" loading="lazy"><figcaption>Sur son pied en inox</figcaption></figure>
+    <figure><img src="img/photo_tige.jpg" alt="Une pièce et sa tige courbée" loading="lazy"><figcaption>La tige courbée</figcaption></figure>
+    <figure><img src="img/photo_mains.jpg" alt="Une main déplace une pièce" loading="lazy"><figcaption>Les cases séparées</figcaption></figure>
+    <figure><img src="img/photo_lepine.jpg" alt="Remise du prix au Concours Lépine" loading="lazy"><figcaption>Concours Lépine 2025</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="ch" id="meca"><div class="wrap">
+  <div class="when">21 novembre</div>
+  <h2>La mécanique d'abord</h2>
+  <p class="intro">Deux prototypes faits avec ChatGPT (V4, V5) avaient l'allure, pas la mécanique : les pièces traversaient la matière. La V6 a été auditée puis reprise de zéro. La V7.3 a validé le principe : chaque coup d'une vraie partie est contrôlé (jeu dans la rainure, angle de la tige), et une pièce prise part au « garage » sur le bord.</p>
+  <div class="g2">
+    <figure><img src="img/v7_3.jpg" alt="Version 7.3 en studio" loading="lazy"><figcaption>V7.3 : la partie et ses contrôles mécaniques, coup par coup.</figcaption></figure>
+    <figure><img src="img/v7_4.jpg" alt="Version 7.4 avec chaises et panorama" loading="lazy"><figcaption>V7.4 : chaises, sol et sept lieux en panorama 360° (gare, parc, salon victorien…).</figcaption></figure>
+  </div>
+  <div class="note"><b>Décision.</b> Sans accès au vrai échiquier pour mesurer, on ne bloque plus sur l'ingénierie : on vise une reproduction fidèle à la photo, avec des cotes modifiables dans le code.</div>
+</div></section>
+
+<section class="ch" id="site"><div class="wrap">
+  <div class="when">22 et 23 novembre</div>
+  <h2>Un site à la hauteur de l'objet</h2>
+  <p class="intro">Le site de Frédéric (valerien.org) est repensé en version premium : le nom VALÉRIEN en Cinzel, un logo animé en 3D, une boucle vidéo du film produit, et la 3D jouable en plein écran avec ses sept décors.</p>
+  <div class="g2">
+    <figure><video src="vid/logo.mp4" poster="img/poster_logo.jpg" controls playsinline preload="none"></video><figcaption>L'intro du logo : un seul whoosh d'entrée et une nappe sci-fi en fondu.</figcaption></figure>
+    <figure><video src="vid/boucle_site.mp4" poster="img/poster_boucle_site.jpg" muted loop playsinline controls preload="none"></video><figcaption>La boucle de la page d'accueil.</figcaption></figure>
+    <figure><img src="img/site_accueil.jpg" alt="Page d'accueil du site" loading="lazy"><figcaption>La page d'accueil.</figcaption></figure>
+    <figure><img src="img/site_3d.jpg" alt="La 3D en plein écran dans le parc" loading="lazy"><figcaption>La 3D en plein écran : rotation lente, impacts sonores spatialisés.</figcaption></figure>
+  </div>
+  <figure><img src="img/vue_capture.jpg" alt="Capture d écran et reconstitution de l angle" loading="lazy"><figcaption>Le cadrage d'ouverture : à partir d'une simple capture d'écran, l'angle exact est retrouvé par comparaison de rendus.</figcaption></figure>
+</div></section>
+
+<section class="ch" id="produit"><div class="wrap">
+  <div class="when">22 novembre</div>
+  <h2>Le film produit, tout en Blender</h2>
+  <p class="intro">Un film studio de 28 secondes, rendu en local sur un Mac : la partie se joue, la caméra descend sous le plateau pour montrer les tiges dans les rainures.</p>
+  <figure><video src="vid/film_produit.mp4" poster="img/poster_film_produit.jpg" controls playsinline preload="none"></video></figure>
+  <div class="g2">
+    <figure><img src="img/rendu_propositions.jpg" alt="Propositions de rendu" loading="lazy"><figcaption>Les looks proposés avant le rendu final.</figcaption></figure>
+    <figure><img src="img/rendu_xray.jpg" alt="Vue rayons X du mécanisme" loading="lazy"><figcaption>Une vue « rayons X » pour lire le mécanisme.</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="ch" id="son"><div class="wrap">
+  <div class="when">23 novembre</div>
+  <h2>Le son, à l'oreille du musicien</h2>
+  <p class="intro">Le son compte autant que l'image. L'IA propose large, l'oreille d'un violoniste taille : un logo épuré en trois étapes, une musique passée de mineur à majeur, des oiseaux baissés six fois, des pièces qui sonnent différemment selon leur couleur.</p>
+  <figure><video src="vid/p3_son.mp4" poster="img/poster_p3_son.jpg" controls playsinline preload="none"></video><figcaption>Les pas du grand-père au plan 3, ajoutés en post-production et calés à l'image près, sur une ambiance de rue.</figcaption></figure>
+  <ul class="tight">
+    <li>Un fond « qui sonne comme un basson » (des voix synthétiques ratées) : supprimé.</li>
+    <li>La réverbération : enlevée. Les pas : décalés de 10 images, puis de 5.</li>
+    <li>Un pas en double, « talon puis talon » : retiré. L'analyse ne le voyait pas, l'oreille si.</li>
+  </ul>
+</div></section>
+
+<section class="ch" id="film"><div class="wrap">
+  <div class="when">22 au 24 novembre</div>
+  <h2>« Le temps d'une partie »</h2>
+  <p class="intro">Un film de 45 secondes dans une gare : un garçon et un grand-père qui ne se connaissent pas jouent, et la foule s'arrête. Les personnages et la gare viennent de l'IA (Higgsfield), le vrai échiquier vient de Blender.</p>
+  <figure><img src="img/storyboard.jpg" alt="Storyboard en six plans" loading="lazy"><figcaption>Le storyboard en six plans.</figcaption></figure>
+
+  <h3>Plan 3, la rencontre : de la maquette au plan final</h3>
+  <div class="cmp" data-cmp data-video style="--x:50%" tabindex="0" aria-label="Comparateur vidéo du plan 3">
+    <video src="vid/p3_apres.mp4" poster="img/p3_poster.jpg" muted playsinline loop preload="metadata"></video>
+    <video class="top" src="vid/p3_avant.mp4" muted playsinline loop preload="metadata"></video>
+    <span class="lab l">Maquette Blender</span><span class="lab r">Plan IA</span>
+    <div class="bar"><div class="knob">⇆</div></div>
+  </div>
+  <p class="cap">Glisse le curseur. À gauche, la prévisualisation avec des mannequins ; à droite, la vidéo générée (Seedance 2.5).</p>
+
+  <h3>Plan 2, l'enfant : quand le décor glisse</h3>
+  <div class="g2">
+    <figure><video src="vid/p2_glisse.mp4" poster="img/poster_p2_glisse.jpg" muted loop playsinline controls preload="none"></video><figcaption>Version 2 : l'enfant tire sa chaise… et la table glisse avec. Deux images de référence au cadrage différent.</figcaption></figure>
+    <figure><video src="vid/p2_v3.mp4" poster="img/poster_p2_v3.jpg" muted loop playsinline controls preload="none"></video><figcaption>Version 3, validée : une seule image de départ.</figcaption></figure>
+  </div>
+
+  <h3>Des maquettes Blender pour tenir la géographie</h3>
+  <figure><img src="img/layouts.jpg" alt="Maquettes des plans 1, 4a, 5 et 6" loading="lazy"><figcaption>L'IA déplaçait l'horloge, arrondissait la table, tournait le grand-père. La solution : donner à l'IA une maquette 3D de chaque plan.</figcaption></figure>
+
+  <h3>Plan 4a : poser le vrai VALÉRIEN</h3>
+  <p>Six versions pour que l'incrustation tienne : caméra recalée sur les coins de l'ancienne table, plateau remonté à sa vraie hauteur, rotation de 35° pour faire face aux deux joueurs lumière de la gare, inox sans teinte rosée, ombre du plateau sur le pied.</p>
+  <div class="rail" id="rail">
+    <figure><img src="img/p4a_essai1.jpg" alt="Premier essai" loading="lazy"><figcaption>Essai 1 : le grand-père face à un coin de table. Refusé.</figcaption></figure>
+    <figure><img src="img/p4a_plate.jpg" alt="Image sans table" loading="lazy"><figcaption>La table effacée par l'IA.</figcaption></figure>
+    <figure><img src="img/p4a_v2.jpg" alt="Version 2" loading="lazy"><figcaption>V2 : une boîte blanche, trop brillante.</figcaption></figure>
+    <figure><img src="img/p4a_v4.jpg" alt="Version 4" loading="lazy"><figcaption>V4 : éclairée par le panorama de la gare.</figcaption></figure>
+    <figure><img src="img/p4a_v5.jpg" alt="Version 5" loading="lazy"><figcaption>V5 : tournée de 35°.</figcaption></figure>
+    <figure><img src="img/p4a_v6.jpg" alt="Version 6" loading="lazy"><figcaption>V6, validée : inox neutre, ombre sous le plateau.</figcaption></figure>
+  </div>
+  <div class="railnav"><button data-rail="-1" aria-label="Image précédente">← Précédente</button><button data-rail="1" aria-label="Image suivante">Suivante →</button></div>
+  <div class="g2">
+    <figure><video src="vid/p4a_seedance.mp4" poster="img/poster_p4a_seedance.jpg" muted loop playsinline controls preload="none"></video><figcaption>Seedance : beau jeu d'acteur, mais l'échiquier est redessiné.</figcaption></figure>
+    <figure><video src="vid/p4a_kling.mp4" poster="img/poster_p4a_kling.jpg" muted loop playsinline controls preload="none"></video><figcaption>Kling : part exactement de l'image, l'échiquier bouge de moins de 2 pixels. Retenu, et quatre fois moins cher.</figcaption></figure>
+  </div>
+
+  <h3>Plans 5 et 6 : la foule s'arrête</h3>
+  <div class="g2">
+    <figure><video src="vid/p5.mp4" poster="img/poster_p5.jpg" muted loop playsinline controls preload="none"></video><figcaption>Plan 5 : le grand-père répond, les voyageurs ralentissent derrière lui.</figcaption></figure>
+    <figure><video src="vid/p6.mp4" poster="img/poster_p6.jpg" muted loop playsinline controls preload="none"></video><figcaption>Plan 6 : le cercle s'est formé, la caméra monte.</figcaption></figure>
+  </div>
+
+  <h3>Plan 1 et plan 2b : corrigés après visionnage</h3>
+  <div class="g2">
+    <figure><video src="vid/p1_guichets.mp4" poster="img/poster_p1_guichets.jpg" muted loop playsinline controls preload="none"></video><figcaption>Plan 1, première version : on ne voit pas la verrière. Refusé.</figcaption></figure>
+    <figure><video src="vid/p1_verriere.mp4" poster="img/poster_p1_verriere.jpg" muted loop playsinline controls preload="none"></video><figcaption>Plan 1 refait : la verrière et l'horloge en fond.</figcaption></figure>
+  </div>
+  <figure><video src="vid/p2b.mp4" poster="img/poster_p2b.jpg" muted loop playsinline controls preload="none"></video><figcaption>Plan 2b, ajouté : l'arrivée du grand-père en plan large, pour masquer une mauvaise transition.</figcaption></figure>
+</div></section>
+
+<section class="ch" id="montage"><div class="wrap">
+  <div class="when">23 novembre, au soir</div>
+  <h2>Deux montages</h2>
+  <div class="g2">
+    <figure><video src="vid/montage_v1.mp4" poster="img/poster_montage_v1.jpg" controls playsinline preload="none"></video><figcaption>Montage 1 : un gros plan Blender sur fond noir (« très mauvais, à éliminer ») et un plan 1 sans verrière.</figcaption></figure>
+    <figure><video src="vid/montage_v2.mp4" poster="img/poster_montage_v2.jpg" controls playsinline preload="none"></video><figcaption>Montage 2, 44 s : plan 1 refait, arrivée du grand-père en plan large, fond noir supprimé.</figcaption></figure>
+  </div>
+  <div class="note"><b>La suite.</b> Dans tous les plans, l'échiquier sera le rendu 3D de Blender, jamais un dessin de l'IA : les plans 1 à 3 montrent encore une table. Piste à tester : Atlas de World Labs, pour faire de la gare un vrai décor 3D commun à tous les plans.</div>
+</div></section>
+
+<section class="ch" id="bilan"><div class="wrap">
+  <div class="when">Bilan au 24 novembre</div>
+  <h2>Ce que ça a coûté, ce qu'on a appris</h2>
+  <div class="figs">
+    <div class="fig1"><div class="n">4 jours</div><div class="t">du 21 au 24 novembre</div></div>
+    <div class="fig1"><div class="n">≈ 500</div><div class="t">crédits Higgsfield sur 1 200</div></div>
+    <div class="fig1"><div class="n">7 plans</div><div class="t">montés, 44 secondes</div></div>
+    <div class="fig1"><div class="n">6 versions</div><div class="t">pour une seule incrustation</div></div>
+  </div>
+  <ul class="tight" style="margin-top:20px">
+    <li>L'IA ne garde pas la géographie d'un lieu d'un plan à l'autre : il faut des maquettes, et bientôt un décor 3D.</li>
+    <li>L'IA redessine toujours l'objet réel : le produit doit venir de la 3D, jamais de la génération.</li>
+    <li>Le bon modèle dépend du besoin : Kling respecte l'image de départ, Seedance joue mieux mais réinvente.</li>
+    <li>Mesurer avant de valider : une table qui glisse ne se voit pas sur une vignette.</li>
+    <li>Le son et l'œil se règlent à l'image près, et c'est l'humain qui tranche.</li>
+  </ul>
+  <figure><img src="img/planche.jpg" alt="Planche des versions de chaque plan" loading="lazy"><figcaption>Toutes les versions gardées, pour pouvoir revenir en arrière.</figcaption></figure>
+</div></section>
+</main>
+
+<footer><div class="wrap">VALÉRIEN, échiquier de Frédéric Brochard, Concours Lépine 2025. Making-of réalisé avec Claude (Anthropic). Images IA : Higgsfield (Nano Banana Pro, Seedance 2.5, Kling 3.0). 3D : Three.js et Blender.</div></footer>
+
+<script>
+{
+  // Comparateurs à curseur : souris, doigt ou flèches du clavier
+  for (const c of document.querySelectorAll('[data-cmp]')) {
+    let drag = false;
+    const setX = x => { const r = c.getBoundingClientRect(); c.style.setProperty('--x', Math.max(0, Math.min(100, (x - r.left) / r.width * 100)) + '%'); };
+    c.addEventListener('pointerdown', e => { drag = true; c.setPointerCapture(e.pointerId); setX(e.clientX); });
+    c.addEventListener('pointermove', e => { if (drag || e.pointerType === 'mouse') setX(e.clientX); });
+    c.addEventListener('pointerup', () => { drag = false; });
+    c.addEventListener('keydown', e => {
+      const v = parseFloat(getComputedStyle(c).getPropertyValue('--x')) || 50;
+      if (e.key === 'ArrowLeft') { c.style.setProperty('--x', Math.max(0, v - 5) + '%'); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { c.style.setProperty('--x', Math.min(100, v + 5) + '%'); e.preventDefault(); }
+    });
+    // Comparateur vidéo : les deux vidéos jouent ensemble quand il est visible
+    if (c.hasAttribute('data-video')) {
+      const [b, a] = c.querySelectorAll('video');
+      const go = () => { a.play().catch(() => {}); b.play().catch(() => {}); };
+      const io = new IntersectionObserver(es => { for (const en of es) { if (en.isIntersecting) go(); else { a.pause(); b.pause(); } } }, { threshold: .3 });
+      io.observe(c);
+      c.addEventListener('click', go);
+      setInterval(() => { if (!b.paused && Math.abs(a.currentTime - b.currentTime) > .06) a.currentTime = b.currentTime; }, 250);
+    }
+  }
+  // Défilement de l'évolution du plan 4a
+  const rail = document.getElementById('rail');
+  for (const btn of document.querySelectorAll('[data-rail]')) {
+    btn.addEventListener('click', () => { const w = rail.querySelector('figure').getBoundingClientRect().width + 12; rail.scrollBy({ left: w * Number(btn.dataset.rail), behavior: 'smooth' }); });
+  }
+  rail.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); rail.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * rail.clientWidth * .8, behavior: 'smooth' }); } });
+  rail.tabIndex = 0;
+}
+</script>
+</body>
+</html>

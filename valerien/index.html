@@ -175,6 +175,9 @@
   footer { background:#0d0e0d; color:rgba(255,255,255,.6); font-size:13px; padding:46px 0; }
   footer .wrap { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   footer b { color:#fff; letter-spacing:.24em; font:600 16px var(--serif); }
+  footer .mo { margin-top:22px; justify-content:flex-end; font-size:11px; }
+  footer .mo a { color:rgba(255,255,255,.35); text-decoration:none; }
+  footer .mo a:hover, footer .mo a:focus-visible { color:rgba(255,255,255,.7); }
 
   .reveal { opacity:0; transform:translateY(18px); transition:opacity .9s ease, transform .9s ease; }
   .reveal.in { opacity:1; transform:none; }
@@ -507,6 +510,7 @@ else try {
     <div><b>VALÉRIEN</b><br>Jeux d'échecs à pièces imperdables · Médaille d'or Concours Lépine 2025</div>
     <div>Invention de Frédéric Brochard · Système breveté<br>Photos : VALÉRIEN · Visualisation 3D : Pascal Robotics · Panoramas Poly Haven (CC0)</div>
   </div>
+  <div class="wrap mo"><a href="making-of/">Making-of</a></div>
 </footer>
 
 <script>
@@ -612,14 +616,14 @@ addEventListener('message', e => { const d = e.data;
 /* ===== Son du site =====
    Les navigateurs interdisent le son tant que le visiteur n'a pas cliqué : tout démarre donc muet.
    Le bouton « Son » (en bas à gauche, visible dès l'intro) active :
-     - le whoosh d'entrée de l'anneau (t = 0 s de l'intro),
+     - le whoosh d'entrée de l'anneau (t = 0 s de l'intro), puis la nappe sci-fi des pions et de la rotation,
      - la musique d'ambiance, en boucle sans raccord, qui démarre en fondu à la fin de l'intro.
    Le choix est mémorisé : au retour, le son reprend au premier clic ou toucher sur la page. */
 (() => {
   const btn = document.getElementById('sndBtn'); if (!btn) return;
   const KEY = 'valerien_son', LOOP = 4 * 15.583333;          // durée exacte de la boucle musicale
-  let ctx, master, bufs = {}, loading, on = false, music = null, firedIn = false;
-  const load = () => loading || (loading = Promise.all(['whoosh-in', 'ambiance'].map(n =>
+  let ctx, master, bufs = {}, loading, on = false, music = null, firedIn = false, firedSci = false;
+  const load = () => loading || (loading = Promise.all(['whoosh-in', 'logo-scifi', 'ambiance'].map(n =>
     fetch('son/' + n + '.mp3').then(r => r.arrayBuffer()).then(a => ctx.decodeAudioData(a)).then(b => bufs[n] = b))));
   const shot = (n, gain = 0.9) => { const b = bufs[n]; if (!b || !on) return;
     const s = ctx.createBufferSource(), g = ctx.createGain(); g.gain.value = gain; s.buffer = b; s.connect(g).connect(master); s.start(); };
@@ -638,6 +642,9 @@ addEventListener('message', e => { const d = e.data;
     const t = window.__introT;
     if (introRunning() && t !== undefined) {
       if (!firedIn && t < 0.35) { firedIn = true; shot('whoosh-in'); }
+      // nappe « sci-fi » (Mixkit, licence gratuite) : entre en fondu avec les pions, tient pendant la rotation,
+      // sort en fondu au départ du logo (fondus intégrés au fichier : 1,2 s → 4,8 s de l'intro)
+      if (!firedSci && t >= 1.2 && t < 2.5) { firedSci = true; shot('logo-scifi', 0.8); }
       requestAnimationFrame(watch);
     } else setTimeout(startMusic, introRunning() ? 0 : 400);
   }
