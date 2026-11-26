@@ -42,6 +42,12 @@
   #mute { left:22px; bottom:22px; }
   #ai { position:fixed; z-index:6; left:50%; bottom:10px; transform:translateX(-50%); font:300 10px/1 var(--sans); letter-spacing:.05em;
     color:rgba(245,242,236,.38); width:min(92vw,640px); text-align:center; line-height:1.4; }
+  /* bouton plein écran (icône), à côté de « Passer » */
+  #fs { right:22px; top:22px; padding:9px; line-height:0; }
+  #fs svg { width:22px; height:22px; }
+  /* pendant la lecture, les commandes s'effacent ; un toucher ou un mouvement de souris les fait revenir */
+  .ui, #ai { transition:opacity .5s, background .25s, color .25s; }
+  body.idle .ui, body.idle #ai { opacity:0; pointer-events:none; }
   @media (max-width:600px) { #skip { bottom:44px; right:14px; } #mute { bottom:44px; left:14px; } }
   /* smartphone en paysage : écran bas, on resserre l'écran d'accueil et on dégage le bas */
   @media (max-height:520px) and (orientation:landscape) {
@@ -54,7 +60,8 @@
     .cd { gap:4px; margin-top:0; }
     .cdn b { font-size:24px; } .cdl { font-size:9.5px; } .cdn i { font-size:10px; } .kick { font-size:9.5px; }
     #ai { font-size:9px; bottom:6px; }
-    #skip { bottom:22px; right:14px; } #mute { bottom:22px; left:14px; }
+    .ui { font-size:11px; padding:7px 11px; } #fs { padding:7px; top:12px; right:14px; } #fs svg { width:18px; height:18px; }
+    #skip { bottom:16px; right:14px; } #mute { bottom:16px; left:14px; }
   }
   /* fondu vers le site à la fin */
   #fade { position:fixed; inset:0; z-index:9; background:#fbfaf7; opacity:0; pointer-events:none; transition:opacity .9s ease; }
@@ -78,6 +85,7 @@
 </div>
 
 <button id="mute" class="ui" hidden>Couper le son</button>
+<button id="fs" class="ui" hidden aria-label="Plein écran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <a id="skip" class="ui" href="../?jeu">Passer&ensp;›</a>
 <div id="ai">Film réalisé avec l'aide de l'intelligence artificielle · échiquier VALÉRIEN en 3D</div>
 <div id="fade"></div>
@@ -94,8 +102,24 @@ try { sessionStorage.setItem('valTeaser', '1'); } catch (e) {}
   const start = () => {
     gate.classList.add('out'); v.muted = false; v.currentTime = 0;
     v.play().catch(() => { v.muted = true; v.play(); mute.textContent = 'Activer le son'; });
-    mute.hidden = false;
+    mute.hidden = false; fsBtn.hidden = !canFs; wake();
   };
+  // plein écran : toute la page sur Android et ordinateur, la vidéo seule sur iPhone
+  const fsBtn = document.getElementById('fs'), de = document.documentElement;
+  const canFs = !!(de.requestFullscreen || de.webkitRequestFullscreen || v.webkitEnterFullscreen);
+  const isFs = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+  fsBtn.addEventListener('click', e => { e.stopPropagation();
+    if (isFs()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    const req = de.requestFullscreen || de.webkitRequestFullscreen;
+    if (req) Promise.resolve(req.call(de, { navigationUI:'hide' }))
+      .then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }).catch(() => {});
+    else v.webkitEnterFullscreen();
+  });
+  // commandes qui s'effacent pendant la lecture
+  let idleT = null;
+  const wake = () => { document.body.classList.remove('idle'); clearTimeout(idleT);
+    idleT = setTimeout(() => { if (!v.paused) document.body.classList.add('idle'); }, 2500); };
+  ['pointerdown', 'pointermove', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { if (gate.classList.contains('out')) wake(); }, { passive:true }));
   gate.addEventListener('click', start);
   gate.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
   mute.addEventListener('click', () => { v.muted = !v.muted; mute.textContent = v.muted ? 'Activer le son' : 'Couper le son'; });

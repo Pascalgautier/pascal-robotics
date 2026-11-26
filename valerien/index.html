@@ -639,7 +639,7 @@ addEventListener('message', e => { const d = e.data;
     let i0 = 0; while (i0 < 4096 && Math.abs(d[i0]) < 1e-4) i0++;   // silence d'encodage MP3 en tête, retiré pour une boucle sans raccord
     const s = ctx.createBufferSource(), g = ctx.createGain();
     s.buffer = b; s.loop = true; s.loopStart = i0 / b.sampleRate; s.loopEnd = Math.min(b.duration, s.loopStart + LOOP);
-    g.gain.setValueAtTime(0, ctx.currentTime); g.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 3);
+    g.gain.setValueAtTime(0, ctx.currentTime); g.gain.linearRampToValueAtTime(1.6, ctx.currentTime + 3);   // ambiance plus présente (+9 dB)
     s.connect(g).connect(master); s.start(0, s.loopStart); music = { s, g };
   }
   const introRunning = () => !!document.getElementById('intro') && !window.__introDone;
