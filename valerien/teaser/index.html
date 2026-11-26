@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VALÉRIEN — Le temps d'une partie · Teaser</title>
+<meta name="description" content="Teaser du film « Le temps d'une partie » : une gare, un échiquier VALÉRIEN, deux générations.">
+<meta property="og:title" content="VALÉRIEN — Le temps d'une partie · Teaser">
+<meta property="og:image" content="../video/teaser-poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --brass:#c9a56b; --ivory:#f5f2ec; --mut:rgba(245,242,236,.55); --serif:'Cormorant Garamond', Georgia, serif; --sans:'Inter', -apple-system, sans-serif; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:#000; color:var(--ivory); font-family:var(--sans); overflow:hidden; }
+  video { position:fixed; inset:0; width:100%; height:100%; object-fit:contain; background:#000; }
+  /* écran d'accueil : un clic lance le film avec le son */
+  #gate { position:fixed; inset:0; z-index:5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px;
+    background:#000 url(../video/teaser-poster.jpg) center/cover; cursor:pointer; transition:opacity .7s ease; }
+  #gate::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(0,0,0,.35), rgba(0,0,0,.82)); }
+  #gate > * { position:relative; }
+  #gate.out { opacity:0; pointer-events:none; }
+  .kick { font:500 11px/1 var(--sans); letter-spacing:.34em; text-transform:uppercase; color:var(--brass); }
+  .brand { font:400 clamp(46px,9vw,104px)/.9 'Cinzel', serif; letter-spacing:.2em; margin-left:.2em; }
+  .sub { font:italic 400 clamp(22px,3vw,32px)/1 var(--serif); color:rgba(245,242,236,.85); margin-top:-8px; }
+  .play { margin-top:12px; width:86px; height:86px; border-radius:50%; border:1px solid rgba(245,242,236,.7); background:rgba(0,0,0,.25);
+    display:flex; align-items:center; justify-content:center; transition:transform .3s, background .3s, border-color .3s; }
+  #gate:hover .play { transform:scale(1.06); background:rgba(201,165,107,.25); border-color:var(--brass); }
+  .play svg { width:28px; height:28px; margin-left:5px; fill:var(--ivory); }
+  .hint { font:300 13px/1 var(--sans); color:var(--mut); letter-spacing:.06em; }
+  .cd { display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:6px; }
+  .cdl { font:500 11px/1 var(--sans); letter-spacing:.24em; text-transform:uppercase; color:var(--brass); }
+  .cdn { display:flex; align-items:baseline; gap:6px; font-family:var(--serif); }
+  .cdn b { font-weight:400; font-size:clamp(28px,5vw,40px); font-variant-numeric:lining-nums tabular-nums; color:var(--ivory); min-width:1.3em; text-align:right; }
+  .cdn i { font:300 12px/1 var(--sans); font-style:normal; color:var(--mut); margin-right:10px; }
+  /* commandes pendant le film */
+  .ui { position:fixed; z-index:6; font:400 12.5px/1 var(--sans); letter-spacing:.08em; color:rgba(245,242,236,.8);
+    background:rgba(0,0,0,.35); border:1px solid rgba(245,242,236,.25); padding:11px 16px; cursor:pointer; text-decoration:none; transition:background .25s, color .25s; }
+  .ui:hover { background:rgba(201,165,107,.35); color:#fff; }
+  #skip { right:22px; bottom:22px; }
+  #mute { left:22px; bottom:22px; }
+  #ai { position:fixed; z-index:6; left:50%; bottom:10px; transform:translateX(-50%); font:300 10px/1 var(--sans); letter-spacing:.05em;
+    color:rgba(245,242,236,.38); width:min(92vw,640px); text-align:center; line-height:1.4; }
+  @media (max-width:600px) { #skip { bottom:44px; right:14px; } #mute { bottom:44px; left:14px; } }
+  /* fondu vers le site à la fin */
+  #fade { position:fixed; inset:0; z-index:9; background:#fbfaf7; opacity:0; pointer-events:none; transition:opacity .9s ease; }
+  #fade.on { opacity:1; }
+</style>
+</head>
+<body>
+<video id="v" playsinline preload="auto" poster="../video/teaser-poster.jpg">
+  <source src="../video/teaser-1080.mp4" type="video/mp4" media="(min-width: 900px)">
+  <source src="../video/teaser-720.mp4" type="video/mp4">
+</video>
+
+<div id="gate" role="button" tabindex="0" aria-label="Lancer le teaser avec le son">
+  <div class="kick">Teaser</div>
+  <div class="brand">VALÉRIEN</div>
+  <div class="sub">Le temps d'une partie</div>
+  <div class="play"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></svg></div>
+  <div class="hint">33 secondes · avec le son</div>
+  <div class="cd" aria-live="off"><span class="cdl">Le film complet le 21 décembre 2026</span>
+    <span class="cdn"><b id="cdD">–</b><i>jours</i><b id="cdH">–</b><i>h</i><b id="cdM">–</b><i>min</i><b id="cdS">–</b><i>s</i></span></div>
+</div>
+
+<button id="mute" class="ui" hidden>Couper le son</button>
+<a id="skip" class="ui" href="../?jeu">Passer&ensp;›</a>
+<div id="ai">Film réalisé avec l'aide de l'intelligence artificielle · échiquier VALÉRIEN en 3D</div>
+<div id="fade"></div>
+
+<script>
+(() => {
+  const v = document.getElementById('v'), gate = document.getElementById('gate'), mute = document.getElementById('mute');
+  const fade = document.getElementById('fade'), skip = document.getElementById('skip');
+  const SITE = '../?jeu';
+  // en arrivant sur le site depuis le teaser : pas d'intro du logo, la fenêtre « jouez » s'ouvre directement
+  const toSite = () => { try { sessionStorage.setItem('valIntro', '1'); } catch (e) {}
+    fade.classList.add('on'); setTimeout(() => { location.href = SITE; }, 900); };
+  const start = () => {
+    gate.classList.add('out'); v.muted = false; v.currentTime = 0;
+    v.play().catch(() => { v.muted = true; v.play(); mute.textContent = 'Activer le son'; });
+    mute.hidden = false;
+  };
+  gate.addEventListener('click', start);
+  gate.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); start(); } });
+  mute.addEventListener('click', () => { v.muted = !v.muted; mute.textContent = v.muted ? 'Activer le son' : 'Couper le son'; });
+  skip.addEventListener('click', e => { e.preventDefault(); toSite(); });
+  v.addEventListener('ended', toSite);
+  // compte à rebours jusqu'à la sortie du film (21 décembre 2026, minuit, heure de Paris)
+  const END = new Date('2026-12-21T00:00:00+01:00').getTime(), $ = id => document.getElementById(id);
+  const tick = () => { let r = Math.max(0, END - Date.now()) / 1000;
+    const d = Math.floor(r / 86400); r -= d * 86400; const h = Math.floor(r / 3600); r -= h * 3600; const m = Math.floor(r / 60); const s2 = Math.floor(r - m * 60);
+    $('cdD').textContent = d; $('cdH').textContent = String(h).padStart(2, '0'); $('cdM').textContent = String(m).padStart(2, '0'); $('cdS').textContent = String(s2).padStart(2, '0'); };
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

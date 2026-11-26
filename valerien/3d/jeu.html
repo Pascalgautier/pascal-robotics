@@ -87,6 +87,10 @@
   .modal th { color:#c9a56b; font-weight:600; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
   .modal td.n { text-align:right; font-variant-numeric:tabular-nums; }
   .modal tr.me td { color:#ffd9a8; }
+  /* arrivée directe depuis le site (?direct) : panneau d'options replié, bouton ☰ pour l'ouvrir */
+  body.direct #ui.hidden { display:none; }
+  body.direct #toggleUI { display:block; }
+  @media (min-width:701px) { body.direct #toggleUI { left:10px; right:auto; } }
 </style>
 <script type="importmap">
 { "imports": {
@@ -1940,7 +1944,9 @@ buildTimeline();
 updateGameBar();
 setDecor('gare');          // ouverture directe dans le parc (Lieu 360°), vue « Ambiance »
 setView('amb', true);
-if (!/[?&]demo\b/.test(location.search)) { setMode('jeu'); if (!player) askName(); }   // V8 : ouverture directe en mode jeu (?demo pour la démonstration)
+const DIRECT = /[?&]direct\b/.test(location.search);   // arrivée depuis la carte du site : directement la partie 3D, sans menu
+if (DIRECT) { document.body.classList.add('direct'); uiToggled = true; $('ui').classList.add('hidden'); resize(); }
+if (!/[?&]demo\b/.test(location.search)) { setMode('jeu'); if (!player && !DIRECT) askName(); else if (!player) setPlayer('Joueur'); }   // V8 : ouverture directe en mode jeu (?demo pour la démonstration)
 tick();
 window.__valerien = { C, PCS, TL, play, applyTime, setView, setDecor, resize, gare, loadPanoFromBlob, check3D, bodyMargin, checkAnchor, buildTimeline, game, setMode, playMove, appendMove, newGame, camera };
 </script>
