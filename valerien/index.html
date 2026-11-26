@@ -2,6 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<script>
+/* Première visite de la session : on ouvre d'abord le teaser du film (avec « Passer »), qui ramène ensuite ici.
+   Pas de redirection si le teaser a déjà été vu, pour un lien vers une section (#…) ou un retour du jeu. */
+try { if (!sessionStorage.getItem('valTeaser') && !location.hash && !/[?&](jeu|site)\b/.test(location.search)
+          && !/\/3d\//.test(document.referrer)) location.replace('teaser/'); } catch (e) {}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VALÉRIEN — Le jeu d'échecs aux pièces imperdables</title>
 <meta name="description" content="VALÉRIEN, le premier jeu d'échecs à pièces imperdables pour les lieux publics. Médaille d'or au Concours Lépine 2025. Fabrication 100 % française. Vente ou location.">
@@ -664,9 +670,18 @@ addEventListener('message', e => { const d = e.data;
       setTimeout(() => { if (!on) { if (music) { music.s.stop(); music = null; } ctx.suspend(); } }, 1200); }
   }
   btn.addEventListener('click', e => { e.stopPropagation(); on ? disable() : enable(); });
-  // au retour d'un visiteur qui avait choisi le son : reprise au premier geste sur la page
+  // son activé par défaut (sauf si le visiteur l'a coupé) : on essaie tout de suite ; si le navigateur
+  // le bloque (aucun clic encore sur le site), il démarre au premier toucher, clic ou touche
   let pref = null; try { pref = localStorage.getItem(KEY); } catch (e) {}
-  if (pref === '1') { const go = () => { if (!on) enable(); }; ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, go, { once:true, capture:true })); }
+  if (pref !== '0') {
+    const go = () => { if (!on) enable(); };
+    ['pointerdown', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, go, { once:true, capture:true }));
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx.resume().catch(() => {});
+      setTimeout(() => { if (ctx.state === 'running') go(); }, 250);
+    } catch (e) {}
+  }
   // onglet caché : on suspend, on reprend au retour
   document.addEventListener('visibilitychange', () => { if (!ctx || !on) return; document.hidden ? ctx.suspend() : ctx.resume(); });
 })();

@@ -83,6 +83,7 @@
 <div id="fade"></div>
 
 <script>
+try { sessionStorage.setItem('valTeaser', '1'); } catch (e) {}
 (() => {
   const v = document.getElementById('v'), gate = document.getElementById('gate'), mute = document.getElementById('mute');
   const fade = document.getElementById('fade'), skip = document.getElementById('skip');
